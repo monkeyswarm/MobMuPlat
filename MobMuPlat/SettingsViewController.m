@@ -117,9 +117,14 @@
     clearConsoleButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     
     //setup elements of the audioMIDIView
+    //UILabel* midiLabel = [[UILabel alloc]init ];
     UILabel* midiSourceLabel = [[UILabel alloc]init ];
     midiSourceTableView  = [[UITableView alloc]init];
     midiSourceTableView.layer.cornerRadius = cornerRadius;
+    //UILabel* midiDestinationLabel = [[UILabel alloc]init ];
+    midiDestinationTableView  = [[UITableView alloc]init];
+    midiDestinationTableView.layer.cornerRadius = cornerRadius;
+    
     UILabel* bufferLabel = [[UILabel alloc]init ];
     UILabel* rateLabel = [[UILabel alloc]init];
     tickValueLabel = [[UILabel alloc]init];
@@ -158,7 +163,7 @@
     
     //layout audioMidiView ====
     
-	midiSourceLabel.text=@"Select MIDI Input Source";
+	midiSourceLabel.text=@"Select MIDI Input & Output";
 	midiSourceLabel.backgroundColor=[UIColor clearColor];
 	midiSourceLabel.textAlignment=UITextAlignmentCenter;
 	midiSourceLabel.font=[UIFont systemFontOfSize:16];
@@ -169,10 +174,17 @@
 	midiSourceTableView.bounces=NO;
 	[audioMIDIView addSubview:midiSourceTableView];
     
+    midiDestinationTableView.delegate=self;
+	midiDestinationTableView.dataSource=self;
+	midiDestinationTableView.bounces=NO;
+	[audioMIDIView addSubview:midiDestinationTableView];
+    
     NSIndexPath *topIndexPath = [NSIndexPath indexPathForRow:0 inSection: 0];
     //connect to top element of midi source list
 	if( [[[self.audioDelegate midi] sources] count] >0 )
         [midiSourceTableView selectRowAtIndexPath:topIndexPath animated:NO scrollPosition:UITableViewScrollPositionTop];
+    if( [[[self.audioDelegate midi] destinations] count] >0 )
+        [midiDestinationTableView selectRowAtIndexPath:topIndexPath animated:NO scrollPosition:UITableViewScrollPositionTop];
     
     
     bufferLabel.text=@"Audio Buffer Size (in Pd Blocks)";
@@ -261,7 +273,8 @@
         
         //audio midi
         midiSourceLabel.frame = CGRectMake(5, 0, 290, 25);
-        midiSourceTableView.frame = CGRectMake(10, 30, 280, 60);
+        midiSourceTableView.frame = CGRectMake(10, 30, 135, 60);
+        midiDestinationTableView.frame = CGRectMake(10+135+10, 30, 135, 60);
         bufferLabel.frame = CGRectMake(5, 100, 290, 25);
         [tickSeg setFrame:CGRectMake(10, 125, 280, 30)];
         tickValueLabel.frame = CGRectMake(10, 160, 280, 30);
@@ -292,7 +305,8 @@
         
         //audio midi - same
         midiSourceLabel.frame = CGRectMake(5, 0, 290, 25);
-        midiSourceTableView.frame = CGRectMake(10, 30, 280, 100);
+        midiSourceTableView.frame = CGRectMake(10, 30, 135, 100);
+        midiDestinationTableView.frame=CGRectMake(10+135+10, 30, 135, 100);
         bufferLabel.frame = CGRectMake(5, 145, 290, 25);
         [tickSeg setFrame:CGRectMake(10, 170, 280, 30)];
         
@@ -329,7 +343,8 @@
         //audio midi
         midiSourceLabel.frame = CGRectMake(5*2.4, 0, 290*2.4, 25*2.133);
         midiSourceLabel.font=[UIFont systemFontOfSize:32];
-        midiSourceTableView.frame = CGRectMake(10*2.4, 30*2.133, 280*2.4, 60*2.133);
+        midiSourceTableView.frame = CGRectMake(10*2.4, 30*2.133, 135*2.4, 60*2.133);
+        midiDestinationTableView.frame=CGRectMake((10+135+10)*2.4, 30*2.133, 135*2.4, 60*2.133);
         bufferLabel.frame = CGRectMake(5*2.4, 100*2.133, 290*2.4, 25*2.133);
         bufferLabel.font=[UIFont systemFontOfSize:32];
         [tickSeg setFrame:CGRectMake(10*2.4, 125*2.133, 280*2.4, 30*2.133)];
@@ -505,6 +520,7 @@
 
 -(void)reloadMidiSources{
     [midiSourceTableView reloadData];
+    [midiDestinationTableView reloadData];
 }
 
 //load a pure data file from an index path on the filesTable
@@ -606,13 +622,17 @@
     else if (tableView==midiSourceTableView){
         [self.audioDelegate setMidiSourceIndex:[indexPath indexAtPosition:1] ];
 	}
+    else if (tableView==midiDestinationTableView){
+        [self.audioDelegate setMidiDestinationIndex:[indexPath indexAtPosition:1] ];
+	}
     
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if(tableView == filesTableView)return [(mmpOrAll ? allFiles : MMPFiles) count];
-    else /*if (tableView==midiSourceTableView)*/return [[[self.audioDelegate midi] sources]  count];
+    else if (tableView==midiSourceTableView)return [[[self.audioDelegate midi] sources]  count];
+    else return [[[self.audioDelegate midi] destinations]  count];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)aTableView {
@@ -625,8 +645,8 @@
         else return 35;
     }
 	else /*if (tableView==midiSourceTableView)*/{
-        if (hardwareCanvasType==canvasTypeIPad)return 50;
-        else return 25;
+        if (hardwareCanvasType==canvasTypeIPad)return 45;
+        else return 22.5;
     }
 }
 
@@ -656,7 +676,7 @@
         return cell;
     }
     
-    else /*if (tableView==midiSourceTableView)*/{
+    else if (tableView==midiSourceTableView){
         PGMidiConnection* currSource = [[[self.audioDelegate midi] sources] objectAtIndex: [indexPath indexAtPosition:1]];
 		NSString* currMidiSourceName = currSource.name;
 		UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:currMidiSourceName];
@@ -664,11 +684,26 @@
         if(cell==nil){
 			cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:currMidiSourceName] ;
 			[cell textLabel].text=currMidiSourceName;
-			if (hardwareCanvasType==canvasTypeIPad)cell.textLabel.font=[UIFont systemFontOfSize:32];
-            else cell.textLabel.font=[UIFont systemFontOfSize:16];
+			if (hardwareCanvasType==canvasTypeIPad)cell.textLabel.font=[UIFont systemFontOfSize:24];
+            else cell.textLabel.font=[UIFont systemFontOfSize:12];
 		}
 		return cell;
 	}
+    
+    else{//destination
+        PGMidiConnection* currDestination = [[[self.audioDelegate midi] destinations] objectAtIndex: [indexPath indexAtPosition:1]];
+		NSString* currMidiDestName = currDestination.name;
+		UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:currMidiDestName];
+		
+        if(cell==nil){
+			cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:currMidiDestName] ;
+			[cell textLabel].text=currMidiDestName;
+			if (hardwareCanvasType==canvasTypeIPad)cell.textLabel.font=[UIFont systemFontOfSize:24];
+            else cell.textLabel.font=[UIFont systemFontOfSize:12];
+		}
+		return cell;
+
+    }
 
 }
 

@@ -24,7 +24,7 @@
 
 
 
-@interface ViewController : UIViewController<PdReceiverDelegate, UIAccelerometerDelegate,  SettingsViewControllerDelegate, ControlDelegate, UIScrollViewDelegate, AudioSettingsDelegate, PGMidiDelegate, PGMidiSourceDelegate, OSCDelegateProtocol >{
+@interface ViewController : UIViewController<PdReceiverDelegate, UIAccelerometerDelegate,  SettingsViewControllerDelegate, ControlDelegate, UIScrollViewDelegate, AudioSettingsDelegate, PGMidiDelegate, PGMidiSourceDelegate, OSCDelegateProtocol, PdMidiReceiverDelegate>{
     
     
     UIButton * settingsButton;
@@ -43,7 +43,9 @@
     //midi
     PGMidi *midi;
     PGMidiSource *currMidiSource;
-    int currMidiPortIndex;
+    PGMidiDestination *currMidiDestination;
+    int currMidiSourceIndex;
+    int currMidiDestinationIndex;
 	
     
     BOOL isLandscape;

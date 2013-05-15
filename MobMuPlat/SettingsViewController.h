@@ -25,7 +25,7 @@ typedef enum{
 @interface SettingsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate>{
     canvasType hardwareCanvasType;
     
-    UITableView* filesTableView, *midiSourceTableView;
+    UITableView* filesTableView, *midiSourceTableView, *midiDestinationTableView;
     NSArray *MMPFiles, *allFiles;
     UIButton* dspButton, *loadDocButton, *showFilesButton, *consoleButton, *clearConsoleButton;
     BOOL mmpOrAll;
@@ -68,6 +68,7 @@ typedef enum{
 -(int)sampleRate;
 -(PGMidi*) midi;
 -(void)setMidiSourceIndex:(int)index;
+-(void)setMidiDestinationIndex:(int)index;
 @property BOOL backgroundAudioEnabled;
 
 @end

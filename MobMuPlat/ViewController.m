@@ -78,6 +78,11 @@ extern void sigmund_tilde_setup(void);
     [midi setNetworkEnabled:YES];
     [midi setVirtualDestinationEnabled:YES];
     [midi.virtualDestinationSource addDelegate:self];
+    //out
+    [midi setVirtualEndpointName:@"MobMuPlat"];
+    [midi setVirtualSourceEnabled:YES];
+    //[midi.virtualSourceDestination]
+    
     
     settingsVC = [[SettingsViewController alloc] init ];//]WithNibName:@"SettingsView" bundle:nil];
     int ticksPerBuffer;
@@ -243,6 +248,9 @@ extern void sigmund_tilde_setup(void);
 	if([midi.sources count]>0){
 		[self setMidiSourceIndex:0];//connect to first device in MIDI source list
 	}
+    if([midi.destinations count]>0){
+		[self setMidiDestinationIndex:0];//connect to first device in MIDI source list
+	}
     
     //delegate for file loading, etc
     settingsVC.delegate = self;
@@ -257,6 +265,7 @@ extern void sigmund_tilde_setup(void);
     //PD setup
     // set self as PdRecieverDelegate to recieve messages from Libpd
 	[PdBase setDelegate:self];
+    [PdBase setMidiDelegate:self];
 		
 	[PdBase subscribe:@"toGUI"];
     [PdBase subscribe:@"toNetwork"];
@@ -899,13 +908,19 @@ extern void sigmund_tilde_setup(void);
 }
 
 -(void)setMidiSourceIndex:(int)inIndex{
-	currMidiPortIndex=inIndex;
+	currMidiSourceIndex=inIndex;
 	[currMidiSource removeDelegate:self];
     currMidiSource = [midi.sources objectAtIndex:inIndex];
 	[currMidiSource addDelegate:self];
     NSLog(@"set MidiSourceIndex to %d, %@", inIndex, currMidiSource.name);
 }
 
+-(void)setMidiDestinationIndex:(int)inIndex{
+    currMidiDestinationIndex = inIndex;
+    //[currMidiDestination]
+    currMidiDestination=[midi.destinations objectAtIndex:inIndex];
+    NSLog(@"set MidiDestinationIndex to %d, %@", inIndex, currMidiDestination.name);
+}
 
 //==== pgmidi delegate methods
 - (void) midi:(PGMidi*)midi sourceAdded:(PGMidiSource *)source
@@ -919,10 +934,16 @@ extern void sigmund_tilde_setup(void);
      [settingsVC reloadMidiSources];
 }
 
-//no midi destinations, leave these two unimplemented
-- (void) midi:(PGMidi*)midi destinationAdded:(PGMidiDestination *)destination{}
 
-- (void) midi:(PGMidi*)midi destinationRemoved:(PGMidiDestination *)destination{}
+- (void) midi:(PGMidi*)midi destinationAdded:(PGMidiDestination *)destination{
+    //NSLog(@"added %@", destination.name);
+    [settingsVC reloadMidiSources];
+}
+
+- (void) midi:(PGMidi*)midi destinationRemoved:(PGMidiDestination *)destination{
+    //NSLog(@"removed %@", destination.name);
+    [settingsVC reloadMidiSources];
+}
 
 
 -(NSMutableArray*)midiSourcesArray{//of PGMIDIConnection, get name connection.name
@@ -988,7 +1009,7 @@ extern void sigmund_tilde_setup(void);
 	char channel = (bytePtr[0] & 0x0F);
     
     for(int i=0;i<[messageData length];i++)
-        [PdBase sendMidiByte:currMidiPortIndex byte:(int)bytePtr[i]];
+        [PdBase sendMidiByte:currMidiSourceIndex byte:(int)bytePtr[i]];
 	
 	
     switch (type) {
@@ -1026,6 +1047,43 @@ extern void sigmund_tilde_setup(void);
 		}
 }
 
+//receive midi from PD, out to PGMidi
+
+- (void)receiveNoteOn:(int)pitch withVelocity:(int)velocity forChannel:(int)channel {
+    const UInt8 bytes[]  = { 0x90+channel, pitch, velocity };
+    [currMidiDestination sendBytes:bytes size:sizeof(bytes)];
+}
+
+- (void)receiveControlChange:(int)value forController:(int)controller forChannel:(int)channel {
+    const UInt8 bytes[]  = { 0xB0+channel, controller, value };
+    [currMidiDestination sendBytes:bytes size:sizeof(bytes)];
+}
+
+- (void)receiveProgramChange:(int)value forChannel:(int)channel {
+    const UInt8 bytes[]  = { 0xC0+channel, value };
+    [currMidiDestination sendBytes:bytes size:sizeof(bytes)];
+}
+
+- (void)receivePitchBend:(int)value forChannel:(int)channel {
+    const UInt8 bytes[]  = { 0xE0+channel, (value-8192)&0x7F, ((value-8192)>>7)&0x7F };
+    [currMidiDestination sendBytes:bytes size:sizeof(bytes)];
+}
+
+- (void)receiveAftertouch:(int)value forChannel:(int)channel {
+    const UInt8 bytes[]  = { 0xD0+channel, value };
+    [currMidiDestination sendBytes:bytes size:sizeof(bytes)];
+}
+
+- (void)receivePolyAftertouch:(int)value forPitch:(int)pitch forChannel:(int)channel {
+    const UInt8 bytes[]  = { 0xA0+channel, pitch, value };
+    [currMidiDestination sendBytes:bytes size:sizeof(bytes)];
+}
+
+// Override this method in subclasses if you want different printing behavior.
+// No need to synchronize here.
+/*- (void)receiveMidiByte:(int)byte forPort: (int)port {
+    NSLog(@"Received midi byte: %d 0x%X", port, byte);
+}*/
 
 
 - (void)didReceiveMemoryWarning{

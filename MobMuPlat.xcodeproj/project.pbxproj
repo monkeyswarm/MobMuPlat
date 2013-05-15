@@ -15,12 +15,9 @@
 		DC0FC7FB172D846900E895C3 /* PdBase.m in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC7F1172D846900E895C3 /* PdBase.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DC0FC7FC172D846900E895C3 /* PdDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC7F3172D846900E895C3 /* PdDispatcher.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DC0FC7FD172D846900E895C3 /* PdFile.m in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC7F5172D846900E895C3 /* PdFile.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		DC0FC7FE172D846900E895C3 /* ringbuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC7F6172D846900E895C3 /* ringbuffer.c */; };
 		DC0FC80C172D847700E895C3 /* s_libpdmidi.c in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC802172D847700E895C3 /* s_libpdmidi.c */; };
 		DC0FC80D172D847700E895C3 /* x_libpdreceive.c in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC803172D847700E895C3 /* x_libpdreceive.c */; };
-		DC0FC80E172D847700E895C3 /* z_csharp_helper.c in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC805172D847700E895C3 /* z_csharp_helper.c */; };
 		DC0FC80F172D847700E895C3 /* z_libpd.c in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC807172D847700E895C3 /* z_libpd.c */; };
-		DC0FC810172D847700E895C3 /* z_queued.c in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC809172D847700E895C3 /* z_queued.c */; };
 		DC0FC8A9172D84D400E895C3 /* lrshift~.c in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC89E172D84D400E895C3 /* lrshift~.c */; };
 		DC0FC8AA172D84D400E895C3 /* bonk~.c in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC89F172D84D400E895C3 /* bonk~.c */; };
 		DC0FC8AB172D84D400E895C3 /* choice.c in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC8A0172D84D400E895C3 /* choice.c */; };
@@ -168,6 +165,10 @@
 		DCA9B9461733103B000E59DD /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B9401733103B000E59DD /* unzip.c */; };
 		DCA9B9471733103B000E59DD /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B9421733103B000E59DD /* zip.c */; };
 		DCB11AE11702B315004B92EA /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCB11AE01702B315004B92EA /* CoreMotion.framework */; };
+		DCD191A317418E9600580793 /* ringbuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = DCD1919B17418E9600580793 /* ringbuffer.c */; };
+		DCD191A417418E9600580793 /* z_hook_util.c in Sources */ = {isa = PBXBuildFile; fileRef = DCD1919D17418E9600580793 /* z_hook_util.c */; };
+		DCD191A517418E9600580793 /* z_print_util.c in Sources */ = {isa = PBXBuildFile; fileRef = DCD1919F17418E9600580793 /* z_print_util.c */; };
+		DCD191A617418E9600580793 /* z_queued.c in Sources */ = {isa = PBXBuildFile; fileRef = DCD191A117418E9600580793 /* z_queued.c */; };
 		DCD8DF5F17330C4700767321 /* cats1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3217330C4700767321 /* cats1.jpg */; };
 		DCD8DF6017330C4700767321 /* cats2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3317330C4700767321 /* cats2.jpg */; };
 		DCD8DF6117330C4700767321 /* cats3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3417330C4700767321 /* cats3.jpg */; };
@@ -235,17 +236,11 @@
 		DC0FC7F3172D846900E895C3 /* PdDispatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PdDispatcher.m; sourceTree = "<group>"; };
 		DC0FC7F4172D846900E895C3 /* PdFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PdFile.h; sourceTree = "<group>"; };
 		DC0FC7F5172D846900E895C3 /* PdFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PdFile.m; sourceTree = "<group>"; };
-		DC0FC7F6172D846900E895C3 /* ringbuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ringbuffer.c; sourceTree = "<group>"; };
-		DC0FC7F7172D846900E895C3 /* ringbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ringbuffer.h; sourceTree = "<group>"; };
 		DC0FC802172D847700E895C3 /* s_libpdmidi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = s_libpdmidi.c; sourceTree = "<group>"; };
 		DC0FC803172D847700E895C3 /* x_libpdreceive.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = x_libpdreceive.c; sourceTree = "<group>"; };
 		DC0FC804172D847700E895C3 /* x_libpdreceive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x_libpdreceive.h; sourceTree = "<group>"; };
-		DC0FC805172D847700E895C3 /* z_csharp_helper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = z_csharp_helper.c; sourceTree = "<group>"; };
-		DC0FC806172D847700E895C3 /* z_csharp_helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = z_csharp_helper.h; sourceTree = "<group>"; };
 		DC0FC807172D847700E895C3 /* z_libpd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = z_libpd.c; sourceTree = "<group>"; };
 		DC0FC808172D847700E895C3 /* z_libpd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = z_libpd.h; sourceTree = "<group>"; };
-		DC0FC809172D847700E895C3 /* z_queued.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = z_queued.c; sourceTree = "<group>"; };
-		DC0FC80A172D847700E895C3 /* z_queued.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = z_queued.h; sourceTree = "<group>"; };
 		DC0FC89E172D84D400E895C3 /* lrshift~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "lrshift~.c"; sourceTree = "<group>"; };
 		DC0FC89F172D84D400E895C3 /* bonk~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "bonk~.c"; sourceTree = "<group>"; };
 		DC0FC8A0172D84D400E895C3 /* choice.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = choice.c; sourceTree = "<group>"; };
@@ -447,6 +442,14 @@
 		DCA9B9421733103B000E59DD /* zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zip.c; path = Zip/minizip/zip.c; sourceTree = SOURCE_ROOT; };
 		DCA9B9431733103B000E59DD /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zip.h; path = Zip/minizip/zip.h; sourceTree = SOURCE_ROOT; };
 		DCB11AE01702B315004B92EA /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
+		DCD1919B17418E9600580793 /* ringbuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ringbuffer.c; path = util/ringbuffer.c; sourceTree = "<group>"; };
+		DCD1919C17418E9600580793 /* ringbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ringbuffer.h; path = util/ringbuffer.h; sourceTree = "<group>"; };
+		DCD1919D17418E9600580793 /* z_hook_util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = z_hook_util.c; path = util/z_hook_util.c; sourceTree = "<group>"; };
+		DCD1919E17418E9600580793 /* z_hook_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = z_hook_util.h; path = util/z_hook_util.h; sourceTree = "<group>"; };
+		DCD1919F17418E9600580793 /* z_print_util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = z_print_util.c; path = util/z_print_util.c; sourceTree = "<group>"; };
+		DCD191A017418E9600580793 /* z_print_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = z_print_util.h; path = util/z_print_util.h; sourceTree = "<group>"; };
+		DCD191A117418E9600580793 /* z_queued.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = z_queued.c; path = util/z_queued.c; sourceTree = "<group>"; };
+		DCD191A217418E9600580793 /* z_queued.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = z_queued.h; path = util/z_queued.h; sourceTree = "<group>"; };
 		DCD8DF3217330C4700767321 /* cats1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = cats1.jpg; path = patches/cats1.jpg; sourceTree = "<group>"; };
 		DCD8DF3317330C4700767321 /* cats2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = cats2.jpg; path = patches/cats2.jpg; sourceTree = "<group>"; };
 		DCD8DF3417330C4700767321 /* cats3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = cats3.jpg; path = patches/cats3.jpg; sourceTree = "<group>"; };
@@ -584,8 +587,6 @@
 				DC0FC7F3172D846900E895C3 /* PdDispatcher.m */,
 				DC0FC7F4172D846900E895C3 /* PdFile.h */,
 				DC0FC7F5172D846900E895C3 /* PdFile.m */,
-				DC0FC7F6172D846900E895C3 /* ringbuffer.c */,
-				DC0FC7F7172D846900E895C3 /* ringbuffer.h */,
 			);
 			name = objc;
 			path = libpd/objc;
@@ -594,15 +595,12 @@
 		DC0FC7FF172D847700E895C3 /* libpd_wrapper */ = {
 			isa = PBXGroup;
 			children = (
+				DCD1919A17418E8000580793 /* util */,
 				DC0FC802172D847700E895C3 /* s_libpdmidi.c */,
 				DC0FC803172D847700E895C3 /* x_libpdreceive.c */,
 				DC0FC804172D847700E895C3 /* x_libpdreceive.h */,
-				DC0FC805172D847700E895C3 /* z_csharp_helper.c */,
-				DC0FC806172D847700E895C3 /* z_csharp_helper.h */,
 				DC0FC807172D847700E895C3 /* z_libpd.c */,
 				DC0FC808172D847700E895C3 /* z_libpd.h */,
-				DC0FC809172D847700E895C3 /* z_queued.c */,
-				DC0FC80A172D847700E895C3 /* z_queued.h */,
 			);
 			name = libpd_wrapper;
 			path = libpd/libpd_wrapper;
@@ -868,6 +866,21 @@
 			name = patches;
 			sourceTree = "<group>";
 		};
+		DCD1919A17418E8000580793 /* util */ = {
+			isa = PBXGroup;
+			children = (
+				DCD1919B17418E9600580793 /* ringbuffer.c */,
+				DCD1919C17418E9600580793 /* ringbuffer.h */,
+				DCD1919D17418E9600580793 /* z_hook_util.c */,
+				DCD1919E17418E9600580793 /* z_hook_util.h */,
+				DCD1919F17418E9600580793 /* z_print_util.c */,
+				DCD191A017418E9600580793 /* z_print_util.h */,
+				DCD191A117418E9600580793 /* z_queued.c */,
+				DCD191A217418E9600580793 /* z_queued.h */,
+			);
+			name = util;
+			sourceTree = "<group>";
+		};
 		DCE7370D16B5E30300512571 /* VVOSC */ = {
 			isa = PBXGroup;
 			children = (
@@ -1114,12 +1127,9 @@
 				DC0FC7FB172D846900E895C3 /* PdBase.m in Sources */,
 				DC0FC7FC172D846900E895C3 /* PdDispatcher.m in Sources */,
 				DC0FC7FD172D846900E895C3 /* PdFile.m in Sources */,
-				DC0FC7FE172D846900E895C3 /* ringbuffer.c in Sources */,
 				DC0FC80C172D847700E895C3 /* s_libpdmidi.c in Sources */,
 				DC0FC80D172D847700E895C3 /* x_libpdreceive.c in Sources */,
-				DC0FC80E172D847700E895C3 /* z_csharp_helper.c in Sources */,
 				DC0FC80F172D847700E895C3 /* z_libpd.c in Sources */,
-				DC0FC810172D847700E895C3 /* z_queued.c in Sources */,
 				DC0FC8A9172D84D400E895C3 /* lrshift~.c in Sources */,
 				DC0FC8AA172D84D400E895C3 /* bonk~.c in Sources */,
 				DC0FC8AB172D84D400E895C3 /* choice.c in Sources */,
@@ -1233,6 +1243,10 @@
 				DC5957111733800500CEBECC /* MeSlider.m in Sources */,
 				DC5957121733800500CEBECC /* MeToggle.m in Sources */,
 				DC5957131733800500CEBECC /* MeXYSlider.m in Sources */,
+				DCD191A317418E9600580793 /* ringbuffer.c in Sources */,
+				DCD191A417418E9600580793 /* z_hook_util.c in Sources */,
+				DCD191A517418E9600580793 /* z_print_util.c in Sources */,
+				DCD191A617418E9600580793 /* z_queued.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

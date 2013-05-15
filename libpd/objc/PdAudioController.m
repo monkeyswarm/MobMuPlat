@@ -191,7 +191,6 @@
 }
 
 - (void)setActive:(BOOL)active {
-    //printf("\nsetting active? %d", active);
     self.audioUnit.active = active;
     active_ = self.audioUnit.isActive;
 }
