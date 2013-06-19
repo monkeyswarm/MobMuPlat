@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreMotion/CoreMotion.h>
+#import <CoreLocation/CoreLocation.h>
 #import "PdAudioController.h"
 #import "PdBase.h"
 
@@ -24,7 +25,7 @@
 
 
 
-@interface ViewController : UIViewController<PdReceiverDelegate, UIAccelerometerDelegate,  SettingsViewControllerDelegate, ControlDelegate, UIScrollViewDelegate, AudioSettingsDelegate, PGMidiDelegate, PGMidiSourceDelegate, OSCDelegateProtocol, PdMidiReceiverDelegate>{
+@interface ViewController : UIViewController<PdReceiverDelegate, UIAccelerometerDelegate,  SettingsViewControllerDelegate, ControlDelegate, UIScrollViewDelegate, AudioSettingsDelegate, PGMidiDelegate, PGMidiSourceDelegate, OSCDelegateProtocol, PdMidiReceiverDelegate, CLLocationManagerDelegate>{
     
     
     UIButton * settingsButton;
@@ -63,6 +64,8 @@
     
     //new
     CMMotionManager* motionManager;
+    CLLocationManager *locationManager;
+    //CLLocation *currLocation;//to send into patches on initial request for data (if start/stop doesn't send a point? it does)
 }
 
 

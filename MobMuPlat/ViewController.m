@@ -159,6 +159,14 @@ extern void sigmund_tilde_setup(void);
         NSLog(@"No gyro info on device.");
     }
     
+    //GPS location
+       
+    locationManager = [[CLLocationManager alloc] init] ;
+    locationManager.delegate = self;
+    [locationManager setDistanceFilter:1.0];
+    //[locationManager startUpdatingLocation ];
+              
+    
     //copy bundle stuff if not there, i.e. first time we are running it on a new version #
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *publicDocumentsDir = [paths objectAtIndex:0];
@@ -177,16 +185,16 @@ extern void sigmund_tilde_setup(void);
     if(!alreadyStartedOnVersion || [alreadyStartedOnVersion boolValue] == NO) {
          NSArray* defaultPatches;
         if(hardwareCanvasType==canvasTypeIPhone3p5Inch ){
-            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine.mmp", @"MMPTutorial1-GUI.mmp", @"MMPTutorial2-Input.mmp", @"MMPTutorial3-Hardware.mmp", @"MMPTutorial4-Networking.mmp",@"MMPTutorial5-Files.mmp",@"MMPExamples-Vocoder.mmp", @"MMPExamples-Motion.mmp", @"MMPExamples-Sequencer.mmp", nil];
+            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine.mmp", @"MMPTutorial1-GUI.mmp", @"MMPTutorial2-Input.mmp", @"MMPTutorial3-Hardware.mmp", @"MMPTutorial4-Networking.mmp",@"MMPTutorial5-Files.mmp",@"MMPExamples-Vocoder.mmp", @"MMPExamples-Motion.mmp", @"MMPExamples-Sequencer.mmp", @"MMPExamples-GPS.mmp",nil];
         }
         else if (hardwareCanvasType==canvasTypeIPhone4Inch){
-            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine-ip5.mmp", @"MMPTutorial1-GUI-ip5.mmp", @"MMPTutorial2-Input-ip5.mmp", @"MMPTutorial3-Hardware-ip5.mmp", @"MMPTutorial4-Networking-ip5.mmp",@"MMPTutorial5-Files-ip5.mmp", @"MMPExamples-Vocoder-ip5.mmp", @"MMPExamples-Motion-ip5.mmp", @"MMPExamples-Sequencer-ip5.mmp", nil];
+            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine-ip5.mmp", @"MMPTutorial1-GUI-ip5.mmp", @"MMPTutorial2-Input-ip5.mmp", @"MMPTutorial3-Hardware-ip5.mmp", @"MMPTutorial4-Networking-ip5.mmp",@"MMPTutorial5-Files-ip5.mmp", @"MMPExamples-Vocoder-ip5.mmp", @"MMPExamples-Motion-ip5.mmp", @"MMPExamples-Sequencer-ip5.mmp",@"MMPExamples-GPS-ip5.mmp", nil];
         }
         else{//pad
-            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine-Pad.mmp", @"MMPTutorial1-GUI-Pad.mmp", @"MMPTutorial2-Input-Pad.mmp", @"MMPTutorial3-Hardware-Pad.mmp", @"MMPTutorial4-Networking-Pad.mmp",@"MMPTutorial5-Files-Pad.mmp", @"MMPExamples-Vocoder-Pad.mmp", @"MMPExamples-Motion-Pad.mmp", @"MMPExamples-Sequencer-Pad.mmp", nil];
+            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine-Pad.mmp", @"MMPTutorial1-GUI-Pad.mmp", @"MMPTutorial2-Input-Pad.mmp", @"MMPTutorial3-Hardware-Pad.mmp", @"MMPTutorial4-Networking-Pad.mmp",@"MMPTutorial5-Files-Pad.mmp", @"MMPExamples-Vocoder-Pad.mmp", @"MMPExamples-Motion-Pad.mmp", @"MMPExamples-Sequencer-Pad.mmp",@"MMPExamples-GPS-Pad.mmp", nil];
         }
         
-        NSArray* commonFiles = [NSArray arrayWithObjects:@"MMPTutorial0-HelloSine.pd",@"MMPTutorial1-GUI.pd", @"MMPTutorial2-Input.pd", @"MMPTutorial3-Hardware.pd", @"MMPTutorial4-Networking.pd",@"MMPTutorial5-Files.pd",@"cats1.jpg", @"cats2.jpg",@"cats3.jpg",@"clap.wav",@"Welcome.pd",  @"MMPExamples-Vocoder.pd", @"vocod_channel.pd", @"MMPExamples-Motion.pd", @"MMPExamples-Sequencer.pd", nil];
+        NSArray* commonFiles = [NSArray arrayWithObjects:@"MMPTutorial0-HelloSine.pd",@"MMPTutorial1-GUI.pd", @"MMPTutorial2-Input.pd", @"MMPTutorial3-Hardware.pd", @"MMPTutorial4-Networking.pd",@"MMPTutorial5-Files.pd",@"cats1.jpg", @"cats2.jpg",@"cats3.jpg",@"clap.wav",@"Welcome.pd",  @"MMPExamples-Vocoder.pd", @"vocod_channel.pd", @"MMPExamples-Motion.pd", @"MMPExamples-Sequencer.pd", @"MMPExamples-GPS.pd", nil];
         
         defaultPatches = [defaultPatches arrayByAddingObjectsFromArray:commonFiles];
         
@@ -396,6 +404,8 @@ extern void sigmund_tilde_setup(void);
     
     [self disconnectPorts];
     
+    [locationManager stopUpdatingLocation];
+    
     currPortNumber = DEFAULT_PORT_NUMBER;
     [self connectPorts];
     
@@ -420,6 +430,8 @@ extern void sigmund_tilde_setup(void);
     if(scrollView)[scrollView removeFromSuperview];
     
     [allGUIControl removeAllObjects];
+    
+    [locationManager stopUpdatingLocation];
     
     [self disconnectPorts];
    
@@ -842,6 +854,28 @@ extern void sigmund_tilde_setup(void);
             NSArray* msgArray=[NSArray arrayWithObjects:@"/motionFrequency", [NSNumber numberWithFloat:self.motionFrequency], nil];
             [PdBase sendList:msgArray toReceiver:@"fromSystem"];
         }
+        //GPS
+        else if([[list objectAtIndex:0] isEqualToString:@"/enableLocation"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+            float val = [[list objectAtIndex:1] floatValue];
+            //printf("\nenable location %.2f", val );
+            if(val>0)[locationManager startUpdatingLocation];
+            else [locationManager stopUpdatingLocation ];
+        }
+        else if([[list objectAtIndex:0] isEqualToString:@"/setDistanceFilter"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+            float val = [[list objectAtIndex:1] floatValue];
+            //printf("\ndistance filter %.2f", val );
+            if(val>0)[locationManager setDistanceFilter:val];
+            else [locationManager setDistanceFilter:kCLDistanceFilterNone];
+        }
+        else if([[list objectAtIndex:0] isEqualToString:@"/getDistanceFilter"]){
+            NSArray* msgArray=[NSArray arrayWithObjects:@"/distanceFilter", [NSNumber numberWithFloat:locationManager.distanceFilter], nil];
+            [PdBase sendList:msgArray toReceiver:@"fromSystem"];
+        }
+        /*else if([[list objectAtIndex:0] isEqualToString:@"/getMotionFrequency"]){
+            NSArray* msgArray=[NSArray arrayWithObjects:@"/motionFrequency", [NSNumber numberWithFloat:self.motionFrequency], nil];
+            [PdBase sendList:msgArray toReceiver:@"fromSystem"];
+        }*/
+        
 
 
     }
@@ -1084,6 +1118,70 @@ extern void sigmund_tilde_setup(void);
 /*- (void)receiveMidiByte:(int)byte forPort: (int)port {
     NSLog(@"Received midi byte: %d 0x%X", port, byte);
 }*/
+
+///GPS
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
+	//printf("\ndidupdate! : %f %f", newLocation.coordinate.latitude, newLocation.coordinate.longitude);
+    //[settingsVC consolePrint:[NSString stringWithFormat:@"\ngps %f %f\n", newLocation.coordinate.latitude, newLocation.coordinate.longitude]];
+    
+    ///location lat long alt horizacc vertacc, lat fine long fine
+    int latRough = (int)( newLocation.coordinate.latitude*1000);
+    int longRough = (int)( newLocation.coordinate.longitude*1000);
+    int latFine = (int)fabs((fmod( newLocation.coordinate.latitude , .001)*1000000));
+    int longFine = (int)fabs((fmod( newLocation.coordinate.longitude , .001)*1000000));
+
+    //printf("\n %f %f %d %d %d %d", newLocation.coordinate.latitude, newLocation.coordinate.longitude, latRough, longRough, latFine, longFine);
+    
+    NSArray* locationArray=[NSArray arrayWithObjects:@"/location", [NSNumber numberWithFloat:newLocation.coordinate.latitude],[NSNumber numberWithFloat:newLocation.coordinate.longitude], [NSNumber numberWithFloat:newLocation.altitude], [NSNumber numberWithFloat:newLocation.horizontalAccuracy], [NSNumber numberWithFloat:newLocation.verticalAccuracy], [NSNumber numberWithInt:latRough], [NSNumber numberWithInt:longRough], [NSNumber numberWithInt:latFine], [NSNumber numberWithInt:longFine], nil];
+    
+    [PdBase sendList:locationArray toReceiver:@"fromSystem"];
+}
+
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+	//printf("\nupdatefail!");
+    if (![CLLocationManager locationServicesEnabled]){
+        UIAlertView *alert = [[UIAlertView alloc]
+                              initWithTitle: @"Location Fail"
+                              message: @"Location Services Disabled"
+                              delegate: nil
+                              cancelButtonTitle:@"OK"
+                              otherButtonTitles:nil];
+        [alert show];
+    }
+       
+    
+    
+   else if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied){
+        UIAlertView *alert = [[UIAlertView alloc]
+                              initWithTitle: @"Location Fail"
+                              message: @"Location Services Denied - check iOS privacy settings"
+                              delegate: nil
+                              cancelButtonTitle:@"OK"
+                              otherButtonTitles:nil];
+    [alert show];
+    }
+    
+   else {
+       UIAlertView *alert = [[UIAlertView alloc]
+                             initWithTitle: @"Location Fail"
+                             message: @"Location Services Unavailable"
+                             delegate: nil
+                             cancelButtonTitle:@"OK"
+                             otherButtonTitles:nil];
+       [alert show];
+   }
+
+    
+   /* if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized)
+        NSLog(@"location services are enabled");
+    
+    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined)
+        NSLog(@"about to show a dialog requesting permission");*/
+
+    
+
+	
+}
 
 
 - (void)didReceiveMemoryWarning{

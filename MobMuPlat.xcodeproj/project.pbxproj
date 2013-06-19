@@ -104,6 +104,11 @@
 		DC29445F16584ABE00BF4A50 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC29445E16584ABE00BF4A50 /* AVFoundation.framework */; };
 		DC29446916584B0100BF4A50 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC29446816584B0100BF4A50 /* AudioToolbox.framework */; };
 		DC3DB0A11668C3840056DF1A /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DC3DB0A01668C3840056DF1A /* SettingsViewController.m */; };
+		DC456B03176BC1540080BB33 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC456B02176BC1540080BB33 /* CoreLocation.framework */; };
+		DC456B08176C1A700080BB33 /* MMPExamples-GPS-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DC456B04176C1A700080BB33 /* MMPExamples-GPS-ip5.mmp */; };
+		DC456B09176C1A700080BB33 /* MMPExamples-GPS-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DC456B05176C1A700080BB33 /* MMPExamples-GPS-Pad.mmp */; };
+		DC456B0A176C1A700080BB33 /* MMPExamples-GPS.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DC456B06176C1A700080BB33 /* MMPExamples-GPS.mmp */; };
+		DC456B0B176C1A700080BB33 /* MMPExamples-GPS.pd in Resources */ = {isa = PBXBuildFile; fileRef = DC456B07176C1A700080BB33 /* MMPExamples-GPS.pd */; };
 		DC59570A1733800500CEBECC /* MeButton.m in Sources */ = {isa = PBXBuildFile; fileRef = DC5956F71733800500CEBECC /* MeButton.m */; };
 		DC59570B1733800500CEBECC /* MeControl.m in Sources */ = {isa = PBXBuildFile; fileRef = DC5956F91733800500CEBECC /* MeControl.m */; };
 		DC59570C1733800500CEBECC /* MeGrid.m in Sources */ = {isa = PBXBuildFile; fileRef = DC5956FB1733800500CEBECC /* MeGrid.m */; };
@@ -341,6 +346,11 @@
 		DC29446816584B0100BF4A50 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		DC3DB09F1668C3840056DF1A /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		DC3DB0A01668C3840056DF1A /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
+		DC456B02176BC1540080BB33 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		DC456B04176C1A700080BB33 /* MMPExamples-GPS-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-GPS-ip5.mmp"; path = "patches/MMPExamples-GPS-ip5.mmp"; sourceTree = "<group>"; };
+		DC456B05176C1A700080BB33 /* MMPExamples-GPS-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-GPS-Pad.mmp"; path = "patches/MMPExamples-GPS-Pad.mmp"; sourceTree = "<group>"; };
+		DC456B06176C1A700080BB33 /* MMPExamples-GPS.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-GPS.mmp"; path = "patches/MMPExamples-GPS.mmp"; sourceTree = "<group>"; };
+		DC456B07176C1A700080BB33 /* MMPExamples-GPS.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-GPS.pd"; path = "patches/MMPExamples-GPS.pd"; sourceTree = "<group>"; };
 		DC5956F61733800500CEBECC /* MeButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeButton.h; path = gui/MeButton.h; sourceTree = "<group>"; };
 		DC5956F71733800500CEBECC /* MeButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeButton.m; path = gui/MeButton.m; sourceTree = "<group>"; };
 		DC5956F81733800500CEBECC /* MeControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeControl.h; path = gui/MeControl.h; sourceTree = "<group>"; };
@@ -508,6 +518,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DC456B03176BC1540080BB33 /* CoreLocation.framework in Frameworks */,
 				DCB11AE11702B315004B92EA /* CoreMotion.framework in Frameworks */,
 				DCFF717716B59F3100CDCEAE /* libz.dylib in Frameworks */,
 				DC8EBBB91660F3B4003C3162 /* QuartzCore.framework in Frameworks */,
@@ -719,6 +730,7 @@
 		DC233D9D1655EDF500AC01C5 = {
 			isa = PBXGroup;
 			children = (
+				DC456B02176BC1540080BB33 /* CoreLocation.framework */,
 				DC0FC7E3172D837F00E895C3 /* libpd */,
 				DC0FC7E2172D81CB00E895C3 /* JSONKit */,
 				DC0FC7E0172D81BC00E895C3 /* PGMidi */,
@@ -817,6 +829,10 @@
 		DC29445B16584A6E00BF4A50 /* patches */ = {
 			isa = PBXGroup;
 			children = (
+				DC456B04176C1A700080BB33 /* MMPExamples-GPS-ip5.mmp */,
+				DC456B05176C1A700080BB33 /* MMPExamples-GPS-Pad.mmp */,
+				DC456B06176C1A700080BB33 /* MMPExamples-GPS.mmp */,
+				DC456B07176C1A700080BB33 /* MMPExamples-GPS.pd */,
 				DCD8DF3217330C4700767321 /* cats1.jpg */,
 				DCD8DF3317330C4700767321 /* cats2.jpg */,
 				DCD8DF3417330C4700767321 /* cats3.jpg */,
@@ -1105,6 +1121,10 @@
 				DC59573D1733805000CEBECC /* titlepad_ring_185x110.png in Resources */,
 				DC59573E1733805000CEBECC /* titlepad_text_46x142.png in Resources */,
 				DC59573F1733805000CEBECC /* titlepad_text_142x46.png in Resources */,
+				DC456B08176C1A700080BB33 /* MMPExamples-GPS-ip5.mmp in Resources */,
+				DC456B09176C1A700080BB33 /* MMPExamples-GPS-Pad.mmp in Resources */,
+				DC456B0A176C1A700080BB33 /* MMPExamples-GPS.mmp in Resources */,
+				DC456B0B176C1A700080BB33 /* MMPExamples-GPS.pd in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

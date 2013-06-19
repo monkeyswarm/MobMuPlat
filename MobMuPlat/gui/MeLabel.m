@@ -78,7 +78,9 @@
                 [newString appendString:(NSString*)thing];
             }
             else if ([thing isKindOfClass:[NSNumber class]]){
-                [newString appendString:[NSString stringWithFormat:@"%.3f", [(NSNumber*)thing floatValue]]];
+                float val = [(NSNumber*)thing floatValue];
+                if(fmod(val,1)==0)[newString appendString:[NSString stringWithFormat:@"%d", (int)val]];//print whole numbers as ints
+                else [newString appendString:[NSString stringWithFormat:@"%.3f", val]];
             }
             [newString appendString:@" "];
         }
