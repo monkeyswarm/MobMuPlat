@@ -1113,11 +1113,10 @@ extern void sigmund_tilde_setup(void);
     [currMidiDestination sendBytes:bytes size:sizeof(bytes)];
 }
 
-// Override this method in subclasses if you want different printing behavior.
-// No need to synchronize here.
-/*- (void)receiveMidiByte:(int)byte forPort: (int)port {
-    NSLog(@"Received midi byte: %d 0x%X", port, byte);
-}*/
+- (void)receiveMidiByte:(int)byte forPort: (int)port {
+    const UInt8 shortByte = (UInt8)byte;
+    [currMidiDestination sendBytes:&shortByte size:1];
+}
 
 ///GPS
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
