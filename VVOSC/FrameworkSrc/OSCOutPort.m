@@ -1,5 +1,6 @@
 
 #import "OSCOutPort.h"
+#import "OSCInPort.h"
 
 
 
@@ -8,7 +9,7 @@
 
 
 - (NSString *) description	{
-	return [NSString stringWithFormat:@"<OSCOutPort %@:%ld>",addressString,port];
+	return [NSString stringWithFormat:@"<OSCOutPort %@:%hd>",addressString,port];
 }
 + (id) createWithAddress:(NSString *)a andPort:(unsigned short)p	{
 	OSCOutPort		*returnMe = [[OSCOutPort alloc] initWithAddress:a andPort:p];
@@ -96,6 +97,17 @@
 	memset(addr.sin_zero, '\0', sizeof(addr.sin_zero));
 	addr.sin_port = htons(port);
 	
+	long			bufSize = 65506;
+	if (setsockopt(sock,SOL_SOCKET,SO_SNDBUF,&bufSize,sizeof(long)) != 0)	{
+		NSLog(@"\t\terr %d at setsockopt() in %s",errno,__func__);
+	}
+	
+	//	if any part of the address string contains "255", this is a broadcast output
+	NSRange			bcastRange = [addressString rangeOfString:@"255"];
+	if ((bcastRange.location!=NSNotFound)&&(bcastRange.length>0))	{
+		int			yes = 1;
+		setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &yes, sizeof(yes));
+	}
 	return YES;
 }
 
@@ -109,6 +121,27 @@
 		[self sendThisPacket:newPacket];
 }
 - (void) sendThisMessage:(OSCMessage *)m	{
+	/*
+	if ((deleted) || (m==nil))
+		return;
+	//	if it's a query, i can't just send it out- my socket isn't bound to a port, so when OS X 
+	//	goes to send the UDP packet it'll be coming from a random port- and the OSC client that 
+	//	receives it won't know where to send the reply or error...
+	OSCMessageType		mType = [m messageType];
+	if (mType==OSCMessageTypeQuery)	{
+		//	in order for the raw network packet to have a UDP origin header that matches a port i'm receiving on, i have to send it from an OSCInPort
+		[XXXXXXX _dispatchQuery:m toOutPort:self];
+		return;
+	}
+	//	if i'm here, it's not a query- it's a normal message, and i can just send that shit out
+	if (sock==-1)
+		return;
+	OSCPacket		*newPacket = [OSCPacket createWithContent:m];
+	if (newPacket != nil)
+		[self sendThisPacket:newPacket];
+	*/
+	
+	//NSLog(@"%s ... %@",__func__,m);
 	if ((deleted) || (sock == -1) || (m == nil))
 		return;
 	
@@ -116,6 +149,8 @@
 	
 	if (newPacket != nil)
 		[self sendThisPacket:newPacket];
+	else
+		NSLog(@"\t\terr: couldnt create packet at %s",__func__);
 }
 - (void) sendThisPacket:(OSCPacket *)p	{
 	//NSLog(@"%s",__func__);
@@ -125,7 +160,7 @@
 	[p retain];
 	
 	int				numBytesSent = -1;
-	int				bufferSize = [p bufferLength];
+	long			bufferSize = [p bufferLength];
 	unsigned char	*buff = [p payload];
 	
 	if (buff == NULL)	{
@@ -133,7 +168,7 @@
 		return;
 	}
 	//	send the packet's data to the destination
-	numBytesSent = sendto(sock, buff, bufferSize, 0, (const struct sockaddr *)&addr, sizeof(addr));
+	numBytesSent = (int)sendto(sock, buff, bufferSize, 0, (const struct sockaddr *)&addr, sizeof(addr));
 	//	make sure the packet can be freed...
 	[p release];
 }
@@ -175,6 +210,21 @@
 	[self createSocket];
 }
 
+
+- (BOOL) _matchesRawAddress:(unsigned int)a andPort:(unsigned short)p	{
+	BOOL		returnMe = NO;
+	if (((unsigned int)addr.sin_addr.s_addr==a) && ((unsigned short)addr.sin_port==p))
+		returnMe = YES;
+	return returnMe;
+}
+- (BOOL) _matchesRawAddress:(unsigned int)a	{
+	BOOL		returnMe = NO;
+	if ((unsigned int)addr.sin_addr.s_addr == a)
+		returnMe = YES;
+	return returnMe;
+}
+
+
 - (NSString *) portLabel	{
 	return portLabel;
 }
@@ -193,6 +243,9 @@
 }
 - (NSString *) addressString	{
 	return addressString;
+}
+- (struct sockaddr_in *) addr	{
+	return &addr;
 }
 
 

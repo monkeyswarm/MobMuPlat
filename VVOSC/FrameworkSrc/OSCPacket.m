@@ -1,5 +1,6 @@
 
 #import "OSCPacket.h"
+#import "OSCInPort.h"
 
 
 
@@ -7,14 +8,15 @@
 @implementation OSCPacket
 
 
-+ (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l toInPort:(id)p	{
++ (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l toInPort:(id)p fromAddr:(unsigned int)txAddr port:(unsigned short)txPort	{
+	//NSLog(@"%s",__func__);
 	//	this stuff prints out the buffer to the console log- it's very, very useful.  probably will be added to the test app at some point.
 	/*
 	printf("******************************\n");
 	int				bundleIndexCount;
 	unsigned char	*bufferCharPtr=b;
 	for (bundleIndexCount=0; bundleIndexCount<(l/4); ++bundleIndexCount)	{
-		printf("\t(%ld)\t\t%c\t%c\t%c\t%c\t\t%ld\t\t%ld\t\t%ld\t\t%ld\n",bundleIndexCount * 4,
+		printf("\t(%d)\t\t%c\t%c\t%c\t%c\t\t%d\t\t%d\t\t%d\t\t%d\n",bundleIndexCount * 4,
 			*(bufferCharPtr+bundleIndexCount*4), *(bufferCharPtr+bundleIndexCount*4+1), *(bufferCharPtr+bundleIndexCount*4+2), *(bufferCharPtr+bundleIndexCount*4+3),
 			*(bufferCharPtr+bundleIndexCount*4), *(bufferCharPtr+bundleIndexCount*4+1), *(bufferCharPtr+bundleIndexCount*4+2), *(bufferCharPtr+bundleIndexCount*4+3));
 	}
@@ -22,18 +24,55 @@
 	*/
 	
 	unsigned char	*buffPtr = b;
+	BOOL			isBundle = NO;
+	if ((buffPtr[0]=='#') && (buffPtr[1]=='b'))
+		isBundle = YES;
+	
+	if (isBundle)	{
+		[OSCBundle
+			parseRawBuffer:b
+			ofMaxLength:l
+			toInPort:p
+			inheritedTimeTag:nil
+			fromAddr:txAddr
+			port:txPort];
+	}
+	else	{
+		OSCMessage		*tmpMsg = [OSCMessage
+			parseRawBuffer:b
+			ofMaxLength:l
+			fromAddr:txAddr
+			port:txPort];
+		if (tmpMsg != nil)	{
+			//if ([tmpMsg messageType] == OSCMessageTypeQuery)
+			//	[tmpMsg XXXXXXXXXXXX];
+			[p _addMessage:tmpMsg];
+		}
+	}
+	
+	/*
 	if (buffPtr[0] == '#')	{
 		[OSCBundle
 			parseRawBuffer:b
 			ofMaxLength:l
-			toInPort:p];
+			toInPort:p
+			inheritedTimeTag:nil
+			fromAddr:txAddr
+			port:txPort];
 	}
 	else if (buffPtr[0] == '/')	{
-		[OSCMessage
+		OSCMessage		*tmpMsg = [OSCMessage
 			parseRawBuffer:b
 			ofMaxLength:l
-			toInPort:p];
+			fromAddr:txAddr
+			port:txPort];
+		if (tmpMsg != nil)	{
+			//if ([tmpMsg messageType] == OSCMessageTypeQuery)
+			//	[tmpMsg XXXXXXXXXXXX];
+			[p _addMessage:tmpMsg];
+		}
 	}
+	*/
 }
 + (id) createWithContent:(id)c	{
 	OSCPacket		*returnMe = [[OSCPacket alloc] initWithContent:c];
@@ -42,7 +81,7 @@
 	return [returnMe autorelease];
 }
 - (id) initWithContent:(id)c	{
-	//NSLog(@"%s",__func__);
+	//NSLog(@"%s ... %@",__func__,c);
 	if (c == nil)
 		goto BAIL;
 	
@@ -59,7 +98,7 @@
 		int				bundleIndexCount;
 		unsigned char	*bufferCharPtr=payload;
 		for (bundleIndexCount=0; bundleIndexCount<(bufferLength/4); ++bundleIndexCount)	{
-			printf("\t(%ld)\t\t%c\t%c\t%c\t%c\t\t%ld\t\t%ld\t\t%ld\t\t%ld\n",bundleIndexCount * 4,
+			printf("\t(%d)\t\t%c\t%c\t%c\t%c\t\t%d\t\t%d\t\t%d\t\t%d\n",bundleIndexCount * 4,
 				*(bufferCharPtr+bundleIndexCount*4), *(bufferCharPtr+bundleIndexCount*4+1), *(bufferCharPtr+bundleIndexCount*4+2), *(bufferCharPtr+bundleIndexCount*4+3),
 				*(bufferCharPtr+bundleIndexCount*4), *(bufferCharPtr+bundleIndexCount*4+1), *(bufferCharPtr+bundleIndexCount*4+2), *(bufferCharPtr+bundleIndexCount*4+3));
 		}
@@ -81,7 +120,7 @@
 	[super dealloc];
 }
 
-- (int) bufferLength	{
+- (long) bufferLength	{
 	return bufferLength;
 }
 - (unsigned char *) payload	{

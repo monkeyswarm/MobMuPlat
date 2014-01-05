@@ -6,7 +6,12 @@
 //  Copyright 2009 Vidvox. All rights reserved.
 //
 
+#if IPHONE
 #import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif
+
 #import "MutLockDict.h"
 #import "ObjectHolder.h"
 

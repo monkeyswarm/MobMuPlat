@@ -1,5 +1,9 @@
 
+#if IPHONE
 #import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif
 #import <pthread.h>
 
 
@@ -14,8 +18,9 @@ This class exists because NSMutableDictionary is not thread-safe by default: if 
 	pthread_rwlock_t		dictLock;
 }
 
-+ (id) dictionaryWithCapacity:(NSUInteger)c;
-- (id) initWithCapacity:(NSUInteger)c;
++ (id) dictionaryWithCapacity:(NSInteger)c;
++ (id) dictionaryWithDict:(NSDictionary *)d;
+- (id) initWithCapacity:(NSInteger)c;
 
 - (void) rdlock;
 - (void) wrlock;
@@ -42,7 +47,10 @@ This class exists because NSMutableDictionary is not thread-safe by default: if 
 - (NSArray *) allValues;
 - (NSArray *) lockAllValues;
 
-- (NSUInteger) count;
-- (NSUInteger) lockCount;
+- (void) lockMakeObjectsPerformSelector:(SEL)s;
+- (void) makeObjectsPerformSelector:(SEL)s;
+
+- (NSInteger) count;
+- (NSInteger) lockCount;
 
 @end

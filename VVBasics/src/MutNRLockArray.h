@@ -1,5 +1,9 @@
 
+#if IPHONE
 #import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif
 
 #import "MutLockArray.h"
 #import "ObjectHolder.h"
@@ -14,25 +18,35 @@ Instead of adding (and therefore retaining) objects to an array like my supercla
 */
 
 @interface MutNRLockArray : MutLockArray {
-
+	BOOL		zwrFlag;	//	NO by default. if YES, uses mike ash's zeroing weak reference object instead of just storing a simple weak reference!
 }
 
-+ (id) arrayWithCapacity:(NSUInteger)c;
++ (id) arrayWithCapacity:(NSInteger)c;
 
 - (NSMutableArray *) createArrayCopy;
+- (NSMutableArray *) lockCreateArrayCopyFromObjects;
 - (NSMutableArray *) createArrayCopyFromObjects;
 - (void) addObject:(id)o;
 - (void) addObjectsFromArray:(id)a;
 - (void) replaceWithObjectsFromArray:(id)a;
-- (void) insertObject:(id)o atIndex:(NSUInteger)i;
+- (BOOL) insertObject:(id)o atIndex:(NSInteger)i;
 - (id) lastObject;
 - (void) removeObject:(id)o;
 - (BOOL) containsObject:(id)o;
-- (id) objectAtIndex:(NSUInteger)i;
+- (id) objectAtIndex:(NSInteger)i;
 - (NSArray *) objectsAtIndexes:(NSIndexSet *)indexes;
-- (NSUInteger) indexOfObject:(id)o;
+- (NSInteger) indexOfObject:(id)o;
 - (BOOL) containsIdenticalPtr:(id)o;
 - (long) indexOfIdenticalPtr:(id)o;
 - (void) removeIdenticalPtr:(id)o;
+
+@property (assign,readwrite) BOOL zwrFlag;
+
+//	these methods exist because the lookup cost for an ObjectHolder can be significant for high-performance applications- these methods get the object from the ObjectHolder and call the method directly on it!
+- (void) bruteForceMakeObjectsPerformSelector:(SEL)s;
+- (void) lockBruteForceMakeObjectsPerformSelector:(SEL)s;
+- (void) bruteForceMakeObjectsPerformSelector:(SEL)s withObject:(id)o;
+- (void) lockBruteForceMakeObjectsPerformSelector:(SEL)s withObject:(id)o;
+
 
 @end

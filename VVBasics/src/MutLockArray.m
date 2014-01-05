@@ -24,13 +24,13 @@
 - (NSString *) description	{
 	return [NSString stringWithFormat:@"<MutLockArray: %@>",array];
 }
-+ (id) arrayWithCapacity:(NSUInteger)c	{
++ (id) arrayWithCapacity:(NSInteger)c	{
 	MutLockArray		*returnMe = [[MutLockArray alloc] initWithCapacity:c];
 	if (returnMe == nil)
 		return nil;
 	return [returnMe autorelease];
 }
-- (id) initWithCapacity:(NSUInteger)c	{
+- (id) initWithCapacity:(NSInteger)c	{
 	pthread_rwlockattr_t		attr;
 	
 	if (self = [super init])	{
@@ -70,6 +70,11 @@
 
 - (void) rdlock	{
 	pthread_rwlock_rdlock(&arrayLock);
+}
+- (BOOL) tryRdLock	{
+	BOOL		returnMe = NO;
+	returnMe = (pthread_rwlock_tryrdlock(&arrayLock)==0) ? YES : NO;
+	return returnMe;
 }
 - (void) wrlock	{
 	pthread_rwlock_wrlock(&arrayLock);
@@ -145,8 +150,12 @@
 		@try	{
 			[array removeAllObjects];
 			if ([a count]>0)	{
-				if ([a isKindOfClass:[MutLockArray class]])
-					[array addObjectsFromArray:[a lockCreateArrayCopy]];
+				if ([a isKindOfClass:[MutLockArray class]])	{
+					[a rdlock];
+					[array addObjectsFromArray:[a array]];
+					[a unlock];
+					//[array addObjectsFromArray:[a lockCreateArrayCopy]];
+				}
 				else
 					[array addObjectsFromArray:a];
 			}
@@ -175,33 +184,38 @@
 		pthread_rwlock_unlock(&arrayLock);
 	}	
 }
-- (void) insertObject:(id)o atIndex:(NSUInteger)i	{
+- (BOOL) insertObject:(id)o atIndex:(NSInteger)i	{
+	BOOL		returnMe = NO;
 	if ((array != nil) && (o != nil) && (i<=[array count]))	{
 		//@try	{
 			[array insertObject:o atIndex:i];
+			returnMe = YES;
 		//}
 		//@catch (NSException *err)	{
 		//	NSLog(@"\t\t%s - %@",__func__,err);
 		//}
 	}
+	return returnMe;
 }
-- (void) lockInsertObject:(id)o atIndex:(NSUInteger)i	{
+- (BOOL) lockInsertObject:(id)o atIndex:(NSInteger)i	{
+	BOOL		returnMe = NO;
 	if ((array != nil) && (o != nil))	{
 		pthread_rwlock_wrlock(&arrayLock);
-			[self insertObject:o atIndex:i];
+			returnMe = [self insertObject:o atIndex:i];
 		pthread_rwlock_unlock(&arrayLock);
 	}
+	return returnMe;
 }
 
 
 - (void) removeAllObjects	{
 	if ((array != nil) && ([array count] > 0))	{
-		@try	{
+		//@try	{
 			[array removeAllObjects];
-		}
-		@catch (NSException *err)	{
-			NSLog(@"\t\tERR: %s - %@",__func__,err);
-		}
+		//}
+		//@catch (NSException *err)	{
+			//NSLog(@"\t\tERR: %s - %@",__func__,err);
+		//}
 	}
 }
 - (void) lockRemoveAllObjects	{
@@ -260,12 +274,12 @@
 
 - (void) removeLastObject	{
 	if ((array != nil) && ([array count]>0))	{
-		@try	{
+		//@try	{
 			[array removeLastObject];
-		}
-		@catch (NSException *err)	{
-			NSLog(@"\t\tERR: %s - %@",__func__,err);
-		}
+		//}
+		//@catch (NSException *err)	{
+			//NSLog(@"\t\tERR: %s - %@",__func__,err);
+		//}
 	}
 }
 - (void) lockRemoveLastObject	{
@@ -275,12 +289,12 @@
 }
 - (void) removeObject:(id)o	{
 	if (array != nil)	{
-		@try	{
+		//@try	{
 			[array removeObject:o];
-		}
-		@catch (NSException *err)	{
-			NSLog(@"\t\tERR: %s - %@",__func__,err);
-		}
+		//}
+		//@catch (NSException *err)	{
+			//NSLog(@"\t\tERR: %s - %@",__func__,err);
+		//}
 	}
 }
 - (void) lockRemoveObject:(id)o	{
@@ -288,17 +302,17 @@
 		[self removeObject:o];
 	pthread_rwlock_unlock(&arrayLock);
 }
-- (void) removeObjectAtIndex:(NSUInteger)i	{
+- (void) removeObjectAtIndex:(NSInteger)i	{
 	if ((array!=nil) && ([array count]>0) && (i<[array count]) && (i>=0))	{
-		@try	{
+		//@try	{
 			[array removeObjectAtIndex:i];
-		}
-		@catch (NSException *err)	{
-			NSLog(@"\t\tERR: %s - %@",__func__,err);
-		}
+		//}
+		//@catch (NSException *err)	{
+			//NSLog(@"\t\tERR: %s - %@",__func__,err);
+		//}
 	}
 }
-- (void) lockRemoveObjectAtIndex:(NSUInteger)i	{
+- (void) lockRemoveObjectAtIndex:(NSInteger)i	{
 	if (array != nil)	{
 		pthread_rwlock_wrlock(&arrayLock);
 			[self removeObjectAtIndex:i];
@@ -307,12 +321,12 @@
 }
 - (void) removeObjectsAtIndexes:(NSIndexSet *)i	{
 	if (array != nil)	{
-		@try	{
+		//@try	{
 			[array removeObjectsAtIndexes:i];
-		}
-		@catch (NSException *err)	{
-			NSLog(@"\t\tERR: %s - %@",__func__,err);
-		}
+		//}
+		//@catch (NSException *err)	{
+			//NSLog(@"\t\tERR: %s - %@",__func__,err);
+		//}
 	}
 }
 - (void) lockRemoveObjectsAtIndexes:(NSIndexSet *)i	{
@@ -324,25 +338,48 @@
 }
 - (void) removeObjectsInArray:(NSArray *)otherArray	{
 	if (array != nil)	{
-		@try	{
+		//@try	{
 			[array removeObjectsInArray:otherArray];
-		}
-		@catch (NSException *err)	{
-			NSLog(@"\t\tERR: %s - %@",__func__,err);
-		}
+		//}
+		//@catch (NSException *err)	{
+			//NSLog(@"\t\tERR: %s - %@",__func__,err);
+		//}
 	}	
 }
 - (void) lockRemoveObjectsInArray:(NSArray *)otherArray	{
 	if (array != nil)	{
-		@try	{
+		//@try	{
 			pthread_rwlock_wrlock(&arrayLock);
 				[array removeObjectsInArray:otherArray];
 			pthread_rwlock_unlock(&arrayLock);
-		}
-		@catch (NSException *err)	{
-			NSLog(@"\t\tERR: %s - %@",__func__,err);
-		}
+		//}
+		//@catch (NSException *err)	{
+			//NSLog(@"\t\tERR: %s - %@",__func__,err);
+		//}
 	}
+}
+- (void) removeIdenticalPtrsInArray:(NSArray *)a	{
+	if ((a==nil) || ([a count]<1))
+		return;
+	//@try	{
+		NSMutableIndexSet		*indicesToRemove = [[[NSMutableIndexSet alloc] init] autorelease];
+		for (id anObj in a)	{
+			long			identicalIndex = [self indexOfIdenticalPtr:anObj];
+			if (identicalIndex != NSNotFound)
+				[indicesToRemove addIndex:identicalIndex];
+		}
+		[array removeObjectsAtIndexes:indicesToRemove];
+	//}
+	//@catch (NSException *err)	{
+		//NSLog(@"\t\tERR: %s - %@",__func__,err);
+	//}
+}
+- (void) lockRemoveIdenticalPtrsInArray:(NSArray *)a	{
+	if ((a==nil) || ([a count]<1))
+		return;
+	pthread_rwlock_wrlock(&arrayLock);
+		[self removeIdenticalPtrsInArray:a];
+	pthread_rwlock_unlock(&arrayLock);
 }
 - (id) valueForKey:(NSString *)key	{
 	if ((array == nil) || (key == nil))
@@ -378,7 +415,7 @@
 }
 
 
-- (id) objectAtIndex:(NSUInteger)i	{
+- (id) objectAtIndex:(NSInteger)i	{
 	if ((array != nil) && (i>=0) && (i<[array count]))	{
 		id			returnMe = nil;
 		//@try	{
@@ -391,7 +428,7 @@
 	}
 	return nil;
 }
-- (id) lockObjectAtIndex:(NSUInteger)i	{
+- (id) lockObjectAtIndex:(NSInteger)i	{
 	id		returnMe = nil;
 	pthread_rwlock_rdlock(&arrayLock);
 		returnMe = [self objectAtIndex:i];
@@ -418,8 +455,8 @@
 	
 	return returnMe;
 }
-- (NSUInteger) indexOfObject:(id)o	{
-	NSUInteger returnMe = -1;
+- (NSInteger) indexOfObject:(id)o	{
+	NSInteger returnMe = -1;
 	if ((array != nil) && (o != nil))	{
 		//@try	{
 			returnMe = [array indexOfObject:o];
@@ -430,8 +467,8 @@
 	}
 	return returnMe;	
 }
-- (NSUInteger) lockIndexOfObject:(id)o	{
-	NSUInteger returnMe = -1;
+- (NSInteger) lockIndexOfObject:(id)o	{
+	NSInteger returnMe = -1;
 	if ((array != nil) && (o != nil))	{
 		//@try	{
 			pthread_rwlock_rdlock(&arrayLock);
@@ -450,12 +487,20 @@
 	BOOL				returnMe = NO;
 	
 	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
+		for (id anObj in array)	{
+			if (anObj == o)	{
+				returnMe = YES;
+				break;
+			}
+		}
+		/*
 		NSEnumerator		*it = [array objectEnumerator];
 		id					anObj;
 		while ((anObj = [it nextObject]) && (!returnMe))	{
 			if (anObj == o)
 				returnMe = YES;
 		}
+		*/
 	}
 	
 	return returnMe;
@@ -470,7 +515,20 @@
 	}
 	return returnMe;
 }
-- (int) indexOfIdenticalPtr:(id)o	{
+- (long) indexOfIdenticalPtr:(id)o	{
+	long		foundIndex = NSNotFound;
+	int			indexCount = 0;
+	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
+		for (id anObj in array)	{
+			if (anObj == o)	{
+				foundIndex = indexCount;
+				break;
+			}
+			++indexCount;
+		}
+	}
+	return foundIndex;
+	/*
 	long		delegateIndex = NSNotFound;
 	
 	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
@@ -486,8 +544,9 @@
 	}
 	
 	return delegateIndex;
+	*/
 }
-- (int) lockIndexOfIdenticalPtr:(id)o	{
+- (long) lockIndexOfIdenticalPtr:(id)o	{
 	long		returnMe = NSNotFound;
 	
 	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
@@ -499,6 +558,20 @@
 	return returnMe;
 }
 - (void) removeIdenticalPtr:(id)o	{
+	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
+		long			foundIndex = NSNotFound;
+		int				indexCount = 0;
+		for (id anObj in array)	{
+			if (anObj == o)	{
+				foundIndex = indexCount;
+				break;
+			}
+			++indexCount;
+		}
+		if (foundIndex != NSNotFound)
+			[array removeObjectAtIndex:foundIndex];
+	}
+	/*
 	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
 		long				delegateIndex = NSNotFound;
 		NSEnumerator		*it = [array objectEnumerator];
@@ -513,6 +586,7 @@
 		if (delegateIndex!=NSNotFound)
 			[array removeObjectAtIndex:delegateIndex];
 	}
+	*/
 }
 - (void) lockRemoveIdenticalPtr:(id)o	{
 	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
@@ -544,12 +618,12 @@
 
 - (void) makeObjectsPerformSelector:(SEL)s	{
 	if (array != nil)	{
-		@try	{
+		//@try	{
 			[array makeObjectsPerformSelector:s];
-		}
-		@catch (NSException *err)	{
-			NSLog(@"\t\tERR: %s - %@",__func__,err);
-		}
+		//}
+		//@catch (NSException *err)	{
+			//NSLog(@"\t\tERR: %s - %@",__func__,err);
+		//}
 	}
 }
 - (void) lockMakeObjectsPerformSelector:(SEL)s	{
@@ -561,12 +635,12 @@
 }
 - (void) makeObjectsPerformSelector:(SEL)s withObject:(id)o	{
 	if (array != nil)	{
-		@try	{
+		//@try	{
 			[array makeObjectsPerformSelector:s withObject:o];
-		}
-		@catch (NSException *err)	{
-			NSLog(@"\t\tERR: %s - %@",__func__,err);
-		}
+		//}
+		//@catch (NSException *err)	{
+			//NSLog(@"\t\tERR: %s - %@",__func__,err);
+		//}
 	}
 }
 - (void) lockMakeObjectsPerformSelector:(SEL)s withObject:(id)o	{
@@ -576,72 +650,6 @@
 		pthread_rwlock_unlock(&arrayLock);
 	}
 }
-
-
-/*
-
-these are commented out because the code in these methods is sloppy
-
-- (void) makeCopyPerformSelector:(SEL)s	{
-	if ((array != nil) && ([array count]>0))	{
-		NSArray		*copy = [NSArray arrayWithArray:array];
-		if (copy != nil)	{
-			@try	{
-				[copy makeObjectsPerformSelector:s];
-			}
-			@catch (NSException *err)	{
-				NSLog(@"\t\t%s- %@",__func__,err);
-			}
-		}
-	}
-}
-- (void) lockMakeCopyPerformSelector:(SEL)s	{
-	if ((array != nil) && ([array count]>0))	{
-		pthread_rwlock_rdlock(&arrayLock);
-		NSArray		*copy = [NSArray arrayWithArray:array];
-		pthread_rwlock_unlock(&arrayLock);
-		
-		if (copy != nil)	{
-			@try	{
-				[copy makeObjectsPerformSelector:s];
-			}
-			@catch (NSException *err)	{
-				NSLog(@"\t\t%s- %@",__func__,err);
-			}
-		}
-	}
-}
-- (void) makeCopyPerformSelector:(SEL)s withObject:(id)o	{
-	if ((array != nil) && ([array count]>0))	{
-		NSArray		*copy = [NSArray arrayWithArray:array];
-		if (copy != nil)	{
-			@try	{
-				[copy makeObjectsPerformSelector:s withObject:o];
-			}
-			@catch (NSException *err)	{
-				NSLog(@"\t\t%s- %@",__func__,err);
-			}
-		}
-	}
-}
-- (void) lockMakeCopyPerformSelector:(SEL)s withObject:(id)o	{
-	if ((array != nil) && ([array count]>0))	{
-		pthread_rwlock_rdlock(&arrayLock);
-		NSArray		*copy = [NSArray arrayWithArray:array];
-		pthread_rwlock_unlock(&arrayLock);
-		
-		if (copy != nil)	{
-			@try	{
-				[copy makeObjectsPerformSelector:s withObject:o];
-			}
-			@catch (NSException *err)	{
-				NSLog(@"\t\t%s- %@",__func__,err);
-			}
-		}
-	}
-}
-*/
-
 
 
 - (void) sortUsingSelector:(SEL)s	{
@@ -671,15 +679,15 @@ these are commented out because the code in these methods is sloppy
 }
 
 
-- (NSUInteger) count	{
+- (long) count	{
 	if (array == nil)
 		return 0;
 	return [array count];
 }
-- (NSUInteger) lockCount	{
+- (long) lockCount	{
 	if (array == nil)
 		return 0;
-	int			returnMe = 0;
+	long			returnMe = 0;
 	pthread_rwlock_rdlock(&arrayLock);
 		returnMe = [array count];
 	pthread_rwlock_unlock(&arrayLock);

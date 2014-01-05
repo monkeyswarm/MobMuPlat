@@ -1,13 +1,22 @@
 
+#if IPHONE
 #import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif
 
+#import "VVBasics.h"//<VVBasics/VVBasics.h>
 #import "OSCZeroConfDomain.h"
 #import <pthread.h>
 
 
 
 
+#if IPHONE
+@interface OSCZeroConfManager : NSObject <NSNetServiceBrowserDelegate> {
+#else
 @interface OSCZeroConfManager : NSObject {
+#endif
 	NSNetServiceBrowser		*domainBrowser;
 	
 	NSMutableDictionary		*domainDict;

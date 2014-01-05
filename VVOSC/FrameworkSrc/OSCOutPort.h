@@ -1,5 +1,9 @@
 
+#if IPHONE
 #import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif
 
 
 #include <arpa/inet.h>
@@ -13,7 +17,7 @@
 
 ///	OSCOutPort handles everything needed to send OSC data to a given address
 /*!
-OSCOutPorts are created by the OSCManager- you should never have to explicitly handle their creation or destruction.
+You should never create or destroy an instance of this class manually.  OSCOutPort instances should be created/destroyed by the OSCManager.
 
 the documentation here only covers the basics, the header file for this class is small and heavily commented if you want to know more because you're heavily customizing OSCOutPort.
 */
@@ -53,6 +57,9 @@ the documentation here only covers the basics, the header file for this class is
 ///	changes this output's address and port to the passed address and port
 - (void) setAddressString:(NSString *)n andPort:(unsigned short)p;
 
+- (BOOL) _matchesRawAddress:(unsigned int)a andPort:(unsigned short)p;
+- (BOOL) _matchesRawAddress:(unsigned int)a;
+
 ///	the label used to distinguish this output from other outputs in my manager
 - (NSString *) portLabel;
 ///	change the label used to distinguish this output from other outputs in my manager
@@ -60,5 +67,6 @@ the documentation here only covers the basics, the header file for this class is
 
 - (unsigned short) port;
 - (NSString *) addressString;
+- (struct sockaddr_in *) addr;
 
 @end

@@ -141,13 +141,17 @@
 		DC59573D1733805000CEBECC /* titlepad_ring_185x110.png in Resources */ = {isa = PBXBuildFile; fileRef = DC5957271733805000CEBECC /* titlepad_ring_185x110.png */; };
 		DC59573E1733805000CEBECC /* titlepad_text_46x142.png in Resources */ = {isa = PBXBuildFile; fileRef = DC5957281733805000CEBECC /* titlepad_text_46x142.png */; };
 		DC59573F1733805000CEBECC /* titlepad_text_142x46.png in Resources */ = {isa = PBXBuildFile; fileRef = DC5957291733805000CEBECC /* titlepad_text_142x46.png */; };
+		DC6A9FF51878F88900A7585A /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = DC6A9FEF1878F88900A7585A /* LICENSE */; };
+		DC6A9FF61878F88900A7585A /* README.markdown in Resources */ = {isa = PBXBuildFile; fileRef = DC6A9FF01878F88900A7585A /* README.markdown */; };
+		DC6A9FF71878F88900A7585A /* MAZeroingWeakRef.m in Sources */ = {isa = PBXBuildFile; fileRef = DC6A9FF31878F88900A7585A /* MAZeroingWeakRef.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		DC6A9FFA1878FAC500A7585A /* OSCQueryReply.m in Sources */ = {isa = PBXBuildFile; fileRef = DC6A9FF91878FAC500A7585A /* OSCQueryReply.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		DC6A9FFD1878FB7500A7585A /* VVAssertionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = DC6A9FFC1878FB7500A7585A /* VVAssertionHandler.m */; };
 		DC8EBBB91660F3B4003C3162 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC8EBBB81660F3B4003C3162 /* QuartzCore.framework */; };
 		DC8EFEC71656F782004A88E3 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC8EFEC61656F782004A88E3 /* CoreMIDI.framework */; };
 		DCA9B90717330F3D000E59DD /* MutLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B8F717330F3D000E59DD /* MutLockArray.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DCA9B90817330F3D000E59DD /* MutLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B8F917330F3D000E59DD /* MutLockDict.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DCA9B90917330F3D000E59DD /* MutNRLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B8FB17330F3D000E59DD /* MutNRLockArray.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DCA9B90A17330F3D000E59DD /* MutNRLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B8FD17330F3D000E59DD /* MutNRLockDict.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		DCA9B90B17330F3D000E59DD /* NamedMutLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B8FF17330F3D000E59DD /* NamedMutLockArray.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DCA9B90C17330F3D000E59DD /* ObjectHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B90117330F3D000E59DD /* ObjectHolder.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DCA9B90D17330F3D000E59DD /* VVStopwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B90417330F3D000E59DD /* VVStopwatch.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DCA9B90E17330F3D000E59DD /* VVThreadLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B90617330F3D000E59DD /* VVThreadLoop.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -160,7 +164,6 @@
 		DCA9B93017330F90000E59DD /* OSCOutPort.m in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B91E17330F90000E59DD /* OSCOutPort.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DCA9B93117330F90000E59DD /* OSCPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B92017330F90000E59DD /* OSCPacket.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DCA9B93217330F90000E59DD /* OSCStringAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B92217330F90000E59DD /* OSCStringAdditions.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		DCA9B93317330F90000E59DD /* OSCTest.pd in Resources */ = {isa = PBXBuildFile; fileRef = DCA9B92317330F90000E59DD /* OSCTest.pd */; };
 		DCA9B93417330F90000E59DD /* OSCValue.m in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B92517330F90000E59DD /* OSCValue.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DCA9B93517330F90000E59DD /* OSCZeroConfDomain.m in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B92717330F90000E59DD /* OSCZeroConfDomain.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DCA9B93617330F90000E59DD /* OSCZeroConfManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B92917330F90000E59DD /* OSCZeroConfManager.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -393,6 +396,15 @@
 		DC5957271733805000CEBECC /* titlepad_ring_185x110.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = titlepad_ring_185x110.png; path = graphics/titlepad_ring_185x110.png; sourceTree = "<group>"; };
 		DC5957281733805000CEBECC /* titlepad_text_46x142.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = titlepad_text_46x142.png; path = graphics/titlepad_text_46x142.png; sourceTree = "<group>"; };
 		DC5957291733805000CEBECC /* titlepad_text_142x46.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = titlepad_text_142x46.png; path = graphics/titlepad_text_142x46.png; sourceTree = "<group>"; };
+		DC6A9FEF1878F88900A7585A /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		DC6A9FF01878F88900A7585A /* README.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.markdown; sourceTree = "<group>"; };
+		DC6A9FF21878F88900A7585A /* MAZeroingWeakRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAZeroingWeakRef.h; sourceTree = "<group>"; };
+		DC6A9FF31878F88900A7585A /* MAZeroingWeakRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAZeroingWeakRef.m; sourceTree = "<group>"; };
+		DC6A9FF41878F88900A7585A /* MAZeroingWeakRefNativeZWRNotAllowedTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAZeroingWeakRefNativeZWRNotAllowedTable.h; sourceTree = "<group>"; };
+		DC6A9FF81878FAC500A7585A /* OSCQueryReply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSCQueryReply.h; sourceTree = "<group>"; };
+		DC6A9FF91878FAC500A7585A /* OSCQueryReply.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSCQueryReply.m; sourceTree = "<group>"; };
+		DC6A9FFB1878FB7400A7585A /* VVAssertionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVAssertionHandler.h; sourceTree = "<group>"; };
+		DC6A9FFC1878FB7500A7585A /* VVAssertionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVAssertionHandler.m; sourceTree = "<group>"; };
 		DC8EBBB81660F3B4003C3162 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		DC8EFEC61656F782004A88E3 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		DCA9B8F617330F3D000E59DD /* MutLockArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutLockArray.h; path = VVBasics/src/MutLockArray.h; sourceTree = SOURCE_ROOT; };
@@ -403,8 +415,6 @@
 		DCA9B8FB17330F3D000E59DD /* MutNRLockArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MutNRLockArray.m; path = VVBasics/src/MutNRLockArray.m; sourceTree = SOURCE_ROOT; };
 		DCA9B8FC17330F3D000E59DD /* MutNRLockDict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutNRLockDict.h; path = VVBasics/src/MutNRLockDict.h; sourceTree = SOURCE_ROOT; };
 		DCA9B8FD17330F3D000E59DD /* MutNRLockDict.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MutNRLockDict.m; path = VVBasics/src/MutNRLockDict.m; sourceTree = SOURCE_ROOT; };
-		DCA9B8FE17330F3D000E59DD /* NamedMutLockArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NamedMutLockArray.h; path = VVBasics/src/NamedMutLockArray.h; sourceTree = SOURCE_ROOT; };
-		DCA9B8FF17330F3D000E59DD /* NamedMutLockArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NamedMutLockArray.m; path = VVBasics/src/NamedMutLockArray.m; sourceTree = SOURCE_ROOT; };
 		DCA9B90017330F3D000E59DD /* ObjectHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectHolder.h; path = VVBasics/src/ObjectHolder.h; sourceTree = SOURCE_ROOT; };
 		DCA9B90117330F3D000E59DD /* ObjectHolder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ObjectHolder.m; path = VVBasics/src/ObjectHolder.m; sourceTree = SOURCE_ROOT; };
 		DCA9B90217330F3D000E59DD /* VVBasicMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVBasicMacros.h; path = VVBasics/src/VVBasicMacros.h; sourceTree = SOURCE_ROOT; };
@@ -432,7 +442,6 @@
 		DCA9B92017330F90000E59DD /* OSCPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OSCPacket.m; path = VVOSC/FrameworkSrc/OSCPacket.m; sourceTree = SOURCE_ROOT; };
 		DCA9B92117330F90000E59DD /* OSCStringAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSCStringAdditions.h; path = VVOSC/FrameworkSrc/OSCStringAdditions.h; sourceTree = SOURCE_ROOT; };
 		DCA9B92217330F90000E59DD /* OSCStringAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OSCStringAdditions.m; path = VVOSC/FrameworkSrc/OSCStringAdditions.m; sourceTree = SOURCE_ROOT; };
-		DCA9B92317330F90000E59DD /* OSCTest.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = OSCTest.pd; path = VVOSC/FrameworkSrc/OSCTest.pd; sourceTree = SOURCE_ROOT; };
 		DCA9B92417330F90000E59DD /* OSCValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSCValue.h; path = VVOSC/FrameworkSrc/OSCValue.h; sourceTree = SOURCE_ROOT; };
 		DCA9B92517330F90000E59DD /* OSCValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OSCValue.m; path = VVOSC/FrameworkSrc/OSCValue.m; sourceTree = SOURCE_ROOT; };
 		DCA9B92617330F90000E59DD /* OSCZeroConfDomain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSCZeroConfDomain.h; path = VVOSC/FrameworkSrc/OSCZeroConfDomain.h; sourceTree = SOURCE_ROOT; };
@@ -537,6 +546,7 @@
 		DC0FC7E0172D81BC00E895C3 /* PGMidi */ = {
 			isa = PBXGroup;
 			children = (
+				DC6A9FEE1878F88900A7585A /* MAZeroingWeakRef */,
 				DCD8DF9017330D8A00767321 /* PGArc.h */,
 				DCD8DF9117330D8A00767321 /* PGMidi.h */,
 				DCD8DF9217330D8A00767321 /* PGMidi.mm */,
@@ -882,6 +892,26 @@
 			name = patches;
 			sourceTree = "<group>";
 		};
+		DC6A9FEE1878F88900A7585A /* MAZeroingWeakRef */ = {
+			isa = PBXGroup;
+			children = (
+				DC6A9FEF1878F88900A7585A /* LICENSE */,
+				DC6A9FF01878F88900A7585A /* README.markdown */,
+				DC6A9FF11878F88900A7585A /* Source */,
+			);
+			path = MAZeroingWeakRef;
+			sourceTree = "<group>";
+		};
+		DC6A9FF11878F88900A7585A /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				DC6A9FF21878F88900A7585A /* MAZeroingWeakRef.h */,
+				DC6A9FF31878F88900A7585A /* MAZeroingWeakRef.m */,
+				DC6A9FF41878F88900A7585A /* MAZeroingWeakRefNativeZWRNotAllowedTable.h */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
 		DCD1919A17418E8000580793 /* util */ = {
 			isa = PBXGroup;
 			children = (
@@ -910,6 +940,8 @@
 		DCE7370E16B5E30B00512571 /* FrameworkSrc */ = {
 			isa = PBXGroup;
 			children = (
+				DC6A9FF81878FAC500A7585A /* OSCQueryReply.h */,
+				DC6A9FF91878FAC500A7585A /* OSCQueryReply.m */,
 				DCA9B91017330F90000E59DD /* OSCAddressSpace.h */,
 				DCA9B91117330F90000E59DD /* OSCAddressSpace.m */,
 				DCA9B91217330F90000E59DD /* OSCBundle.h */,
@@ -929,7 +961,6 @@
 				DCA9B92017330F90000E59DD /* OSCPacket.m */,
 				DCA9B92117330F90000E59DD /* OSCStringAdditions.h */,
 				DCA9B92217330F90000E59DD /* OSCStringAdditions.m */,
-				DCA9B92317330F90000E59DD /* OSCTest.pd */,
 				DCA9B92417330F90000E59DD /* OSCValue.h */,
 				DCA9B92517330F90000E59DD /* OSCValue.m */,
 				DCA9B92617330F90000E59DD /* OSCZeroConfDomain.h */,
@@ -953,6 +984,8 @@
 		DCE7371016B5E31C00512571 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				DC6A9FFB1878FB7400A7585A /* VVAssertionHandler.h */,
+				DC6A9FFC1878FB7500A7585A /* VVAssertionHandler.m */,
 				DCA9B8F617330F3D000E59DD /* MutLockArray.h */,
 				DCA9B8F717330F3D000E59DD /* MutLockArray.m */,
 				DCA9B8F817330F3D000E59DD /* MutLockDict.h */,
@@ -961,8 +994,6 @@
 				DCA9B8FB17330F3D000E59DD /* MutNRLockArray.m */,
 				DCA9B8FC17330F3D000E59DD /* MutNRLockDict.h */,
 				DCA9B8FD17330F3D000E59DD /* MutNRLockDict.m */,
-				DCA9B8FE17330F3D000E59DD /* NamedMutLockArray.h */,
-				DCA9B8FF17330F3D000E59DD /* NamedMutLockArray.m */,
 				DCA9B90017330F3D000E59DD /* ObjectHolder.h */,
 				DCA9B90117330F3D000E59DD /* ObjectHolder.m */,
 				DCA9B90217330F3D000E59DD /* VVBasicMacros.h */,
@@ -1060,6 +1091,7 @@
 				DCD8DF6317330C4700767321 /* MMPExamples-Motion-ip5.mmp in Resources */,
 				DCD8DF6417330C4700767321 /* MMPExamples-Motion-Pad.mmp in Resources */,
 				DCD8DF6517330C4700767321 /* MMPExamples-Motion.mmp in Resources */,
+				DC6A9FF51878F88900A7585A /* LICENSE in Resources */,
 				DCD8DF6617330C4700767321 /* MMPExamples-Motion.pd in Resources */,
 				DCD8DF6717330C4700767321 /* MMPExamples-Sequencer-ip5.mmp in Resources */,
 				DCD8DF6817330C4700767321 /* MMPExamples-Sequencer-Pad.mmp in Resources */,
@@ -1077,6 +1109,7 @@
 				DCD8DF7417330C4700767321 /* MMPTutorial1-GUI-Pad.mmp in Resources */,
 				DCD8DF7517330C4700767321 /* MMPTutorial1-GUI.mmp in Resources */,
 				DCD8DF7617330C4700767321 /* MMPTutorial1-GUI.pd in Resources */,
+				DC6A9FF61878F88900A7585A /* README.markdown in Resources */,
 				DCD8DF7717330C4700767321 /* MMPTutorial2-Input-ip5.mmp in Resources */,
 				DCD8DF7817330C4700767321 /* MMPTutorial2-Input-Pad.mmp in Resources */,
 				DCD8DF7917330C4700767321 /* MMPTutorial2-Input.mmp in Resources */,
@@ -1098,7 +1131,6 @@
 				DCD8DF8917330C4700767321 /* Welcome-Pad.mmp in Resources */,
 				DCD8DF8A17330C4700767321 /* Welcome.mmp in Resources */,
 				DCD8DF8B17330C4700767321 /* Welcome.pd in Resources */,
-				DCA9B93317330F90000E59DD /* OSCTest.pd in Resources */,
 				DC59572A1733805000CEBECC /* Default-568h@2x.png in Resources */,
 				DC59572B1733805000CEBECC /* Default.png in Resources */,
 				DC59572C1733805000CEBECC /* Default@2x.png in Resources */,
@@ -1172,6 +1204,7 @@
 				DC0FC906172D84EA00E895C3 /* d_math.c in Sources */,
 				DC0FC907172D84EA00E895C3 /* d_misc.c in Sources */,
 				DC0FC908172D84EA00E895C3 /* d_osc.c in Sources */,
+				DC6A9FFD1878FB7500A7585A /* VVAssertionHandler.m in Sources */,
 				DC0FC909172D84EA00E895C3 /* d_resample.c in Sources */,
 				DC0FC90A172D84EA00E895C3 /* d_soundfile.c in Sources */,
 				DC0FC90B172D84EA00E895C3 /* d_ugen.c in Sources */,
@@ -1228,17 +1261,18 @@
 				DC0FC93E172D84EA00E895C3 /* x_time.c in Sources */,
 				DCD8DF8E17330C9D00767321 /* JSONKit.m in Sources */,
 				DCD8DF9317330D8B00767321 /* PGMidi.mm in Sources */,
+				DC6A9FFA1878FAC500A7585A /* OSCQueryReply.m in Sources */,
 				DCA9B90717330F3D000E59DD /* MutLockArray.m in Sources */,
 				DCA9B90817330F3D000E59DD /* MutLockDict.m in Sources */,
 				DCA9B90917330F3D000E59DD /* MutNRLockArray.m in Sources */,
 				DCA9B90A17330F3D000E59DD /* MutNRLockDict.m in Sources */,
-				DCA9B90B17330F3D000E59DD /* NamedMutLockArray.m in Sources */,
 				DCA9B90C17330F3D000E59DD /* ObjectHolder.m in Sources */,
 				DCA9B90D17330F3D000E59DD /* VVStopwatch.m in Sources */,
 				DCA9B90E17330F3D000E59DD /* VVThreadLoop.m in Sources */,
 				DCA9B92A17330F90000E59DD /* OSCAddressSpace.m in Sources */,
 				DCA9B92B17330F90000E59DD /* OSCBundle.m in Sources */,
 				DCA9B92C17330F90000E59DD /* OSCInPort.m in Sources */,
+				DC6A9FF71878F88900A7585A /* MAZeroingWeakRef.m in Sources */,
 				DCA9B92D17330F90000E59DD /* OSCManager.m in Sources */,
 				DCA9B92E17330F90000E59DD /* OSCMessage.m in Sources */,
 				DCA9B92F17330F90000E59DD /* OSCNode.m in Sources */,

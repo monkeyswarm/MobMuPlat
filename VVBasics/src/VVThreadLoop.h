@@ -1,12 +1,13 @@
 
+#if IPHONE
 #import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif
 #include <sys/time.h>
+#import <unistd.h>
+#include <libkern/OSAtomic.h>
 
-
-
-
-//	this macro sets the max time interval; default is 1 second (can't go slower than 1 proc/sec)
-#define MAXTIME 1.0
 
 
 
@@ -19,33 +20,44 @@ You can change the execution interval, and VVThreadLoop also examines how long i
 
 
 
+
 @interface VVThreadLoop : NSObject {
-	float				interval;
+	double				interval;
+	double				maxInterval;
 	BOOL				running;
 	BOOL				bail;
+	BOOL				paused;
+	BOOL				executingCallback;
+	
+	OSSpinLock			valLock;	//	ONLY used for quickly accessing 'running', 'bail', 'paused', and 'executingCallback' in a threadsafe fashion
 	
 	id					targetObj;	//!<NOT retained!  If there's no valid target obj/sel pair, the instance sill simply call "threadProc" on itself, so you can just override that method
 	SEL					targetSel;
 }
 
 ///	Returns an initialized VVThreadLoop which will call method "s" on target "t" every time it executes.  Returns nil if passed a nil target or selector, or if the target doesn't respond to the selector.
-- (id) initWithTimeInterval:(float)i target:(id)t selector:(SEL)s;
+- (id) initWithTimeInterval:(double)i target:(id)t selector:(SEL)s;
 ///	Returns an initialized VVThreadLoop which will call "threadProc" on itself every time it executes, so you should override "threadProc" in your subclass.
-- (id) initWithTimeInterval:(float)i;
+- (id) initWithTimeInterval:(double)i;
 - (void) generalInit;
 ///	Spawns a thread and starts executing.  If the thread has already been spawned and is executing, doesn't do anything.
 - (void) start;
 - (void) threadCallback;
 - (void) threadProc;
+///	Pauses/resumes execution.  The thread will still be running at the configured interval- that's what differentiates pause/resume from start/stop- but the target/selector won't be getting called.
+- (void) pause;
+- (void) resume;
 ///	Stops execution by setting a "bail" flag, and returns immediately.  IMPORTANT: may return while the thread loop is still executing!
 - (void) stop;
 ///	Stops execution and doesn't return until the thread's done executing and has been closed.
 - (void) stopAndWaitUntilDone;
 ///	The interval between executions, in seconds.
-- (float) interval;
+- (double) interval;
 ///	Set the interval between executions, in seconds.
-- (void) setInterval:(float)i;
+- (void) setInterval:(double)i;
 ///	Whether or not the thread loop is running.
 - (BOOL) running;
+
+@property (assign,readwrite) double maxInterval;
 
 @end

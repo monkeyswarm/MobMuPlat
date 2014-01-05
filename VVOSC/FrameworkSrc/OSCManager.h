@@ -1,16 +1,21 @@
 
+#if IPHONE
 #import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif
 #import "OSCAddressSpace.h"
 #import "OSCZeroConfManager.h"
 #import "OSCInPort.h"
 #import "OSCOutPort.h"
+#import "OSCQueryReply.h"
 
 
 
 
 ///	Main VVOSC class- manages in & out port creation, zero configuration networking (bonjour/zeroconf)
 /*!
-The OSCManager should be the "main" class that you're working with: it passes any received OSC data to its delegate (your app), creates/deletes inputs and outputs, automatically creates outputs for any osc destinations detected via bonjour, handles distribution of all received OSC messages, and does other manager-ish things.  You should only need one instance of OSCManager in your application.  One of your objects should be OSCManager's delegate (see the "OSCDelegateProtocol" below) so you may receive OSC data.
+The OSCManager will probably be the main class that you're working with: it creates/deletes inputs (which receive data) and outputs (which send data), passes any OSC data received to its delegate (your application), optionally handles distribution of all received OSC messages, and does other manager-ish things.  You should only need one instance of OSCManager in your application.  One of your objects should be OSCManager's delegate (see the "OSCDelegateProtocol" below) so you may receive OSC data.
 
 Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports are running a loop which checks a socket for data received since the last loop.  By default, the OSCInPort's delegate is the OSCManager which created it.  Every time the loop runs, it passes the received data off to its delegate (the manager) as the raw address/value pairs in the order they're received.  When the OSCManager receives data from its in port it immediately passes the received data to its delegate, which should respond to one of the following methods (referred to as the 'OSCDelegateProtocol'):
 
@@ -29,13 +34,23 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 
 
 @interface OSCManager : NSObject {
-	MutLockArray			*inPortArray;	//	MutLockArray.  Array of OSCInPorts- do not access without using the lock!
-	MutLockArray			*outPortArray;	//	MutLockArray.  Array of OSCOutPorts- do not access without using the lock!
+	MutLockArray			*inPortArray;	//	Array of OSCInPorts in a locking array for threadsafe access
+	MutLockArray			*outPortArray;	//	Array of OSCOutPorts in a locking array for threadsafe access
 	
 	id						delegate;		//!<If there's a delegate, it will be notified when OSC messages are received
 	
 	OSCZeroConfManager		*zeroConfManager;	//!<Creates OSCOutPorts for any OSC destinations detected via bonjour/zeroconf
+	
+	Class					inPortClass;
+	NSString				*inPortLabelBase;
+	Class					outPortClass;
 }
+
+//	used to generate the IP addresses for this host
++ (NSArray *) hostIPv4Addresses;
+
+- (id) initWithInPortClass:(Class)i outPortClass:(Class)o;
+- (void) _generalInit;
 
 ///	Deletes all input ports
 - (void) deleteAllInputs;
@@ -62,17 +77,31 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 
 ///	Called when OSCInPorts are processing received messages serially (by default, the manager is an OSCInPort's delegate)
 - (void) receivedOSCMessage:(OSCMessage *)m;
+///	Only used to support the (non-specification) OSC query protocol.  All queries MUST be sent from the manager via this method to one of its outputs (the manager has to actually send the message through an input for technical reasons).  The reply handler is called when a reply is received or when the timeout expires.
+- (void) dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o timeout:(float)t replyHandler:(void (^)(OSCMessage *replyMsg))block;
+///	Only used to support the (non-specification) OSC query protocol.  All queries MUST be sent from the manager via this method to one of its outputs (the manager has to actually send the message through an input for technical reasons).  The delegate is called when a reply is received or when the timeout expires.
+- (void) dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o timeout:(float)t replyDelegate:(id <OSCQueryReplyDelegate>)d;
+///	Used to support the (non-specification) OSC query protocol.  If you've received a query and have assembled a reply or an error, this is how you send the reply/error back to the other app/device/whatever sent the query.  Only works if the passed message is a reply (OSCMessageTypeReply) or error (OSCMessageTypeError) and has a valid (non-0) queryTXAddress & queryTXPort.  locates the corresponding OSCOutPort- creating one if necessary- and sends the OSCMessage out it.
+- (void) transmitReplyOrError:(OSCMessage *)m;
 
 //	Creates and returns a unique label for an input port (unique to this manager)
 - (NSString *) getUniqueInputLabel;
+- (BOOL) isUniqueInputLabel:(NSString *)n;
 //	Creates and returns a unique label for an output port (unique to this manager)
 - (NSString *) getUniqueOutputLabel;
 //	Finds and returns an input matching the passed label (returns nil if not found)
 - (OSCInPort *) findInputWithLabel:(NSString *)n;
+- (NSMutableArray *) findInputsWithLabel:(NSString *)n;
 //	Finds and returns an output matching the passed label (returns nil if not found)
 - (OSCOutPort *) findOutputWithLabel:(NSString *)n;
+- (NSMutableArray *) findOutputsWithLabel:(NSString *)n;
 //	Finds and returns an output matching the passed address and port (returns nil if not found)
 - (OSCOutPort *) findOutputWithAddress:(NSString *)a andPort:(int)p;
+//	Finds and returns an output matching the passed address (which is the raw, network-byte-order internet address expressed as an int) and port.  Returns nil if not found.
+- (OSCOutPort *) findOutputWithRawAddress:(unsigned int)a andPort:(unsigned short)p;
+//	Finds and returns an output matching the passed address (which is the raw, network-byte-order internet address as an int).  returns nil if not found.
+- (OSCOutPort *) findOutputWithRawAddress:(unsigned int)a;
+
 //	Returns the output at the provided index in outPortArray
 - (OSCOutPort *) findOutputForIndex:(int)i;
 //	Finds and returns the input whose zero conf name matches the passed string (returns nil if not found)
@@ -81,6 +110,10 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 - (void) removeInput:(id)p;
 ///	Removes the passed output from the outPortArray
 - (void) removeOutput:(id)p;
+///	Removes the first output with the passed label
+- (void) removeOutputWithLabel:(NSString *)n;
+///	Removes all the outputs from the outPortArray
+- (void) removeAllOutputs;
 ///	Generates and returns an array of strings which correspond to the labels of this manager's out ports
 - (NSArray *) outPortLabelArray;
 
@@ -88,6 +121,7 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 - (id) inPortClass;
 //	By default, returns @"VVOSC"- subclass around this to use a different base string when generating in port labels
 - (NSString *) inPortLabelBase;
+- (void) setInPortLabelBase:(NSString *)n;
 ///	By default, returns [OSCOutPort class]- subclass around to use different subclasses of OSCOutPort
 - (id) outPortClass;
 

@@ -1,5 +1,9 @@
 
+#if IPHONE
 #import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif
 #import <pthread.h>
 
 
@@ -19,13 +23,14 @@ It is important to remember, when working with it, that MutLockArray is NOT a su
 }
 
 ///	Creates and returns an auto-released MutLockArray with a given capacity.  The capacity may be 0.
-+ (id) arrayWithCapacity:(NSUInteger)c;
++ (id) arrayWithCapacity:(NSInteger)c;
 ///	Inits and returns a MutLockArray with a given capacity; the capacity may be 0.
-- (id) initWithCapacity:(NSUInteger)c;
+- (id) initWithCapacity:(NSInteger)c;
 - (id) init;
 
 ///	Establishes a read-lock for the array; multiple read locks may exist simultaneously (if it's not changing, anything can look at the contents of the array).  This method does not return until it has been able to get the lock.
 - (void) rdlock;
+- (BOOL) tryRdLock;	//	returns YES if i got a read-lock successfully!
 ///	Establishes a write-lock for the array.  Only one write-lock may exist at any given time, and all read-locks must be relinquished before the write-lock may be established (if you're going to change the array, nothing else can be changing or observing it).
 - (void) wrlock;
 ///	Unlocks the array.
@@ -51,9 +56,9 @@ It is important to remember, when working with it, that MutLockArray is NOT a su
 ///	Establishes a write-lock, then calls "replaceWithObjectsFromArray" on self; threadsafe.
 - (void) lockReplaceWithObjectsFromArray:(id)a;
 ///	Calls "insertObject:atIndex:" on my array; not threadsafe.
-- (void) insertObject:(id)o atIndex:(NSUInteger)i;
+- (BOOL) insertObject:(id)o atIndex:(NSInteger)i;
 ///	Establishes a write-lock, then calls "insertObject:atIndex:" on self; threadsafe.
-- (void) lockInsertObject:(id)o atIndex:(NSUInteger)i;
+- (BOOL) lockInsertObject:(id)o atIndex:(NSInteger)i;
 ///	Calls "removeAllObjects" on my array; not threadsafe.
 - (void) removeAllObjects;
 ///	Establishes a write-lock, then calls "removeAllObjects" on self; threadsafe.
@@ -79,9 +84,9 @@ It is important to remember, when working with it, that MutLockArray is NOT a su
 ///	Establishes a write-lock, then calls "removeObject:" on self; threadsafe.
 - (void) lockRemoveObject:(id)o;
 ///	Calls "removeObjectAtIndex:" on my array; not threadsafe.
-- (void) removeObjectAtIndex:(NSUInteger)i;
+- (void) removeObjectAtIndex:(NSInteger)i;
 ///	Establishes a write-lock, then calls "removeObjectAtIndex:" on self; threadsafe.
-- (void) lockRemoveObjectAtIndex:(NSUInteger)i;
+- (void) lockRemoveObjectAtIndex:(NSInteger)i;
 ///	Calls "removeObjectsAtIndexes:" on my array; not threadsafe.
 - (void) removeObjectsAtIndexes:(NSIndexSet *)i;
 ///	Establishes a write-lock, then calls "removeObjectsAtIndexes:" on self; threadsafe.
@@ -90,6 +95,10 @@ It is important to remember, when working with it, that MutLockArray is NOT a su
 - (void) removeObjectsInArray:(NSArray *)otherArray;
 ///	Establishes a write-lock, then calls "removeObjectsInArray:" on self; threadsafe.
 - (void) lockRemoveObjectsInArray:(NSArray *)otherArray;
+///	Calls "removeIdenticalPtrsInArray:" on my array; not threadsafe
+- (void) removeIdenticalPtrsInArray:(NSArray *)a;
+///	Establishes a write-lock, then calls "removeIdenticalPtrsInArray:" on self; threadsafe.
+- (void) lockRemoveIdenticalPtrsInArray:(NSArray *)a;
 
 ///	Calls "replaceObjectsAtIndexes:withObjects" on my array; not threadsafe.
 - (void) replaceObjectsAtIndexes:(NSIndexSet *)indexes withObjects:(NSArray *)objects;
@@ -107,17 +116,17 @@ It is important to remember, when working with it, that MutLockArray is NOT a su
 ///	Establishes a read-lock, then calls "containsObject:" on self; threadsafe.
 - (BOOL) lockContainsObject:(id)o;
 ///	Calls "objectAtIndex:" on my array; not threadsafe.
-- (id) objectAtIndex:(NSUInteger)i;
+- (id) objectAtIndex:(NSInteger)i;
 ///	Establishes a read-lock, then calls "objectAtIndex:" on self; threadsafe.
-- (id) lockObjectAtIndex:(NSUInteger)i;
+- (id) lockObjectAtIndex:(NSInteger)i;
 ///	Calls "objectsAtIndexes:" on my array; not threadsafe.
 - (NSArray *) objectsAtIndexes:(NSIndexSet *)indexes;
 ///	Establishes a read-lock, then calls "objectsAtIndexes:" on self; threadsafe.
 - (NSArray *) lockObjectsAtIndexes:(NSIndexSet *)indexes;
 ///	Calls "indexOfObject:" on my array; not threadsafe.
-- (NSUInteger) indexOfObject:(id)o;
+- (NSInteger) indexOfObject:(id)o;
 ///	Establishes a read-lock, then calls "indexOfObject:" on self; threadsafe.
-- (NSUInteger) lockIndexOfObject:(id)o;
+- (NSInteger) lockIndexOfObject:(id)o;
 
 
 ///	Enumerates through my array- compares the address of each item in the array to the passed pointer.  Unlike NSMutableArray, this method does NOT call isEqualTo:, it's just a simple == operator.
@@ -125,9 +134,9 @@ It is important to remember, when working with it, that MutLockArray is NOT a su
 ///	Establishes a read-lock, then calls "containsIdenticalPtr:" on self; threadsafe.
 - (BOOL) lockContainsIdenticalPtr:(id)o;
 ///	Enumerates through my array- compares the address of each item in the array to the passed pointer.  Unlike NSMutableArray, this method does NOT call isEqualTo:, it's just a simple == operator.
-- (int) indexOfIdenticalPtr:(id)o;
+- (long) indexOfIdenticalPtr:(id)o;
 ///	Establishes a read-lock, then calls "indexOfIdenticalPtr:" on self; threadsafe.
-- (int) lockIndexOfIdenticalPtr:(id)o;
+- (long) lockIndexOfIdenticalPtr:(id)o;
 ///	Locates an item in my array by enumerating through it and comparing the address of each item in the array to the passed ptr, and then deletes the matching item from the array; not threadsafe.
 - (void) removeIdenticalPtr:(id)o;
 ///	Establishes a write-lock, then calls "removeIdenticalPtr:" on self; threadsafe.
@@ -170,7 +179,7 @@ It is important to remember, when working with it, that MutLockArray is NOT a su
 
 - (NSEnumerator *) objectEnumerator;
 - (NSEnumerator *) reverseObjectEnumerator;
-- (NSUInteger) count;
-- (NSUInteger) lockCount;
+- (long) count;
+- (long) lockCount;
 
 @end

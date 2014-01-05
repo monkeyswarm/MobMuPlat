@@ -10,13 +10,21 @@
 - (NSString *) description	{
 	return [NSString stringWithFormat:@"<MutLockDict: %@>",dict];
 }
-+ (id) dictionaryWithCapacity:(NSUInteger)c	{
++ (id) dictionaryWithCapacity:(NSInteger)c	{
 	MutLockDict		*returnMe = [[MutLockDict alloc] initWithCapacity:0];
 	if (returnMe == nil)
 		return nil;
 	return [returnMe autorelease];
 }
-- (id) initWithCapacity:(NSUInteger)c	{
++ (id) dictionaryWithDict:(NSDictionary *)d	{
+	id			returnMe = [[MutLockDict alloc] initWithCapacity:0];
+	if (returnMe == nil)
+		return nil;
+	if (d != nil)
+		[[returnMe dict] addEntriesFromDictionary:d];
+	return [returnMe autorelease];
+}
+- (id) initWithCapacity:(NSInteger)c	{
 	if (c < 0)	{
 		[self release];
 		return nil;
@@ -198,6 +206,24 @@
 	pthread_rwlock_unlock(&dictLock);
 	return returnMe;
 }
+
+
+- (void) lockMakeObjectsPerformSelector:(SEL)s	{
+	if (dict==nil)
+		return;
+	pthread_rwlock_rdlock(&dictLock);
+		[self makeObjectsPerformSelector:s];
+	pthread_rwlock_unlock(&dictLock);
+}
+- (void) makeObjectsPerformSelector:(SEL)s	{
+	if (dict == nil)
+		return;
+	NSArray			*valArray = [dict allValues];
+	if (valArray != nil)
+		[valArray makeObjectsPerformSelector:s];
+}
+
+
 - (void) addEntriesFromDictionary:(NSDictionary *)otherDictionary	{
 	if ((dict!=nil)&&(otherDictionary!=nil)&&([otherDictionary count]))	{
 		[dict addEntriesFromDictionary:otherDictionary];
@@ -210,13 +236,13 @@
 		[self addEntriesFromDictionary:otherDictionary];
 	pthread_rwlock_unlock(&dictLock);	
 }
-- (NSUInteger) count	{
+- (NSInteger) count	{
 	if (dict!=nil)
 		return [dict count];
 	return 0;
 }
-- (NSUInteger) lockCount	{
-	NSUInteger	returnMe = 0;
+- (NSInteger) lockCount	{
+	NSInteger	returnMe = 0;
 	pthread_rwlock_rdlock(&dictLock);
 		returnMe = [self count];
 	pthread_rwlock_unlock(&dictLock);

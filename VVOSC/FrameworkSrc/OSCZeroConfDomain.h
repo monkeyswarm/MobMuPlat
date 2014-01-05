@@ -1,5 +1,10 @@
 
+#if IPHONE
 #import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif
 //#import <VVBasics/VVBasics.h>
 #import "MutLockArray.h"
 #import "VVBasicMacros.h"
@@ -9,8 +14,11 @@
 
 
 
-
+#if IPHONE
+@interface OSCZeroConfDomain : NSObject <NSNetServiceBrowserDelegate,NSNetServiceDelegate> {
+#else
 @interface OSCZeroConfDomain : NSObject {
+#endif
 	NSString				*domainString;
 	NSNetServiceBrowser		*serviceBrowser;
 	

@@ -290,7 +290,7 @@ extern void sigmund_tilde_setup(void);
     else//pad
         path = [[NSBundle mainBundle] pathForResource:@"Welcome-Pad" ofType:@"mmp"];
     
-    NSString* jsonString = [NSString stringWithContentsOfFile: path];
+    NSString* jsonString = [NSString stringWithContentsOfFile: path encoding:NSUTF8StringEncoding error:nil];
    
     if(jsonString)[self loadScene:[jsonString objectFromJSONString]];
   
