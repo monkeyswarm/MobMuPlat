@@ -55,6 +55,11 @@
 
 - (void)viewDidLoad{
     [super viewDidLoad];
+    
+    //ios 7 don't have it go under the nav bar
+    if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
+        self.edgesForExtendedLayout = UIRectEdgeNone;
+    
     self.view.backgroundColor=[UIColor colorWithRed:.4 green:.4 blue:.4 alpha:1];
    
   
@@ -138,17 +143,34 @@
     [self.view addSubview:loadDocButton ];
     loadDocButton.enabled=NO;//disable a button when we are looking at its affiliated subview
     
+    if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")){
+        loadDocButton.layer.cornerRadius = 5;
+        loadDocButton.layer.borderWidth = 1;
+        loadDocButton.layer.borderColor = [UIColor blackColor].CGColor;
+    }
+    
+    
     [dspButton setTitle:@"Audio & MIDI" forState:UIControlStateNormal];
     [dspButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [dspButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
     [dspButton addTarget:self action:@selector(showDSP:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:dspButton ];
+    if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")){
+        dspButton.layer.cornerRadius = 5;
+        dspButton.layer.borderWidth = 1;
+        dspButton.layer.borderColor = [UIColor blackColor].CGColor;
+    }
     
     [consoleButton setTitle:@"Pd Console" forState:UIControlStateNormal];
     [consoleButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [consoleButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
     [consoleButton addTarget:self action:@selector(showConsole:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:consoleButton ];
+    if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")){
+        consoleButton.layer.cornerRadius = 5;
+        consoleButton.layer.borderWidth = 1;
+        consoleButton.layer.borderColor = [UIColor blackColor].CGColor;
+    }
     
     //setup elements in filesview
     filesTableView.delegate=self;
@@ -159,6 +181,11 @@
     [showFilesButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [showFilesButton addTarget:self action:@selector(showFilesButtonHit:) forControlEvents:UIControlEventTouchUpInside];
     [filesView addSubview:showFilesButton];
+    if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")){
+        showFilesButton.layer.cornerRadius = 5;
+        showFilesButton.layer.borderWidth = 1;
+        showFilesButton.layer.borderColor = [UIColor blackColor].CGColor;
+    }
     
     
     //layout audioMidiView ====
@@ -254,6 +281,11 @@
     [clearConsoleButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [clearConsoleButton addTarget:self action:@selector(clearConsole:) forControlEvents:UIControlEventTouchUpInside];
     [consoleView addSubview:clearConsoleButton];
+    if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")){
+        clearConsoleButton.layer.cornerRadius = 5;
+        clearConsoleButton.layer.borderWidth = 1;
+        clearConsoleButton.layer.borderColor = [UIColor blackColor].CGColor;
+    }
     
     //layout everything by canvas size
     

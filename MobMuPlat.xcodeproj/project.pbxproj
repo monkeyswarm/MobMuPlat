@@ -730,7 +730,6 @@
 		DC233D9D1655EDF500AC01C5 = {
 			isa = PBXGroup;
 			children = (
-				DC456B02176BC1540080BB33 /* CoreLocation.framework */,
 				DC0FC7E3172D837F00E895C3 /* libpd */,
 				DC0FC7E2172D81CB00E895C3 /* JSONKit */,
 				DC0FC7E0172D81BC00E895C3 /* PGMidi */,
@@ -754,6 +753,7 @@
 		DC233DAB1655EDF500AC01C5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DC456B02176BC1540080BB33 /* CoreLocation.framework */,
 				DCB11AE01702B315004B92EA /* CoreMotion.framework */,
 				DCFF717616B59F3100CDCEAE /* libz.dylib */,
 				DC8EBBB81660F3B4003C3162 /* QuartzCore.framework */,
