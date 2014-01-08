@@ -34,6 +34,7 @@
 #import "MeGrid.h"
 #import "MePanel.h"
 #import "MeMultiSlider.h"
+#import "MeLCD.h"
 
 
 extern void expr_setup(void);
@@ -704,6 +705,10 @@ extern void sigmund_tilde_setup(void);
         else if([newObjectClass isEqualToString:@"MMPMultiSlider"]){
             currObject = [[MeMultiSlider alloc] initWithFrame:frame];
             if([currDict objectForKey:@"range"])  [(MeMultiSlider*)currObject setRange:[[currDict objectForKey:@"range"] intValue]];
+        }
+        else if([newObjectClass isEqualToString:@"MMPLCD"]){
+            currObject = [[MeLCD alloc] initWithFrame:frame];
+            //if([currDict objectForKey:@"range"])  [(MeMultiSlider*)currObject setRange:[[currDict objectForKey:@"range"] intValue]];
         }
         //end subclass-specific list
 

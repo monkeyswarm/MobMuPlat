@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		90DFFB2B187DF85B00DD2149 /* MeLCD.m in Sources */ = {isa = PBXBuildFile; fileRef = 90DFFB2A187DF85B00DD2149 /* MeLCD.m */; };
 		DC03516A16AA67E600708C0D /* AlertHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DC03516916AA67E600708C0D /* AlertHelper.m */; };
 		DC035A1D16D96FC600F4FA62 /* SplashViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DC035A1C16D96FC600F4FA62 /* SplashViewController.m */; };
 		DC0FC7F8172D846900E895C3 /* AudioHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC7EB172D846900E895C3 /* AudioHelpers.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -228,6 +229,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		90DFFB29187DF85B00DD2149 /* MeLCD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeLCD.h; path = gui/MeLCD.h; sourceTree = "<group>"; };
+		90DFFB2A187DF85B00DD2149 /* MeLCD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeLCD.m; path = gui/MeLCD.m; sourceTree = "<group>"; };
 		DC03516816AA67E600708C0D /* AlertHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertHelper.h; sourceTree = "<group>"; };
 		DC03516916AA67E600708C0D /* AlertHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertHelper.m; sourceTree = "<group>"; };
 		DC035A1B16D96FC600F4FA62 /* SplashViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplashViewController.h; sourceTree = "<group>"; };
@@ -832,6 +835,8 @@
 				DC5957071733800500CEBECC /* MeToggle.m */,
 				DC5957081733800500CEBECC /* MeXYSlider.h */,
 				DC5957091733800500CEBECC /* MeXYSlider.m */,
+				90DFFB29187DF85B00DD2149 /* MeLCD.h */,
+				90DFFB2A187DF85B00DD2149 /* MeLCD.m */,
 			);
 			name = gui;
 			sourceTree = "<group>";
@@ -1227,6 +1232,7 @@
 				DC0FC91C172D84EA00E895C3 /* g_text.c in Sources */,
 				DC0FC91D172D84EA00E895C3 /* g_toggle.c in Sources */,
 				DC0FC91E172D84EA00E895C3 /* g_traversal.c in Sources */,
+				90DFFB2B187DF85B00DD2149 /* MeLCD.m in Sources */,
 				DC0FC91F172D84EA00E895C3 /* g_vdial.c in Sources */,
 				DC0FC920172D84EA00E895C3 /* g_vslider.c in Sources */,
 				DC0FC921172D84EA00E895C3 /* g_vumeter.c in Sources */,
