@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		90DFFB27187DC42500DD2149 /* LANdiniUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 90DFFB24187DC42500DD2149 /* LANdiniUser.m */; };
+		90DFFB28187DC42500DD2149 /* LANdiniLANManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 90DFFB26187DC42500DD2149 /* LANdiniLANManager.m */; };
 		DC03516A16AA67E600708C0D /* AlertHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DC03516916AA67E600708C0D /* AlertHelper.m */; };
 		DC035A1D16D96FC600F4FA62 /* SplashViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DC035A1C16D96FC600F4FA62 /* SplashViewController.m */; };
 		DC0FC7F8172D846900E895C3 /* AudioHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC7EB172D846900E895C3 /* AudioHelpers.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -228,6 +230,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		90DFFB23187DC42500DD2149 /* LANdiniUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LANdiniUser.h; sourceTree = "<group>"; };
+		90DFFB24187DC42500DD2149 /* LANdiniUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LANdiniUser.m; sourceTree = "<group>"; };
+		90DFFB25187DC42500DD2149 /* LANdiniLANManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LANdiniLANManager.h; sourceTree = "<group>"; };
+		90DFFB26187DC42500DD2149 /* LANdiniLANManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LANdiniLANManager.m; sourceTree = "<group>"; };
 		DC03516816AA67E600708C0D /* AlertHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertHelper.h; sourceTree = "<group>"; };
 		DC03516916AA67E600708C0D /* AlertHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertHelper.m; sourceTree = "<group>"; };
 		DC035A1B16D96FC600F4FA62 /* SplashViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplashViewController.h; sourceTree = "<group>"; };
@@ -543,6 +549,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		90DFFB22187DC41700DD2149 /* LANdini */ = {
+			isa = PBXGroup;
+			children = (
+				90DFFB23187DC42500DD2149 /* LANdiniUser.h */,
+				90DFFB24187DC42500DD2149 /* LANdiniUser.m */,
+				90DFFB25187DC42500DD2149 /* LANdiniLANManager.h */,
+				90DFFB26187DC42500DD2149 /* LANdiniLANManager.m */,
+			);
+			name = LANdini;
+			sourceTree = "<group>";
+		};
 		DC0FC7E0172D81BC00E895C3 /* PGMidi */ = {
 			isa = PBXGroup;
 			children = (
@@ -740,6 +757,7 @@
 		DC233D9D1655EDF500AC01C5 = {
 			isa = PBXGroup;
 			children = (
+				90DFFB22187DC41700DD2149 /* LANdini */,
 				DC0FC7E3172D837F00E895C3 /* libpd */,
 				DC0FC7E2172D81CB00E895C3 /* JSONKit */,
 				DC0FC7E0172D81BC00E895C3 /* PGMidi */,
@@ -1204,6 +1222,7 @@
 				DC0FC906172D84EA00E895C3 /* d_math.c in Sources */,
 				DC0FC907172D84EA00E895C3 /* d_misc.c in Sources */,
 				DC0FC908172D84EA00E895C3 /* d_osc.c in Sources */,
+				90DFFB27187DC42500DD2149 /* LANdiniUser.m in Sources */,
 				DC6A9FFD1878FB7500A7585A /* VVAssertionHandler.m in Sources */,
 				DC0FC909172D84EA00E895C3 /* d_resample.c in Sources */,
 				DC0FC90A172D84EA00E895C3 /* d_soundfile.c in Sources */,
@@ -1249,6 +1268,7 @@
 				DC0FC932172D84EA00E895C3 /* s_print.c in Sources */,
 				DC0FC933172D84EA00E895C3 /* s_utf8.c in Sources */,
 				DC0FC934172D84EA00E895C3 /* x_acoustics.c in Sources */,
+				90DFFB28187DC42500DD2149 /* LANdiniLANManager.m in Sources */,
 				DC0FC935172D84EA00E895C3 /* x_arithmetic.c in Sources */,
 				DC0FC936172D84EA00E895C3 /* x_connective.c in Sources */,
 				DC0FC937172D84EA00E895C3 /* x_gui.c in Sources */,

@@ -19,7 +19,7 @@
 #import "MeControl.h"
 #import "PGMidi.h"
 #import "VVOSC.h"
-
+#import "LANdiniLANManager.h"
 
 //@class OSCManager, OSCInPort, OSCOutPort;
 
@@ -40,6 +40,9 @@
 	OSCOutPort *outPort;
     //for disconnect/reconnect
     int currPortNumber;
+    //LANdini
+    OSCInPort* inPortFromLANdini;
+    OSCOutPort* outPortToLANdini;
     
     //midi
     PGMidi *midi;
@@ -65,7 +68,8 @@
     //new
     CMMotionManager* motionManager;
     CLLocationManager *locationManager;
-    //CLLocation *currLocation;//to send into patches on initial request for data (if start/stop doesn't send a point? it does)
+    
+    LANdiniLANManager* llm;
 }
 
 

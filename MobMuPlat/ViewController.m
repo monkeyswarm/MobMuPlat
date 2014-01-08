@@ -166,6 +166,9 @@ extern void sigmund_tilde_setup(void);
     [locationManager setDistanceFilter:1.0];
     //[locationManager startUpdatingLocation ];
               
+    //landini
+    llm = [[LANdiniLANManager alloc] init];
+    
     
     //copy bundle stuff if not there, i.e. first time we are running it on a new version #
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -382,11 +385,13 @@ extern void sigmund_tilde_setup(void);
         outPort = [manager createNewOutputToAddress:@"224.0.0.1" atPort:currPortNumber];
         inPort = [manager createNewInputForPort:currPortNumber];
     }
+    outPortToLANdini = [manager createNewOutputToAddress:@"127.0.0.1" atPort:50506];
+    inPortFromLANdini = [manager createNewInputForPort:50505];
 }
 
 -(void)disconnectPorts{
-    if(inPort!=nil)[manager deleteAllInputs];
-    if(outPort!=nil)[manager deleteAllOutputs];
+    /*if(inPort!=nil)*/[manager deleteAllInputs];
+    /*if(outPort!=nil)*/[manager deleteAllOutputs];
 }
 
 //====settingsVC delegate methods
@@ -789,12 +794,21 @@ extern void sigmund_tilde_setup(void);
 //PureData has sent out a message from the patch (from a receive object, we look for messages from "toNetwork","toGUI","toSystem")
 - (void)receiveList:(NSArray *)list fromSource:(NSString *)source{
     if([source isEqualToString:@"toNetwork"]){
+       
         OSCMessage *msg = [OSCMessage createWithAddress:[list objectAtIndex:0]];
         for(id item in [list subarrayWithRange:NSMakeRange(1, [list count]-1)]){
             if([item isKindOfClass:[NSString class]]) [msg addString:item];
             else if([item isKindOfClass:[NSNumber class]])[msg addFloat:[item floatValue]];
         }
-        [outPort sendThisPacket:[OSCPacket createWithContent:msg]];
+        
+        //look for LANdini
+        if([ [list objectAtIndex:0] rangeOfString:@"/send"].location == 0){
+            //NSLog(@"LANDINI!!!!: %@", msg);
+            [outPortToLANdini sendThisPacket:[OSCPacket createWithContent:msg]];
+        }
+        else{
+            [outPort sendThisPacket:[OSCPacket createWithContent:msg]];
+        }
     }
     
     else if([source isEqualToString:@"toGUI"]){
@@ -875,7 +889,12 @@ extern void sigmund_tilde_setup(void);
             NSArray* msgArray=[NSArray arrayWithObjects:@"/motionFrequency", [NSNumber numberWithFloat:self.motionFrequency], nil];
             [PdBase sendList:msgArray toReceiver:@"fromSystem"];
         }*/
-        
+        else if([[list objectAtIndex:0] isEqualToString:@"/enableLANdini"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+            float val = [[list objectAtIndex:1] floatValue];
+            //printf("\nenable location %.2f", val );
+            if(val>0)[llm restartOSC];
+            else [llm stopOSC];
+        }
 
 
     }

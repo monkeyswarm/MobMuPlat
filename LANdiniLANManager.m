@@ -102,7 +102,7 @@
         
         _oscManager = [[OSCManager alloc] init];
         [_oscManager setDelegate:self];
-        [self restartOSC];
+        //[self restartOSC];
         
         [self checkForLAN];
     }
