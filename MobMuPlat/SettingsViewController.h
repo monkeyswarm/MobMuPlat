@@ -40,6 +40,7 @@ typedef enum{
     UIView* filesView, *consoleView, *audioMIDIView;
     UITextView *consoleTextView;
     UISegmentedControl* tickSeg;
+    UISwitch* audioInputSwitch;
     
     int rateValueArray[6];
     int requestedBlockCount;
@@ -57,7 +58,8 @@ typedef enum{
 @protocol SettingsViewControllerDelegate
 - (void)settingsViewControllerDidFinish:(SettingsViewController *)controller;
 - (BOOL)loadScene:(NSDictionary*)sceneDict;
--(BOOL) loadScenePatchOnly:(NSString*)filename;
+- (BOOL)loadScenePatchOnly:(NSString*)filename;
+- (void)setAudioInputEnabled:(BOOL)enabled; //for mic input vs vibration
 @end
 
 @protocol AudioSettingsDelegate //audio+midi stuff stuff

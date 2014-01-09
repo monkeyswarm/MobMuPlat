@@ -776,6 +776,16 @@ extern void sigmund_tilde_setup(void);
     return YES;
 }
 
+
+- (void)setAudioInputEnabled:(BOOL)enabled {
+    if(enabled)
+        [audioController configurePlaybackWithSampleRate:44100 numberChannels:2 inputEnabled:YES mixingEnabled:NO];
+    
+    else
+        [audioController configurePlaybackWithSampleRate:44100 numberChannels:2 inputEnabled:NO mixingEnabled:NO];
+    
+}
+
 //scrollview delegate
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
     return scrollInnerView;
@@ -807,10 +817,15 @@ extern void sigmund_tilde_setup(void);
     
     else if([source isEqualToString:@"toSystem"]){
         //for some reason, there is a conflict with the audio session, and sending a command to vibrate doesn't work...
-        /*if([[list objectAtIndex:0] isEqualToString:@"/vibrate"]){
+        if([[list objectAtIndex:0] isEqualToString:@"/vibrate"]){
             //printf("\nvib?");
-            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate); 
-        }*/
+            if([list count]>1 && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]] && [[list objectAtIndex:1] floatValue]==2){
+                AudioServicesPlaySystemSound(1311); //"/vibrate 2"
+            }
+            else{ //"/vibrate" or "vibrate 1 or non-2
+                AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+            }
+        }
         //camera flash
         if([[list objectAtIndex:0] isEqualToString:@"/flash"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
             float val = [[list objectAtIndex:1] floatValue];

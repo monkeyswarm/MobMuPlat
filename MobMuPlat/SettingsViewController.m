@@ -134,6 +134,7 @@
     UILabel* rateLabel = [[UILabel alloc]init];
     tickValueLabel = [[UILabel alloc]init];
     UILabel* backgroundAudioEnableLabel= [[UILabel alloc]init];
+    UILabel* inputSwitchLabel = [[UILabel alloc]init];
     
     //setup buttons at bottom of main view
     [loadDocButton setTitle:@"Select Document" forState:UIControlStateNormal];
@@ -271,7 +272,18 @@
 	[audioEnableButton addTarget:self action:@selector(audioEnableButtonHit ) forControlEvents:UIControlEventTouchDown];
    	[audioMIDIView addSubview: audioEnableButton];
     
+    //audio input swtich
     
+    inputSwitchLabel.text=@"override audio input\n(allows system vibration)";
+    inputSwitchLabel.backgroundColor=[UIColor clearColor];
+	inputSwitchLabel.textAlignment=UITextAlignmentRight;
+    inputSwitchLabel.numberOfLines=2;
+	inputSwitchLabel.font=[UIFont systemFontOfSize:12];
+	[audioMIDIView addSubview:inputSwitchLabel];
+    
+    audioInputSwitch = [[UISwitch alloc]init];
+	[audioInputSwitch addTarget:self action:@selector(audioInputSwitchHit) forControlEvents:UIControlEventValueChanged];
+   	[audioMIDIView addSubview: audioInputSwitch];
     
     //setup consoleView elements
     consoleTextView.editable=NO;
@@ -342,11 +354,13 @@
         bufferLabel.frame = CGRectMake(5, 145, 290, 25);
         [tickSeg setFrame:CGRectMake(10, 170, 280, 30)];
         
-        tickValueLabel.frame = CGRectMake(10, 205, 280, 30);
-        rateLabel.frame=CGRectMake(5,245,290, 25);
-        rateSeg.frame=CGRectMake(10, 270, 280, 30);
-        audioEnableButton.frame=CGRectMake(190,335,90,40);
-        backgroundAudioEnableLabel.frame = CGRectMake(5, 335, 180, 40);
+        tickValueLabel.frame = CGRectMake(10, 200, 280, 30);
+        rateLabel.frame=CGRectMake(5,240,290, 25);
+        rateSeg.frame=CGRectMake(10, 265, 280, 30);
+        audioEnableButton.frame=CGRectMake(190,310,90,40);
+        backgroundAudioEnableLabel.frame = CGRectMake(5, 310, 180, 40);
+        inputSwitchLabel.frame = CGRectMake(5, 355, 180, 40);
+        audioInputSwitch.frame = CGRectMake(210, 360, audioInputSwitch.frame.size.width, audioInputSwitch.frame.size.height);
         
         //console
         consoleTextView.frame = CGRectMake(5, 5, 290, 280+80);
@@ -432,6 +446,14 @@
     }
 }
 
+-(void)audioInputSwitchHit{
+    //NSLog(@"switch %d", audioInputSwitch.on);
+    if(audioInputSwitch.on){
+        [self.delegate setAudioInputEnabled:NO];//overide to turn mic off, vib on;
+    }
+    else [self.delegate setAudioInputEnabled:YES];
+}
+
 - (void)done:(id)sender {
     [self.delegate settingsViewControllerDidFinish:self];
 }
@@ -494,8 +516,8 @@
     if([consoleStringQueue count]==0)return;//nothing to print
 
     //take all the string in the queue and shove them into one big string
-    NSString* newString = [consoleStringQueue componentsJoinedByString:@""];
-    consoleTextString = [consoleTextString stringByAppendingFormat:@"%@", newString];//append to currently shown string
+    NSString* newString = [consoleStringQueue componentsJoinedByString:@"\n"];
+    consoleTextString = [consoleTextString stringByAppendingFormat:@"\n%@", newString];//append to currently shown string
     int startPoint = [consoleTextString length]-1000; if (startPoint<0)startPoint=0;
     NSRange stringRange = {startPoint, MIN([consoleTextString length], 1000)};//chop off front of string to fit
     consoleTextString = [consoleTextString substringWithRange:stringRange];
