@@ -8,6 +8,16 @@
 
 #import "MeLCD.h"
 
+@interface MeLCD () {
+ 
+    float fR,fG,fB,fA;//FRGBA
+    float bR,bG,bB,bA;//BRGBA
+    CGPoint penPoint;
+    float penWidth;
+}
+
+@end
+
 @implementation MeLCD
 
 - (id)initWithFrame:(CGRect)frame
@@ -16,16 +26,168 @@
     if (self) {
         // Initialization code
         self.width = 5;
-        
-        NSTimer* timer = [NSTimer scheduledTimerWithTimeInterval:1. target:self selector:@selector(drawSquare) userInfo:nil repeats:YES];
+        _cacheContext = CGBitmapContextCreate (nil, (int)frame.size.width, (int)frame.size.height, 8, 0, CGColorSpaceCreateDeviceRGB(), kCGImageAlphaNoneSkipFirst);
+        //NSTimer* timer = [NSTimer scheduledTimerWithTimeInterval:1. target:self selector:@selector(drawSquare) userInfo:nil repeats:YES];
+        penPoint = CGPointMake(0, 0);
+        penWidth = 1;
         
     }
     return self;
 }
 
--(void)drawSquare{
-    [self setNeedsDisplay];
+-(void)setColor:(UIColor *)color{
+    [super setColor:color];
+   
+    CGColorRef cgcolor = [color CGColor];
+    int numComponents = CGColorGetNumberOfComponents(cgcolor);
+    
+    if (numComponents == 4)
+    {
+        const CGFloat *components = CGColorGetComponents(cgcolor);
+        bR  = components[0];
+        bG  = components[1];
+        bB  = components[2];
+        bA  = components[3];
+    }
 }
+
+-(void)setHighlightColor:(UIColor *)highlightColor{
+    [super setBackgroundColor:highlightColor];
+    
+    CGColorRef color = [highlightColor CGColor];
+    int numComponents = CGColorGetNumberOfComponents(color);
+    
+    if (numComponents == 4)
+    {
+        const CGFloat *components = CGColorGetComponents(color);
+        fR = components[0];
+        fG = components[1];
+        fB = components[2];
+        fA = components[3];
+    }
+    
+}
+//
+
+-(void)clear{
+    CGContextClearRect(_cacheContext, self.bounds);
+    [self setNeedsDisplayInRect:self.bounds];
+}
+
+-(void)paintRectX:(float)x Y:(float)y X2:(float)x2 Y2:(float)y2 R:(float)r G:(float)g B:(float)b A:(float)a{
+    CGContextSetRGBFillColor(_cacheContext, r,g,b,a);
+	CGRect newRect = CGRectMake( MIN(x,x2)*self.frame.size.width, MIN(y,y2)*self.frame.size.height, fabsf(x2-x)*self.frame.size.width, fabs(y2-y)*self.frame.size.height);
+    CGContextFillRect(_cacheContext, newRect);
+    [self setNeedsDisplayInRect:newRect];
+}
+
+-(void)paintRectX:(float)x Y:(float)y X2:(float)x2 Y2:(float)y2{
+    [self paintRectX:x Y:y X2:x2 Y2:y2 R:fR G:fG B:fB A:fA];
+}
+
+-(void)frameRectX:(float)x Y:(float)y X2:(float)x2 Y2:(float)y2 R:(float)r G:(float)g B:(float)b A:(float)a{
+    CGContextSetRGBFillColor(_cacheContext, r,g,b,a);
+	CGRect newRect = CGRectMake( MIN(x,x2)*self.frame.size.width, MIN(y,y2)*self.frame.size.height, fabsf(x2-x)*self.frame.size.width, fabs(y2-y)*self.frame.size.height);
+    CGContextStrokeRect(_cacheContext, newRect);
+    [self setNeedsDisplayInRect:newRect];
+}
+
+-(void)frameRectX:(float)x Y:(float)y X2:(float)x2 Y2:(float)y2{
+    [self frameRectX:x Y:y X2:x2 Y2:y2 R:fR G:fG B:fB A:fA];
+}
+
+-(void)frameOvalX:(float)x Y:(float)y X2:(float)x2 Y2:(float)y2 R:(float)r G:(float)g B:(float)b A:(float)a{
+    CGContextSetRGBFillColor(_cacheContext, r,g,b,a);
+	CGRect newRect = CGRectMake( MIN(x,x2)*self.frame.size.width, MIN(y,y2)*self.frame.size.height, fabsf(x2-x)*self.frame.size.width, fabs(y2-y)*self.frame.size.height);
+    CGContextStrokeEllipseInRect(_cacheContext, newRect);
+    [self setNeedsDisplayInRect:newRect];
+}
+
+-(void)frameOvalX:(float)x Y:(float)y X2:(float)x2 Y2:(float)y2{
+    [self frameOvalX:x Y:y X2:x2 Y2:y2 R:fR G:fG B:fB A:fA];
+}
+
+-(void)paintOvalX:(float)x Y:(float)y X2:(float)x2 Y2:(float)y2 R:(float)r G:(float)g B:(float)b A:(float)a{
+    CGContextSetRGBFillColor(_cacheContext, r,g,b,a);
+	CGRect newRect = CGRectMake( MIN(x,x2)*self.frame.size.width, MIN(y,y2)*self.frame.size.height, fabsf(x2-x)*self.frame.size.width, fabs(y2-y)*self.frame.size.height);
+    CGContextFillEllipseInRect(_cacheContext, newRect);
+    [self setNeedsDisplayInRect:newRect];
+}
+
+-(void)paintOvalX:(float)x Y:(float)y X2:(float)x2 Y2:(float)y2{
+    [self paintOvalX:x Y:y X2:x2 Y2:y2 R:fR G:fG B:fB A:fA];
+}
+
+-(void)moveToX:(float)x Y:(float)y {
+    penPoint.x = x*self.frame.size.width;
+    penPoint.y = y*self.frame.size.height;
+    CGContextMoveToPoint(_cacheContext, x,y);
+}
+
+-(void)lineToX:(float)x Y:(float)y{
+    //convert to coords
+    x = x*self.frame.size.width;
+    y = y*self.frame.size.height;
+    
+	CGContextAddLineToPoint(_cacheContext, x, y);
+	CGContextStrokePath(_cacheContext);
+    CGRect newRect = CGRectMake(MIN(penPoint.x, x), MIN(penPoint.y, y), fabs(penPoint.x-x), fabs(penPoint.y-y));
+    [self setNeedsDisplayInRect:newRect];
+}
+
+//receive messages from PureData (via [send toGUI]), routed from ViewController via the address to this object
+-(void)receiveList:(NSArray *)inArray{
+    if([inArray count]==5 && [[inArray objectAtIndex:0] isEqualToString:@"paintrect"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+        [self paintRectX:[[inArray objectAtIndex:1] floatValue] Y:[[inArray objectAtIndex:2] floatValue] X2:[[inArray objectAtIndex:3] floatValue] Y2:[[inArray objectAtIndex:4] floatValue]];
+    }
+    else if([inArray count]==9 && [[inArray objectAtIndex:0] isEqualToString:@"paintrect"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+        [self paintRectX:[[inArray objectAtIndex:1] floatValue] Y:[[inArray objectAtIndex:2] floatValue] X2:[[inArray objectAtIndex:3] floatValue] Y2:[[inArray objectAtIndex:4] floatValue] R:[[inArray objectAtIndex:5] floatValue] G:[[inArray objectAtIndex:6] floatValue] B:[[inArray objectAtIndex:7] floatValue] A:[[inArray objectAtIndex:8] floatValue]];
+    }
+    else if([inArray count]==5 && [[inArray objectAtIndex:0] isEqualToString:@"framerect"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+        [self frameRectX:[[inArray objectAtIndex:1] floatValue] Y:[[inArray objectAtIndex:2] floatValue] X2:[[inArray objectAtIndex:3] floatValue] Y2:[[inArray objectAtIndex:4] floatValue]];
+    }
+    else if([inArray count]==9 && [[inArray objectAtIndex:0] isEqualToString:@"framerect"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+        [self frameRectX:[[inArray objectAtIndex:1] floatValue] Y:[[inArray objectAtIndex:2] floatValue] X2:[[inArray objectAtIndex:3] floatValue] Y2:[[inArray objectAtIndex:4] floatValue] R:[[inArray objectAtIndex:5] floatValue] G:[[inArray objectAtIndex:6] floatValue] B:[[inArray objectAtIndex:7] floatValue] A:[[inArray objectAtIndex:8] floatValue]];
+    }
+    else if([inArray count]==5 && [[inArray objectAtIndex:0] isEqualToString:@"paintoval"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+        [self paintOvalX:[[inArray objectAtIndex:1] floatValue] Y:[[inArray objectAtIndex:2] floatValue] X2:[[inArray objectAtIndex:3] floatValue] Y2:[[inArray objectAtIndex:4] floatValue]];
+    }
+    else if([inArray count]==9 && [[inArray objectAtIndex:0] isEqualToString:@"paintoval"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+        [self paintOvalX:[[inArray objectAtIndex:1] floatValue] Y:[[inArray objectAtIndex:2] floatValue] X2:[[inArray objectAtIndex:3] floatValue] Y2:[[inArray objectAtIndex:4] floatValue] R:[[inArray objectAtIndex:5] floatValue] G:[[inArray objectAtIndex:6] floatValue] B:[[inArray objectAtIndex:7] floatValue] A:[[inArray objectAtIndex:8] floatValue]];
+    }
+    else if([inArray count]==5 && [[inArray objectAtIndex:0] isEqualToString:@"frameoval"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+        [self frameOvalX:[[inArray objectAtIndex:1] floatValue] Y:[[inArray objectAtIndex:2] floatValue] X2:[[inArray objectAtIndex:3] floatValue] Y2:[[inArray objectAtIndex:4] floatValue]];
+    }
+    else if([inArray count]==9 && [[inArray objectAtIndex:0] isEqualToString:@"frameoval"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+        [self frameOvalX:[[inArray objectAtIndex:1] floatValue] Y:[[inArray objectAtIndex:2] floatValue] X2:[[inArray objectAtIndex:3] floatValue] Y2:[[inArray objectAtIndex:4] floatValue] R:[[inArray objectAtIndex:5] floatValue] G:[[inArray objectAtIndex:6] floatValue] B:[[inArray objectAtIndex:7] floatValue] A:[[inArray objectAtIndex:8] floatValue]];
+    }
+    
+    else if ([inArray count]==1 && [[inArray objectAtIndex:0] isEqualToString:@"clear"]){
+        [self clear];
+    }
+}
+
+-(void)setPenWidth:(float)w{
+    penWidth = w;
+    CGContextSetLineWidth(_cacheContext, w);
+}
+
+//
+
+-(void)drawSquare{
+    
+    CGContextSetRGBStrokeColor(_cacheContext, 1.0, 1.0, 1.0, 0.5);
+	// And drawing with a blue fill color
+	CGContextSetRGBFillColor(_cacheContext, 0.0, 0.0, 1.0, 1.0);
+	// Draw them with a 2.0 stroke width so they are a bit more visible.
+	CGContextSetLineWidth(_cacheContext, 2.0);
+	CGRect newRect = CGRectMake(arc4random() % 200, arc4random() % 200, 60.0, 60.0);
+    CGContextStrokeRect(_cacheContext, newRect);
+   
+    //[self setNeedsDisplay];
+    [self setNeedsDisplayInRect:newRect];
+}
+
 
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
@@ -35,9 +197,13 @@
     // Drawing code
     CGContextRef context = UIGraphicsGetCurrentContext();
     
+    CGImageRef cacheImage = CGBitmapContextCreateImage(_cacheContext);
+    CGContextDrawImage(context, self.bounds, cacheImage);
+    CGImageRelease(cacheImage);
+    
     NSLog(@"===draw %p", context);
     
-    // Drawing with a white stroke color
+  /*  // Drawing with a white stroke color
 	CGContextSetRGBStrokeColor(context, 1.0, 1.0, 1.0, 1.0);
 	// And drawing with a blue fill color
 	CGContextSetRGBFillColor(context, 0.0, 0.0, 1.0, 1.0);
@@ -45,7 +211,7 @@
 	CGContextSetLineWidth(context, 2.0);
 	
     CGContextStrokeRect(context, CGRectMake(arc4random() % 200, arc4random() % 200, 60.0, 60.0));
-	
+	*/
     /*
     // Add Rect to the current path, then stroke it
 	CGContextAddRect(context, CGRectMake(30.0, 30.0, 60.0, 60.0));

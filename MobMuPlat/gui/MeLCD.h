@@ -12,5 +12,6 @@
 @interface MeLCD : MeControl
 
 @property float width;
+@property CGContextRef cacheContext;
 
 @end
