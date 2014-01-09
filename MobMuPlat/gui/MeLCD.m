@@ -52,7 +52,7 @@
 }
 
 -(void)setHighlightColor:(UIColor *)highlightColor{
-    [super setBackgroundColor:highlightColor];
+    [super setHighlightColor:highlightColor];
     
     CGColorRef color = [highlightColor CGColor];
     int numComponents = CGColorGetNumberOfComponents(color);
@@ -121,14 +121,14 @@
 -(void)moveToX:(float)x Y:(float)y {
     penPoint.x = x*self.frame.size.width;
     penPoint.y = y*self.frame.size.height;
-    CGContextMoveToPoint(_cacheContext, x,y);
+    
 }
 
 -(void)lineToX:(float)x Y:(float)y{
     //convert to coords
     x = x*self.frame.size.width;
     y = y*self.frame.size.height;
-    
+    CGContextMoveToPoint(_cacheContext, penPoint.x,penPoint.y);
 	CGContextAddLineToPoint(_cacheContext, x, y);
 	CGContextStrokePath(_cacheContext);
     CGRect newRect = CGRectMake(MIN(penPoint.x, x), MIN(penPoint.y, y), fabs(penPoint.x-x), fabs(penPoint.y-y));
@@ -161,7 +161,15 @@
     else if([inArray count]==9 && [[inArray objectAtIndex:0] isEqualToString:@"frameoval"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
         [self frameOvalX:[[inArray objectAtIndex:1] floatValue] Y:[[inArray objectAtIndex:2] floatValue] X2:[[inArray objectAtIndex:3] floatValue] Y2:[[inArray objectAtIndex:4] floatValue] R:[[inArray objectAtIndex:5] floatValue] G:[[inArray objectAtIndex:6] floatValue] B:[[inArray objectAtIndex:7] floatValue] A:[[inArray objectAtIndex:8] floatValue]];
     }
-    
+    else if([inArray count]==3 && [[inArray objectAtIndex:0] isEqualToString:@"lineto"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+        [self lineToX:[[inArray objectAtIndex:1] floatValue] Y:[[inArray objectAtIndex:2] floatValue]  ];
+    }
+    else if([inArray count]==3 && [[inArray objectAtIndex:0] isEqualToString:@"moveto"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+        [self moveToX:[[inArray objectAtIndex:1] floatValue] Y:[[inArray objectAtIndex:2] floatValue]  ];
+    }
+    else if([inArray count]==2 && [[inArray objectAtIndex:0] isEqualToString:@"penwidth"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+        [self setPenWidth: [[inArray objectAtIndex:1] floatValue]  ];
+    }
     else if ([inArray count]==1 && [[inArray objectAtIndex:0] isEqualToString:@"clear"]){
         [self clear];
     }
