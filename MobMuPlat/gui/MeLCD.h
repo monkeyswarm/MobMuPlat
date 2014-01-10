@@ -11,7 +11,8 @@
 
 @interface MeLCD : MeControl
 
-@property float width;
-@property CGContextRef cacheContext;
+
+@property (nonatomic) int borderThickness;
+
 
 @end

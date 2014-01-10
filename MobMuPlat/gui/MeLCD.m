@@ -10,8 +10,10 @@
 
 @interface MeLCD () {
  
+    
+    CGContextRef _cacheContext;
     float fR,fG,fB,fA;//FRGBA
-    float bR,bG,bB,bA;//BRGBA
+    //float bR,bG,bB,bA;//BRGBA
     CGPoint penPoint;
     float penWidth;
 }
@@ -25,10 +27,8 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        self.width = 5;
         _cacheContext = CGBitmapContextCreate (nil, (int)frame.size.width, (int)frame.size.height, 8, 0, CGColorSpaceCreateDeviceRGB(),  kCGImageAlphaPremultipliedLast  );
-        //[self clear];HERE how to make cachecontext alpha background
-        //NSTimer* timer = [NSTimer scheduledTimerWithTimeInterval:1. target:self selector:@selector(drawSquare) userInfo:nil repeats:YES];
+        CGContextSetRGBFillColor(_cacheContext, 1., 0., 1., 1.);
         penPoint = CGPointMake(0, 0);
         penWidth = 1;
         
@@ -36,10 +36,12 @@
     return self;
 }
 
+
 -(void)setColor:(UIColor *)color{
     [super setColor:color];
-   
-    CGColorRef cgcolor = [color CGColor];
+    self.backgroundColor = color;
+    
+    /*CGColorRef cgcolor = [color CGColor];
     int numComponents = CGColorGetNumberOfComponents(cgcolor);
     
     if (numComponents == 4)
@@ -49,7 +51,7 @@
         bG  = components[1];
         bB  = components[2];
         bA  = components[3];
-    }
+    }*/
 }
 
 -(void)setHighlightColor:(UIColor *)highlightColor{
@@ -158,6 +160,55 @@
     CGContextSetLineWidth(_cacheContext, w);
 }
 
+
+-(void)framePolyRGBA:(NSArray*)pointArray R:(float)r G:(float)g B:(float)b A:(float)a {
+    //points are normalized, NSNumber floats
+    if([pointArray count]<4)return;
+    
+    CGContextSetRGBStrokeColor(_cacheContext, r,g,b,a);
+    CGContextMoveToPoint(_cacheContext, [[pointArray objectAtIndex:0] floatValue]*self.frame.size.width, [[pointArray objectAtIndex:1] floatValue]*self.frame.size.height );
+	
+    for(int i = 2; i < [pointArray count]; i+=2)
+	{
+		CGContextAddLineToPoint(_cacheContext, [[pointArray objectAtIndex:i] floatValue]*self.frame.size.width, [[pointArray objectAtIndex:i+1] floatValue]*self.frame.size.height);
+	}
+	
+	CGContextClosePath(_cacheContext);
+    
+    CGContextDrawPath(_cacheContext, kCGPathStroke);
+    //todo bounding redraw rect
+    [self setNeedsDisplay];
+}
+
+-(void)framePoly:(NSArray*)pointArray{
+    [self framePolyRGBA:pointArray R:fR G:fG B:fB A:fA];
+}
+
+-(void)paintPolyRGBA:(NSArray*)pointArray R:(float)r G:(float)g B:(float)b A:(float)a {
+    //points are normalized, NSNumber floats
+    if([pointArray count]<4)return;
+    
+    CGContextSetRGBFillColor(_cacheContext, r,g,b,a);
+    CGContextMoveToPoint(_cacheContext, [[pointArray objectAtIndex:0] floatValue]*self.frame.size.width, [[pointArray objectAtIndex:1] floatValue]*self.frame.size.height );
+	
+    for(int i = 2; i < [pointArray count]; i+=2)
+	{
+		CGContextAddLineToPoint(_cacheContext, [[pointArray objectAtIndex:i] floatValue]*self.frame.size.width, [[pointArray objectAtIndex:i+1] floatValue]*self.frame.size.height);
+	}
+	
+	CGContextClosePath(_cacheContext);
+    
+    CGContextDrawPath(_cacheContext, kCGPathFill);
+    //todo bounding redraw rect
+    [self setNeedsDisplay];
+}
+
+-(void)paintPoly:(NSArray*)pointArray{
+    [self paintPolyRGBA:pointArray R:fR G:fG B:fB A:fA];
+}
+
+
+
 //touch sent out
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
@@ -222,6 +273,28 @@
     }
     else if([inArray count]==9 && [[inArray objectAtIndex:0] isEqualToString:@"frameoval"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
         [self frameOvalX:[[inArray objectAtIndex:1] floatValue] Y:[[inArray objectAtIndex:2] floatValue] X2:[[inArray objectAtIndex:3] floatValue] Y2:[[inArray objectAtIndex:4] floatValue] R:[[inArray objectAtIndex:5] floatValue] G:[[inArray objectAtIndex:6] floatValue] B:[[inArray objectAtIndex:7] floatValue] A:[[inArray objectAtIndex:8] floatValue]];
+    }
+    else if([inArray count]%2==1 && [[inArray objectAtIndex:0] isEqualToString:@"framepoly"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+        NSArray* pointArray = [inArray subarrayWithRange:NSMakeRange(1, [inArray count]-1) ];//strip off "framepoly"
+        
+        [self framePoly:pointArray];
+    }
+    else if([inArray count]>0 && [inArray count]%2==1 && [[inArray objectAtIndex:0] isEqualToString:@"framepolyRGBA"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+        NSArray* pointArray = [inArray subarrayWithRange:NSMakeRange(1, [inArray count]-5) ];//strip off "framepolyRGBA"
+        NSInteger RGBAStartIndex = [inArray count]-4;
+        
+        [self framePolyRGBA:pointArray R:[[inArray objectAtIndex:RGBAStartIndex] floatValue] G:[[inArray objectAtIndex:RGBAStartIndex+1] floatValue] B:[[inArray objectAtIndex:RGBAStartIndex+2] floatValue] A:[[inArray objectAtIndex:RGBAStartIndex+3] floatValue] ];
+    }
+    else if([inArray count]%2==1 && [[inArray objectAtIndex:0] isEqualToString:@"paintpoly"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+        NSArray* pointArray = [inArray subarrayWithRange:NSMakeRange(1, [inArray count]-1) ];//strip off "paintpoly"
+        
+        [self paintPoly:pointArray];
+    }
+    else if([inArray count]>0 && [inArray count]%2==1 && [[inArray objectAtIndex:0] isEqualToString:@"paintpolyRGBA"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+        NSArray* pointArray = [inArray subarrayWithRange:NSMakeRange(1, [inArray count]-5) ];//strip off "paintpolyRGBA"
+        NSInteger RGBAStartIndex = [inArray count]-4;
+        
+        [self paintPolyRGBA:pointArray R:[[inArray objectAtIndex:RGBAStartIndex] floatValue] G:[[inArray objectAtIndex:RGBAStartIndex+1] floatValue] B:[[inArray objectAtIndex:RGBAStartIndex+2] floatValue] A:[[inArray objectAtIndex:RGBAStartIndex+3] floatValue] ];
     }
     else if([inArray count]==3 && [[inArray objectAtIndex:0] isEqualToString:@"lineto"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
         [self lineToX:[[inArray objectAtIndex:1] floatValue] Y:[[inArray objectAtIndex:2] floatValue]  ];
