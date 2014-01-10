@@ -26,7 +26,8 @@
     if (self) {
         // Initialization code
         self.width = 5;
-        _cacheContext = CGBitmapContextCreate (nil, (int)frame.size.width, (int)frame.size.height, 8, 0, CGColorSpaceCreateDeviceRGB(), kCGImageAlphaNoneSkipFirst);
+        _cacheContext = CGBitmapContextCreate (nil, (int)frame.size.width, (int)frame.size.height, 8, 0, CGColorSpaceCreateDeviceRGB(),  kCGImageAlphaPremultipliedLast  );
+        //[self clear];HERE how to make cachecontext alpha background
         //NSTimer* timer = [NSTimer scheduledTimerWithTimeInterval:1. target:self selector:@selector(drawSquare) userInfo:nil repeats:YES];
         penPoint = CGPointMake(0, 0);
         penWidth = 1;
@@ -86,9 +87,11 @@
 }
 
 -(void)frameRectX:(float)x Y:(float)y X2:(float)x2 Y2:(float)y2 R:(float)r G:(float)g B:(float)b A:(float)a{
-    CGContextSetRGBFillColor(_cacheContext, r,g,b,a);
+    CGContextSetRGBStrokeColor(_cacheContext, r,g,b,a);
 	CGRect newRect = CGRectMake( MIN(x,x2)*self.frame.size.width, MIN(y,y2)*self.frame.size.height, fabsf(x2-x)*self.frame.size.width, fabs(y2-y)*self.frame.size.height);
     CGContextStrokeRect(_cacheContext, newRect);
+    
+    newRect = CGRectMake( newRect.origin.x-penWidth, newRect.origin.y-penWidth, newRect.size.width+(2*penWidth), newRect.size.height+(2*penWidth));
     [self setNeedsDisplayInRect:newRect];
 }
 
@@ -97,9 +100,11 @@
 }
 
 -(void)frameOvalX:(float)x Y:(float)y X2:(float)x2 Y2:(float)y2 R:(float)r G:(float)g B:(float)b A:(float)a{
-    CGContextSetRGBFillColor(_cacheContext, r,g,b,a);
+    CGContextSetRGBStrokeColor(_cacheContext, r,g,b,a);
 	CGRect newRect = CGRectMake( MIN(x,x2)*self.frame.size.width, MIN(y,y2)*self.frame.size.height, fabsf(x2-x)*self.frame.size.width, fabs(y2-y)*self.frame.size.height);
     CGContextStrokeEllipseInRect(_cacheContext, newRect);
+    
+    newRect = CGRectMake( newRect.origin.x-penWidth, newRect.origin.y-penWidth, newRect.size.width+(2*penWidth), newRect.size.height+(2*penWidth));
     [self setNeedsDisplayInRect:newRect];
 }
 
@@ -124,15 +129,72 @@
     
 }
 
--(void)lineToX:(float)x Y:(float)y{
+-(void)lineToX:(float)x Y:(float)y R:(float)r G:(float)g B:(float)b A:(float)a{
     //convert to coords
     x = x*self.frame.size.width;
     y = y*self.frame.size.height;
+    
+    NSLog(@"pen x %.2f y %.2f TO x %.2f y %.2f ", penPoint.x, penPoint.y, x, y);
+    CGContextSetRGBStrokeColor(_cacheContext, r,g,b,a);
     CGContextMoveToPoint(_cacheContext, penPoint.x,penPoint.y);
 	CGContextAddLineToPoint(_cacheContext, x, y);
 	CGContextStrokePath(_cacheContext);
-    CGRect newRect = CGRectMake(MIN(penPoint.x, x), MIN(penPoint.y, y), fabs(penPoint.x-x), fabs(penPoint.y-y));
+    CGRect newRect = CGRectMake(MIN(penPoint.x, x)-penWidth, MIN(penPoint.y, y)-penWidth, fabs(penPoint.x-x)+(2*penWidth), fabs(penPoint.y-y)+(2*penWidth));
     [self setNeedsDisplayInRect:newRect];
+    //[self setNeedsDisplay];
+    
+    CGContextMoveToPoint(_cacheContext, x,y);
+    penPoint.x = x;
+    penPoint.y = y;
+    
+}
+
+-(void)lineToX:(float)x Y:(float)y{
+    [self lineToX:x Y:y R:fR G:fG B:fB A:fA];
+}
+
+-(void)setPenWidth:(float)w{
+    penWidth = w;
+    CGContextSetLineWidth(_cacheContext, w);
+}
+
+//touch sent out
+
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+	CGPoint point = [[touches anyObject] locationInView:self];
+    float valX = point.x/self.frame.size.width;
+	float valY = point.y/self.frame.size.height;
+    if(valX>1)valX=1; if(valX<0)valX=0;
+    if(valY>1)valY=1; if(valY<0)valY=0;
+    
+    [self sendValueState:1.f X:valX Y:valY];
+}
+
+-(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
+	CGPoint point = [[touches anyObject] locationInView:self];
+    float valX = point.x/self.frame.size.width;
+	float valY = point.y/self.frame.size.height;
+    if(valX>1)valX=1; if(valX<0)valX=0;
+    if(valY>1)valY=1; if(valY<0)valY=0;
+    
+    [self sendValueState:2.f X:valX Y:valY];
+}
+
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
+    CGPoint point = [[touches anyObject] locationInView:self];
+    float valX = point.x/self.frame.size.width;
+	float valY = point.y/self.frame.size.height;
+    if(valX>1)valX=1; if(valX<0)valX=0;
+    if(valY>1)valY=1; if(valY<0)valY=0;
+    
+    [self sendValueState:0.f X:valX Y:valY];
+}
+-(void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event{
+	[self touchesEnded:touches withEvent:event];
+}
+
+-(void)sendValueState:(float)state X:(float)x Y:(float)y{
+    [self.controlDelegate sendGUIMessageArray:[NSArray arrayWithObjects:self.address, [NSNumber numberWithFloat:state], [NSNumber numberWithFloat:x], [NSNumber numberWithFloat:y], nil]];
 }
 
 //receive messages from PureData (via [send toGUI]), routed from ViewController via the address to this object
@@ -164,6 +226,9 @@
     else if([inArray count]==3 && [[inArray objectAtIndex:0] isEqualToString:@"lineto"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
         [self lineToX:[[inArray objectAtIndex:1] floatValue] Y:[[inArray objectAtIndex:2] floatValue]  ];
     }
+    else if([inArray count]==7 && [[inArray objectAtIndex:0] isEqualToString:@"lineto"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+        [self lineToX:[[inArray objectAtIndex:1] floatValue] Y:[[inArray objectAtIndex:2] floatValue] R:[[inArray objectAtIndex:3] floatValue] G:[[inArray objectAtIndex:4] floatValue] B:[[inArray objectAtIndex:5] floatValue] A:[[inArray objectAtIndex:6] floatValue] ];
+    }
     else if([inArray count]==3 && [[inArray objectAtIndex:0] isEqualToString:@"moveto"] && [[inArray objectAtIndex:1] isKindOfClass:[NSNumber class]]){
         [self moveToX:[[inArray objectAtIndex:1] floatValue] Y:[[inArray objectAtIndex:2] floatValue]  ];
     }
@@ -175,10 +240,7 @@
     }
 }
 
--(void)setPenWidth:(float)w{
-    penWidth = w;
-    CGContextSetLineWidth(_cacheContext, w);
-}
+
 
 //
 
@@ -282,6 +344,12 @@
 		CGContextStrokePath(context);
 	}
     */
+    
+    /*CGContextSetRGBFillColor (context, 1, 0, 0, 1);// 3
+    CGContextFillRect (context, CGRectMake (0, 0, 200, 100 ));// 4
+    CGContextSetRGBFillColor (context, 0, 0, 1, .5);// 5
+    CGContextFillRect (context, CGRectMake (0, 0, 100, 200));
+     */
 }
 
 
