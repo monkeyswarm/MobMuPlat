@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		90BE0D621880A9EF009446AD /* MMPTutorial6-2DGraphics-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = 90BE0D5E1880A9EF009446AD /* MMPTutorial6-2DGraphics-Pad.mmp */; };
+		90BE0D631880A9EF009446AD /* MMPTutorial6-2DGraphics-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = 90BE0D5F1880A9EF009446AD /* MMPTutorial6-2DGraphics-ip5.mmp */; };
+		90BE0D641880A9EF009446AD /* MMPTutorial6-2DGraphics.mmp in Resources */ = {isa = PBXBuildFile; fileRef = 90BE0D601880A9EF009446AD /* MMPTutorial6-2DGraphics.mmp */; };
+		90BE0D651880A9EF009446AD /* MMPTutorial6-2DGraphics.pd in Resources */ = {isa = PBXBuildFile; fileRef = 90BE0D611880A9EF009446AD /* MMPTutorial6-2DGraphics.pd */; };
 		90DFFB2B187DF85B00DD2149 /* MeLCD.m in Sources */ = {isa = PBXBuildFile; fileRef = 90DFFB2A187DF85B00DD2149 /* MeLCD.m */; };
 		DC03516A16AA67E600708C0D /* AlertHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DC03516916AA67E600708C0D /* AlertHelper.m */; };
 		DC035A1D16D96FC600F4FA62 /* SplashViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DC035A1C16D96FC600F4FA62 /* SplashViewController.m */; };
@@ -229,6 +233,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		90BE0D5E1880A9EF009446AD /* MMPTutorial6-2DGraphics-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial6-2DGraphics-Pad.mmp"; path = "patches/MMPTutorial6-2DGraphics-Pad.mmp"; sourceTree = "<group>"; };
+		90BE0D5F1880A9EF009446AD /* MMPTutorial6-2DGraphics-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial6-2DGraphics-ip5.mmp"; path = "patches/MMPTutorial6-2DGraphics-ip5.mmp"; sourceTree = "<group>"; };
+		90BE0D601880A9EF009446AD /* MMPTutorial6-2DGraphics.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial6-2DGraphics.mmp"; path = "patches/MMPTutorial6-2DGraphics.mmp"; sourceTree = "<group>"; };
+		90BE0D611880A9EF009446AD /* MMPTutorial6-2DGraphics.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial6-2DGraphics.pd"; path = "patches/MMPTutorial6-2DGraphics.pd"; sourceTree = "<group>"; };
 		90DFFB29187DF85B00DD2149 /* MeLCD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeLCD.h; path = gui/MeLCD.h; sourceTree = "<group>"; };
 		90DFFB2A187DF85B00DD2149 /* MeLCD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeLCD.m; path = gui/MeLCD.m; sourceTree = "<group>"; };
 		DC03516816AA67E600708C0D /* AlertHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertHelper.h; sourceTree = "<group>"; };
@@ -852,6 +860,10 @@
 				DCD8DF3317330C4700767321 /* cats2.jpg */,
 				DCD8DF3417330C4700767321 /* cats3.jpg */,
 				DCD8DF3517330C4700767321 /* clap.wav */,
+				90BE0D5E1880A9EF009446AD /* MMPTutorial6-2DGraphics-Pad.mmp */,
+				90BE0D5F1880A9EF009446AD /* MMPTutorial6-2DGraphics-ip5.mmp */,
+				90BE0D601880A9EF009446AD /* MMPTutorial6-2DGraphics.mmp */,
+				90BE0D611880A9EF009446AD /* MMPTutorial6-2DGraphics.pd */,
 				DCD8DF3617330C4700767321 /* MMPExamples-Motion-ip5.mmp */,
 				DCD8DF3717330C4700767321 /* MMPExamples-Motion-Pad.mmp */,
 				DCD8DF3817330C4700767321 /* MMPExamples-Motion.mmp */,
@@ -1092,10 +1104,12 @@
 				DCD8DF5F17330C4700767321 /* cats1.jpg in Resources */,
 				DCD8DF6017330C4700767321 /* cats2.jpg in Resources */,
 				DCD8DF6117330C4700767321 /* cats3.jpg in Resources */,
+				90BE0D651880A9EF009446AD /* MMPTutorial6-2DGraphics.pd in Resources */,
 				DCD8DF6217330C4700767321 /* clap.wav in Resources */,
 				DCD8DF6317330C4700767321 /* MMPExamples-Motion-ip5.mmp in Resources */,
 				DCD8DF6417330C4700767321 /* MMPExamples-Motion-Pad.mmp in Resources */,
 				DCD8DF6517330C4700767321 /* MMPExamples-Motion.mmp in Resources */,
+				90BE0D621880A9EF009446AD /* MMPTutorial6-2DGraphics-Pad.mmp in Resources */,
 				DC6A9FF51878F88900A7585A /* LICENSE in Resources */,
 				DCD8DF6617330C4700767321 /* MMPExamples-Motion.pd in Resources */,
 				DCD8DF6717330C4700767321 /* MMPExamples-Sequencer-ip5.mmp in Resources */,
@@ -1117,6 +1131,7 @@
 				DC6A9FF61878F88900A7585A /* README.markdown in Resources */,
 				DCD8DF7717330C4700767321 /* MMPTutorial2-Input-ip5.mmp in Resources */,
 				DCD8DF7817330C4700767321 /* MMPTutorial2-Input-Pad.mmp in Resources */,
+				90BE0D631880A9EF009446AD /* MMPTutorial6-2DGraphics-ip5.mmp in Resources */,
 				DCD8DF7917330C4700767321 /* MMPTutorial2-Input.mmp in Resources */,
 				DCD8DF7A17330C4700767321 /* MMPTutorial2-Input.pd in Resources */,
 				DCD8DF7B17330C4700767321 /* MMPTutorial3-Hardware-ip5.mmp in Resources */,
@@ -1126,6 +1141,7 @@
 				DCD8DF7F17330C4700767321 /* MMPTutorial4-Networking-ip5.mmp in Resources */,
 				DCD8DF8017330C4700767321 /* MMPTutorial4-Networking-Pad.mmp in Resources */,
 				DCD8DF8117330C4700767321 /* MMPTutorial4-Networking.mmp in Resources */,
+				90BE0D641880A9EF009446AD /* MMPTutorial6-2DGraphics.mmp in Resources */,
 				DCD8DF8217330C4700767321 /* MMPTutorial4-Networking.pd in Resources */,
 				DCD8DF8317330C4700767321 /* MMPTutorial5-Files-ip5.mmp in Resources */,
 				DCD8DF8417330C4700767321 /* MMPTutorial5-Files-Pad.mmp in Resources */,
