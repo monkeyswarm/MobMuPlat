@@ -34,6 +34,7 @@
 #import "MeGrid.h"
 #import "MePanel.h"
 #import "MeMultiSlider.h"
+#import "MeLCD.h"
 
 
 extern void expr_setup(void);
@@ -185,16 +186,16 @@ extern void sigmund_tilde_setup(void);
     if(!alreadyStartedOnVersion || [alreadyStartedOnVersion boolValue] == NO) {
          NSArray* defaultPatches;
         if(hardwareCanvasType==canvasTypeIPhone3p5Inch ){
-            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine.mmp", @"MMPTutorial1-GUI.mmp", @"MMPTutorial2-Input.mmp", @"MMPTutorial3-Hardware.mmp", @"MMPTutorial4-Networking.mmp",@"MMPTutorial5-Files.mmp",@"MMPExamples-Vocoder.mmp", @"MMPExamples-Motion.mmp", @"MMPExamples-Sequencer.mmp", @"MMPExamples-GPS.mmp",nil];
+            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine.mmp", @"MMPTutorial1-GUI.mmp", @"MMPTutorial2-Input.mmp", @"MMPTutorial3-Hardware.mmp", @"MMPTutorial4-Networking.mmp",@"MMPTutorial5-Files.mmp",@"MMPExamples-Vocoder.mmp", @"MMPExamples-Motion.mmp", @"MMPExamples-Sequencer.mmp", @"MMPExamples-GPS.mmp", @"MMPTutorial6-2DGraphics.mmp", nil];
         }
         else if (hardwareCanvasType==canvasTypeIPhone4Inch){
-            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine-ip5.mmp", @"MMPTutorial1-GUI-ip5.mmp", @"MMPTutorial2-Input-ip5.mmp", @"MMPTutorial3-Hardware-ip5.mmp", @"MMPTutorial4-Networking-ip5.mmp",@"MMPTutorial5-Files-ip5.mmp", @"MMPExamples-Vocoder-ip5.mmp", @"MMPExamples-Motion-ip5.mmp", @"MMPExamples-Sequencer-ip5.mmp",@"MMPExamples-GPS-ip5.mmp", nil];
+            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine-ip5.mmp", @"MMPTutorial1-GUI-ip5.mmp", @"MMPTutorial2-Input-ip5.mmp", @"MMPTutorial3-Hardware-ip5.mmp", @"MMPTutorial4-Networking-ip5.mmp",@"MMPTutorial5-Files-ip5.mmp", @"MMPExamples-Vocoder-ip5.mmp", @"MMPExamples-Motion-ip5.mmp", @"MMPExamples-Sequencer-ip5.mmp",@"MMPExamples-GPS-ip5.mmp", @"MMPTutorial6-2DGraphics-ip5.mmp", nil];
         }
         else{//pad
-            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine-Pad.mmp", @"MMPTutorial1-GUI-Pad.mmp", @"MMPTutorial2-Input-Pad.mmp", @"MMPTutorial3-Hardware-Pad.mmp", @"MMPTutorial4-Networking-Pad.mmp",@"MMPTutorial5-Files-Pad.mmp", @"MMPExamples-Vocoder-Pad.mmp", @"MMPExamples-Motion-Pad.mmp", @"MMPExamples-Sequencer-Pad.mmp",@"MMPExamples-GPS-Pad.mmp", nil];
+            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine-Pad.mmp", @"MMPTutorial1-GUI-Pad.mmp", @"MMPTutorial2-Input-Pad.mmp", @"MMPTutorial3-Hardware-Pad.mmp", @"MMPTutorial4-Networking-Pad.mmp",@"MMPTutorial5-Files-Pad.mmp", @"MMPExamples-Vocoder-Pad.mmp", @"MMPExamples-Motion-Pad.mmp", @"MMPExamples-Sequencer-Pad.mmp",@"MMPExamples-GPS-Pad.mmp", @"MMPTutorial6-2DGraphics-Pad.mmp", nil];
         }
         
-        NSArray* commonFiles = [NSArray arrayWithObjects:@"MMPTutorial0-HelloSine.pd",@"MMPTutorial1-GUI.pd", @"MMPTutorial2-Input.pd", @"MMPTutorial3-Hardware.pd", @"MMPTutorial4-Networking.pd",@"MMPTutorial5-Files.pd",@"cats1.jpg", @"cats2.jpg",@"cats3.jpg",@"clap.wav",@"Welcome.pd",  @"MMPExamples-Vocoder.pd", @"vocod_channel.pd", @"MMPExamples-Motion.pd", @"MMPExamples-Sequencer.pd", @"MMPExamples-GPS.pd", nil];
+        NSArray* commonFiles = [NSArray arrayWithObjects:@"MMPTutorial0-HelloSine.pd",@"MMPTutorial1-GUI.pd", @"MMPTutorial2-Input.pd", @"MMPTutorial3-Hardware.pd", @"MMPTutorial4-Networking.pd",@"MMPTutorial5-Files.pd",@"cats1.jpg", @"cats2.jpg",@"cats3.jpg",@"clap.wav",@"Welcome.pd",  @"MMPExamples-Vocoder.pd", @"vocod_channel.pd", @"MMPExamples-Motion.pd", @"MMPExamples-Sequencer.pd", @"MMPExamples-GPS.pd", @"MMPTutorial6-2DGraphics.pd", nil];
         
         defaultPatches = [defaultPatches arrayByAddingObjectsFromArray:commonFiles];
         
@@ -706,6 +707,10 @@ extern void sigmund_tilde_setup(void);
         else if([newObjectClass isEqualToString:@"MMPMultiSlider"]){
             currObject = [[MeMultiSlider alloc] initWithFrame:frame];
             if([currDict objectForKey:@"range"])  [(MeMultiSlider*)currObject setRange:[[currDict objectForKey:@"range"] intValue]];
+        }
+        else if([newObjectClass isEqualToString:@"MMPLCD"]){
+            currObject = [[MeLCD alloc] initWithFrame:frame];
+            //if([currDict objectForKey:@"range"])  [(MeMultiSlider*)currObject setRange:[[currDict objectForKey:@"range"] intValue]];
         }
         //end subclass-specific list
 
