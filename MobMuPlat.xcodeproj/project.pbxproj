@@ -99,6 +99,8 @@
 		DC0FC93C172D84EA00E895C3 /* x_net.c in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC8F9172D84EA00E895C3 /* x_net.c */; };
 		DC0FC93D172D84EA00E895C3 /* x_qlist.c in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC8FA172D84EA00E895C3 /* x_qlist.c */; };
 		DC0FC93E172D84EA00E895C3 /* x_time.c in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC8FB172D84EA00E895C3 /* x_time.c */; };
+		DC178CE51880FD9F00DD4BF8 /* LANdiniLANManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DC178CE21880FD9F00DD4BF8 /* LANdiniLANManager.m */; };
+		DC178CE61880FD9F00DD4BF8 /* LANdiniUser.m in Sources */ = {isa = PBXBuildFile; fileRef = DC178CE41880FD9F00DD4BF8 /* LANdiniUser.m */; };
 		DC233DAD1655EDF500AC01C5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC233DAC1655EDF500AC01C5 /* UIKit.framework */; };
 		DC233DAF1655EDF500AC01C5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC233DAE1655EDF500AC01C5 /* Foundation.framework */; };
 		DC233DB11655EDF500AC01C5 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC233DB01655EDF500AC01C5 /* CoreGraphics.framework */; };
@@ -344,6 +346,10 @@
 		DC0FC8F9172D84EA00E895C3 /* x_net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = x_net.c; sourceTree = "<group>"; };
 		DC0FC8FA172D84EA00E895C3 /* x_qlist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = x_qlist.c; sourceTree = "<group>"; };
 		DC0FC8FB172D84EA00E895C3 /* x_time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = x_time.c; sourceTree = "<group>"; };
+		DC178CE11880FD9F00DD4BF8 /* LANdiniLANManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LANdiniLANManager.h; path = LANdini/LANdiniLANManager.h; sourceTree = "<group>"; };
+		DC178CE21880FD9F00DD4BF8 /* LANdiniLANManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LANdiniLANManager.m; path = LANdini/LANdiniLANManager.m; sourceTree = "<group>"; };
+		DC178CE31880FD9F00DD4BF8 /* LANdiniUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LANdiniUser.h; path = LANdini/LANdiniUser.h; sourceTree = "<group>"; };
+		DC178CE41880FD9F00DD4BF8 /* LANdiniUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LANdiniUser.m; path = LANdini/LANdiniUser.m; sourceTree = "<group>"; };
 		DC233DA81655EDF500AC01C5 /* MobMuPlat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MobMuPlat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC233DAC1655EDF500AC01C5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		DC233DAE1655EDF500AC01C5 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -554,6 +560,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		90DFFB22187DC41700DD2149 /* LANdini */ = {
+			isa = PBXGroup;
+			children = (
+				DC178CE11880FD9F00DD4BF8 /* LANdiniLANManager.h */,
+				DC178CE21880FD9F00DD4BF8 /* LANdiniLANManager.m */,
+				DC178CE31880FD9F00DD4BF8 /* LANdiniUser.h */,
+				DC178CE41880FD9F00DD4BF8 /* LANdiniUser.m */,
+			);
+			name = LANdini;
+			sourceTree = "<group>";
+		};
 		DC0FC7E0172D81BC00E895C3 /* PGMidi */ = {
 			isa = PBXGroup;
 			children = (
@@ -751,6 +768,7 @@
 		DC233D9D1655EDF500AC01C5 = {
 			isa = PBXGroup;
 			children = (
+				90DFFB22187DC41700DD2149 /* LANdini */,
 				DC0FC7E3172D837F00E895C3 /* libpd */,
 				DC0FC7E2172D81CB00E895C3 /* JSONKit */,
 				DC0FC7E0172D81BC00E895C3 /* PGMidi */,
@@ -1237,6 +1255,7 @@
 				DC0FC911172D84EA00E895C3 /* g_graph.c in Sources */,
 				DC0FC912172D84EA00E895C3 /* g_guiconnect.c in Sources */,
 				DC0FC913172D84EA00E895C3 /* g_hdial.c in Sources */,
+				DC178CE61880FD9F00DD4BF8 /* LANdiniUser.m in Sources */,
 				DC0FC914172D84EA00E895C3 /* g_hslider.c in Sources */,
 				DC0FC915172D84EA00E895C3 /* g_io.c in Sources */,
 				DC0FC916172D84EA00E895C3 /* g_mycanvas.c in Sources */,
@@ -1271,6 +1290,7 @@
 				DC0FC932172D84EA00E895C3 /* s_print.c in Sources */,
 				DC0FC933172D84EA00E895C3 /* s_utf8.c in Sources */,
 				DC0FC934172D84EA00E895C3 /* x_acoustics.c in Sources */,
+				DC178CE51880FD9F00DD4BF8 /* LANdiniLANManager.m in Sources */,
 				DC0FC935172D84EA00E895C3 /* x_arithmetic.c in Sources */,
 				DC0FC936172D84EA00E895C3 /* x_connective.c in Sources */,
 				DC0FC937172D84EA00E895C3 /* x_gui.c in Sources */,
