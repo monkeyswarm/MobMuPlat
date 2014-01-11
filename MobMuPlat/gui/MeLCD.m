@@ -9,11 +9,8 @@
 #import "MeLCD.h"
 
 @interface MeLCD () {
- 
-    
     CGContextRef _cacheContext;
     float fR,fG,fB,fA;//FRGBA
-    //float bR,bG,bB,bA;//BRGBA
     CGPoint penPoint;
     float penWidth;
 }
@@ -36,22 +33,10 @@
     return self;
 }
 
-
 -(void)setColor:(UIColor *)color{
     [super setColor:color];
     self.backgroundColor = color;
     
-    /*CGColorRef cgcolor = [color CGColor];
-    int numComponents = CGColorGetNumberOfComponents(cgcolor);
-    
-    if (numComponents == 4)
-    {
-        const CGFloat *components = CGColorGetComponents(cgcolor);
-        bR  = components[0];
-        bG  = components[1];
-        bB  = components[2];
-        bA  = components[3];
-    }*/
 }
 
 -(void)setHighlightColor:(UIColor *)highlightColor{
@@ -136,7 +121,7 @@
     x = x*self.frame.size.width;
     y = y*self.frame.size.height;
     
-    NSLog(@"pen x %.2f y %.2f TO x %.2f y %.2f ", penPoint.x, penPoint.y, x, y);
+    //NSLog(@"pen x %.2f y %.2f TO x %.2f y %.2f ", penPoint.x, penPoint.y, x, y);
     CGContextSetRGBStrokeColor(_cacheContext, r,g,b,a);
     CGContextMoveToPoint(_cacheContext, penPoint.x,penPoint.y);
 	CGContextAddLineToPoint(_cacheContext, x, y);
@@ -313,116 +298,14 @@
     }
 }
 
+- (void)drawRect:(CGRect)rect {
 
-
-//
-
--(void)drawSquare{
-    
-    CGContextSetRGBStrokeColor(_cacheContext, 1.0, 1.0, 1.0, 0.5);
-	// And drawing with a blue fill color
-	CGContextSetRGBFillColor(_cacheContext, 0.0, 0.0, 1.0, 1.0);
-	// Draw them with a 2.0 stroke width so they are a bit more visible.
-	CGContextSetLineWidth(_cacheContext, 2.0);
-	CGRect newRect = CGRectMake(arc4random() % 200, arc4random() % 200, 60.0, 60.0);
-    CGContextStrokeRect(_cacheContext, newRect);
-   
-    //[self setNeedsDisplay];
-    [self setNeedsDisplayInRect:newRect];
-}
-
-
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    
-    // Drawing code
     CGContextRef context = UIGraphicsGetCurrentContext();
     
     CGImageRef cacheImage = CGBitmapContextCreateImage(_cacheContext);
     CGContextDrawImage(context, self.bounds, cacheImage);
     CGImageRelease(cacheImage);
     
-    NSLog(@"===draw %p", context);
-    
-  /*  // Drawing with a white stroke color
-	CGContextSetRGBStrokeColor(context, 1.0, 1.0, 1.0, 1.0);
-	// And drawing with a blue fill color
-	CGContextSetRGBFillColor(context, 0.0, 0.0, 1.0, 1.0);
-	// Draw them with a 2.0 stroke width so they are a bit more visible.
-	CGContextSetLineWidth(context, 2.0);
-	
-    CGContextStrokeRect(context, CGRectMake(arc4random() % 200, arc4random() % 200, 60.0, 60.0));
-	*/
-    /*
-    // Add Rect to the current path, then stroke it
-	CGContextAddRect(context, CGRectMake(30.0, 30.0, 60.0, 60.0));
-	CGContextStrokePath(context);
-	
-	// Stroke Rect convenience that is equivalent to above
-	CGContextStrokeRect(context, CGRectMake(30.0, 120.0, 60.0, 60.0));
-	
-    
-    // Create filled rectangles via two different paths.
-	// Add/Fill path
-	CGContextAddRect(context, CGRectMake(210.0, 30.0, 60.0, 60.0));
-	CGContextFillPath(context);
-	// Fill convienience.
-	CGContextFillRect(context, CGRectMake(210.0, 120.0, 60.0, 60.0));
-    */
-    /*
-    // Drawing lines with a white stroke color
-	CGContextSetRGBStrokeColor(context, 1.0, 1.0, 1.0, 1.0);
-	
-	// Preserve the current drawing state
-	CGContextSaveGState(context);
-	
-	// Setup the horizontal line to demostrate caps
-	CGContextMoveToPoint(context, 40.0, 30.0);
-	CGContextAddLineToPoint(context, 280.0, 30.0);
-    
-	// Set the line width & cap for the cap demo
-	CGContextSetLineWidth(context, self.width);
-	//CGContextSetLineCap(context, self.cap);
-	CGContextStrokePath(context);
-	
-	// Restore the previous drawing state, and save it again.
-	CGContextRestoreGState(context);
-	CGContextSaveGState(context);
-	
-	// Setup the angled line to demonstrate joins
-	CGContextMoveToPoint(context, 40.0, 190.0);
-	CGContextAddLineToPoint(context, 160.0, 70.0);
-	CGContextAddLineToPoint(context, 280.0, 190.0);
-    
-	// Set the line width & join for the join demo
-	CGContextSetLineWidth(context, self.width);
-	//CGContextSetLineJoin(context, self.join);
-	CGContextStrokePath(context);
-    
-	// Restore the previous drawing state.
-	CGContextRestoreGState(context);
-    
-	// If the stroke width is large enough, display the path that generated these lines
-	if (self.width >= 4.0) // arbitrarily only show when the line is at least twice as wide as our target stroke
-	{
-		CGContextSetRGBStrokeColor(context, 1.0, 0.0, 0.0, 1.0);
-		CGContextMoveToPoint(context, 40.0, 30.0);
-		CGContextAddLineToPoint(context, 280.0, 30.0);
-		CGContextMoveToPoint(context, 40.0, 190.0);
-		CGContextAddLineToPoint(context, 160.0, 70.0);
-		CGContextAddLineToPoint(context, 280.0, 190.0);
-		CGContextSetLineWidth(context, 2.0);
-		CGContextStrokePath(context);
-	}
-    */
-    
-    /*CGContextSetRGBFillColor (context, 1, 0, 0, 1);// 3
-    CGContextFillRect (context, CGRectMake (0, 0, 200, 100 ));// 4
-    CGContextSetRGBFillColor (context, 0, 0, 1, .5);// 5
-    CGContextFillRect (context, CGRectMake (0, 0, 100, 200));
-     */
 }
 
 
