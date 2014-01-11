@@ -405,6 +405,7 @@ extern void sigmund_tilde_setup(void);
     [self disconnectPorts];
     
     [locationManager stopUpdatingLocation];
+    [locationManager stopUpdatingHeading];
     
     currPortNumber = DEFAULT_PORT_NUMBER;
     [self connectPorts];
@@ -432,6 +433,7 @@ extern void sigmund_tilde_setup(void);
     [allGUIControl removeAllObjects];
     
     [locationManager stopUpdatingLocation];
+    [locationManager stopUpdatingHeading];
     
     [self disconnectPorts];
    
@@ -873,8 +875,14 @@ extern void sigmund_tilde_setup(void);
         else if([[list objectAtIndex:0] isEqualToString:@"/enableLocation"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
             float val = [[list objectAtIndex:1] floatValue];
             //printf("\nenable location %.2f", val );
-            if(val>0)[locationManager startUpdatingLocation];
-            else [locationManager stopUpdatingLocation ];
+            if(val>0){
+                [locationManager startUpdatingLocation];
+                [locationManager startUpdatingHeading];
+            }
+            else{
+                [locationManager stopUpdatingLocation ];
+                [locationManager stopUpdatingHeading];
+            }
         }
         else if([[list objectAtIndex:0] isEqualToString:@"/setDistanceFilter"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
             float val = [[list objectAtIndex:1] floatValue];
@@ -1191,12 +1199,14 @@ extern void sigmund_tilde_setup(void);
     
     if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined)
         NSLog(@"about to show a dialog requesting permission");*/
-
-    
-
-	
 }
 
+- (void) locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading {
+    
+    NSArray* locationArray=[NSArray arrayWithObjects:@"/compass", [NSNumber numberWithFloat:newHeading.magneticHeading], nil];
+    
+    [PdBase sendList:locationArray toReceiver:@"fromSystem"];
+}
 
 - (void)didReceiveMemoryWarning{
     [super didReceiveMemoryWarning];

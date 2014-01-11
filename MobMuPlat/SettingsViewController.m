@@ -146,8 +146,10 @@
     
     if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")){
         loadDocButton.layer.cornerRadius = 5;
-        loadDocButton.layer.borderWidth = 1;
-        loadDocButton.layer.borderColor = [UIColor blackColor].CGColor;
+        loadDocButton.layer.borderWidth = 2;
+        loadDocButton.layer.borderColor = [UIColor whiteColor].CGColor;
+        [loadDocButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        
     }
     
     
@@ -158,8 +160,10 @@
     [self.view addSubview:dspButton ];
     if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")){
         dspButton.layer.cornerRadius = 5;
-        dspButton.layer.borderWidth = 1;
-        dspButton.layer.borderColor = [UIColor blackColor].CGColor;
+        dspButton.layer.borderWidth = 2;
+        dspButton.layer.borderColor = [UIColor whiteColor].CGColor;
+        [dspButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        
     }
     
     [consoleButton setTitle:@"Pd Console" forState:UIControlStateNormal];
@@ -169,8 +173,9 @@
     [self.view addSubview:consoleButton ];
     if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")){
         consoleButton.layer.cornerRadius = 5;
-        consoleButton.layer.borderWidth = 1;
-        consoleButton.layer.borderColor = [UIColor blackColor].CGColor;
+        consoleButton.layer.borderWidth = 2;
+        consoleButton.layer.borderColor = [UIColor whiteColor].CGColor;
+        [consoleButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     }
     
     //setup elements in filesview
@@ -184,8 +189,9 @@
     [filesView addSubview:showFilesButton];
     if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")){
         showFilesButton.layer.cornerRadius = 5;
-        showFilesButton.layer.borderWidth = 1;
-        showFilesButton.layer.borderColor = [UIColor blackColor].CGColor;
+        showFilesButton.layer.borderWidth = 2;
+        showFilesButton.layer.borderColor = [UIColor whiteColor].CGColor;
+        [showFilesButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     }
     
     
@@ -295,8 +301,9 @@
     [consoleView addSubview:clearConsoleButton];
     if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")){
         clearConsoleButton.layer.cornerRadius = 5;
-        clearConsoleButton.layer.borderWidth = 1;
-        clearConsoleButton.layer.borderColor = [UIColor blackColor].CGColor;
+        clearConsoleButton.layer.borderWidth = 2;
+        clearConsoleButton.layer.borderColor = [UIColor whiteColor].CGColor;
+        [clearConsoleButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     }
     
     //layout everything by canvas size
@@ -319,13 +326,15 @@
         midiSourceLabel.frame = CGRectMake(5, 0, 290, 25);
         midiSourceTableView.frame = CGRectMake(10, 30, 135, 60);
         midiDestinationTableView.frame = CGRectMake(10+135+10, 30, 135, 60);
-        bufferLabel.frame = CGRectMake(5, 100, 290, 25);
-        [tickSeg setFrame:CGRectMake(10, 125, 280, 30)];
-        tickValueLabel.frame = CGRectMake(10, 160, 280, 30);
-        rateLabel.frame=CGRectMake(5,190,290, 25);
-        rateSeg.frame=CGRectMake(10, 215, 280, 30);
-        audioEnableButton.frame=CGRectMake(190,260,90,40);
-        backgroundAudioEnableLabel.frame = CGRectMake(5, 260, 180, 40);
+        bufferLabel.frame = CGRectMake(5, 90, 290, 25);
+        [tickSeg setFrame:CGRectMake(10, 115, 280, 30)];
+        tickValueLabel.frame = CGRectMake(10, 150, 280, 30);
+        rateLabel.frame=CGRectMake(5,180,290, 25);
+        rateSeg.frame=CGRectMake(10, 205, 280, 30);
+        audioEnableButton.frame=CGRectMake(190,245,90,40);
+        backgroundAudioEnableLabel.frame = CGRectMake(5, 245, 180, 40);
+        inputSwitchLabel.frame = CGRectMake(5, 283, 180, 40);
+        audioInputSwitch.frame = CGRectMake(210, 288, audioInputSwitch.frame.size.width, audioInputSwitch.frame.size.height);
         
         //console
         consoleTextView.frame = CGRectMake(5, 5, 290, 280);
@@ -402,10 +411,13 @@
         rateLabel.font = [UIFont systemFontOfSize:32];
         rateSeg.frame=CGRectMake(10*2.4, 220*2.133, 280*2.4, 30*2.133);
         
-        audioEnableButton.frame=CGRectMake(190*2.4,260*2.133,90*2.4,40*2.133);
+        audioEnableButton.frame=CGRectMake(190*2.4,255*2.133,90*2.4,30*2.133);
         audioEnableButton.font = [UIFont systemFontOfSize:32];
-        backgroundAudioEnableLabel.frame = CGRectMake(5*2.4, 260*2.133, 180*2.4, 40*2.133);
+        backgroundAudioEnableLabel.frame = CGRectMake(5*2.4, 250*2.133, 180*2.4, 40*2.133);
         backgroundAudioEnableLabel.font=[UIFont systemFontOfSize:24];
+        inputSwitchLabel.frame = CGRectMake(5*2.4, 280*2.13333, 180*2.4, 40*2.1333);
+        inputSwitchLabel.font=[UIFont systemFontOfSize:24];
+        audioInputSwitch.frame = CGRectMake(220*2.4, 292*2.133, audioInputSwitch.frame.size.width, audioInputSwitch.frame.size.height);
         
         //console
         consoleTextView.frame = CGRectMake(5*2.4, 5*2.133, 290*2.4, 280*2.133);
