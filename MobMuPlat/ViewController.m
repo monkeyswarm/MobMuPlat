@@ -808,6 +808,10 @@ extern void sigmund_tilde_setup(void);
     [PdBase sendList:msgArray toReceiver:@"fromGUI"];
 }
 
+//not used
+/*- (void)receiveSymbol:(NSString *)symbol fromSource:(NSString *)source{
+}*/
+
 //PureData has sent out a message from the patch (from a receive object, we look for messages from "toNetwork","toGUI","toSystem")
 - (void)receiveList:(NSArray *)list fromSource:(NSString *)source{
     if([source isEqualToString:@"toNetwork"]){
@@ -917,19 +921,16 @@ extern void sigmund_tilde_setup(void);
             NSArray* msgArray=[NSArray arrayWithObjects:@"/motionFrequency", [NSNumber numberWithFloat:self.motionFrequency], nil];
             [PdBase sendList:msgArray toReceiver:@"fromSystem"];
         }*/
-        else if([[list objectAtIndex:0] isEqualToString:@"/enableLANdini"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+        /*else if([[list objectAtIndex:0] isEqualToString:@"/enableLANdini"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
             float val = [[list objectAtIndex:1] floatValue];
-            //if(val>0)[llm restartOSC];
-            //else [llm stopOSC];
-        }
+            if(val>0)[llm restartOSC];
+            else [llm stopOSC];
+        }*/
 
 
     }
 }
 
-//not used, since we only receive lists
-/*- (void)receiveSymbol:(NSString *)symbol fromSource:(NSString *)source{
-}*/
 
 - (void)receivePrint:(NSString *)message
 {

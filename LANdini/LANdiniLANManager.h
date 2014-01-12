@@ -31,6 +31,5 @@
 - (NSTimeInterval) elapsedTime;
 -(void)sendMsgToApp:(NSArray*)msgArray;
 
-/*-(void)stopOSC;
--(void)restartOSC;*/
+
 @end
