@@ -11,6 +11,7 @@
 
 #import "PGMidi.h"
 #import "MeSlider.h"
+#import <MediaPlayer/MediaPlayer.h>
 
 @protocol SettingsViewControllerDelegate;
 @protocol AudioSettingsDelegate;
@@ -44,6 +45,9 @@ typedef enum{
     
     int rateValueArray[6];
     int requestedBlockCount;
+    
+    MPVolumeView *myVolumeView;
+
 }
 
 @property (nonatomic, assign) id <SettingsViewControllerDelegate> delegate;

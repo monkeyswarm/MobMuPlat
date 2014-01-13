@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		90503180188474D9003D85E9 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9050317F188474D9003D85E9 /* MediaPlayer.framework */; };
 		90BE0D621880A9EF009446AD /* MMPTutorial6-2DGraphics-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = 90BE0D5E1880A9EF009446AD /* MMPTutorial6-2DGraphics-Pad.mmp */; };
 		90BE0D631880A9EF009446AD /* MMPTutorial6-2DGraphics-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = 90BE0D5F1880A9EF009446AD /* MMPTutorial6-2DGraphics-ip5.mmp */; };
 		90BE0D641880A9EF009446AD /* MMPTutorial6-2DGraphics.mmp in Resources */ = {isa = PBXBuildFile; fileRef = 90BE0D601880A9EF009446AD /* MMPTutorial6-2DGraphics.mmp */; };
@@ -236,6 +237,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9050317F188474D9003D85E9 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		90BE0D5E1880A9EF009446AD /* MMPTutorial6-2DGraphics-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial6-2DGraphics-Pad.mmp"; path = "patches/MMPTutorial6-2DGraphics-Pad.mmp"; sourceTree = "<group>"; };
 		90BE0D5F1880A9EF009446AD /* MMPTutorial6-2DGraphics-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial6-2DGraphics-ip5.mmp"; path = "patches/MMPTutorial6-2DGraphics-ip5.mmp"; sourceTree = "<group>"; };
 		90BE0D601880A9EF009446AD /* MMPTutorial6-2DGraphics.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial6-2DGraphics.mmp"; path = "patches/MMPTutorial6-2DGraphics.mmp"; sourceTree = "<group>"; };
@@ -547,6 +549,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				90503180188474D9003D85E9 /* MediaPlayer.framework in Frameworks */,
 				DC456B03176BC1540080BB33 /* CoreLocation.framework in Frameworks */,
 				DCB11AE11702B315004B92EA /* CoreMotion.framework in Frameworks */,
 				DCFF717716B59F3100CDCEAE /* libz.dylib in Frameworks */,
@@ -795,6 +798,7 @@
 		DC233DAB1655EDF500AC01C5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9050317F188474D9003D85E9 /* MediaPlayer.framework */,
 				DC456B02176BC1540080BB33 /* CoreLocation.framework */,
 				DCB11AE01702B315004B92EA /* CoreMotion.framework */,
 				DCFF717616B59F3100CDCEAE /* libz.dylib */,

@@ -435,6 +435,32 @@
     [self.view addSubview:audioMIDIView];
     [self.view addSubview:filesView];
     
+   /*
+    // Create a simple holding UIView and give it a frame
+    UIView *volumeHolder = [[UIView alloc] initWithFrame: CGRectMake(20, 200, 200, 60)];
+    
+    // set the UIView backgroundColor to clear.
+    [volumeHolder setBackgroundColor: [UIColor greenColor]];
+    
+    // add the holding view as a subView of the main view
+    [audioMIDIView addSubview: volumeHolder];
+    
+    // Create an instance of MPVolumeView and give it a frame
+    myVolumeView = [[MPVolumeView alloc] initWithFrame: CGRectZero];
+    //myVolumeView.showsVolumeSlider = NO;
+    myVolumeView.showsRouteButton = YES;
+
+    
+    // Add myVolumeView as a subView of the volumeHolder
+    [volumeHolder addSubview: myVolumeView];
+    [myVolumeView sizeToFit];
+    */
+    
+    myVolumeView = [ [MPVolumeView alloc] initWithFrame:CGRectMake(100, 300, 100, 100)] ;
+    myVolumeView.showsRouteButton = YES;
+    [audioMIDIView addSubview:myVolumeView];
+
+    
 }
 
 -(void)viewWillAppear:(BOOL)animated{
