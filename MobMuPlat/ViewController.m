@@ -35,6 +35,7 @@
 #import "MePanel.h"
 #import "MeMultiSlider.h"
 #import "MeLCD.h"
+#import "MeUnknown.h"
 
 
 extern void expr_setup(void);
@@ -189,16 +190,16 @@ extern void sigmund_tilde_setup(void);
     if(!alreadyStartedOnVersion || [alreadyStartedOnVersion boolValue] == NO) {
          NSArray* defaultPatches;
         if(hardwareCanvasType==canvasTypeIPhone3p5Inch ){
-            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine.mmp", @"MMPTutorial1-GUI.mmp", @"MMPTutorial2-Input.mmp", @"MMPTutorial3-Hardware.mmp", @"MMPTutorial4-Networking.mmp",@"MMPTutorial5-Files.mmp",@"MMPExamples-Vocoder.mmp", @"MMPExamples-Motion.mmp", @"MMPExamples-Sequencer.mmp", @"MMPExamples-GPS.mmp", @"MMPTutorial6-2DGraphics.mmp", nil];
+            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine.mmp", @"MMPTutorial1-GUI.mmp", @"MMPTutorial2-Input.mmp", @"MMPTutorial3-Hardware.mmp", @"MMPTutorial4-Networking.mmp",@"MMPTutorial5-Files.mmp",@"MMPExamples-Vocoder.mmp", @"MMPExamples-Motion.mmp", @"MMPExamples-Sequencer.mmp", @"MMPExamples-GPS.mmp", @"MMPTutorial6-2DGraphics.mmp", @"MMPExamples-LANdini.mmp", nil];
         }
         else if (hardwareCanvasType==canvasTypeIPhone4Inch){
-            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine-ip5.mmp", @"MMPTutorial1-GUI-ip5.mmp", @"MMPTutorial2-Input-ip5.mmp", @"MMPTutorial3-Hardware-ip5.mmp", @"MMPTutorial4-Networking-ip5.mmp",@"MMPTutorial5-Files-ip5.mmp", @"MMPExamples-Vocoder-ip5.mmp", @"MMPExamples-Motion-ip5.mmp", @"MMPExamples-Sequencer-ip5.mmp",@"MMPExamples-GPS-ip5.mmp", @"MMPTutorial6-2DGraphics-ip5.mmp", nil];
+            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine-ip5.mmp", @"MMPTutorial1-GUI-ip5.mmp", @"MMPTutorial2-Input-ip5.mmp", @"MMPTutorial3-Hardware-ip5.mmp", @"MMPTutorial4-Networking-ip5.mmp",@"MMPTutorial5-Files-ip5.mmp", @"MMPExamples-Vocoder-ip5.mmp", @"MMPExamples-Motion-ip5.mmp", @"MMPExamples-Sequencer-ip5.mmp",@"MMPExamples-GPS-ip5.mmp", @"MMPTutorial6-2DGraphics-ip5.mmp", @"MMPExamples-LANdini-ip5.mmp", nil];
         }
         else{//pad
-            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine-Pad.mmp", @"MMPTutorial1-GUI-Pad.mmp", @"MMPTutorial2-Input-Pad.mmp", @"MMPTutorial3-Hardware-Pad.mmp", @"MMPTutorial4-Networking-Pad.mmp",@"MMPTutorial5-Files-Pad.mmp", @"MMPExamples-Vocoder-Pad.mmp", @"MMPExamples-Motion-Pad.mmp", @"MMPExamples-Sequencer-Pad.mmp",@"MMPExamples-GPS-Pad.mmp", @"MMPTutorial6-2DGraphics-Pad.mmp", nil];
+            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine-Pad.mmp", @"MMPTutorial1-GUI-Pad.mmp", @"MMPTutorial2-Input-Pad.mmp", @"MMPTutorial3-Hardware-Pad.mmp", @"MMPTutorial4-Networking-Pad.mmp",@"MMPTutorial5-Files-Pad.mmp", @"MMPExamples-Vocoder-Pad.mmp", @"MMPExamples-Motion-Pad.mmp", @"MMPExamples-Sequencer-Pad.mmp",@"MMPExamples-GPS-Pad.mmp", @"MMPTutorial6-2DGraphics-Pad.mmp", @"MMPExamples-LANdini-Pad.mmp", nil];
         }
         
-        NSArray* commonFiles = [NSArray arrayWithObjects:@"MMPTutorial0-HelloSine.pd",@"MMPTutorial1-GUI.pd", @"MMPTutorial2-Input.pd", @"MMPTutorial3-Hardware.pd", @"MMPTutorial4-Networking.pd",@"MMPTutorial5-Files.pd",@"cats1.jpg", @"cats2.jpg",@"cats3.jpg",@"clap.wav",@"Welcome.pd",  @"MMPExamples-Vocoder.pd", @"vocod_channel.pd", @"MMPExamples-Motion.pd", @"MMPExamples-Sequencer.pd", @"MMPExamples-GPS.pd", @"MMPTutorial6-2DGraphics.pd", nil];
+        NSArray* commonFiles = [NSArray arrayWithObjects:@"MMPTutorial0-HelloSine.pd",@"MMPTutorial1-GUI.pd", @"MMPTutorial2-Input.pd", @"MMPTutorial3-Hardware.pd", @"MMPTutorial4-Networking.pd",@"MMPTutorial5-Files.pd",@"cats1.jpg", @"cats2.jpg",@"cats3.jpg",@"clap.wav",@"Welcome.pd",  @"MMPExamples-Vocoder.pd", @"vocod_channel.pd", @"MMPExamples-Motion.pd", @"MMPExamples-Sequencer.pd", @"MMPExamples-GPS.pd", @"MMPTutorial6-2DGraphics.pd", @"MMPExamples-LANdini.pd", nil];
         
         defaultPatches = [defaultPatches arrayByAddingObjectsFromArray:commonFiles];
         
@@ -709,13 +710,16 @@ extern void sigmund_tilde_setup(void);
             currObject = [[MePanel alloc]initWithFrame:frame];
             if([currDict objectForKey:@"imagePath"]) [(MePanel*)currObject setImagePath:[currDict objectForKey:@"imagePath"] ];
         }
-        else if([newObjectClass isEqualToString:@"MMPMultiSlider"]){
+       else if([newObjectClass isEqualToString:@"MMPMultiSlider"]){
             currObject = [[MeMultiSlider alloc] initWithFrame:frame];
             if([currDict objectForKey:@"range"])  [(MeMultiSlider*)currObject setRange:[[currDict objectForKey:@"range"] intValue]];
         }
         else if([newObjectClass isEqualToString:@"MMPLCD"]){
             currObject = [[MeLCD alloc] initWithFrame:frame];
-            //if([currDict objectForKey:@"range"])  [(MeMultiSlider*)currObject setRange:[[currDict objectForKey:@"range"] intValue]];
+        }
+        else{//unkown
+            currObject = [[MeUnknown alloc] initWithFrame:frame];
+            [(MeUnknown*)currObject setWarning:newObjectClass];
         }
         //end subclass-specific list
 
@@ -815,18 +819,28 @@ extern void sigmund_tilde_setup(void);
 //PureData has sent out a message from the patch (from a receive object, we look for messages from "toNetwork","toGUI","toSystem")
 - (void)receiveList:(NSArray *)list fromSource:(NSString *)source{
     if([source isEqualToString:@"toNetwork"]){
-       
+        //NSLog(@"%@", list);
         OSCMessage *msg = [OSCMessage createWithAddress:[list objectAtIndex:0]];
         for(id item in [list subarrayWithRange:NSMakeRange(1, [list count]-1)]){
             if([item isKindOfClass:[NSString class]]) [msg addString:item];
             else if([item isKindOfClass:[NSNumber class]])[msg addFloat:[item floatValue]];
         }
         
-        //look for LANdini
+        //look for LANdini - this clause looks for /send, /sendGD, /sendOGD
         if([ [list objectAtIndex:0] rangeOfString:@"/send"].location == 0){
             //NSLog(@"LANDINI!!!!: %@", msg);
             [outPortToLANdini sendThisPacket:[OSCPacket createWithContent:msg]];
         }
+        else if ([ [list objectAtIndex:0] rangeOfString:@"/networkTime"].location == 0){
+             [outPortToLANdini sendThisPacket:[OSCPacket createWithContent:msg]];
+        }
+        else if ([ [list objectAtIndex:0] rangeOfString:@"/numUsers"].location == 0){
+            [outPortToLANdini sendThisPacket:[OSCPacket createWithContent:msg]];
+        }
+        else if ([ [list objectAtIndex:0] rangeOfString:@"/userNames"].location == 0){
+            [outPortToLANdini sendThisPacket:[OSCPacket createWithContent:msg]];
+        }
+        //not for landini - send out regular!
         else{
             [outPort sendThisPacket:[OSCPacket createWithContent:msg]];
         }

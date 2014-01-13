@@ -93,6 +93,8 @@
         
         _startDate = [NSDate date];
         
+        _syncServerName = @"noSyncServer";
+        
         _oscManager = [[OSCManager alloc] init];
         [_oscManager setDelegate:self];
         
@@ -164,7 +166,7 @@
 
 -(void)initLAN:(NSString*)address{
     
-    _syncServerName = @"noSyncServer";
+    
     if([self.logDelegate respondsToSelector:@selector(refreshSyncServer:)] )
         [self.logDelegate refreshSyncServer:_syncServerName];
     
@@ -559,6 +561,7 @@
         
         //DEI edit not in original supercollider source:send new message to user app with names
         [self receiveGetNamesRequest];
+        [self receiveGetNumUsersRequest];
         //end DEI edit
     }
     return usr;
@@ -591,6 +594,7 @@
         [_userList removeObject:user];
         //DEI edit not in original supercollider: send the user client new users list
         [self receiveGetNamesRequest];
+        [self receiveGetNumUsersRequest];
     }
     
 }

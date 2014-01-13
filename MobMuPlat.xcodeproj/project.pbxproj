@@ -148,11 +148,12 @@
 		DC59573D1733805000CEBECC /* titlepad_ring_185x110.png in Resources */ = {isa = PBXBuildFile; fileRef = DC5957271733805000CEBECC /* titlepad_ring_185x110.png */; };
 		DC59573E1733805000CEBECC /* titlepad_text_46x142.png in Resources */ = {isa = PBXBuildFile; fileRef = DC5957281733805000CEBECC /* titlepad_text_46x142.png */; };
 		DC59573F1733805000CEBECC /* titlepad_text_142x46.png in Resources */ = {isa = PBXBuildFile; fileRef = DC5957291733805000CEBECC /* titlepad_text_142x46.png */; };
+		DC5A5AD21882565500FC97D5 /* MeUnknown.m in Sources */ = {isa = PBXBuildFile; fileRef = DC5A5AD11882565500FC97D5 /* MeUnknown.m */; };
+		DC5A5AD8188256E400FC97D5 /* VVAssertionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = DC5A5AD7188256E400FC97D5 /* VVAssertionHandler.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		DC5A5ADB1882572300FC97D5 /* OSCQueryReply.m in Sources */ = {isa = PBXBuildFile; fileRef = DC5A5ADA1882572300FC97D5 /* OSCQueryReply.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DC6A9FF51878F88900A7585A /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = DC6A9FEF1878F88900A7585A /* LICENSE */; };
 		DC6A9FF61878F88900A7585A /* README.markdown in Resources */ = {isa = PBXBuildFile; fileRef = DC6A9FF01878F88900A7585A /* README.markdown */; };
 		DC6A9FF71878F88900A7585A /* MAZeroingWeakRef.m in Sources */ = {isa = PBXBuildFile; fileRef = DC6A9FF31878F88900A7585A /* MAZeroingWeakRef.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		DC6A9FFA1878FAC500A7585A /* OSCQueryReply.m in Sources */ = {isa = PBXBuildFile; fileRef = DC6A9FF91878FAC500A7585A /* OSCQueryReply.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		DC6A9FFD1878FB7500A7585A /* VVAssertionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = DC6A9FFC1878FB7500A7585A /* VVAssertionHandler.m */; };
 		DC8EBBB91660F3B4003C3162 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC8EBBB81660F3B4003C3162 /* QuartzCore.framework */; };
 		DC8EFEC71656F782004A88E3 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC8EFEC61656F782004A88E3 /* CoreMIDI.framework */; };
 		DCA9B90717330F3D000E59DD /* MutLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B8F717330F3D000E59DD /* MutLockArray.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -413,15 +414,17 @@
 		DC5957271733805000CEBECC /* titlepad_ring_185x110.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = titlepad_ring_185x110.png; path = graphics/titlepad_ring_185x110.png; sourceTree = "<group>"; };
 		DC5957281733805000CEBECC /* titlepad_text_46x142.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = titlepad_text_46x142.png; path = graphics/titlepad_text_46x142.png; sourceTree = "<group>"; };
 		DC5957291733805000CEBECC /* titlepad_text_142x46.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = titlepad_text_142x46.png; path = graphics/titlepad_text_142x46.png; sourceTree = "<group>"; };
+		DC5A5AD01882565500FC97D5 /* MeUnknown.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeUnknown.h; path = gui/MeUnknown.h; sourceTree = "<group>"; };
+		DC5A5AD11882565500FC97D5 /* MeUnknown.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeUnknown.m; path = gui/MeUnknown.m; sourceTree = "<group>"; };
+		DC5A5AD6188256E400FC97D5 /* VVAssertionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVAssertionHandler.h; path = VVBasics/src/VVAssertionHandler.h; sourceTree = SOURCE_ROOT; };
+		DC5A5AD7188256E400FC97D5 /* VVAssertionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVAssertionHandler.m; path = VVBasics/src/VVAssertionHandler.m; sourceTree = SOURCE_ROOT; };
+		DC5A5AD91882572300FC97D5 /* OSCQueryReply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSCQueryReply.h; path = VVOSC/FrameworkSrc/OSCQueryReply.h; sourceTree = SOURCE_ROOT; };
+		DC5A5ADA1882572300FC97D5 /* OSCQueryReply.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OSCQueryReply.m; path = VVOSC/FrameworkSrc/OSCQueryReply.m; sourceTree = SOURCE_ROOT; };
 		DC6A9FEF1878F88900A7585A /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		DC6A9FF01878F88900A7585A /* README.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.markdown; sourceTree = "<group>"; };
 		DC6A9FF21878F88900A7585A /* MAZeroingWeakRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAZeroingWeakRef.h; sourceTree = "<group>"; };
 		DC6A9FF31878F88900A7585A /* MAZeroingWeakRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAZeroingWeakRef.m; sourceTree = "<group>"; };
 		DC6A9FF41878F88900A7585A /* MAZeroingWeakRefNativeZWRNotAllowedTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAZeroingWeakRefNativeZWRNotAllowedTable.h; sourceTree = "<group>"; };
-		DC6A9FF81878FAC500A7585A /* OSCQueryReply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSCQueryReply.h; sourceTree = "<group>"; };
-		DC6A9FF91878FAC500A7585A /* OSCQueryReply.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSCQueryReply.m; sourceTree = "<group>"; };
-		DC6A9FFB1878FB7400A7585A /* VVAssertionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVAssertionHandler.h; sourceTree = "<group>"; };
-		DC6A9FFC1878FB7500A7585A /* VVAssertionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVAssertionHandler.m; sourceTree = "<group>"; };
 		DC8EBBB81660F3B4003C3162 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		DC8EFEC61656F782004A88E3 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		DCA9B8F617330F3D000E59DD /* MutLockArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutLockArray.h; path = VVBasics/src/MutLockArray.h; sourceTree = SOURCE_ROOT; };
@@ -863,6 +866,8 @@
 				DC5957091733800500CEBECC /* MeXYSlider.m */,
 				90DFFB29187DF85B00DD2149 /* MeLCD.h */,
 				90DFFB2A187DF85B00DD2149 /* MeLCD.m */,
+				DC5A5AD01882565500FC97D5 /* MeUnknown.h */,
+				DC5A5AD11882565500FC97D5 /* MeUnknown.m */,
 			);
 			name = gui;
 			sourceTree = "<group>";
@@ -975,8 +980,8 @@
 		DCE7370E16B5E30B00512571 /* FrameworkSrc */ = {
 			isa = PBXGroup;
 			children = (
-				DC6A9FF81878FAC500A7585A /* OSCQueryReply.h */,
-				DC6A9FF91878FAC500A7585A /* OSCQueryReply.m */,
+				DC5A5AD91882572300FC97D5 /* OSCQueryReply.h */,
+				DC5A5ADA1882572300FC97D5 /* OSCQueryReply.m */,
 				DCA9B91017330F90000E59DD /* OSCAddressSpace.h */,
 				DCA9B91117330F90000E59DD /* OSCAddressSpace.m */,
 				DCA9B91217330F90000E59DD /* OSCBundle.h */,
@@ -1019,8 +1024,8 @@
 		DCE7371016B5E31C00512571 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				DC6A9FFB1878FB7400A7585A /* VVAssertionHandler.h */,
-				DC6A9FFC1878FB7500A7585A /* VVAssertionHandler.m */,
+				DC5A5AD6188256E400FC97D5 /* VVAssertionHandler.h */,
+				DC5A5AD7188256E400FC97D5 /* VVAssertionHandler.m */,
 				DCA9B8F617330F3D000E59DD /* MutLockArray.h */,
 				DCA9B8F717330F3D000E59DD /* MutLockArray.m */,
 				DCA9B8F817330F3D000E59DD /* MutLockDict.h */,
@@ -1233,6 +1238,7 @@
 				DC0FC8FC172D84EA00E895C3 /* d_arithmetic.c in Sources */,
 				DC0FC8FD172D84EA00E895C3 /* d_array.c in Sources */,
 				DC0FC8FE172D84EA00E895C3 /* d_ctl.c in Sources */,
+				DC5A5ADB1882572300FC97D5 /* OSCQueryReply.m in Sources */,
 				DC0FC8FF172D84EA00E895C3 /* d_dac.c in Sources */,
 				DC0FC900172D84EA00E895C3 /* d_delay.c in Sources */,
 				DC0FC901172D84EA00E895C3 /* d_fft.c in Sources */,
@@ -1243,7 +1249,6 @@
 				DC0FC906172D84EA00E895C3 /* d_math.c in Sources */,
 				DC0FC907172D84EA00E895C3 /* d_misc.c in Sources */,
 				DC0FC908172D84EA00E895C3 /* d_osc.c in Sources */,
-				DC6A9FFD1878FB7500A7585A /* VVAssertionHandler.m in Sources */,
 				DC0FC909172D84EA00E895C3 /* d_resample.c in Sources */,
 				DC0FC90A172D84EA00E895C3 /* d_soundfile.c in Sources */,
 				DC0FC90B172D84EA00E895C3 /* d_ugen.c in Sources */,
@@ -1274,6 +1279,7 @@
 				DC0FC922172D84EA00E895C3 /* m_atom.c in Sources */,
 				DC0FC923172D84EA00E895C3 /* m_binbuf.c in Sources */,
 				DC0FC924172D84EA00E895C3 /* m_class.c in Sources */,
+				DC5A5AD21882565500FC97D5 /* MeUnknown.m in Sources */,
 				DC0FC925172D84EA00E895C3 /* m_conf.c in Sources */,
 				DC0FC926172D84EA00E895C3 /* m_glob.c in Sources */,
 				DC0FC927172D84EA00E895C3 /* m_memory.c in Sources */,
@@ -1286,6 +1292,7 @@
 				DC0FC92E172D84EA00E895C3 /* s_inter.c in Sources */,
 				DC0FC92F172D84EA00E895C3 /* s_loader.c in Sources */,
 				DC0FC930172D84EA00E895C3 /* s_main.c in Sources */,
+				DC5A5AD8188256E400FC97D5 /* VVAssertionHandler.m in Sources */,
 				DC0FC931172D84EA00E895C3 /* s_path.c in Sources */,
 				DC0FC932172D84EA00E895C3 /* s_print.c in Sources */,
 				DC0FC933172D84EA00E895C3 /* s_utf8.c in Sources */,
@@ -1303,7 +1310,6 @@
 				DC0FC93E172D84EA00E895C3 /* x_time.c in Sources */,
 				DCD8DF8E17330C9D00767321 /* JSONKit.m in Sources */,
 				DCD8DF9317330D8B00767321 /* PGMidi.mm in Sources */,
-				DC6A9FFA1878FAC500A7585A /* OSCQueryReply.m in Sources */,
 				DCA9B90717330F3D000E59DD /* MutLockArray.m in Sources */,
 				DCA9B90817330F3D000E59DD /* MutLockDict.m in Sources */,
 				DCA9B90917330F3D000E59DD /* MutNRLockArray.m in Sources */,
