@@ -38,7 +38,8 @@ typedef enum{
     NSMutableArray* consoleStringQueue;
     
     //views
-    UIView* filesView, *consoleView, *audioMIDIView;
+    UIView* filesView, *consoleView;
+    UIScrollView* audioMIDIView;
     UITextView *consoleTextView;
     UISegmentedControl* tickSeg;
     UISwitch* audioInputSwitch;
@@ -46,7 +47,9 @@ typedef enum{
     int rateValueArray[6];
     int requestedBlockCount;
     
-    MPVolumeView *myVolumeView;
+    MPVolumeView *audioRouteView;
+    UILabel* audioRouteLabel;
+    int outputChannelCount;
 
 }
 
@@ -59,14 +62,14 @@ typedef enum{
 
 @end
 
-@protocol SettingsViewControllerDelegate
+@protocol SettingsViewControllerDelegate <NSObject>
 - (void)settingsViewControllerDidFinish:(SettingsViewController *)controller;
 - (BOOL)loadScene:(NSDictionary*)sceneDict;
 - (BOOL)loadScenePatchOnly:(NSString*)filename;
 - (void)setAudioInputEnabled:(BOOL)enabled; //for mic input vs vibration
 @end
 
-@protocol AudioSettingsDelegate //audio+midi stuff stuff
+@protocol AudioSettingsDelegate <NSObject>//audio+midi stuff stuff
 -(int)blockSize;
 -(int)setTicksPerBuffer:(int)newTick;//returns actual ticks
 -(int)actualTicksPerBuffer;
@@ -75,6 +78,7 @@ typedef enum{
 -(PGMidi*) midi;
 -(void)setMidiSourceIndex:(int)index;
 -(void)setMidiDestinationIndex:(int)index;
+-(int)setChannelCount:(int)newChannelCount;
 @property BOOL backgroundAudioEnabled;
 
 @end

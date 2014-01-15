@@ -61,7 +61,7 @@
     //audio settings
     int samplingRate;
     BOOL inputOrMixing;
-    
+     int channelCount;
     
     UINavigationController *navigationController;
     
@@ -70,6 +70,8 @@
     CLLocationManager *locationManager;
     
     LANdiniLANManager* llm;
+   
+   
 }
 
 

@@ -68,6 +68,9 @@ extern void sigmund_tilde_setup(void);
 -(id) init{
     self=[super init];
 
+    channelCount = 2;
+    samplingRate = 44100;
+    
     openPDFile=nil;
     
     allGUIControl = [[NSMutableArray alloc]init];
@@ -104,7 +107,7 @@ extern void sigmund_tilde_setup(void);
     //libPD setup
     
     audioController = [[PdAudioController alloc] init] ;
-	[audioController configurePlaybackWithSampleRate:44100 numberChannels:2 inputEnabled:YES mixingEnabled:NO];
+	[audioController configurePlaybackWithSampleRate:samplingRate numberChannels:channelCount inputEnabled:YES mixingEnabled:NO];
     [audioController configureTicksPerBuffer:ticksPerBuffer];
     //[audioController print];
     
@@ -366,9 +369,15 @@ extern void sigmund_tilde_setup(void);
 
 -(int)setRate:(int)inRate{//return actual value
     samplingRate=inRate;
-    [self.audioController configurePlaybackWithSampleRate:samplingRate numberChannels:2 inputEnabled:YES mixingEnabled:NO];
+    [self.audioController configurePlaybackWithSampleRate:samplingRate numberChannels:channelCount inputEnabled:YES mixingEnabled:NO];
     NSLog(@"sample rate set to %d", [self.audioController sampleRate]);
     return [self.audioController sampleRate];
+}
+
+-(int)setChannelCount:(int)newChannelCount{
+    channelCount = newChannelCount;
+    [self.audioController configurePlaybackWithSampleRate:samplingRate numberChannels:channelCount inputEnabled:YES mixingEnabled:NO];
+    return [self.audioController numberChannels];
 }
 
 -(int)sampleRate{
@@ -797,10 +806,10 @@ extern void sigmund_tilde_setup(void);
 
 - (void)setAudioInputEnabled:(BOOL)enabled {
     if(enabled)
-        [audioController configurePlaybackWithSampleRate:44100 numberChannels:2 inputEnabled:YES mixingEnabled:NO];
+        [audioController configurePlaybackWithSampleRate:44100 numberChannels:channelCount inputEnabled:YES mixingEnabled:NO];
     
     else
-        [audioController configurePlaybackWithSampleRate:44100 numberChannels:2 inputEnabled:NO mixingEnabled:NO];
+        [audioController configurePlaybackWithSampleRate:44100 numberChannels:channelCount inputEnabled:NO mixingEnabled:NO];
     
 }
 

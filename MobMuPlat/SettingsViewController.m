@@ -71,6 +71,9 @@
                                                                                 action:@selector(done:)];
     self.navigationItem.leftBarButtonItem = doneButton;
    
+    //match default pdaudiocontroller settings
+    outputChannelCount = 2;
+    
     //allowed sampling rate values for use in the segmented control
     rateValueArray[0]=8000;
     rateValueArray[1]=11025;
@@ -98,7 +101,8 @@
     //set up the three main subviews
     filesView = [[UIView alloc] init];
     consoleView = [[UIView alloc] init];
-    audioMIDIView = [[UIView alloc] init];
+    audioMIDIView = [[UIScrollView alloc] init];
+    audioMIDIView.bounces = NO;
     
     filesView.backgroundColor=[UIColor purpleColor];
     consoleView.backgroundColor = [UIColor colorWithRed:.843 green:.23 blue:.351 alpha:1];//red
@@ -136,6 +140,8 @@
     tickValueLabel = [[UILabel alloc]init];
     UILabel* backgroundAudioEnableLabel= [[UILabel alloc]init];
     UILabel* inputSwitchLabel = [[UILabel alloc]init];
+    UILabel* routeSwitchLabel = [[UILabel alloc]init];
+    audioRouteLabel = [[UILabel alloc]init];
     
     //setup buttons at bottom of main view
     [loadDocButton setTitle:@"Select Document" forState:UIControlStateNormal];
@@ -281,16 +287,35 @@
     
     //audio input swtich
     
-    inputSwitchLabel.text=@"override audio input\n(allows system vibration)";
+    inputSwitchLabel.text=@"override audio input\n(allows system vibration, \nand output audio routing)";
     inputSwitchLabel.backgroundColor=[UIColor clearColor];
 	inputSwitchLabel.textAlignment=UITextAlignmentRight;
-    inputSwitchLabel.numberOfLines=2;
+    inputSwitchLabel.numberOfLines=3;
 	inputSwitchLabel.font=[UIFont systemFontOfSize:12];
 	[audioMIDIView addSubview:inputSwitchLabel];
     
     audioInputSwitch = [[UISwitch alloc]init];
 	[audioInputSwitch addTarget:self action:@selector(audioInputSwitchHit) forControlEvents:UIControlEventValueChanged];
    	[audioMIDIView addSubview: audioInputSwitch];
+    
+    //MPVolume label and button
+    
+    routeSwitchLabel.text=@"choose from available devices";
+    routeSwitchLabel.backgroundColor=[UIColor clearColor];
+	routeSwitchLabel.textAlignment=UITextAlignmentRight;
+	routeSwitchLabel.font=[UIFont systemFontOfSize:12];
+    [audioMIDIView addSubview:routeSwitchLabel];
+    audioRouteView =  [[MPVolumeView alloc] init];
+    audioRouteView.showsRouteButton = YES;
+    audioRouteView.showsVolumeSlider = NO;
+    [audioMIDIView addSubview:audioRouteView];
+    
+    //audioRouteLabel.text=@"choose from available devices";
+    audioRouteLabel.backgroundColor=[UIColor clearColor];
+	audioRouteLabel.textAlignment=UITextAlignmentCenter;
+	audioRouteLabel.font=[UIFont systemFontOfSize:12];
+    audioRouteLabel.numberOfLines = 2;
+    [audioMIDIView addSubview:audioRouteLabel];
     
     //setup consoleView elements
     consoleTextView.editable=NO;
@@ -313,7 +338,8 @@
         CGRect innerViewRect = CGRectMake(10, 10, 300, 320);
         filesView.frame=innerViewRect;
         consoleView.frame=innerViewRect;
-        audioMIDIView.frame=innerViewRect;
+        audioMIDIView.frame = innerViewRect;
+        audioMIDIView.contentSize=CGSizeMake(300, 400);
         
         consoleButton.frame = CGRectMake(10, 340, 145, 35);
         dspButton.frame = CGRectMake(10+145+10, 340, 145, 35);
@@ -334,8 +360,12 @@
         rateSeg.frame=CGRectMake(10, 205, 280, 30);
         audioEnableButton.frame=CGRectMake(190,245,90,40);
         backgroundAudioEnableLabel.frame = CGRectMake(5, 245, 180, 40);
-        inputSwitchLabel.frame = CGRectMake(5, 283, 180, 40);
-        audioInputSwitch.frame = CGRectMake(210, 288, audioInputSwitch.frame.size.width, audioInputSwitch.frame.size.height);
+        inputSwitchLabel.frame = CGRectMake(5, 283, 180, 60);
+        audioInputSwitch.frame = CGRectMake(210, 295, audioInputSwitch.frame.size.width, audioInputSwitch.frame.size.height);
+        
+        routeSwitchLabel.frame = CGRectMake(5, 328, 180, 40);
+        audioRouteView.frame = CGRectMake(215, 335, audioRouteView.frame.size.width, audioRouteView.frame.size.height);
+        audioRouteLabel.frame = CGRectMake(0, 357, 300, 40);
         
         //console
         consoleTextView.frame = CGRectMake(5, 5, 290, 280);
@@ -348,6 +378,7 @@
         filesView.frame=innerViewRect;
         consoleView.frame=innerViewRect;
         audioMIDIView.frame=innerViewRect;
+        audioMIDIView.contentSize=CGSizeMake(300, 480);
         
         consoleButton.frame = CGRectMake(10, 340+86, 145, 35);//+86 ypos
         dspButton.frame = CGRectMake(10+145+10, 340+86, 145, 35);
@@ -369,8 +400,12 @@
         rateSeg.frame=CGRectMake(10, 265, 280, 30);
         audioEnableButton.frame=CGRectMake(190,310,90,40);
         backgroundAudioEnableLabel.frame = CGRectMake(5, 310, 180, 40);
-        inputSwitchLabel.frame = CGRectMake(5, 355, 180, 40);
-        audioInputSwitch.frame = CGRectMake(210, 360, audioInputSwitch.frame.size.width, audioInputSwitch.frame.size.height);
+        inputSwitchLabel.frame = CGRectMake(5, 350, 180, 60);
+        audioInputSwitch.frame = CGRectMake(210, 365, audioInputSwitch.frame.size.width, audioInputSwitch.frame.size.height);
+        
+        routeSwitchLabel.frame = CGRectMake(5, 405, 180, 40);
+        audioRouteView.frame = CGRectMake(215, 413, audioRouteView.frame.size.width, audioRouteView.frame.size.height);
+        audioRouteLabel.frame = CGRectMake(0, 435, 300, 40);
         
         //console
         consoleTextView.frame = CGRectMake(5, 5, 290, 280+80);
@@ -383,6 +418,7 @@
         filesView.frame=innerViewRect;
         consoleView.frame=innerViewRect;
         audioMIDIView.frame=innerViewRect;
+        audioMIDIView.contentSize=CGSizeMake(300*2.4, 440*2.133);
         
         consoleButton.frame = CGRectMake(10*2.4, 340*2.133, 145*2.4, 35*2.133);
         [consoleButton setFont:[UIFont systemFontOfSize:28]];
@@ -416,9 +452,15 @@
         audioEnableButton.font = [UIFont systemFontOfSize:32];
         backgroundAudioEnableLabel.frame = CGRectMake(5*2.4, 250*2.133, 180*2.4, 40*2.133);
         backgroundAudioEnableLabel.font=[UIFont systemFontOfSize:24];
-        inputSwitchLabel.frame = CGRectMake(5*2.4, 280*2.13333, 180*2.4, 40*2.1333);
+        inputSwitchLabel.frame = CGRectMake(5*2.4, 280*2.13333, 180*2.4, 60*2.1333);
         inputSwitchLabel.font=[UIFont systemFontOfSize:24];
-        audioInputSwitch.frame = CGRectMake(220*2.4, 292*2.133, audioInputSwitch.frame.size.width, audioInputSwitch.frame.size.height);
+        audioInputSwitch.frame = CGRectMake(210*2.4, 295*2.133, audioInputSwitch.frame.size.width, audioInputSwitch.frame.size.height);
+        
+        routeSwitchLabel.frame = CGRectMake(5*2.4, 328*2.133, 180*2.4, 40*2.133);
+        routeSwitchLabel.font = [UIFont systemFontOfSize:24];
+        audioRouteView.frame = CGRectMake(215*2.4, 335*2.133, audioRouteView.frame.size.width, audioRouteView.frame.size.height);
+        audioRouteLabel.frame = CGRectMake(0*2.4, 357*2.133, 300*2.4, 40*2.133);
+        audioRouteLabel.font = [UIFont systemFontOfSize:24];
         
         //console
         consoleTextView.frame = CGRectMake(5*2.4, 5*2.133, 290*2.4, 280*2.133);
@@ -432,36 +474,50 @@
         [rateSeg setTitleTextAttributes:attributes forState:UIControlStateNormal];
     }
     
+    
     [self.view addSubview:consoleView];
     [self.view addSubview:audioMIDIView];
     [self.view addSubview:filesView];
     
-   /*
-    // Create a simple holding UIView and give it a frame
-    UIView *volumeHolder = [[UIView alloc] initWithFrame: CGRectMake(20, 200, 200, 60)];
-    
-    // set the UIView backgroundColor to clear.
-    [volumeHolder setBackgroundColor: [UIColor greenColor]];
-    
-    // add the holding view as a subView of the main view
-    [audioMIDIView addSubview: volumeHolder];
-    
-    // Create an instance of MPVolumeView and give it a frame
-    myVolumeView = [[MPVolumeView alloc] initWithFrame: CGRectZero];
-    //myVolumeView.showsVolumeSlider = NO;
-    myVolumeView.showsRouteButton = YES;
+    [self updateAudioRouteLabel];
 
-    
-    // Add myVolumeView as a subView of the volumeHolder
-    [volumeHolder addSubview: myVolumeView];
-    [myVolumeView sizeToFit];
-    */
-    
-    myVolumeView = [ [MPVolumeView alloc] initWithFrame:CGRectMake(100, 300, 100, 100)] ;
-    myVolumeView.showsRouteButton = YES;
-    [audioMIDIView addSubview:myVolumeView];
+    if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"6.0")){
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(audioRouteChange:) name:AVAudioSessionRouteChangeNotification object:nil];
+    }
+}
 
+- (void)audioRouteChange:(NSNotification*)notif{
     
+    if(outputChannelCount<=2 && [[AVAudioSession sharedInstance] outputNumberOfChannels]>2){
+        if ([self.audioDelegate respondsToSelector:@selector(setChannelCount:)]) {
+            [self.audioDelegate setChannelCount:[[AVAudioSession sharedInstance] outputNumberOfChannels] ];
+        }
+    }
+    else if(outputChannelCount>2 && [[AVAudioSession sharedInstance] outputNumberOfChannels]<=2) {
+        if ([self.audioDelegate respondsToSelector:@selector(setChannelCount:)]) {
+            [self.audioDelegate setChannelCount:2];
+        }
+    }
+    
+    [self updateAudioRouteLabel];
+}
+
+-(void)updateAudioRouteLabel{
+    if([[AVAudioSession sharedInstance] respondsToSelector:@selector(currentRoute)]){//ios 5 doesn't find selector
+        
+    AVAudioSessionRouteDescription* asrd = [[AVAudioSession sharedInstance] currentRoute];
+    NSString* inputString = @"input:(none)";
+    if([[asrd inputs] count] > 0 ){
+        AVAudioSessionPortDescription* aspd = [[asrd inputs] objectAtIndex:0];
+        inputString = [NSString stringWithFormat:@"input:%@ channels:%d", aspd.portName, [[AVAudioSession sharedInstance] inputNumberOfChannels] ];
+    }
+    NSString* outputString = @"output:(none)";
+    if([[asrd outputs] count] > 0 ){
+        AVAudioSessionPortDescription* aspd = [[asrd outputs] objectAtIndex:0];
+        outputString = [NSString stringWithFormat:@"output:%@ channels:%d", aspd.portName, [[AVAudioSession sharedInstance] outputNumberOfChannels] ];
+    }
+    audioRouteLabel.text = [NSString stringWithFormat:@"%@\n%@", inputString, outputString];
+    }
 }
 
 -(void)viewWillAppear:(BOOL)animated{
