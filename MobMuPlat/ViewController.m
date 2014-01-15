@@ -106,6 +106,7 @@ extern void sigmund_tilde_setup(void);
     audioController = [[PdAudioController alloc] init] ;
 	[audioController configurePlaybackWithSampleRate:44100 numberChannels:2 inputEnabled:YES mixingEnabled:NO];
     [audioController configureTicksPerBuffer:ticksPerBuffer];
+    //[audioController print];
     
     //access to PD externals not normally part of libPD
     expr_setup();
@@ -269,6 +270,7 @@ extern void sigmund_tilde_setup(void);
     settingsVC.delegate = self;
     //delegate (from audio+midi screen of settingsVC) for setting audio+midi parameters (sampling rate, MIDI source, etc)
     settingsVC.audioDelegate = self;
+    
     
     navigationController = [[UINavigationController alloc] initWithRootViewController:settingsVC];
     navigationController.navigationBar.barStyle = UIBarStyleBlack;

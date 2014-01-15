@@ -16,6 +16,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "ZipArchive.h"
 
+#import <AVFoundation/AVFoundation.h>
 
 @implementation SettingsViewController
 @synthesize delegate;
@@ -525,6 +526,9 @@
     consoleButton.enabled=NO;
     [self.view bringSubviewToFront:consoleView];
     self.navigationItem.title = @"Pd Console";
+    
+    [self consolePrint:[NSString stringWithFormat:@"in: %d out: %d",
+                              [[AVAudioSession sharedInstance] currentHardwareInputNumberOfChannels], [[AVAudioSession sharedInstance] currentHardwareOutputNumberOfChannels] ] ] ;
 
 }
 
