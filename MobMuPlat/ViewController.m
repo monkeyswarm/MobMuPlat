@@ -120,21 +120,20 @@ extern void sigmund_tilde_setup(void);
     lrshift_tilde_setup();
     sigmund_tilde_setup();
     
-    //hardware polling freqs
-    self.accelFrequency=10;
-    self.gyroFrequency=10;
-    self.motionFrequency=10;
     
-    //start accelerometer
-    [[UIAccelerometer sharedAccelerometer] setUpdateInterval:1.0 / self.accelFrequency];
-	[[UIAccelerometer sharedAccelerometer] setDelegate:self];
     
     //start device motion detection
-    
     motionManager = [[CMMotionManager alloc] init];
-    motionManager.deviceMotionUpdateInterval = 1.0 / self.gyroFrequency;
-    motionManager.gyroUpdateInterval=1.0/self.motionFrequency;
+        
+    //start accelerometer
+    if (motionManager.accelerometerAvailable){
+        [motionManager startAccelerometerUpdatesToQueue:[NSOperationQueue currentQueue] withHandler:^(CMAccelerometerData  *accelerometerData, NSError *error) {
+            [self accelerometerDidAccelerate:accelerometerData.acceleration];
+        }];
+    }
+    
     if (motionManager.deviceMotionAvailable){
+        
         [motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue currentQueue] withHandler:^ (CMDeviceMotion *devMotion, NSError *error){
          CMAttitude *currentAttitude = devMotion.attitude;
          /*float xRotation = currentAttitude.roll*180/M_PI;
@@ -174,6 +173,8 @@ extern void sigmund_tilde_setup(void);
               
     //landini
     llm = [[LANdiniLANManager alloc] init];
+    //dev only
+    //llm.logDelegate=self;
     
     
     //copy bundle stuff if not there, i.e. first time we are running it on a new version #
@@ -319,8 +320,7 @@ extern void sigmund_tilde_setup(void);
 }
 
 //called often by accelerometer, package accel values and send to PD
--(void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration{
-    
+-(void)accelerometerDidAccelerate:(CMAcceleration)acceleration{
     //first, "cook" the values to get a nice tilt value without going beyond -1 to 1
     
 	//printf("\naccel %.2f %.2f %.2f", acceleration.x, acceleration.y, acceleration.z);
@@ -890,33 +890,33 @@ extern void sigmund_tilde_setup(void);
             float val = [[list objectAtIndex:1] floatValue];
             if(val<0.01)val=0.01;//clip
             if(val>100)val=100;
-            self.accelFrequency=val;
-            [[UIAccelerometer sharedAccelerometer] setUpdateInterval:1.0/val];
+            if(val>0)
+                motionManager.accelerometerUpdateInterval = 1.0/val;
         }
         else if([[list objectAtIndex:0] isEqualToString:@"/getAccelFrequency"]){
-            NSArray* msgArray=[NSArray arrayWithObjects:@"/accelFrequency", [NSNumber numberWithFloat:self.accelFrequency], nil];
+            NSArray* msgArray=[NSArray arrayWithObjects:@"/accelFrequency", [NSNumber numberWithFloat:motionManager.accelerometerUpdateInterval], nil];
             [PdBase sendList:msgArray toReceiver:@"fromSystem"];
         }
         else if([[list objectAtIndex:0] isEqualToString:@"/setGyroFrequency"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
             float val = [[list objectAtIndex:1] floatValue];
             if(val<0.01)val=0.01;//clip
             if(val>100)val=100;
-            self.gyroFrequency=val;
-            motionManager.gyroUpdateInterval=1.0/val;
+            if(val>0)
+                motionManager.gyroUpdateInterval=1.0/val;
         }
         else if([[list objectAtIndex:0] isEqualToString:@"/getGyroFrequency"]){
-            NSArray* msgArray=[NSArray arrayWithObjects:@"/gyroFrequency", [NSNumber numberWithFloat:self.gyroFrequency], nil];
+            NSArray* msgArray=[NSArray arrayWithObjects:@"/gyroFrequency", [NSNumber numberWithFloat:motionManager.gyroUpdateInterval], nil];
             [PdBase sendList:msgArray toReceiver:@"fromSystem"];
         }
         else if([[list objectAtIndex:0] isEqualToString:@"/setMotionFrequency"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
             float val = [[list objectAtIndex:1] floatValue];
             if(val<0.01)val=0.01;//clip
             if(val>100)val=100;
-            self.motionFrequency=val;
-            motionManager.deviceMotionUpdateInterval=1.0/val;
+            if(val>0)
+                motionManager.deviceMotionUpdateInterval=1.0/val;
         }
         else if([[list objectAtIndex:0] isEqualToString:@"/getMotionFrequency"]){
-            NSArray* msgArray=[NSArray arrayWithObjects:@"/motionFrequency", [NSNumber numberWithFloat:self.motionFrequency], nil];
+            NSArray* msgArray=[NSArray arrayWithObjects:@"/motionFrequency", [NSNumber numberWithFloat:motionManager.deviceMotionUpdateInterval], nil];
             [PdBase sendList:msgArray toReceiver:@"fromSystem"];
         }
         //GPS
@@ -1268,6 +1268,31 @@ extern void sigmund_tilde_setup(void);
 - (void)didReceiveMemoryWarning{
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark LANdini log delegate - currently dev only
+-(void)logLANdiniOutput:(NSArray*)msgArray{
+   }
+
+-(void)logMsgOutput:(NSArray*)msgArray{
+   }
+
+-(void)logLANdiniInput:(NSArray*)msgArray{
+    [settingsVC consolePrint:@"INPUT:"];
+    for(NSString* str in msgArray)
+        [settingsVC consolePrint:str];
+
+}
+
+-(void)logMsgInput:(NSArray*)msgArray{
+    [settingsVC consolePrint:@"OUTPUT:"];
+    for(NSString* str in msgArray)
+        [settingsVC consolePrint:str];
+
+}
+
+-(void) refreshSyncServer:(NSString*)newServerName{
+    [settingsVC consolePrint:[NSString stringWithFormat:@"new server:%@", newServerName]];
 }
 
 @end

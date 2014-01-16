@@ -71,6 +71,8 @@ so that the recipient gets only "<user msg address> <val> <val>...."
 #X obj 118 434 loadbang;
 #X text 119 413 request data on startup;
 #X msg 119 457 list /numUsers \, list /userNames;
+#X msg 633 294 list /myLCD clear \, list /myLCD paintrect 0 0 1 1 1
+0 1 \$1;
 #X connect 0 0 1 0;
 #X connect 1 0 22 0;
 #X connect 1 0 56 0;
@@ -91,6 +93,7 @@ so that the recipient gets only "<user msg address> <val> <val>...."
 #X connect 19 0 18 1;
 #X connect 20 0 19 0;
 #X connect 22 0 16 0;
+#X connect 22 0 60 0;
 #X connect 22 1 41 0;
 #X connect 23 0 14 0;
 #X connect 24 0 25 0;

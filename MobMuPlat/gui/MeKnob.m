@@ -103,6 +103,7 @@
          newRad= _value*(M_PI*2-ROTATION_PAD_RAD*2)+ROTATION_PAD_RAD+M_PI*.5;
     else if (_range>2)
          newRad= (_value/(_range-1))*(M_PI*2-ROTATION_PAD_RAD*2)+ROTATION_PAD_RAD+M_PI*.5;
+    else return;//should not get here, range < 2
     CGPoint newCenter = CGPointMake(cos(newRad)*indicatorDim/2+centerPoint.x, sin(newRad)*indicatorDim/2+centerPoint.y);
 	indicatorView.center=newCenter;
 	indicatorView.transform=CGAffineTransformMakeRotation(newRad-M_PI/2);

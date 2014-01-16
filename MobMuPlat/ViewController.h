@@ -82,8 +82,6 @@
 @property (retain) PdAudioController* audioController;
 @property (retain) SettingsViewController* settingsVC;
 
-@property float accelFrequency;
-@property float gyroFrequency;
-@property float motionFrequency;
+
 
 @end

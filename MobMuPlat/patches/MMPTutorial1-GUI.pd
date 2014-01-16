@@ -1,4 +1,4 @@
-#N canvas 655 59 636 337 10;
+#N canvas 637 55 763 613 10;
 #X obj 6 40 receive fromGUI;
 #X obj 6 72 route list;
 #X obj 6 105 route /knob0 /knob1;
@@ -23,7 +23,28 @@
 #X floatatom 231 270 5 0 0 0 - - -;
 #X floatatom 269 270 5 0 0 0 - - -;
 #X floatatom 307 269 5 0 0 0 - - -;
-#X text 165 34 comment;
+#X text 116 42 see values coming in from GUI widgets;
+#X text 12 306 send some drawing commands to the LCD;
+#X obj 21 545 send toGUI;
+#X msg 18 363 list /LCD penwidth 5;
+#X msg 196 364 list /LCD clear;
+#X msg 28 392 list /LCD paintrect 0.05 0.05 0.3 0.4;
+#X msg 44 413 list /LCD framerect 0.05 0.5 0.3 0.9;
+#X msg 65 439 list /LCD paintoval 0.3 0.05 0.6 0.4;
+#X msg 81 460 list /LCD frameoval 0.3 0.5 0.6 0.9;
+#X msg 108 539 list /LCD framepoly 0.6 0.65 0.63 0.52 0.8 0.9 0.7 0.85
+0.65 0.7 0.85 0.6;
+#X msg 105 502 list /LCD paintpoly 0.6 0.15 0.63 0.02 0.8 0.4 0.7 0.35
+0.65 0.2 0.85 0.1;
+#X msg 312 365 list /LCD penwidth 2;
+#X msg 287 410 list /LCD framerect 0.1 0.55 0.25 0.85;
+#X msg 324 457 list /LCD frameoval 0.35 0.55 0.55 0.85;
+#X obj 113 332 t b b b b;
+#X obj 51 333 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X msg 459 500 list /LCD paintrect 0.9 0.1 0.97 0.7 1 1 1 0.5;
+#X msg 461 530 list /LCD paintrect 0.85 0.3 0.92 0.9 1 1 1 0.5;
+#X obj 211 338 loadbang;
 #X connect 0 0 1 0;
 #X connect 1 0 2 0;
 #X connect 1 0 3 0;
@@ -45,3 +66,30 @@
 #X connect 18 0 21 0;
 #X connect 18 1 22 0;
 #X connect 18 2 23 0;
+#X connect 27 0 26 0;
+#X connect 28 0 26 0;
+#X connect 29 0 26 0;
+#X connect 30 0 26 0;
+#X connect 31 0 26 0;
+#X connect 32 0 26 0;
+#X connect 33 0 26 0;
+#X connect 34 0 26 0;
+#X connect 35 0 26 0;
+#X connect 36 0 26 0;
+#X connect 37 0 26 0;
+#X connect 38 0 29 0;
+#X connect 38 0 30 0;
+#X connect 38 0 34 0;
+#X connect 38 0 33 0;
+#X connect 38 0 40 0;
+#X connect 38 0 41 0;
+#X connect 38 1 27 0;
+#X connect 38 1 31 0;
+#X connect 38 1 32 0;
+#X connect 38 2 36 0;
+#X connect 38 2 37 0;
+#X connect 38 3 35 0;
+#X connect 39 0 38 0;
+#X connect 40 0 26 0;
+#X connect 41 0 26 0;
+#X connect 42 0 38 0;

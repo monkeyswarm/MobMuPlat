@@ -287,7 +287,7 @@
     
     //audio input swtich
     
-    inputSwitchLabel.text=@"override audio input\n(allows system vibration, \nand output audio routing)";
+    inputSwitchLabel.text=@"override audio input:\n(allows system vibration, \nand output audio routing)";
     inputSwitchLabel.backgroundColor=[UIColor clearColor];
 	inputSwitchLabel.textAlignment=UITextAlignmentRight;
     inputSwitchLabel.numberOfLines=3;
@@ -300,7 +300,7 @@
     
     //MPVolume label and button
     
-    routeSwitchLabel.text=@"choose from available devices";
+    routeSwitchLabel.text=@"choose from available devices:";
     routeSwitchLabel.backgroundColor=[UIColor clearColor];
 	routeSwitchLabel.textAlignment=UITextAlignmentRight;
 	routeSwitchLabel.font=[UIFont systemFontOfSize:12];
@@ -421,16 +421,16 @@
         audioMIDIView.contentSize=CGSizeMake(300*2.4, 440*2.133);
         
         consoleButton.frame = CGRectMake(10*2.4, 340*2.133, 145*2.4, 35*2.133);
-        [consoleButton setFont:[UIFont systemFontOfSize:28]];
+        consoleButton.titleLabel.font = [UIFont systemFontOfSize:28];
         dspButton.frame = CGRectMake((10+145+10)*2.4, 340*2.133, 145*2.4, 35*2.133);
-        [dspButton setFont:[UIFont systemFontOfSize:28]];
+        dspButton.titleLabel.font = [UIFont systemFontOfSize:28];
         loadDocButton.frame=CGRectMake(10*2.4, 390*2.133, 300*2.4, 35*2.133);
-        [loadDocButton setFont:[UIFont systemFontOfSize:28]];
+        loadDocButton.titleLabel.font = [UIFont systemFontOfSize:28];
         
         //load doc
         filesTableView.frame=CGRectMake(5*2.4, 5*2.133, 290*2.4, 280*2.133) ;
         showFilesButton.frame = CGRectMake(20*2.4, 290*2.133, 260*2.4, 25*2.133);
-        [showFilesButton setFont:[UIFont systemFontOfSize:28]];
+        showFilesButton.titleLabel.font = [UIFont systemFontOfSize:28];
         
         //audio midi
         midiSourceLabel.frame = CGRectMake(5*2.4, 0, 290*2.4, 25*2.133);
@@ -449,16 +449,16 @@
         rateSeg.frame=CGRectMake(10*2.4, 220*2.133, 280*2.4, 30*2.133);
         
         audioEnableButton.frame=CGRectMake(190*2.4,255*2.133,90*2.4,30*2.133);
-        audioEnableButton.font = [UIFont systemFontOfSize:32];
+        audioEnableButton.titleLabel.font = [UIFont systemFontOfSize:32];
         backgroundAudioEnableLabel.frame = CGRectMake(5*2.4, 250*2.133, 180*2.4, 40*2.133);
         backgroundAudioEnableLabel.font=[UIFont systemFontOfSize:24];
-        inputSwitchLabel.frame = CGRectMake(5*2.4, 280*2.13333, 180*2.4, 60*2.1333);
+        inputSwitchLabel.frame = CGRectMake(5*2.4, 285*2.13333, 180*2.4, 60*2.1333);
         inputSwitchLabel.font=[UIFont systemFontOfSize:24];
-        audioInputSwitch.frame = CGRectMake(210*2.4, 295*2.133, audioInputSwitch.frame.size.width, audioInputSwitch.frame.size.height);
+        audioInputSwitch.frame = CGRectMake(215*2.4, 295*2.133, audioInputSwitch.frame.size.width, audioInputSwitch.frame.size.height);
         
         routeSwitchLabel.frame = CGRectMake(5*2.4, 328*2.133, 180*2.4, 40*2.133);
         routeSwitchLabel.font = [UIFont systemFontOfSize:24];
-        audioRouteView.frame = CGRectMake(215*2.4, 335*2.133, audioRouteView.frame.size.width, audioRouteView.frame.size.height);
+        audioRouteView.frame = CGRectMake(220*2.4, 342*2.133, audioRouteView.frame.size.width, audioRouteView.frame.size.height);
         audioRouteLabel.frame = CGRectMake(0*2.4, 357*2.133, 300*2.4, 40*2.133);
         audioRouteLabel.font = [UIFont systemFontOfSize:24];
         
@@ -466,7 +466,7 @@
         consoleTextView.frame = CGRectMake(5*2.4, 5*2.133, 290*2.4, 280*2.133);
         consoleTextView.font=[UIFont systemFontOfSize:36];
         clearConsoleButton.frame = CGRectMake(20*2.4, 290*2.133, 260*2.4, 25*2.133);
-        [clearConsoleButton setFont:[UIFont systemFontOfSize:28]];
+        clearConsoleButton.titleLabel.font = [UIFont systemFontOfSize:28];
         //segmented
         UIFont *font = [UIFont boldSystemFontOfSize:24.0f];
         NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:UITextAttributeFont];
@@ -499,25 +499,28 @@
         }
     }
     
-    [self updateAudioRouteLabel];
+    [self updateAudioRouteLabel];//also prints to console
 }
 
 -(void)updateAudioRouteLabel{
     if([[AVAudioSession sharedInstance] respondsToSelector:@selector(currentRoute)]){//ios 5 doesn't find selector
         
-    AVAudioSessionRouteDescription* asrd = [[AVAudioSession sharedInstance] currentRoute];
-    NSString* inputString = @"input:(none)";
-    if([[asrd inputs] count] > 0 ){
-        AVAudioSessionPortDescription* aspd = [[asrd inputs] objectAtIndex:0];
-        inputString = [NSString stringWithFormat:@"input:%@ channels:%d", aspd.portName, [[AVAudioSession sharedInstance] inputNumberOfChannels] ];
+        AVAudioSessionRouteDescription* asrd = [[AVAudioSession sharedInstance] currentRoute];
+        NSString* inputString = @"input:(none)";
+        if([[asrd inputs] count] > 0 ){
+            AVAudioSessionPortDescription* aspd = [[asrd inputs] objectAtIndex:0];
+            inputString = [NSString stringWithFormat:@"input:%@ channels:%d", aspd.portName, [[AVAudioSession sharedInstance] inputNumberOfChannels] ];
+        }
+        NSString* outputString = @"output:(none)";
+        if([[asrd outputs] count] > 0 ){
+            AVAudioSessionPortDescription* aspd = [[asrd outputs] objectAtIndex:0];
+            outputString = [NSString stringWithFormat:@"output:%@ channels:%d", aspd.portName, [[AVAudioSession sharedInstance] outputNumberOfChannels] ];
+        }
+        audioRouteLabel.text = [NSString stringWithFormat:@"%@\n%@", inputString, outputString];
+        [self consolePrint:[NSString stringWithFormat:@"%@\n%@", inputString, outputString] ];
     }
-    NSString* outputString = @"output:(none)";
-    if([[asrd outputs] count] > 0 ){
-        AVAudioSessionPortDescription* aspd = [[asrd outputs] objectAtIndex:0];
-        outputString = [NSString stringWithFormat:@"output:%@ channels:%d", aspd.portName, [[AVAudioSession sharedInstance] outputNumberOfChannels] ];
-    }
-    audioRouteLabel.text = [NSString stringWithFormat:@"%@\n%@", inputString, outputString];
-    }
+    
+    
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -582,9 +585,6 @@
     consoleButton.enabled=NO;
     [self.view bringSubviewToFront:consoleView];
     self.navigationItem.title = @"Pd Console";
-    
-    [self consolePrint:[NSString stringWithFormat:@"in: %d out: %d",
-                              [[AVAudioSession sharedInstance] currentHardwareInputNumberOfChannels], [[AVAudioSession sharedInstance] currentHardwareOutputNumberOfChannels] ] ] ;
 
 }
 
@@ -687,7 +687,7 @@
     
     //if an MMP file, open JSONString and load it 
     if([suffix isEqualToString:@"mmp"]){
-        NSString* jsonString = [NSString stringWithContentsOfFile: fullPath];
+        NSString* jsonString = [NSString stringWithContentsOfFile:fullPath encoding:NSUTF8StringEncoding error:nil];
         NSDictionary* sceneDict = [jsonString objectFromJSONString];
         
         BOOL loaded = [self.delegate loadScene:sceneDict];
