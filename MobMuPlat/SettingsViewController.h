@@ -95,7 +95,6 @@ typedef enum{
 - (void)settingsViewControllerDidFinish:(SettingsViewController *)controller;
 - (BOOL)loadScene:(NSDictionary*)sceneDict;
 - (BOOL)loadScenePatchOnly:(NSString*)filename;
--(void)setLANdiniEnabled:(BOOL)enabled;
 
 @end
 
@@ -115,7 +114,7 @@ typedef enum{
 
 @end
 
-@protocol LANdiniDelegate <NSObject, UITableViewDelegate, UITableViewDataSource>
+@protocol LANdiniDelegate <NSObject>
 -(float)getLANdiniTime;
 -(void)enableLANdini:(BOOL)enable;
 -(Reachability*)getReachability;

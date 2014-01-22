@@ -691,7 +691,7 @@ BOOL LANdiniSwitchBool;
 
     }
     
-    else if (tableView==_LANdiniUserTableView){
+    else /*if (tableView==_LANdiniUserTableView)*/{
         UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"LANdiniUserCell"];
 		LANdiniUser* user = [_LANdiniUserArray objectAtIndex:[indexPath row]];
         
