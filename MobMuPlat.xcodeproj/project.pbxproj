@@ -100,6 +100,8 @@
 		DC0FC93C172D84EA00E895C3 /* x_net.c in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC8F9172D84EA00E895C3 /* x_net.c */; };
 		DC0FC93D172D84EA00E895C3 /* x_qlist.c in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC8FA172D84EA00E895C3 /* x_qlist.c */; };
 		DC0FC93E172D84EA00E895C3 /* x_time.c in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC8FB172D84EA00E895C3 /* x_time.c */; };
+		DC13B957188E053200647115 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = DC13B956188E053200647115 /* Reachability.m */; };
+		DC13B959188E125600647115 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC13B958188E125600647115 /* SystemConfiguration.framework */; };
 		DC178CE51880FD9F00DD4BF8 /* LANdiniLANManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DC178CE21880FD9F00DD4BF8 /* LANdiniLANManager.m */; };
 		DC178CE61880FD9F00DD4BF8 /* LANdiniUser.m in Sources */ = {isa = PBXBuildFile; fileRef = DC178CE41880FD9F00DD4BF8 /* LANdiniUser.m */; };
 		DC233DAD1655EDF500AC01C5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC233DAC1655EDF500AC01C5 /* UIKit.framework */; };
@@ -148,6 +150,7 @@
 		DC6A9FF51878F88900A7585A /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = DC6A9FEF1878F88900A7585A /* LICENSE */; };
 		DC6A9FF61878F88900A7585A /* README.markdown in Resources */ = {isa = PBXBuildFile; fileRef = DC6A9FF01878F88900A7585A /* README.markdown */; };
 		DC6A9FF71878F88900A7585A /* MAZeroingWeakRef.m in Sources */ = {isa = PBXBuildFile; fileRef = DC6A9FF31878F88900A7585A /* MAZeroingWeakRef.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		DC7DD717188F2A660068BA66 /* SettingsViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = DC7DD716188F2A660068BA66 /* SettingsViewController~ipad.xib */; };
 		DC89675D18870F7D00750137 /* MMPExamples-LANdini.pd in Resources */ = {isa = PBXBuildFile; fileRef = DC89675918870F7D00750137 /* MMPExamples-LANdini.pd */; };
 		DC89675E18870F7D00750137 /* MMPExamples-LANdini-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DC89675A18870F7D00750137 /* MMPExamples-LANdini-Pad.mmp */; };
 		DC89675F18870F7D00750137 /* MMPExamples-LANdini.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DC89675B18870F7D00750137 /* MMPExamples-LANdini.mmp */; };
@@ -235,6 +238,7 @@
 		DCD8DF8B17330C4700767321 /* Welcome.pd in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5E17330C4700767321 /* Welcome.pd */; };
 		DCD8DF8E17330C9D00767321 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = DCD8DF8D17330C9D00767321 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DCD8DF9317330D8B00767321 /* PGMidi.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCD8DF9217330D8A00767321 /* PGMidi.mm */; };
+		DCEF4F2C188ED1CD00D6EE54 /* SettingsViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */; };
 		DCFF717716B59F3100CDCEAE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DCFF717616B59F3100CDCEAE /* libz.dylib */; };
 /* End PBXBuildFile section */
 
@@ -351,6 +355,9 @@
 		DC0FC8F9172D84EA00E895C3 /* x_net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = x_net.c; sourceTree = "<group>"; };
 		DC0FC8FA172D84EA00E895C3 /* x_qlist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = x_qlist.c; sourceTree = "<group>"; };
 		DC0FC8FB172D84EA00E895C3 /* x_time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = x_time.c; sourceTree = "<group>"; };
+		DC13B955188E053200647115 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Reachability.h; path = Reachability/Reachability.h; sourceTree = "<group>"; };
+		DC13B956188E053200647115 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Reachability.m; path = Reachability/Reachability.m; sourceTree = "<group>"; };
+		DC13B958188E125600647115 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		DC178CE11880FD9F00DD4BF8 /* LANdiniLANManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LANdiniLANManager.h; path = LANdini/LANdiniLANManager.h; sourceTree = "<group>"; };
 		DC178CE21880FD9F00DD4BF8 /* LANdiniLANManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LANdiniLANManager.m; path = LANdini/LANdiniLANManager.m; sourceTree = "<group>"; };
 		DC178CE31880FD9F00DD4BF8 /* LANdiniUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LANdiniUser.h; path = LANdini/LANdiniUser.h; sourceTree = "<group>"; };
@@ -422,6 +429,7 @@
 		DC6A9FF21878F88900A7585A /* MAZeroingWeakRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAZeroingWeakRef.h; sourceTree = "<group>"; };
 		DC6A9FF31878F88900A7585A /* MAZeroingWeakRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAZeroingWeakRef.m; sourceTree = "<group>"; };
 		DC6A9FF41878F88900A7585A /* MAZeroingWeakRefNativeZWRNotAllowedTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAZeroingWeakRefNativeZWRNotAllowedTable.h; sourceTree = "<group>"; };
+		DC7DD716188F2A660068BA66 /* SettingsViewController~ipad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "SettingsViewController~ipad.xib"; path = "settings/SettingsViewController~ipad.xib"; sourceTree = "<group>"; };
 		DC89675918870F7D00750137 /* MMPExamples-LANdini.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-LANdini.pd"; path = "patches/MMPExamples-LANdini.pd"; sourceTree = "<group>"; };
 		DC89675A18870F7D00750137 /* MMPExamples-LANdini-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-LANdini-Pad.mmp"; path = "patches/MMPExamples-LANdini-Pad.mmp"; sourceTree = "<group>"; };
 		DC89675B18870F7D00750137 /* MMPExamples-LANdini.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-LANdini.mmp"; path = "patches/MMPExamples-LANdini.mmp"; sourceTree = "<group>"; };
@@ -545,6 +553,7 @@
 		DCD8DF9017330D8A00767321 /* PGArc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGArc.h; path = PGMidi/PGArc.h; sourceTree = "<group>"; };
 		DCD8DF9117330D8A00767321 /* PGMidi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGMidi.h; path = PGMidi/PGMidi.h; sourceTree = "<group>"; };
 		DCD8DF9217330D8A00767321 /* PGMidi.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PGMidi.mm; path = PGMidi/PGMidi.mm; sourceTree = "<group>"; };
+		DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "SettingsViewController~iphone.xib"; path = "settings/SettingsViewController~iphone.xib"; sourceTree = "<group>"; };
 		DCFF717616B59F3100CDCEAE /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -553,6 +562,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DC13B959188E125600647115 /* SystemConfiguration.framework in Frameworks */,
 				90503180188474D9003D85E9 /* MediaPlayer.framework in Frameworks */,
 				DC456B03176BC1540080BB33 /* CoreLocation.framework in Frameworks */,
 				DCB11AE11702B315004B92EA /* CoreMotion.framework in Frameworks */,
@@ -772,9 +782,19 @@
 			name = graphics;
 			sourceTree = "<group>";
 		};
+		DC13B951188E04EB00647115 /* Reachability */ = {
+			isa = PBXGroup;
+			children = (
+				DC13B955188E053200647115 /* Reachability.h */,
+				DC13B956188E053200647115 /* Reachability.m */,
+			);
+			name = Reachability;
+			sourceTree = "<group>";
+		};
 		DC233D9D1655EDF500AC01C5 = {
 			isa = PBXGroup;
 			children = (
+				DC13B951188E04EB00647115 /* Reachability */,
 				90DFFB22187DC41700DD2149 /* LANdini */,
 				DC0FC7E3172D837F00E895C3 /* libpd */,
 				DC0FC7E2172D81CB00E895C3 /* JSONKit */,
@@ -799,6 +819,7 @@
 		DC233DAB1655EDF500AC01C5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DC13B958188E125600647115 /* SystemConfiguration.framework */,
 				9050317F188474D9003D85E9 /* MediaPlayer.framework */,
 				DC456B02176BC1540080BB33 /* CoreLocation.framework */,
 				DCB11AE01702B315004B92EA /* CoreMotion.framework */,
@@ -817,6 +838,7 @@
 		DC233DB21655EDF500AC01C5 /* MobMuPlat */ = {
 			isa = PBXGroup;
 			children = (
+				DCEF4F21188ECC7A00D6EE54 /* settings */,
 				DC1065AA16B4255000AD4091 /* graphics */,
 				DC27F12A165EB8900094A069 /* gui */,
 				DC29445B16584A6E00BF4A50 /* patches */,
@@ -1055,6 +1077,15 @@
 			name = src;
 			sourceTree = "<group>";
 		};
+		DCEF4F21188ECC7A00D6EE54 /* settings */ = {
+			isa = PBXGroup;
+			children = (
+				DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */,
+				DC7DD716188F2A660068BA66 /* SettingsViewController~ipad.xib */,
+			);
+			name = settings;
+			sourceTree = "<group>";
+		};
 		DCFF713416B59BDC00CDCEAE /* Zip */ = {
 			isa = PBXGroup;
 			children = (
@@ -1179,6 +1210,7 @@
 				DC89675D18870F7D00750137 /* MMPExamples-LANdini.pd in Resources */,
 				DCD8DF8017330C4700767321 /* MMPTutorial4-Networking-Pad.mmp in Resources */,
 				DCD8DF8117330C4700767321 /* MMPTutorial4-Networking.mmp in Resources */,
+				DCEF4F2C188ED1CD00D6EE54 /* SettingsViewController~iphone.xib in Resources */,
 				DC89676018870F7D00750137 /* MMPExamples-LANdini-ip5.mmp in Resources */,
 				DC89675E18870F7D00750137 /* MMPExamples-LANdini-Pad.mmp in Resources */,
 				90BE0D641880A9EF009446AD /* MMPTutorial6-2DGraphics.mmp in Resources */,
@@ -1189,6 +1221,7 @@
 				DCD8DF8417330C4700767321 /* MMPTutorial5-Files-Pad.mmp in Resources */,
 				DCD8DF8517330C4700767321 /* MMPTutorial5-Files.mmp in Resources */,
 				DCD8DF8617330C4700767321 /* MMPTutorial5-Files.pd in Resources */,
+				DC7DD717188F2A660068BA66 /* SettingsViewController~ipad.xib in Resources */,
 				DCD8DF8717330C4700767321 /* vocod_channel.pd in Resources */,
 				DCD8DF8817330C4700767321 /* Welcome-ip5.mmp in Resources */,
 				DCD8DF8917330C4700767321 /* Welcome-Pad.mmp in Resources */,
@@ -1332,6 +1365,7 @@
 				DCA9B92A17330F90000E59DD /* OSCAddressSpace.m in Sources */,
 				DCA9B92B17330F90000E59DD /* OSCBundle.m in Sources */,
 				DCA9B92C17330F90000E59DD /* OSCInPort.m in Sources */,
+				DC13B957188E053200647115 /* Reachability.m in Sources */,
 				DC6A9FF71878F88900A7585A /* MAZeroingWeakRef.m in Sources */,
 				DCA9B92D17330F90000E59DD /* OSCManager.m in Sources */,
 				DCA9B92E17330F90000E59DD /* OSCMessage.m in Sources */,
@@ -1452,7 +1486,7 @@
 					"-DPD",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "A3646FCD-4CF0-40ED-A461-190642B768E7";
+				PROVISIONING_PROFILE = "0C2C5849-EF94-4662-B32C-A3B4D935A828";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = "armv7 armv7s";
@@ -1482,7 +1516,7 @@
 					"-DPD",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "A3646FCD-4CF0-40ED-A461-190642B768E7";
+				PROVISIONING_PROFILE = "0C2C5849-EF94-4662-B32C-A3B4D935A828";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "A3646FCD-4CF0-40ED-A461-190642B768E7";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";

@@ -63,9 +63,6 @@ the mode and the destination.;
 of a specific user;
 #X text -194 535 ======SPEC:===== (see Jascha Narveson's LANdini webpage
 for more info);
-#X text -199 694 these two elements are stripped of when received \,
-so that the recipient gets only "<user msg address> <val> <val>...."
-;
 #X obj 285 137 route /landini/userNames /landini/numUsers /landini/networkTime
 ;
 #X obj 118 434 loadbang;
@@ -73,9 +70,12 @@ so that the recipient gets only "<user msg address> <val> <val>...."
 #X msg 119 457 list /numUsers \, list /userNames;
 #X msg 633 294 list /myLCD clear \, list /myLCD paintrect 0 0 1 1 1
 0 1 \$1;
+#X text -199 694 these two elements are stripped off the message when
+received \, so that the recipient gets only "<user msg address> <val>
+<val>....";
 #X connect 0 0 1 0;
 #X connect 1 0 22 0;
-#X connect 1 0 56 0;
+#X connect 1 0 55 0;
 #X connect 3 0 4 0;
 #X connect 5 0 6 0;
 #X connect 6 0 26 0;
@@ -93,7 +93,7 @@ so that the recipient gets only "<user msg address> <val> <val>...."
 #X connect 19 0 18 1;
 #X connect 20 0 19 0;
 #X connect 22 0 16 0;
-#X connect 22 0 60 0;
+#X connect 22 0 59 0;
 #X connect 22 1 41 0;
 #X connect 23 0 14 0;
 #X connect 24 0 25 0;
@@ -130,9 +130,9 @@ so that the recipient gets only "<user msg address> <val> <val>...."
 #X connect 41 0 40 0;
 #X connect 44 0 43 0;
 #X connect 45 0 38 0;
-#X connect 56 0 10 0;
-#X connect 56 1 13 0;
-#X connect 56 2 15 0;
-#X connect 56 3 23 0;
-#X connect 57 0 59 0;
-#X connect 59 0 17 0;
+#X connect 55 0 10 0;
+#X connect 55 1 13 0;
+#X connect 55 2 15 0;
+#X connect 55 3 23 0;
+#X connect 56 0 58 0;
+#X connect 58 0 17 0;

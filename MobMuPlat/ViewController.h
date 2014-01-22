@@ -12,7 +12,7 @@
 #import "PdAudioController.h"
 #import "PdBase.h"
 
-
+#import "Reachability.h"
 #import "JSONKit.h"
 
 #import "SettingsViewController.h"
@@ -25,7 +25,7 @@
 
 
 
-@interface ViewController : UIViewController<PdReceiverDelegate, UIAccelerometerDelegate,  SettingsViewControllerDelegate, ControlDelegate, UIScrollViewDelegate, AudioSettingsDelegate, PGMidiDelegate, PGMidiSourceDelegate, OSCDelegateProtocol, PdMidiReceiverDelegate, CLLocationManagerDelegate>{
+@interface ViewController : UIViewController<PdReceiverDelegate, UIAccelerometerDelegate,  SettingsViewControllerDelegate, ControlDelegate, UIScrollViewDelegate, AudioSettingsDelegate, PGMidiDelegate, PGMidiSourceDelegate, OSCDelegateProtocol, PdMidiReceiverDelegate, CLLocationManagerDelegate, LANdiniDelegate>{
     
     
     UIButton * settingsButton;
@@ -71,12 +71,14 @@
     
     LANdiniLANManager* llm;
    
+    Reachability* reach;
    
 }
 
 
 -(void)connectPorts;
 -(void)disconnectPorts;
++(NSString*)fetchSSIDInfo;
 
 @property BOOL backgroundAudioEnabled;
 @property (retain) PdAudioController* audioController;

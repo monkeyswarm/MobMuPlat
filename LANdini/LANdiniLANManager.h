@@ -10,13 +10,20 @@
 #import "VVOSC.h"
 #import "LANdiniUser.h"
 
-@protocol LANdiniDemoLogDelegate <NSObject>
+@protocol LANdiniLogDelegate <NSObject>
 
 -(void)logLANdiniOutput:(NSArray*)msgArray;
 -(void)logMsgOutput:(NSArray*)msgArray;
 -(void)logLANdiniInput:(NSArray*)msgArray;
 -(void)logMsgInput:(NSArray*)msgArray;
--(void)refreshSyncServer:(NSString*)newServerName;
+//-(void)refreshSyncServer:(NSString*)newServerName;
+
+@end
+
+@protocol LANdiniUserStateDelegate <NSObject>
+
+-(void)userStateChanged:(NSArray*)msgArray;
+-(void)syncServerChanged:(NSString*)newServerName;
 
 @end
 
@@ -24,12 +31,16 @@
 
 
 @property (strong, nonatomic) LANdiniUser * me;
-@property id<LANdiniDemoLogDelegate> logDelegate;
+@property (weak, nonatomic) id<LANdiniLogDelegate> logDelegate;
+@property (weak, nonatomic) id<LANdiniUserStateDelegate> userDelegate;
+
 
 
 + (OSCMessage*) OSCMessageFromArray:(NSArray*)vals; //array of address, object vals -> OSCMessage
 - (NSTimeInterval) elapsedTime;
 -(void)sendMsgToApp:(NSArray*)msgArray;
 
+-(NSTimeInterval)networkTime;
+-(void)setEnabled:(BOOL)enabled;
 
 @end

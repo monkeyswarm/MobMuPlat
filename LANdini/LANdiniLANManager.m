@@ -52,6 +52,8 @@
     OSCOutPort* _targetAppAddr;
     OSCInPort* _inPortLocal;
     OSCInPort* _inPortNetwork;
+    
+    BOOL _enabled;
 }
 @end
 
@@ -98,13 +100,11 @@
         _oscManager = [[OSCManager alloc] init];
         [_oscManager setDelegate:self];
         
-        [self connectOSC:nil];
-        
-        [self checkForLAN];
+        //[self connectOSC:nil];
         
         //not called on startup
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectOSC:) name:UIApplicationWillEnterForegroundNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(disconnectOSC:) name:UIApplicationWillResignActiveNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterFG:) name:UIApplicationWillEnterForegroundNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterBG:) name:UIApplicationWillResignActiveNotification object:nil];
     }
     return self;
 }
@@ -117,29 +117,63 @@
         [self.logDelegate logMsgInput:msgArray];
 }
 
+-(void)setEnabled:(BOOL)enabled{
+    _enabled = enabled;
+    
+    if(_enabled){
+        [self connectOSC];
+    }
+    else{
+        [self disconnectOSC];
+    }
+}
 
--(void)connectOSC:(NSNotification*)notif{
+-(void)willEnterFG:(NSNotification*)notif{
+    if(_enabled){
+        [self connectOSC];
+    }
+}
+
+-(void)willEnterBG:(NSNotification*)notif{
+    if(_enabled){
+        [self disconnectOSC];
+    }
+}
+
+-(void)connectOSC{
+    NSLog(@"connectOSC llm %p", self);
     _targetAppAddr = [_oscManager createNewOutputToAddress:@"127.0.0.1" atPort:_toLocalPort];
     _broadcastAppAddr = [_oscManager createNewOutputToAddress:@"224.0.0.1" atPort:SC_DEFAULT_PORT];
     _inPortNetwork = [_oscManager createNewInputForPort:SC_DEFAULT_PORT];//network responders from other landinis
     _inPortLocal = [_oscManager createNewInputForPort:_fromLocalPort];//api responders from local user app
     
-    for(LANdiniUser* user in _userList){
-        [user restartOSC];
-    }
+    [self checkForLAN];
 }
 
--(void)disconnectOSC:(NSNotification*)notif{
+-(void)disconnectOSC{
+    NSLog(@"disconnectOSC llm %p", self);
+    [_userList removeAllObjects];
+    [self receiveGetNamesRequest];
+    [self receiveGetNumUsersRequest];
+    if([self.userDelegate respondsToSelector:@selector(userStateChanged:)])
+        [self.userDelegate userStateChanged:_userList];
+    
     [_oscManager deleteAllInputs];
     [_oscManager deleteAllOutputs];
     _inPortNetwork = nil;//ness?
     _inPortLocal = nil;
     _targetAppAddr = nil;
     _broadcastAppAddr = nil;
+    _syncServerName = @"noSyncServer";
     
-    for(LANdiniUser* user in _userList){
-        [user stopOSC];
+    //if backgrounded when looking for LAN, then that timer keeps firing and overlaps with its recreation to init the LAN twice, adding "me" twice
+    //this attempts to prevent that
+    if(_connectionTimer!=nil){
+        [_connectionTimer invalidate];
+        _connectionTimer=nil;
     }
+    
+    
 }
 
 -(NSTimeInterval) elapsedTime{
@@ -155,6 +189,7 @@
 -(void)connectionTimerMethod:(NSTimer*)timer{
     NSString* address = [self getIPAddress];
     if(address!=nil){
+        NSLog(@"timer %p", _connectionTimer);
         [_connectionTimer invalidate];
         _connectionTimer=nil;
         [self initLAN:address];
@@ -167,20 +202,37 @@
 -(void)initLAN:(NSString*)address{
     
     
-    if([self.logDelegate respondsToSelector:@selector(refreshSyncServer:)] )
-        [self.logDelegate refreshSyncServer:_syncServerName];
+    if([self.userDelegate respondsToSelector:@selector(syncServerChanged:)] )
+        [self.userDelegate syncServerChanged:_syncServerName];
     
     NSString* myIP = address;
     int myPort = SC_DEFAULT_PORT; // supercollider default port
     NSString* myName = [[UIDevice currentDevice] name];
+    
+    //rare cases of double adding on to/from background
+    LANdiniUser* findMe = [self userInUserListWithName:myName];
+    if(findMe){
+        [_userList removeObject:findMe];
+        NSLog(@"LANdini initLAN: redundant me");
+    }
+    
     _me = [[LANdiniUser alloc] initWithName:myName IP:myIP port:myPort network:self];
     _connected = YES;
     [_userList addObject:_me];
+    
+    if([self.userDelegate respondsToSelector:@selector(userStateChanged:)])
+        [self.userDelegate userStateChanged:_userList];
+    [self receiveGetNamesRequest];
+    [self receiveGetNumUsersRequest];
     
     //NSLog(@"connected to LAN at %@ on port %d", _me.ip, _me.port);
     if([self.logDelegate respondsToSelector:@selector(logLANdiniOutput:)] )
         [self.logDelegate logLANdiniOutput:@[ [NSString stringWithFormat:@"connected to LAN at %@ on port %d", _me.ip, _me.port] ] ];
     
+    
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+      
     NSLog(@"got to the responders");
     [self setupAPIResponders];
     NSLog(@"got to the network responders");
@@ -195,7 +247,10 @@
         NSLog(@"starting drop user task");
         [self startDropUserTimer];
     });
+        
+         });
 }
+
 
 -(void) setupAPIResponders{
 
@@ -541,7 +596,7 @@
     }
     
     NSString* syncServerPingName = [msgArray objectAtIndex:8];//todo add check
-    if( [_syncServerName isEqualToString:@"noSyncServer"] || [syncServerPingName isEqualToString:_syncServerName] ){
+    if( [syncServerPingName isEqualToString:@"noSyncServer"] || ![syncServerPingName isEqualToString:_syncServerName] ){
         [self dealWithNewSyncServerName:syncServerPingName];//syncServerPingName
     }
 }
@@ -562,6 +617,8 @@
         //DEI edit not in original supercollider source:send new message to user app with names
         [self receiveGetNamesRequest];
         [self receiveGetNumUsersRequest];
+        if([self.userDelegate respondsToSelector:@selector(userStateChanged:)])
+            [self.userDelegate userStateChanged:_userList];
         //end DEI edit
     }
     return usr;
@@ -595,6 +652,8 @@
         //DEI edit not in original supercollider: send the user client new users list
         [self receiveGetNamesRequest];
         [self receiveGetNumUsersRequest];
+        if([self.userDelegate respondsToSelector:@selector(userStateChanged:)])
+            [self.userDelegate userStateChanged:_userList];
     }
     
 }
@@ -613,15 +672,15 @@
     _adjustmentToGetNetworkTime = 0;
     _inSync = YES;
     
-    if([self.logDelegate respondsToSelector:@selector(refreshSyncServer:)] )
-        [self.logDelegate refreshSyncServer:_me.name];
+    if([self.userDelegate respondsToSelector:@selector(syncServerChanged:)] )
+        [self.userDelegate syncServerChanged:_me.name];
 }
 
 
 -(void) dealWithNewSyncServerName:(NSString*)newName{
     
     if([newName isEqualToString:@"noSyncServer"]){
-        //NSLog(@"pinged sync server name is noSyncServer");
+        NSLog(@"pinged sync server name is noSyncServer");
         NSMutableArray* namesArray = [[NSMutableArray alloc]init];
         for(LANdiniUser* user in _userList){
             [namesArray addObject:user.name];
@@ -629,7 +688,7 @@
         
         [namesArray sortUsingSelector:@selector(compare:)];//sort by string
         NSLog(@"here's allNames: %@", namesArray);
-        if([namesArray objectAtIndex:0]==_me.name){
+        if([namesArray count]>0 && [namesArray objectAtIndex:0]==_me.name){
             if(![_syncServerName isEqualToString:_me.name]){
                 [self becomeSyncServer];
             }
@@ -645,8 +704,8 @@
         if(user!=nil){//if found
             _syncServerName = newName;
             
-            if([self.logDelegate respondsToSelector:@selector(refreshSyncServer:)] )
-                [self.logDelegate refreshSyncServer:newName];
+            if([self.userDelegate respondsToSelector:@selector(syncServerChanged:)] )
+                [self.userDelegate syncServerChanged:newName];
         }
         
         //[self startSyncTimer];
@@ -659,8 +718,8 @@
     _inSync = NO;
     _syncServerName = @"noSyncServer";
     _smallestRtt = 1;
-    if([self.logDelegate respondsToSelector:@selector(refreshSyncServer:)] )
-        [self.logDelegate refreshSyncServer:_syncServerName];
+    if([self.userDelegate respondsToSelector:@selector(syncServerChanged:)] )
+        [self.userDelegate syncServerChanged:_syncServerName];
 }
 
 //i get this when I am the time server, I should not be getting messages from me
@@ -909,7 +968,9 @@
     return usr;
 }
 
-
+-(void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 
 
 @end

@@ -17,6 +17,14 @@
 #import "ZipArchive.h"
 
 #import <AVFoundation/AVFoundation.h>
+#import "ViewController.h"
+
+@interface SettingsViewController () {
+    __weak NSArray* _LANdiniUserArray;
+    NSTimer* _networkTimer;
+    NSString* _LANdiniSyncServerName;
+}
+@end
 
 @implementation SettingsViewController
 @synthesize delegate;
@@ -70,7 +78,14 @@
                                                                                 target:self
                                                                                 action:@selector(done:)];
     self.navigationItem.leftBarButtonItem = doneButton;
-   
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reachabilityChanged:)
+                                                 name:kReachabilityChangedNotification
+                                               object:nil];
+    
+    
+    
     //match default pdaudiocontroller settings
     outputChannelCount = 2;
     
@@ -95,394 +110,162 @@
     hardwareCanvasType = [SettingsViewController getCanvasType];
     
     int cornerRadius;
-    if(hardwareCanvasType==canvasTypeIPad)cornerRadius=20;
-    else cornerRadius=10;
-    
-    //set up the three main subviews
-    filesView = [[UIView alloc] init];
-    consoleView = [[UIView alloc] init];
-    audioMIDIView = [[UIScrollView alloc] init];
-    audioMIDIView.bounces = NO;
-    
-    filesView.backgroundColor=[UIColor purpleColor];
-    consoleView.backgroundColor = [UIColor colorWithRed:.843 green:.23 blue:.351 alpha:1];//red
-    audioMIDIView.backgroundColor = [UIColor colorWithRed:.902 green:.33 blue:.18 alpha:1];//orange
-    
-    filesView.layer.cornerRadius = cornerRadius;
-    consoleView.layer.cornerRadius = cornerRadius;
-    audioMIDIView.layer.cornerRadius = cornerRadius;
-    
-    loadDocButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    dspButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    consoleButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    
-    //setup elements of the filesView
-    filesTableView = [[UITableView alloc]init];
-    filesTableView.layer.cornerRadius = cornerRadius;
-    showFilesButton =[UIButton buttonWithType:UIButtonTypeRoundedRect];
-    
-    //setup element of the consoleView
-    consoleTextView = [[UITextView alloc]init];
-    consoleTextView.layer.cornerRadius = cornerRadius;
-    clearConsoleButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    
-    //setup elements of the audioMIDIView
-    //UILabel* midiLabel = [[UILabel alloc]init ];
-    UILabel* midiSourceLabel = [[UILabel alloc]init ];
-    midiSourceTableView  = [[UITableView alloc]init];
-    midiSourceTableView.layer.cornerRadius = cornerRadius;
-    //UILabel* midiDestinationLabel = [[UILabel alloc]init ];
-    midiDestinationTableView  = [[UITableView alloc]init];
-    midiDestinationTableView.layer.cornerRadius = cornerRadius;
-    
-    UILabel* bufferLabel = [[UILabel alloc]init ];
-    UILabel* rateLabel = [[UILabel alloc]init];
-    tickValueLabel = [[UILabel alloc]init];
-    UILabel* backgroundAudioEnableLabel= [[UILabel alloc]init];
-    UILabel* inputSwitchLabel = [[UILabel alloc]init];
-    UILabel* routeSwitchLabel = [[UILabel alloc]init];
-    audioRouteLabel = [[UILabel alloc]init];
-    
-    //setup buttons at bottom of main view
-    [loadDocButton setTitle:@"Select Document" forState:UIControlStateNormal];
-    [loadDocButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [loadDocButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
-    [loadDocButton addTarget:self action:@selector(showLoadDoc:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:loadDocButton ];
-    loadDocButton.enabled=NO;//disable a button when we are looking at its affiliated subview
-    
-    if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")){
-        loadDocButton.layer.cornerRadius = 5;
-        loadDocButton.layer.borderWidth = 2;
-        loadDocButton.layer.borderColor = [UIColor whiteColor].CGColor;
-        [loadDocButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        
+    int buttonRadius;
+    if(hardwareCanvasType==canvasTypeIPad){
+        cornerRadius=20;
+        buttonRadius=10;
+    }
+    else{
+         cornerRadius=10;
+        buttonRadius=5;
     }
     
+    //top buttons
+    [_documentViewButton addTarget:self action:@selector(showLoadDoc:) forControlEvents:UIControlEventTouchUpInside];
+    _documentViewButton.layer.cornerRadius = buttonRadius;
+    _documentViewButton.layer.borderWidth = 1;
+    _documentViewButton.layer.borderColor = [UIColor whiteColor].CGColor;
     
-    [dspButton setTitle:@"Audio & MIDI" forState:UIControlStateNormal];
-    [dspButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [dspButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
-    [dspButton addTarget:self action:@selector(showDSP:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:dspButton ];
-    if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")){
-        dspButton.layer.cornerRadius = 5;
-        dspButton.layer.borderWidth = 2;
-        dspButton.layer.borderColor = [UIColor whiteColor].CGColor;
-        [dspButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        
-    }
+    [_consoleViewButton addTarget:self action:@selector(showConsole:) forControlEvents:UIControlEventTouchUpInside];
+    _consoleViewButton.layer.cornerRadius = buttonRadius;
+    _consoleViewButton.layer.borderWidth = 1;
+    _consoleViewButton.layer.borderColor = [UIColor whiteColor].CGColor;
     
-    [consoleButton setTitle:@"Pd Console" forState:UIControlStateNormal];
-    [consoleButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [consoleButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
-    [consoleButton addTarget:self action:@selector(showConsole:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:consoleButton ];
-    if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")){
-        consoleButton.layer.cornerRadius = 5;
-        consoleButton.layer.borderWidth = 2;
-        consoleButton.layer.borderColor = [UIColor whiteColor].CGColor;
-        [consoleButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    }
+    [_audioMidiViewButton addTarget:self action:@selector(showDSP:) forControlEvents:UIControlEventTouchUpInside];
+    _audioMidiViewButton.layer.cornerRadius = buttonRadius;
+    _audioMidiViewButton.layer.borderWidth = 1;
+    _audioMidiViewButton.layer.borderColor = [UIColor whiteColor].CGColor;
     
-    //setup elements in filesview
-    filesTableView.delegate=self;
-    filesTableView.dataSource=self;
-    [filesView addSubview:filesTableView];
+    [_LANdiniViewButton addTarget:self action:@selector(showLANdini:) forControlEvents:UIControlEventTouchUpInside];
+    _LANdiniViewButton.layer.cornerRadius = buttonRadius;
+    _LANdiniViewButton.layer.borderWidth = 1;
+    _LANdiniViewButton.layer.borderColor = [UIColor whiteColor].CGColor;
     
-    [showFilesButton setTitle:@"show all files" forState:UIControlStateNormal];
-    [showFilesButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [showFilesButton addTarget:self action:@selector(showFilesButtonHit:) forControlEvents:UIControlEventTouchUpInside];
-    [filesView addSubview:showFilesButton];
-    if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")){
-        showFilesButton.layer.cornerRadius = 5;
-        showFilesButton.layer.borderWidth = 2;
-        showFilesButton.layer.borderColor = [UIColor whiteColor].CGColor;
-        [showFilesButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    }
+    //documents
+    _documentsTableView.delegate = self;
+    _documentsTableView.dataSource = self;
+    [_showFilesButton addTarget:self action:@selector(showFilesButtonHit:) forControlEvents:UIControlEventTouchUpInside];
+    _showFilesButton.layer.cornerRadius = buttonRadius;
+    _showFilesButton.layer.borderWidth = 1;
+    _showFilesButton.layer.borderColor = [UIColor whiteColor].CGColor;
     
     
-    //layout audioMidiView ====
+    //console
+    [_clearConsoleButton addTarget:self action:@selector(clearConsole:) forControlEvents:UIControlEventTouchUpInside];
+    _clearConsoleButton.layer.cornerRadius = buttonRadius;
+    _clearConsoleButton.layer.borderWidth = 1;
+    _clearConsoleButton.layer.borderColor = [UIColor whiteColor].CGColor;
     
-	midiSourceLabel.text=@"Select MIDI Input & Output";
-	midiSourceLabel.backgroundColor=[UIColor clearColor];
-	midiSourceLabel.textAlignment=UITextAlignmentCenter;
-	midiSourceLabel.font=[UIFont systemFontOfSize:16];
-	[audioMIDIView addSubview:midiSourceLabel];
-    
-    midiSourceTableView.delegate=self;
-	midiSourceTableView.dataSource=self;
-	midiSourceTableView.bounces=NO;
-	[audioMIDIView addSubview:midiSourceTableView];
-    
-    midiDestinationTableView.delegate=self;
-	midiDestinationTableView.dataSource=self;
-	midiDestinationTableView.bounces=NO;
-	[audioMIDIView addSubview:midiDestinationTableView];
+    //audio midi
+    _midiSourceTableView.delegate = self;
+    _midiSourceTableView.dataSource = self;
+    _midiDestinationTableView.delegate = self;
+    _midiDestinationTableView.dataSource = self;
     
     NSIndexPath *topIndexPath = [NSIndexPath indexPathForRow:0 inSection: 0];
-    //connect to top element of midi source list
-	if( [[[self.audioDelegate midi] sources] count] >0 )
-        [midiSourceTableView selectRowAtIndexPath:topIndexPath animated:NO scrollPosition:UITableViewScrollPositionTop];
+    if( [[[self.audioDelegate midi] sources] count] >0 )
+        [_midiSourceTableView selectRowAtIndexPath:topIndexPath animated:NO scrollPosition:UITableViewScrollPositionTop];
     if( [[[self.audioDelegate midi] destinations] count] >0 )
-        [midiDestinationTableView selectRowAtIndexPath:topIndexPath animated:NO scrollPosition:UITableViewScrollPositionTop];
+        [_midiDestinationTableView selectRowAtIndexPath:topIndexPath animated:NO scrollPosition:UITableViewScrollPositionTop];
     
-    
-    bufferLabel.text=@"Audio Buffer Size (in Pd Blocks)";
-	bufferLabel.backgroundColor=[UIColor clearColor];
-	bufferLabel.textAlignment=UITextAlignmentCenter;
-	bufferLabel.font=[UIFont systemFontOfSize:16];//[MBConstants paramLabelFont];
-	[audioMIDIView addSubview:bufferLabel];
-    
-    NSArray* tickItems = [NSArray arrayWithObjects:@"1", @"2", @"4", @"8", @"16", @"32", @"64", nil];
-    tickSeg = [[UISegmentedControl alloc]initWithItems:tickItems];
-    UIFont *font = [UIFont boldSystemFontOfSize:12.0f];
-    NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:UITextAttributeFont];
-    [tickSeg setTitleTextAttributes:attributes forState:UIControlStateNormal];
-    [tickSeg addTarget:self action:@selector(tickSegChanged:) forControlEvents:UIControlEventValueChanged];
-    [audioMIDIView addSubview:tickSeg];
+    [_audioMidiScrollView setContentSize:_audioMidiContentView.frame.size];
     
     int actualTicks = [self.audioDelegate actualTicksPerBuffer];
-    tickSeg.selectedSegmentIndex = (int)log2(actualTicks);
+    _tickSeg.selectedSegmentIndex = (int)log2(actualTicks);
+    [_tickSeg addTarget:self action:@selector(tickSegChanged:) forControlEvents:UIControlEventValueChanged];
+    [_rateSeg addTarget:self action:@selector(rateSegChanged:) forControlEvents:UIControlEventValueChanged];
+    [self tickSegChanged:_tickSeg];//set label
     
-    int blockSize = [self.audioDelegate blockSize];
-    tickValueLabel.font=[UIFont systemFontOfSize:12];
-    tickValueLabel.backgroundColor=[UIColor clearColor];
-    tickValueLabel.numberOfLines=2;
-    tickValueLabel.textAlignment=UITextAlignmentCenter;
-    [tickValueLabel setText:[NSString stringWithFormat:@"request: %d * block size (%d) = %d samples \nactual: %d * block size (%d) = %d samples", requestedBlockCount, blockSize, requestedBlockCount*blockSize, actualTicks, blockSize, actualTicks*blockSize  ]];
-    [audioMIDIView addSubview:tickValueLabel];
+    [_audioEnableButton addTarget:self action:@selector(audioEnableButtonHit ) forControlEvents:UIControlEventTouchDown];
+    _audioEnableButton.layer.cornerRadius = 5;
+    _audioEnableButton.layer.borderWidth = 1;
+    _audioEnableButton.layer.borderColor = [UIColor whiteColor].CGColor;
+	[_audioInputSwitch addTarget:self action:@selector(audioInputSwitchHit) forControlEvents:UIControlEventValueChanged];
     
-    rateLabel.text=@"Sampling Rate";
-	rateLabel.backgroundColor=[UIColor clearColor];
-	rateLabel.textAlignment=UITextAlignmentCenter;
-	rateLabel.font=[UIFont systemFontOfSize:16];
-	[audioMIDIView addSubview:rateLabel];
-    
-    NSArray* rateItems = [NSArray arrayWithObjects:@"8000", @"11025", @"22050", @"32000", @"44100", @"48000", nil];
-    UISegmentedControl* rateSeg = [[UISegmentedControl alloc]initWithItems:rateItems];
-    [rateSeg setTitleTextAttributes:attributes forState:UIControlStateNormal];
-    [rateSeg addTarget:self action:@selector(rateSegChanged:) forControlEvents:UIControlEventValueChanged];
-    [audioMIDIView addSubview:rateSeg];
-    
-    //int rate = [self.audioDelegate sampleRate];
-    //I am going to assume that my sample rate is 44100, as I set it to such in ViewController before creating this object
-    rateSeg.selectedSegmentIndex = 4;
-    
-    //background audio 
-    backgroundAudioEnableLabel.text=@"app runs in background:\n(for iOS controllers/sequencers)";
-    backgroundAudioEnableLabel.backgroundColor=[UIColor clearColor];
-	backgroundAudioEnableLabel.textAlignment=UITextAlignmentRight;
-    backgroundAudioEnableLabel.numberOfLines=2;
-	backgroundAudioEnableLabel.font=[UIFont systemFontOfSize:12];
-	[audioMIDIView addSubview:backgroundAudioEnableLabel];
-    
-    audioEnableButton = [UIButton buttonWithType:UIButtonTypeCustom];
-	audioEnableButton.layer.cornerRadius=5;
-	audioEnableButton.layer.borderWidth=2;
-	[audioEnableButton setTitle:@"disabled" forState:UIControlStateNormal];
-	audioEnableButton.layer.borderColor=[[UIColor whiteColor] CGColor];
-	[audioEnableButton addTarget:self action:@selector(audioEnableButtonHit ) forControlEvents:UIControlEventTouchDown];
-   	[audioMIDIView addSubview: audioEnableButton];
-    
-    //audio input swtich
-    
-    inputSwitchLabel.text=@"override audio input:\n(allows system vibration, \nand output audio routing)";
-    inputSwitchLabel.backgroundColor=[UIColor clearColor];
-	inputSwitchLabel.textAlignment=UITextAlignmentRight;
-    inputSwitchLabel.numberOfLines=3;
-	inputSwitchLabel.font=[UIFont systemFontOfSize:12];
-	[audioMIDIView addSubview:inputSwitchLabel];
-    
-    audioInputSwitch = [[UISwitch alloc]init];
-	[audioInputSwitch addTarget:self action:@selector(audioInputSwitchHit) forControlEvents:UIControlEventValueChanged];
-   	[audioMIDIView addSubview: audioInputSwitch];
-    
-    //MPVolume label and button
-    
-    routeSwitchLabel.text=@"choose from available devices:";
-    routeSwitchLabel.backgroundColor=[UIColor clearColor];
-	routeSwitchLabel.textAlignment=UITextAlignmentRight;
-	routeSwitchLabel.font=[UIFont systemFontOfSize:12];
-    [audioMIDIView addSubview:routeSwitchLabel];
-    audioRouteView =  [[MPVolumeView alloc] init];
+    audioRouteView =  [[MPVolumeView alloc] initWithFrame:_audioRouteContainerView.frame];
     audioRouteView.showsRouteButton = YES;
     audioRouteView.showsVolumeSlider = NO;
-    [audioMIDIView addSubview:audioRouteView];
+    [_audioMidiContentView addSubview:audioRouteView];
+    [audioRouteView sizeToFit];
     
-    //audioRouteLabel.text=@"choose from available devices";
-    audioRouteLabel.backgroundColor=[UIColor clearColor];
-	audioRouteLabel.textAlignment=UITextAlignmentCenter;
-	audioRouteLabel.font=[UIFont systemFontOfSize:12];
-    audioRouteLabel.numberOfLines = 2;
-    [audioMIDIView addSubview:audioRouteLabel];
+    //LANdini
+    [_LANdiniEnableSwitch addTarget:self action:@selector(LANdiniSwitchHit:) forControlEvents:UIControlEventValueChanged];
+    _LANdiniUserTableView.delegate = self;
+    _LANdiniUserTableView.dataSource = self;
     
-    //setup consoleView elements
-    consoleTextView.editable=NO;
-    [consoleView addSubview:consoleTextView];
+    [self updateNetworkLabel:[self.LANdiniDelegate getReachability] ];
+
     
-    [clearConsoleButton setTitle:@"clear" forState:UIControlStateNormal];
-    [clearConsoleButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [clearConsoleButton addTarget:self action:@selector(clearConsole:) forControlEvents:UIControlEventTouchUpInside];
-    [consoleView addSubview:clearConsoleButton];
-    if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")){
-        clearConsoleButton.layer.cornerRadius = 5;
-        clearConsoleButton.layer.borderWidth = 2;
-        clearConsoleButton.layer.borderColor = [UIColor whiteColor].CGColor;
-        [clearConsoleButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    }
+   
+    //
+    _documentView.layer.cornerRadius = cornerRadius;
+    _consoleView.layer.cornerRadius = cornerRadius;
+    _audioMidiScrollView.layer.cornerRadius = cornerRadius;
+    _LANdiniView.layer.cornerRadius = cornerRadius;
     
-    //layout everything by canvas size
+    _documentsTableView.layer.cornerRadius = cornerRadius;
+    _consoleTextView.layer.cornerRadius = cornerRadius;
     
+    _midiSourceTableView.layer.cornerRadius = cornerRadius;
+    _midiDestinationTableView.layer.cornerRadius = cornerRadius;
+    _LANdiniUserTableView.layer.cornerRadius = cornerRadius;
+
     if(hardwareCanvasType==canvasTypeIPhone3p5Inch){
-        CGRect innerViewRect = CGRectMake(10, 10, 300, 320);
-        filesView.frame=innerViewRect;
-        consoleView.frame=innerViewRect;
-        audioMIDIView.frame = innerViewRect;
-        audioMIDIView.contentSize=CGSizeMake(300, 400);
-        
-        consoleButton.frame = CGRectMake(10, 340, 145, 35);
-        dspButton.frame = CGRectMake(10+145+10, 340, 145, 35);
-        loadDocButton.frame=CGRectMake(10, 390, 300, 35);
-        
-        //load doc
-        filesTableView.frame=CGRectMake(5, 5, 290, 280) ;
-        showFilesButton.frame = CGRectMake(20, 290, 260, 25);
-        
-        //audio midi
-        midiSourceLabel.frame = CGRectMake(5, 0, 290, 25);
-        midiSourceTableView.frame = CGRectMake(10, 30, 135, 60);
-        midiDestinationTableView.frame = CGRectMake(10+135+10, 30, 135, 60);
-        bufferLabel.frame = CGRectMake(5, 90, 290, 25);
-        [tickSeg setFrame:CGRectMake(10, 115, 280, 30)];
-        tickValueLabel.frame = CGRectMake(10, 150, 280, 30);
-        rateLabel.frame=CGRectMake(5,180,290, 25);
-        rateSeg.frame=CGRectMake(10, 205, 280, 30);
-        audioEnableButton.frame=CGRectMake(190,245,90,40);
-        backgroundAudioEnableLabel.frame = CGRectMake(5, 245, 180, 40);
-        inputSwitchLabel.frame = CGRectMake(5, 283, 180, 60);
-        audioInputSwitch.frame = CGRectMake(210, 295, audioInputSwitch.frame.size.width, audioInputSwitch.frame.size.height);
-        
-        routeSwitchLabel.frame = CGRectMake(5, 328, 180, 40);
-        audioRouteView.frame = CGRectMake(215, 335, audioRouteView.frame.size.width, audioRouteView.frame.size.height);
-        audioRouteLabel.frame = CGRectMake(0, 357, 300, 40);
-        
-        //console
-        consoleTextView.frame = CGRectMake(5, 5, 290, 280);
-        consoleTextView.font=[UIFont systemFontOfSize:18];
-        clearConsoleButton.frame = CGRectMake(20, 290, 260, 25);
-        
+        if(SYSTEM_VERSION_LESS_THAN(@"7.0")){
+            //segmented
+            UIFont *font = [UIFont boldSystemFontOfSize:12.0f];
+            NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:UITextAttributeFont];
+            [_tickSeg setTitleTextAttributes:attributes forState:UIControlStateNormal];
+            [_rateSeg setTitleTextAttributes:attributes forState:UIControlStateNormal];
+            
+            CGRect frame= _tickSeg.frame;
+            [_tickSeg setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, 30)];
+            frame= _rateSeg.frame;
+            [_rateSeg setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, 30)];
+        }
     }
     else if(hardwareCanvasType==canvasTypeIPhone4Inch){
-        CGRect innerViewRect = CGRectMake(10, 10, 300, 320+80);//+80 height
-        filesView.frame=innerViewRect;
-        consoleView.frame=innerViewRect;
-        audioMIDIView.frame=innerViewRect;
-        audioMIDIView.contentSize=CGSizeMake(300, 480);
-        
-        consoleButton.frame = CGRectMake(10, 340+86, 145, 35);//+86 ypos
-        dspButton.frame = CGRectMake(10+145+10, 340+86, 145, 35);
-        loadDocButton.frame=CGRectMake(10, 390+86, 300, 35);
-        
-        //load doc
-        filesTableView.frame=CGRectMake(5, 5, 290, 280+80) ;
-        showFilesButton.frame = CGRectMake(20, 290+80, 260, 25);
-        
-        //audio midi - same
-        midiSourceLabel.frame = CGRectMake(5, 0, 290, 25);
-        midiSourceTableView.frame = CGRectMake(10, 30, 135, 100);
-        midiDestinationTableView.frame=CGRectMake(10+135+10, 30, 135, 100);
-        bufferLabel.frame = CGRectMake(5, 145, 290, 25);
-        [tickSeg setFrame:CGRectMake(10, 170, 280, 30)];
-        
-        tickValueLabel.frame = CGRectMake(10, 200, 280, 30);
-        rateLabel.frame=CGRectMake(5,240,290, 25);
-        rateSeg.frame=CGRectMake(10, 265, 280, 30);
-        audioEnableButton.frame=CGRectMake(190,310,90,40);
-        backgroundAudioEnableLabel.frame = CGRectMake(5, 310, 180, 40);
-        inputSwitchLabel.frame = CGRectMake(5, 350, 180, 60);
-        audioInputSwitch.frame = CGRectMake(210, 365, audioInputSwitch.frame.size.width, audioInputSwitch.frame.size.height);
-        
-        routeSwitchLabel.frame = CGRectMake(5, 405, 180, 40);
-        audioRouteView.frame = CGRectMake(215, 413, audioRouteView.frame.size.width, audioRouteView.frame.size.height);
-        audioRouteLabel.frame = CGRectMake(0, 435, 300, 40);
-        
-        //console
-        consoleTextView.frame = CGRectMake(5, 5, 290, 280+80);
-        consoleTextView.font=[UIFont systemFontOfSize:18];
-        clearConsoleButton.frame = CGRectMake(20, 290+80, 260, 25);
-
+        if(SYSTEM_VERSION_LESS_THAN(@"7.0")){
+            //segmented
+            UIFont *font = [UIFont boldSystemFontOfSize:12.0f];
+            NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:UITextAttributeFont];
+            [_tickSeg setTitleTextAttributes:attributes forState:UIControlStateNormal];
+            [_rateSeg setTitleTextAttributes:attributes forState:UIControlStateNormal];
+            
+            CGRect frame= _tickSeg.frame;
+            [_tickSeg setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, 30)];
+            frame= _rateSeg.frame;
+            [_rateSeg setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, 30)];
+        }
     }
-    else{ //ipad
-        CGRect innerViewRect = CGRectMake(10*2.4, 10*2.133, 300*2.4, 320*2.133);//+448 wid, +544 height - factor 2.4 width 2.13333 height
-        filesView.frame=innerViewRect;
-        consoleView.frame=innerViewRect;
-        audioMIDIView.frame=innerViewRect;
-        audioMIDIView.contentSize=CGSizeMake(300*2.4, 440*2.133);
+    else{//ipad
         
-        consoleButton.frame = CGRectMake(10*2.4, 340*2.133, 145*2.4, 35*2.133);
-        consoleButton.titleLabel.font = [UIFont systemFontOfSize:28];
-        dspButton.frame = CGRectMake((10+145+10)*2.4, 340*2.133, 145*2.4, 35*2.133);
-        dspButton.titleLabel.font = [UIFont systemFontOfSize:28];
-        loadDocButton.frame=CGRectMake(10*2.4, 390*2.133, 300*2.4, 35*2.133);
-        loadDocButton.titleLabel.font = [UIFont systemFontOfSize:28];
-        
-        //load doc
-        filesTableView.frame=CGRectMake(5*2.4, 5*2.133, 290*2.4, 280*2.133) ;
-        showFilesButton.frame = CGRectMake(20*2.4, 290*2.133, 260*2.4, 25*2.133);
-        showFilesButton.titleLabel.font = [UIFont systemFontOfSize:28];
-        
-        //audio midi
-        midiSourceLabel.frame = CGRectMake(5*2.4, 0, 290*2.4, 25*2.133);
-        midiSourceLabel.font=[UIFont systemFontOfSize:32];
-        midiSourceTableView.frame = CGRectMake(10*2.4, 30*2.133, 135*2.4, 60*2.133);
-        midiDestinationTableView.frame=CGRectMake((10+135+10)*2.4, 30*2.133, 135*2.4, 60*2.133);
-        bufferLabel.frame = CGRectMake(5*2.4, 100*2.133, 290*2.4, 25*2.133);
-        bufferLabel.font=[UIFont systemFontOfSize:32];
-        [tickSeg setFrame:CGRectMake(10*2.4, 125*2.133, 280*2.4, 30*2.133)];
-        
-        tickValueLabel.frame = CGRectMake(10*2.4, 160*2.133, 280*2.4, 30*2.133);
-        tickValueLabel.font=[UIFont systemFontOfSize:24];
-        
-        rateLabel.frame=CGRectMake(5*2.4,195*2.133,290*2.4, 25*2.133);
-        rateLabel.font = [UIFont systemFontOfSize:32];
-        rateSeg.frame=CGRectMake(10*2.4, 220*2.133, 280*2.4, 30*2.133);
-        
-        audioEnableButton.frame=CGRectMake(190*2.4,255*2.133,90*2.4,30*2.133);
-        audioEnableButton.titleLabel.font = [UIFont systemFontOfSize:32];
-        backgroundAudioEnableLabel.frame = CGRectMake(5*2.4, 250*2.133, 180*2.4, 40*2.133);
-        backgroundAudioEnableLabel.font=[UIFont systemFontOfSize:24];
-        inputSwitchLabel.frame = CGRectMake(5*2.4, 285*2.13333, 180*2.4, 60*2.1333);
-        inputSwitchLabel.font=[UIFont systemFontOfSize:24];
-        audioInputSwitch.frame = CGRectMake(215*2.4, 295*2.133, audioInputSwitch.frame.size.width, audioInputSwitch.frame.size.height);
-        
-        routeSwitchLabel.frame = CGRectMake(5*2.4, 328*2.133, 180*2.4, 40*2.133);
-        routeSwitchLabel.font = [UIFont systemFontOfSize:24];
-        audioRouteView.frame = CGRectMake(220*2.4, 342*2.133, audioRouteView.frame.size.width, audioRouteView.frame.size.height);
-        audioRouteLabel.frame = CGRectMake(0*2.4, 357*2.133, 300*2.4, 40*2.133);
-        audioRouteLabel.font = [UIFont systemFontOfSize:24];
-        
-        //console
-        consoleTextView.frame = CGRectMake(5*2.4, 5*2.133, 290*2.4, 280*2.133);
-        consoleTextView.font=[UIFont systemFontOfSize:36];
-        clearConsoleButton.frame = CGRectMake(20*2.4, 290*2.133, 260*2.4, 25*2.133);
-        clearConsoleButton.titleLabel.font = [UIFont systemFontOfSize:28];
-        //segmented
         UIFont *font = [UIFont boldSystemFontOfSize:24.0f];
         NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:UITextAttributeFont];
-        [tickSeg setTitleTextAttributes:attributes forState:UIControlStateNormal];
-        [rateSeg setTitleTextAttributes:attributes forState:UIControlStateNormal];
+        [_tickSeg setTitleTextAttributes:attributes forState:UIControlStateNormal];
+        [_rateSeg setTitleTextAttributes:attributes forState:UIControlStateNormal];
+        
+        if(SYSTEM_VERSION_LESS_THAN(@"7.0")){
+            //segmented
+             CGRect frame= _tickSeg.frame;
+            [_tickSeg setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, 60)];
+            frame= _rateSeg.frame;
+            [_rateSeg setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, 60)];
+        }
+        else{//ios 7
+            CGRect frame= _tickSeg.frame;
+            [_tickSeg setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height*2)];
+            frame= _rateSeg.frame;
+            [_rateSeg setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height*2)];
+        }
     }
     
-    
-    [self.view addSubview:consoleView];
-    [self.view addSubview:audioMIDIView];
-    [self.view addSubview:filesView];
-    
+    [self showLoadDoc:nil];
     [self updateAudioRouteLabel];
+    
 
     if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"6.0")){
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(audioRouteChange:) name:AVAudioSessionRouteChangeNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(audioRouteChange:) name:AVAudioSessionRouteChangeNotification object:nil];
     }
 }
 
@@ -516,91 +299,135 @@
             AVAudioSessionPortDescription* aspd = [[asrd outputs] objectAtIndex:0];
             outputString = [NSString stringWithFormat:@"output:%@ channels:%d", aspd.portName, [[AVAudioSession sharedInstance] outputNumberOfChannels] ];
         }
-        audioRouteLabel.text = [NSString stringWithFormat:@"%@\n%@", inputString, outputString];
-        [self consolePrint:[NSString stringWithFormat:@"%@\n%@", inputString, outputString] ];
+        _audioRouteLabel.text = [NSString stringWithFormat:@"%@\n%@", inputString, outputString];
+        //[self consolePrint:[NSString stringWithFormat:@"%@\n%@", inputString, outputString] ];
     }
     
     
 }
 
 -(void)viewWillAppear:(BOOL)animated{
-    consoleTextView.text = consoleTextString;
-    [consoleTextView scrollRangeToVisible:(NSRange){consoleTextString.length-1, 1}];
+    _consoleTextView.text = consoleTextString;
+    [_consoleTextView scrollRangeToVisible:(NSRange){consoleTextString.length-1, 1}];
 
 }
 
 -(void)audioEnableButtonHit{
     self.audioDelegate.backgroundAudioEnabled=!self.audioDelegate.backgroundAudioEnabled;
     if(self.audioDelegate.backgroundAudioEnabled){
-        [audioEnableButton setTitle:@"enabled" forState:UIControlStateNormal];
-        [audioEnableButton setBackgroundColor:[UIColor whiteColor]];
-        [audioEnableButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+        [_audioEnableButton setTitle:@"enabled" forState:UIControlStateNormal];
+        [_audioEnableButton setBackgroundColor:[UIColor whiteColor]];
+        [_audioEnableButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
     }
     
     else{
-        [audioEnableButton setTitle:@"disabled" forState:UIControlStateNormal];
-        [audioEnableButton setBackgroundColor:[UIColor clearColor]];
-        [audioEnableButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_audioEnableButton setTitle:@"disabled" forState:UIControlStateNormal];
+        [_audioEnableButton setBackgroundColor:[UIColor clearColor]];
+        [_audioEnableButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     }
 }
 
+BOOL audioSwitchBool;
 -(void)audioInputSwitchHit{
-    //NSLog(@"switch %d", audioInputSwitch.on);
-    if(audioInputSwitch.on){
-        [self.delegate setAudioInputEnabled:NO];//overide to turn mic off, vib on;
+    
+    if(audioSwitchBool!=_audioInputSwitch.on){
+        audioSwitchBool=_audioInputSwitch.on;
+        NSLog(@"audio switch %d", _audioInputSwitch.on);
+        
+        if(_audioInputSwitch.on){
+            [self.audioDelegate setAudioInputEnabled:NO];//overide to turn mic off, vib on;
+        }
+        else [self.audioDelegate setAudioInputEnabled:YES];
     }
-    else [self.delegate setAudioInputEnabled:YES];
 }
+
+BOOL LANdiniSwitchBool;
+-(void)LANdiniSwitchHit:(UISwitch*)sender{
+    if(LANdiniSwitchBool!=_LANdiniEnableSwitch.on){
+        LANdiniSwitchBool=_LANdiniEnableSwitch.on;
+        NSLog(@"landini switch %d", sender.isOn);
+        if([self.LANdiniDelegate respondsToSelector:@selector(enableLANdini:)]){
+            [self.LANdiniDelegate enableLANdini:[sender isOn]];
+        }
+    
+        if([sender isOn]){
+            _networkTimer = [NSTimer scheduledTimerWithTimeInterval:.25 target:self selector:@selector(networkTime:) userInfo:nil repeats:YES];
+        }
+        else{
+            [_networkTimer invalidate];
+            _networkTimer = nil;
+            _LANdiniTimeLabel.text = @"Network time:";
+        }
+    }
+}
+
+-(void)networkTime:(NSTimer*)timer{
+    _LANdiniTimeLabel.text = [NSString stringWithFormat:@"Network time via %@:\n%.2f", _LANdiniSyncServerName, [self.LANdiniDelegate getLANdiniTime] ];
+}
+
 
 - (void)done:(id)sender {
     [self.delegate settingsViewControllerDidFinish:self];
 }
 
+
 -(void)showFilesButtonHit:(id)sender{
-    if([showFilesButton tag]==0){//is showing mmp, change to show all
+    if([_showFilesButton tag]==0){//is showing mmp, change to show all
         mmpOrAll=YES;
         [self reloadFileTable];
-        [showFilesButton setTitle:@"show only mmp files" forState:UIControlStateNormal];
-        showFilesButton.tag=1;
+        [_showFilesButton setTitle:@"show only mmp files" forState:UIControlStateNormal];
+        _showFilesButton.tag=1;
     }
     else{
         mmpOrAll=NO;
         [self reloadFileTable];
-        [showFilesButton setTitle:@"show all files" forState:UIControlStateNormal];
-        showFilesButton.tag=0;
+        [_showFilesButton setTitle:@"show all files" forState:UIControlStateNormal];
+        _showFilesButton.tag=0;
     }
 }
 
 -(void) showLoadDoc:(id)sender{
-    loadDocButton.enabled=NO;
-    dspButton.enabled=YES;
-    consoleButton.enabled=YES;
-    [self.view bringSubviewToFront:filesView];
+    _documentViewButton.enabled=NO;
+    _audioMidiViewButton.enabled=YES;
+    _consoleViewButton.enabled=YES;
+    _LANdiniViewButton.enabled = YES;
+    [self.view bringSubviewToFront:_documentView];
     self.navigationItem.title = @"Select Document";
     
 }
 -(void)showConsole:(id)sender{
-    loadDocButton.enabled=YES;
-    dspButton.enabled=YES;
-    consoleButton.enabled=NO;
-    [self.view bringSubviewToFront:consoleView];
+    _documentViewButton.enabled=YES;
+    _audioMidiViewButton.enabled=YES;
+    _consoleViewButton.enabled=NO;
+    _LANdiniViewButton.enabled = YES;
+    [self.view bringSubviewToFront:_consoleView];
     self.navigationItem.title = @"Pd Console";
 
 }
 
 - (void)showDSP:(id)sender {
-    loadDocButton.enabled=YES;
-    dspButton.enabled=NO;
-    consoleButton.enabled=YES;
-    [self.view bringSubviewToFront:audioMIDIView];
+    _documentViewButton.enabled=YES;
+    _audioMidiViewButton.enabled=NO;
+    _consoleViewButton.enabled=YES;
+    _LANdiniViewButton.enabled = YES;
+    [self.view bringSubviewToFront:_audioMidiScrollView];
     self.navigationItem.title = @"Audio MIDI Settings";
     
+}
+
+- (void)showLANdini:(id)sender {
+    _documentViewButton.enabled=YES;
+    _audioMidiViewButton.enabled=YES;
+    _consoleViewButton.enabled=YES;
+    _LANdiniViewButton.enabled = NO;
+    [self.view bringSubviewToFront:_LANdiniView];
+    self.navigationItem.title = @"LANdini";
     
 }
 
 -(void)clearConsole:(id)sender{
     consoleTextString=@"";
-    consoleTextView.text = consoleTextString;
+    _consoleTextView.text = consoleTextString;
 }
 
 //adds string to queue
@@ -616,14 +443,14 @@
     //take all the string in the queue and shove them into one big string
     NSString* newString = [consoleStringQueue componentsJoinedByString:@"\n"];
     consoleTextString = [consoleTextString stringByAppendingFormat:@"\n%@", newString];//append to currently shown string
-    int startPoint = [consoleTextString length]-1000; if (startPoint<0)startPoint=0;
-    NSRange stringRange = {startPoint, MIN([consoleTextString length], 1000)};//chop off front of string to fit
+    int startPoint = [consoleTextString length]-2000; if (startPoint<0)startPoint=0;
+    NSRange stringRange = {startPoint, MIN([consoleTextString length], 2000)};//chop off front of string to fit
     consoleTextString = [consoleTextString substringWithRange:stringRange];
     [consoleStringQueue removeAllObjects];
     
     if (self.isViewLoaded && self.view.window) {//if I am on screen, show and scroll
-        consoleTextView.text = consoleTextString;
-        [consoleTextView scrollRangeToVisible:(NSRange){consoleTextString.length-1, 1}];
+        _consoleTextView.text = consoleTextString;
+        [_consoleTextView scrollRangeToVisible:(NSRange){consoleTextString.length-1, 1}];
     }
   
 }
@@ -635,7 +462,7 @@
     
     
     int actualTicks = [self.audioDelegate setTicksPerBuffer:requestedBlockCount];
-    [tickValueLabel setText:[NSString stringWithFormat:@"request: %d * block size (%d) = %d samples \nactual: %d * block size (%d) = %d samples", requestedBlockCount, blockSize, requestedBlockCount*blockSize, actualTicks, blockSize, actualTicks*blockSize  ]];
+    [_tickValueLabel setText:[NSString stringWithFormat:@"request: %d * block size (%d) = %d samples \nactual: %d * block size (%d) = %d samples", requestedBlockCount, blockSize, requestedBlockCount*blockSize, actualTicks, blockSize, actualTicks*blockSize  ]];
     
     if(actualTicks!=requestedBlockCount){
         int actualIndex = (int)log2(actualTicks/64);
@@ -654,26 +481,29 @@
         actualTicks = [self.audioDelegate setTicksPerBuffer:requestedBlockCount];
         if( fmod(log2(actualTicks), 1)==0){
             int newBlockIndex = (int)log2(actualTicks);
-            [tickSeg setSelectedSegmentIndex:newBlockIndex];
+            [_tickSeg setSelectedSegmentIndex:newBlockIndex];
         }
-        else [tickSeg setSelectedSegmentIndex:UISegmentedControlNoSegment];
+        else [_tickSeg setSelectedSegmentIndex:UISegmentedControlNoSegment];
         
     }
     
-    [tickValueLabel setText:[NSString stringWithFormat:@"request: %d * block size (%d) = %d samples \nactual: %d * block size (%d) = %d samples", requestedBlockCount, blockSize, requestedBlockCount*blockSize, actualTicks, blockSize, actualTicks*blockSize  ]];
+    [_tickValueLabel setText:[NSString stringWithFormat:@"request: %d * block size (%d) = %d samples \nactual: %d * block size (%d) = %d samples", requestedBlockCount, blockSize, requestedBlockCount*blockSize, actualTicks, blockSize, actualTicks*blockSize  ]];
 }
 
 
 -(void)reloadFileTable{
     MMPFiles = [SettingsViewController getDocumentsOnlyMMP:YES];
     allFiles = [SettingsViewController getDocumentsOnlyMMP:NO];
-    [filesTableView reloadData];
+    [_documentsTableView reloadData];
 }
 
 -(void)reloadMidiSources{
-    [midiSourceTableView reloadData];
-    [midiDestinationTableView reloadData];
+    [_midiSourceTableView reloadData];
+    [_midiDestinationTableView reloadData];
 }
+
+//landini
+
 
 //load a pure data file from an index path on the filesTable
 -(void)selectHelper:(NSIndexPath*)indexPath{
@@ -753,7 +583,7 @@
 //tableView delegate methods
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    if(tableView==filesTableView){
+    if(tableView==_documentsTableView){
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
         
         //add an activity indicator
@@ -771,20 +601,24 @@
         
     }
     
-    else if (tableView==midiSourceTableView){
+    else if (tableView==_midiSourceTableView){
         [self.audioDelegate setMidiSourceIndex:[indexPath indexAtPosition:1] ];
 	}
-    else if (tableView==midiDestinationTableView){
+    else if (tableView==_midiDestinationTableView){
         [self.audioDelegate setMidiDestinationIndex:[indexPath indexAtPosition:1] ];
 	}
-    
+    /*else if (tableView==_LANdiniUserTableView){
+        [self.LANdiniDelegate ]
+    }*/
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if(tableView == filesTableView)return [(mmpOrAll ? allFiles : MMPFiles) count];
-    else if (tableView==midiSourceTableView)return [[[self.audioDelegate midi] sources]  count];
-    else return [[[self.audioDelegate midi] destinations]  count];
+    if(tableView == _documentsTableView)return [(mmpOrAll ? allFiles : MMPFiles) count];
+    else if (tableView==_midiSourceTableView)return [[[self.audioDelegate midi] sources]  count];
+    else if (tableView==_midiDestinationTableView)return [[[self.audioDelegate midi] destinations]  count];
+    else if (tableView==_LANdiniUserTableView) return [_LANdiniUserArray count];
+    else return 0;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)aTableView {
@@ -792,18 +626,18 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    if(tableView == filesTableView){
+    if(tableView == _documentsTableView){
         if (hardwareCanvasType==canvasTypeIPad)return 70;
         else return 35;
     }
-	else /*if (tableView==midiSourceTableView)*/{
+	else {//midi and landini tables
         if (hardwareCanvasType==canvasTypeIPad)return 45;
         else return 22.5;
     }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if(tableView == filesTableView){
+    if(tableView == _documentsTableView){
         static NSString* CellIdentifier = @"ValueCell";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
@@ -828,7 +662,7 @@
         return cell;
     }
     
-    else if (tableView==midiSourceTableView){
+    else if (tableView==_midiSourceTableView){
         PGMidiConnection* currSource = [[[self.audioDelegate midi] sources] objectAtIndex: [indexPath indexAtPosition:1]];
 		NSString* currMidiSourceName = currSource.name;
 		UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:currMidiSourceName];
@@ -842,7 +676,7 @@
 		return cell;
 	}
     
-    else{//destination
+    else if (tableView==_midiDestinationTableView){
         PGMidiConnection* currDestination = [[[self.audioDelegate midi] destinations] objectAtIndex: [indexPath indexAtPosition:1]];
 		NSString* currMidiDestName = currDestination.name;
 		UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:currMidiDestName];
@@ -856,10 +690,46 @@
 		return cell;
 
     }
+    
+    else if (tableView==_LANdiniUserTableView){
+        UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"LANdiniUserCell"];
+		LANdiniUser* user = [_LANdiniUserArray objectAtIndex:[indexPath row]];
+        
+        if(cell==nil){
+			cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"LANdiniUserCell"] ;
+			[cell textLabel].text=[NSString stringWithFormat:@"%@ - %@", user.name, user.ip];
+			if (hardwareCanvasType==canvasTypeIPad)cell.textLabel.font=[UIFont systemFontOfSize:24];
+            else cell.textLabel.font=[UIFont systemFontOfSize:12];
+		}
+		return cell;
+    }
 
 }
 
+#pragma mark LANdiniUserDelegate - can be on non-main threads
 
+-(void)userStateChanged:(NSArray*)userArray{
+    _LANdiniUserArray = userArray;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_LANdiniUserTableView reloadData];
+    });
+}
+
+-(void)syncServerChanged:(NSString*)newServerName{
+    _LANdiniSyncServerName = newServerName;
+}
+
+#pragma mark reachability from vC
+-(void)reachabilityChanged:(NSNotification*)note {
+    Reachability* reach = (Reachability*)note.userInfo;
+    [self updateNetworkLabel:reach];
+    
+}
+
+-(void)updateNetworkLabel:(Reachability*)reach{
+    NSString* network = [ViewController fetchSSIDInfo];
+    [_LANdiniNetworkLabel setText:[NSString stringWithFormat:@"wifi network %@: %@", [reach isReachable] ? @"enabled" : @"disabled", network ? network : @""]];
+}
 
 
 - (void)didReceiveMemoryWarning

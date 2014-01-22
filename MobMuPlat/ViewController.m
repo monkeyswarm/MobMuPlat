@@ -25,6 +25,8 @@
 
 #import "VVOSC.h"
 
+#import <SystemConfiguration/CaptiveNetwork.h>//for ssid info
+
 #import "MeSlider.h"
 #import "MeKnob.h"
 #import "MeLabel.h"
@@ -89,7 +91,7 @@ extern void sigmund_tilde_setup(void);
     //[midi.virtualSourceDestination]
     
     
-    settingsVC = [[SettingsViewController alloc] init ];//]WithNibName:@"SettingsView" bundle:nil];
+    settingsVC = [[SettingsViewController alloc] initWithNibName:nil bundle:nil];
     int ticksPerBuffer;
 
 #if TARGET_IPHONE_SIMULATOR
@@ -173,8 +175,19 @@ extern void sigmund_tilde_setup(void);
               
     //landini
     llm = [[LANdiniLANManager alloc] init];
+    llm.userDelegate=settingsVC;
+    //(don't enable yet)
     //dev only
     //llm.logDelegate=self;
+    
+    //reachibility
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reachabilityChanged:)
+                                                 name:kReachabilityChangedNotification
+                                               object:nil];
+    reach = [Reachability reachabilityForLocalWiFi];
+    reach.reachableOnWWAN = NO;
+    [reach startNotifier];
     
     
     //copy bundle stuff if not there, i.e. first time we are running it on a new version #
@@ -274,7 +287,7 @@ extern void sigmund_tilde_setup(void);
     settingsVC.delegate = self;
     //delegate (from audio+midi screen of settingsVC) for setting audio+midi parameters (sampling rate, MIDI source, etc)
     settingsVC.audioDelegate = self;
-    
+    settingsVC.LANdiniDelegate = self;
     
     navigationController = [[UINavigationController alloc] initWithRootViewController:settingsVC];
     navigationController.navigationBar.barStyle = UIBarStyleBlack;
@@ -813,6 +826,7 @@ extern void sigmund_tilde_setup(void);
     
 }
 
+
 //scrollview delegate
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
     return scrollInnerView;
@@ -951,7 +965,11 @@ extern void sigmund_tilde_setup(void);
             if(val>0)[llm restartOSC];
             else [llm stopOSC];
         }*/
-
+        //Reachability
+        else if([[list objectAtIndex:0] isEqualToString:@"/getReachability"]){
+            NSArray* msgArray=[NSArray arrayWithObjects:@"/reachability", [NSNumber numberWithFloat:[reach isReachable]? 1.0f : 0.0f ], [ViewController fetchSSIDInfo], nil];
+            [PdBase sendList:msgArray toReceiver:@"fromSystem"];
+        }
 
     }
 }
@@ -1293,6 +1311,42 @@ extern void sigmund_tilde_setup(void);
 
 -(void) refreshSyncServer:(NSString*)newServerName{
     [settingsVC consolePrint:[NSString stringWithFormat:@"new server:%@", newServerName]];
+}
+
+#pragma mark Reachability
+
+-(void)reachabilityChanged:(NSNotification*)note {
+    NSString* network = [ViewController fetchSSIDInfo];
+    NSArray* msgArray=[NSArray arrayWithObjects:@"/reachability", [NSNumber numberWithFloat:[reach isReachable]? 1.0f : 0.0f ], network , nil];
+    [PdBase sendList:msgArray toReceiver:@"fromSystem"];
+}
+
++ (NSString*)fetchSSIDInfo{
+    NSArray *ifs = (__bridge id)CNCopySupportedInterfaces();
+    //  NSLog(@"%s: Supported interfaces: %@", __func__, ifs);
+    id info = nil;
+    for (NSString *ifnam in ifs) {
+        info = (__bridge id)CNCopyCurrentNetworkInfo((__bridge CFStringRef)ifnam);
+        NSLog(@"%s: %@ => %@", __func__, ifnam, info);
+        
+        //printf("\ninfo exists? %d count %d", info, [info count]);
+        NSString* ssidString = [info objectForKey:@"SSID"];
+        return ssidString;
+    }
+    return nil;
+}
+
+#pragma mark LANdini Delegate from settings
+-(float)getLANdiniTime{
+    return [llm networkTime];
+}
+
+-(Reachability*)getReachability{
+    return reach;
+}
+
+-(void)enableLANdini:(BOOL)enabled{
+    [llm setEnabled:enabled];
 }
 
 @end
