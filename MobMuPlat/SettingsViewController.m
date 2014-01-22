@@ -308,7 +308,13 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     _consoleTextView.text = consoleTextString;
+    //ios 7 bug
+    if(hardwareCanvasType==canvasTypeIPhone3p5Inch || hardwareCanvasType==canvasTypeIPhone4Inch)
+        [_consoleTextView setFont:[UIFont systemFontOfSize:16]];
+    else [_consoleTextView setFont:[UIFont systemFontOfSize:24]];
+    
     [_consoleTextView scrollRangeToVisible:(NSRange){consoleTextString.length-1, 1}];
+    
 
 }
 
@@ -332,7 +338,6 @@ BOOL audioSwitchBool;
     
     if(audioSwitchBool!=_audioInputSwitch.on){
         audioSwitchBool=_audioInputSwitch.on;
-        NSLog(@"audio switch %d", _audioInputSwitch.on);
         
         if(_audioInputSwitch.on){
             [self.audioDelegate setAudioInputEnabled:NO];//overide to turn mic off, vib on;
@@ -345,7 +350,6 @@ BOOL LANdiniSwitchBool;
 -(void)LANdiniSwitchHit:(UISwitch*)sender{
     if(LANdiniSwitchBool!=_LANdiniEnableSwitch.on){
         LANdiniSwitchBool=_LANdiniEnableSwitch.on;
-        NSLog(@"landini switch %d", sender.isOn);
         if([self.LANdiniDelegate respondsToSelector:@selector(enableLANdini:)]){
             [self.LANdiniDelegate enableLANdini:[sender isOn]];
         }
@@ -451,6 +455,12 @@ BOOL LANdiniSwitchBool;
     if (self.isViewLoaded && self.view.window) {//if I am on screen, show and scroll
         _consoleTextView.text = consoleTextString;
         [_consoleTextView scrollRangeToVisible:(NSRange){consoleTextString.length-1, 1}];
+        
+        //ios 7 bug, font needs to be set after setting text
+        if(hardwareCanvasType==canvasTypeIPhone3p5Inch || hardwareCanvasType==canvasTypeIPhone4Inch)
+            [_consoleTextView setFont:[UIFont systemFontOfSize:16]];
+        else [_consoleTextView setFont:[UIFont systemFontOfSize:24]];
+            
     }
   
 }
