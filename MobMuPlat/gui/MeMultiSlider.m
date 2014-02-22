@@ -88,11 +88,32 @@
     float clippedPointY = MAX(MIN(point.y, self.frame.size.height-SLIDER_HEIGHT/2), SLIDER_HEIGHT/2);
     float headVal = 1.0-( (clippedPointY-SLIDER_HEIGHT/2) / (self.frame.size.height - SLIDER_HEIGHT) );
     [_valueArray setObject:[NSNumber numberWithFloat:headVal] atIndexedSubscript:headIndex];
-    [self sendValue];
-    UIView* currHead = [headViewArray objectAtIndex:headIndex];
-    CGRect newFrame = CGRectMake(headIndex*headWidth, clippedPointY-SLIDER_HEIGHT/2, headWidth, SLIDER_HEIGHT);
-    currHead.frame=newFrame;
-
+  
+  UIView* currHead = [headViewArray objectAtIndex:headIndex];
+  CGRect newFrame = CGRectMake(headIndex*headWidth, clippedPointY-SLIDER_HEIGHT/2, headWidth, SLIDER_HEIGHT);
+  currHead.frame=newFrame;
+  
+    //also set elements between prev touch and move, to avoid "skipping" on fast drag
+  if(abs(headIndex-currHeadIndex)>1){
+    int minTouchIndex = MIN(headIndex, currHeadIndex);
+    int maxTouchIndex = MAX(headIndex, currHeadIndex);
+    
+    float minTouchedValue = [[_valueArray objectAtIndex:minTouchIndex] floatValue];
+    float maxTouchedValue = [[_valueArray objectAtIndex:maxTouchIndex] floatValue];
+    //NSLog(@"skip within %d (%.2f) to %d(%.2f)", minTouchIndex, [[_valueArray objectAtIndex:minTouchIndex] floatValue], maxTouchIndex, [[_valueArray objectAtIndex:maxTouchIndex] floatValue]);
+    for(int i=minTouchIndex+1;i<maxTouchIndex;i++){
+      float percent = ((float)(i-minTouchIndex))/(maxTouchIndex-minTouchIndex);
+      float interpVal = (maxTouchedValue - minTouchedValue) * percent  + minTouchedValue ;
+      //NSLog(@"%d %.2f %.2f", i, percent, interpVal);
+      [_valueArray setObject:[NSNumber numberWithFloat:interpVal] atIndexedSubscript:i];
+    }
+    //[self updateThumbs];//TODO optimize - this does everything
+    [self updateThumbsFrom:minTouchIndex+1 to:maxTouchIndex-1];
+  }
+  
+  //todo: put send value before gui update?
+  [self sendValue];
+  
     if(headIndex!=currHeadIndex){//dragged to new head
         UIView* prevHead = [headViewArray objectAtIndex:currHeadIndex];
         prevHead.backgroundColor=self.color;//change prev head back
@@ -122,13 +143,17 @@
 	[self touchesEnded:touches withEvent:event];
 }
 
+-(void)updateThumbsFrom:(int)start to:(int)end{
+  for(int i=start;i<=end;i++){
+    NSNumber* val = [_valueArray objectAtIndex:i];
+    UIView* currHead = [headViewArray objectAtIndex:i];
+    CGRect newFrame = CGRectMake(i*headWidth, (1.0-[val floatValue])*(self.frame.size.height-SLIDER_HEIGHT), headWidth, SLIDER_HEIGHT);
+    currHead.frame=newFrame;
+  }
+}
+
 -(void)updateThumbs{
-    for(int i=0;i<[_valueArray count];i++){
-        NSNumber* val = [_valueArray objectAtIndex:i];
-        UIView* currHead = [headViewArray objectAtIndex:i];
-        CGRect newFrame = CGRectMake(i*headWidth, (1.0-[val floatValue])*(self.frame.size.height-SLIDER_HEIGHT), headWidth, SLIDER_HEIGHT);
-        currHead.frame=newFrame;
-    }
+  [self updateThumbsFrom:0 to:[_valueArray count]-1];
 }
 
 //receive messages from PureData (via [send toGUI]), routed from ViewController via the address to this object
@@ -141,8 +166,18 @@
         //printf("\nset!");
         sendVal=NO;
     }
-    
-    if ([inArray count]>0 ){//list to set values
+  
+    if ([inArray count]>1 && [[inArray objectAtIndex:0] isKindOfClass:[NSString class]] && [[inArray objectAtIndex:0] isEqualToString:@"allVal"] ){
+      
+      float val = [[inArray objectAtIndex:1] floatValue];
+      for(int i=0;i<[_valueArray count];i++){
+        [_valueArray setObject:[NSNumber numberWithFloat:val] atIndexedSubscript:i];
+      }
+      [self updateThumbs];
+      if(sendVal)[self sendValue];
+    }
+  
+    else if ([inArray count]>0 && [[inArray objectAtIndex:0] isKindOfClass:[NSNumber class]] ){ //list to set values
         NSMutableArray* newValArray = [[NSMutableArray alloc]init];
         
         for(NSNumber* val in inArray)[newValArray addObject:val];
