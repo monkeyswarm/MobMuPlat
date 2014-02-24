@@ -191,6 +191,7 @@
 		DCD191A417418E9600580793 /* z_hook_util.c in Sources */ = {isa = PBXBuildFile; fileRef = DCD1919D17418E9600580793 /* z_hook_util.c */; };
 		DCD191A517418E9600580793 /* z_print_util.c in Sources */ = {isa = PBXBuildFile; fileRef = DCD1919F17418E9600580793 /* z_print_util.c */; };
 		DCD191A617418E9600580793 /* z_queued.c in Sources */ = {isa = PBXBuildFile; fileRef = DCD191A117418E9600580793 /* z_queued.c */; };
+		DCD5BCA218BAC42200EF3E5D /* MeMultiTouch.m in Sources */ = {isa = PBXBuildFile; fileRef = DCD5BCA118BAC42200EF3E5D /* MeMultiTouch.m */; };
 		DCD8DF5F17330C4700767321 /* cats1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3217330C4700767321 /* cats1.jpg */; };
 		DCD8DF6017330C4700767321 /* cats2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3317330C4700767321 /* cats2.jpg */; };
 		DCD8DF6117330C4700767321 /* cats3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3417330C4700767321 /* cats3.jpg */; };
@@ -503,6 +504,8 @@
 		DCD191A017418E9600580793 /* z_print_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = z_print_util.h; path = util/z_print_util.h; sourceTree = "<group>"; };
 		DCD191A117418E9600580793 /* z_queued.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = z_queued.c; path = util/z_queued.c; sourceTree = "<group>"; };
 		DCD191A217418E9600580793 /* z_queued.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = z_queued.h; path = util/z_queued.h; sourceTree = "<group>"; };
+		DCD5BCA018BAC42200EF3E5D /* MeMultiTouch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeMultiTouch.h; sourceTree = "<group>"; };
+		DCD5BCA118BAC42200EF3E5D /* MeMultiTouch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeMultiTouch.m; sourceTree = "<group>"; };
 		DCD8DF3217330C4700767321 /* cats1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = cats1.jpg; path = patches/cats1.jpg; sourceTree = "<group>"; };
 		DCD8DF3317330C4700767321 /* cats2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = cats2.jpg; path = patches/cats2.jpg; sourceTree = "<group>"; };
 		DCD8DF3417330C4700767321 /* cats3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = cats3.jpg; path = patches/cats3.jpg; sourceTree = "<group>"; };
@@ -896,6 +899,8 @@
 				90DFFB2A187DF85B00DD2149 /* MeLCD.m */,
 				DC5A5AD01882565500FC97D5 /* MeUnknown.h */,
 				DC5A5AD11882565500FC97D5 /* MeUnknown.m */,
+				DCD5BCA018BAC42200EF3E5D /* MeMultiTouch.h */,
+				DCD5BCA118BAC42200EF3E5D /* MeMultiTouch.m */,
 			);
 			name = gui;
 			sourceTree = "<group>";
@@ -1353,6 +1358,7 @@
 				DC0FC93C172D84EA00E895C3 /* x_net.c in Sources */,
 				DC0FC93D172D84EA00E895C3 /* x_qlist.c in Sources */,
 				DC0FC93E172D84EA00E895C3 /* x_time.c in Sources */,
+				DCD5BCA218BAC42200EF3E5D /* MeMultiTouch.m in Sources */,
 				DCD8DF8E17330C9D00767321 /* JSONKit.m in Sources */,
 				DCD8DF9317330D8B00767321 /* PGMidi.mm in Sources */,
 				DCA9B90717330F3D000E59DD /* MutLockArray.m in Sources */,

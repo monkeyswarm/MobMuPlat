@@ -37,6 +37,7 @@
 #import "MePanel.h"
 #import "MeMultiSlider.h"
 #import "MeLCD.h"
+#import "MeMultiTouch.h"
 #import "MeUnknown.h"
 
 
@@ -735,12 +736,18 @@ extern void sigmund_tilde_setup(void);
             if([currDict objectForKey:@"imagePath"]) [(MePanel*)currObject setImagePath:[currDict objectForKey:@"imagePath"] ];
         }
        else if([newObjectClass isEqualToString:@"MMPMultiSlider"]){
-            currObject = [[MeMultiSlider alloc] initWithFrame:frame];
-            if([currDict objectForKey:@"range"])  [(MeMultiSlider*)currObject setRange:[[currDict objectForKey:@"range"] intValue]];
+            //currObject = [[MeMultiSlider alloc] initWithFrame:frame];
+            //if([currDict objectForKey:@"range"])  [(MeMultiSlider*)currObject setRange:[[currDict objectForKey:@"range"] intValue]];
+           
+           //testing multitouch
+           currObject = [[MeMultiTouch alloc] initWithFrame:frame];
         }
         else if([newObjectClass isEqualToString:@"MMPLCD"]){
             currObject = [[MeLCD alloc] initWithFrame:frame];
         }
+        /*else if([newObjectClass isEqualToString:@"MMPMultiTouch"]){
+            currObject = [[MeLCD alloc] initWithFrame:frame];
+        }*/
         else{//unkown
             currObject = [[MeUnknown alloc] initWithFrame:frame];
             [(MeUnknown*)currObject setWarning:newObjectClass];
