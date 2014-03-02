@@ -836,6 +836,14 @@ extern void sigmund_tilde_setup(void);
     return scrollInnerView;
 }
 
+-(void)scrollViewDidEndDecelerating:(UIScrollView *)inScrollView {
+  if (inScrollView==scrollView) {
+    int page = inScrollView.contentOffset.x / inScrollView.frame.size.width;
+    [PdBase sendList:[NSArray arrayWithObjects:@"/page", [NSNumber numberWithInt:page], nil] toReceiver:@"fromSystem"];
+  }
+  //NSLog(@"scrolled: %d", page);
+}
+
 //I want to send a message into PD patch from a gui widget
 -(void)sendGUIMessageArray:(NSArray*)msgArray{
     [PdBase sendList:msgArray toReceiver:@"fromGUI"];
