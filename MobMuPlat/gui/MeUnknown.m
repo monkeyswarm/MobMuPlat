@@ -17,6 +17,7 @@
         // Initialization code
         self.backgroundColor = [UIColor darkGrayColor];
         warningLabel = [[UILabel alloc] initWithFrame:self.bounds];
+        warningLabel.backgroundColor = [UIColor clearColor];
         warningLabel.textAlignment = UITextAlignmentCenter;
         warningLabel.textColor = [UIColor whiteColor];
         warningLabel.numberOfLines = -1;

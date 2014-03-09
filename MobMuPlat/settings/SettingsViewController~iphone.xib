@@ -306,16 +306,17 @@ output:</string>
                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="IbY-rZ-xNa">
-                                    <rect key="frame" x="20" y="307" width="176" height="33"/>
+                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="IbY-rZ-xNa">
+                                    <rect key="frame" x="20" y="301" width="176" height="49"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <string key="text">app runs in background:
-for iOS controllers/sequencers)</string>
+                                    <string key="text">override audio input
+(allows system vibration
+and audio output routing)</string>
                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="FpM-Dy-zYX">
-                                    <rect key="frame" x="208" y="266" width="75" height="35"/>
+                                    <rect key="frame" x="209" y="267" width="75" height="35"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                     <state key="normal" title="disabled">
@@ -324,7 +325,7 @@ for iOS controllers/sequencers)</string>
                                     </state>
                                 </button>
                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="lcE-wK-Ga2">
-                                    <rect key="frame" x="205" y="310" width="51" height="31"/>
+                                    <rect key="frame" x="222" y="310" width="51" height="31"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 </switch>
                                 <view alpha="0.0" contentMode="scaleToFill" id="4ry-H7-1jl">

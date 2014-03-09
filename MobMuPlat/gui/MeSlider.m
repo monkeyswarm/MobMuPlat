@@ -22,13 +22,13 @@
     self.address=@"/unnamedSlider";
     
     troughView=[[UIView alloc]initWithFrame: CGRectMake((frame.size.width-10)/2, SLIDER_TROUGH_TOPINSET, SLIDER_TROUGH_WIDTH, frame.size.height-(SLIDER_TROUGH_TOPINSET*2))];
-    troughView.backgroundColor=[UIColor whiteColor];//[MBConstants thePurpleColor];
+    troughView.backgroundColor=[UIColor whiteColor];
     troughView.layer.cornerRadius=3;
     troughView.userInteractionEnabled=NO;
     [self addSubview:troughView];
     
     thumbView=[[UIView alloc]initWithFrame:CGRectMake(0,frame.size.height-SLIDER_THUMB_HEIGHT, frame.size.width, SLIDER_THUMB_HEIGHT)];
-    thumbView.backgroundColor=[UIColor whiteColor];//[MBConstants thePurpleColor];
+    thumbView.backgroundColor=[UIColor whiteColor];
     thumbView.layer.cornerRadius=5;
     thumbView.userInteractionEnabled=NO;
     [self addSubview:thumbView];
