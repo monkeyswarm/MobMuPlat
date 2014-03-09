@@ -1148,7 +1148,7 @@
 				ORGANIZATIONNAME = "Daniel Iglesia";
 				TargetAttributes = {
 					DC233DA71655EDF500AC01C5 = {
-						DevelopmentTeam = EQHXZ8M8AV;
+						DevelopmentTeam = RJC7S963JF;
 					};
 				};
 			};
@@ -1484,7 +1484,7 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer: daniel Iglesia (6Y3ENEJPL8)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: daniel Iglesia (6Y3ENEJPL8)";
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -1499,7 +1499,7 @@
 					"-DPD",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "94381842-F7FF-4F90-A680-D543A28CBF45";
+				PROVISIONING_PROFILE = "48CB3662-9230-4B2B-B37C-059AA7E14819";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = "armv7 armv7s";

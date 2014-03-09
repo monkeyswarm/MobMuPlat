@@ -66,6 +66,12 @@ extern void sigmund_tilde_setup(void);
     return hardwareCanvasType;
 }
 
++ (BOOL)numberIsFloat:(NSNumber*)num {
+  if(strcmp([num objCType], @encode(float)) == 0 || strcmp([num objCType], @encode(double)) == 0) {
+    return YES;
+  }
+  else return NO;
+}
 
 
 -(id) init{
@@ -853,33 +859,48 @@ extern void sigmund_tilde_setup(void);
 /*- (void)receiveSymbol:(NSString *)symbol fromSource:(NSString *)source{
 }*/
 
++ (OSCMessage*) oscMessageFromList:(NSArray*)list{
+  OSCMessage *msg = [OSCMessage createWithAddress:[list objectAtIndex:0]];
+  for(id item in [list subarrayWithRange:NSMakeRange(1, [list count]-1)]){
+    if([item isKindOfClass:[NSString class]]) [msg addString:item];
+    else if([item isKindOfClass:[NSNumber class]]){
+      NSNumber* itemNumber = (NSNumber*)item;
+      if([ViewController numberIsFloat:itemNumber]) {
+        [msg addFloat:[item floatValue]];
+      }
+      else {
+        [msg addInt:[item intValue]];
+      }
+    }
+  }
+  return msg;
+}
+
 //PureData has sent out a message from the patch (from a receive object, we look for messages from "toNetwork","toGUI","toSystem")
 - (void)receiveList:(NSArray *)list fromSource:(NSString *)source{
     if([source isEqualToString:@"toNetwork"]){
         //NSLog(@"%@", list);
-        OSCMessage *msg = [OSCMessage createWithAddress:[list objectAtIndex:0]];
-        for(id item in [list subarrayWithRange:NSMakeRange(1, [list count]-1)]){
-            if([item isKindOfClass:[NSString class]]) [msg addString:item];
-            else if([item isKindOfClass:[NSNumber class]])[msg addFloat:[item floatValue]];
-        }
+        /**/
         
-        //look for LANdini - this clause looks for /send, /sendGD, /sendOGD
-        if([ [list objectAtIndex:0] rangeOfString:@"/send"].location == 0){
+        //look for LANdini - this clause looks for /send, /send/GD, /send/OGD
+        if([[list objectAtIndex:0] rangeOfString:@"/send"].location == 0 ||
+           [[list objectAtIndex:0] rangeOfString:@"/networkTime"].location == 0 ||
+           [[list objectAtIndex:0] rangeOfString:@"/numUsers"].location == 0 ||
+           [[list objectAtIndex:0] rangeOfString:@"/userNames"].location == 0 ){
             //NSLog(@"LANDINI!!!!: %@", msg);
-            [outPortToLANdini sendThisPacket:[OSCPacket createWithContent:msg]];
-        }
-        else if ([ [list objectAtIndex:0] rangeOfString:@"/networkTime"].location == 0){
-             [outPortToLANdini sendThisPacket:[OSCPacket createWithContent:msg]];
-        }
-        else if ([ [list objectAtIndex:0] rangeOfString:@"/numUsers"].location == 0){
-            [outPortToLANdini sendThisPacket:[OSCPacket createWithContent:msg]];
-        }
-        else if ([ [list objectAtIndex:0] rangeOfString:@"/userNames"].location == 0){
-            [outPortToLANdini sendThisPacket:[OSCPacket createWithContent:msg]];
+          if (llm.enabled) {
+            [outPortToLANdini sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:list]]];
+          }
+          else {
+            //landini disabled: remake message without the first 2 landini elements and send out normal port
+            NSArray* newList = [list subarrayWithRange:NSMakeRange(2, [list count]-2)];
+              
+            [outPort sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:newList]]];
+          }
         }
         //not for landini - send out regular!
         else{
-            [outPort sendThisPacket:[OSCPacket createWithContent:msg]];
+            [outPort sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:list]]];
         }
     }
     

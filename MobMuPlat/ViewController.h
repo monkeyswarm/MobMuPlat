@@ -75,7 +75,7 @@
    
 }
 
-
++(BOOL)numberIsFloat:(NSNumber*)num;
 -(void)connectPorts;
 -(void)disconnectPorts;
 +(NSString*)fetchSSIDInfo;

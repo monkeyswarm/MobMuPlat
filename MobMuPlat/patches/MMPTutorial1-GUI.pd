@@ -1,4 +1,4 @@
-#N canvas 637 55 763 613 10;
+#N canvas 564 139 874 638 10;
 #X obj 6 40 receive fromGUI;
 #X obj 6 72 route list;
 #X obj 6 105 route /knob0 /knob1;
@@ -45,11 +45,26 @@
 #X msg 459 500 list /LCD paintrect 0.9 0.1 0.97 0.7 1 1 1 0.5;
 #X msg 461 530 list /LCD paintrect 0.85 0.3 0.92 0.9 1 1 1 0.5;
 #X obj 211 338 loadbang;
+#X obj 497 67 route /myMultiSlider;
+#X obj 497 182 route /myMultiTouch;
+#X obj 498 210 route touch touchesByVox touchesByTime touchesByX touchesByY
+;
+#X obj 498 92 list prepend set;
+#X text 614 92 (output list of values);
+#X msg 498 139 0 0.253486 0.547251 0.693439 0.458729 0.779162 0.464852
+0;
+#X obj 498 116 list trim;
+#X obj 499 235 list prepend set;
+#X msg 499 282 0 0.253486 0.547251 0.693439 0.458729 0.779162 0.464852
+0;
+#X obj 499 259 list trim;
 #X connect 0 0 1 0;
 #X connect 1 0 2 0;
 #X connect 1 0 3 0;
 #X connect 1 0 4 0;
 #X connect 1 0 5 0;
+#X connect 1 0 43 0;
+#X connect 1 0 44 0;
 #X connect 2 0 6 0;
 #X connect 2 1 7 0;
 #X connect 3 0 9 0;
@@ -93,3 +108,10 @@
 #X connect 40 0 26 0;
 #X connect 41 0 26 0;
 #X connect 42 0 38 0;
+#X connect 43 0 46 0;
+#X connect 44 0 45 0;
+#X connect 45 0 50 0;
+#X connect 46 0 49 0;
+#X connect 49 0 48 0;
+#X connect 50 0 52 0;
+#X connect 52 0 51 0;
