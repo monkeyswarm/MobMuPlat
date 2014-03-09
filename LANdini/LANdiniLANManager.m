@@ -52,8 +52,6 @@
     OSCOutPort* _targetAppAddr;
     OSCInPort* _inPortLocal;
     OSCInPort* _inPortNetwork;
-    
-    BOOL _enabled;
 }
 @end
 
@@ -66,7 +64,7 @@
         if([item isKindOfClass:[NSString class]]) [msg addString:item];
         else if([item isKindOfClass:[NSNumber class]]){
             if(CFNumberIsFloatType((CFNumberRef)item))[msg addFloat:[item floatValue]];
-            else [msg addFloat:[item intValue]];
+            else [msg addInt:[item intValue]];
         }
     }
     return msg;

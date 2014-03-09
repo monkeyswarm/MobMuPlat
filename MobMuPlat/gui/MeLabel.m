@@ -7,10 +7,13 @@
 //
 
 #import "MeLabel.h"
+#import "ViewController.h"
 #define DEFAULT_FONT @"HelveticaNeue"
 #define WIDTH_PAD 10 //ugly hack - iOS and OSX textview have slighty different padding, so offset the ios labels to more closely match
 
 @implementation MeLabel
+
+
 
 - (id)initWithFrame:(CGRect)frame{
     
@@ -78,9 +81,13 @@
                 [newString appendString:(NSString*)thing];
             }
             else if ([thing isKindOfClass:[NSNumber class]]){
-                float val = [(NSNumber*)thing floatValue];
-                if(fmod(val,1)==0)[newString appendString:[NSString stringWithFormat:@"%d", (int)val]];//print whole numbers as ints
-                else [newString appendString:[NSString stringWithFormat:@"%.3f", val]];
+              NSNumber* thingNumber = (NSNumber*)thing;
+              if ([ViewController numberIsFloat:thingNumber] ){ //todo put in separate class
+                [newString appendString:[NSString stringWithFormat:@"%.3f", [thingNumber floatValue]]];
+              }
+              else {
+                [newString appendString:[NSString stringWithFormat:@"%d", [thingNumber intValue]]];
+              }
             }
             [newString appendString:@" "];
         }

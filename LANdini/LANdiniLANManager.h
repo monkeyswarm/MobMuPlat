@@ -33,7 +33,7 @@
 @property (strong, nonatomic) LANdiniUser * me;
 @property (weak, nonatomic) id<LANdiniLogDelegate> logDelegate;
 @property (weak, nonatomic) id<LANdiniUserStateDelegate> userDelegate;
-
+@property (readonly) BOOL enabled;
 
 
 + (OSCMessage*) OSCMessageFromArray:(NSArray*)vals; //array of address, object vals -> OSCMessage
