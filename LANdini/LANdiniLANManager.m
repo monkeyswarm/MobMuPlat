@@ -211,7 +211,7 @@
     LANdiniUser* findMe = [self userInUserListWithName:myName];
     if(findMe){
         [_userList removeObject:findMe];
-        NSLog(@"LANdini initLAN: redundant me");
+        //NSLog(@"LANdini initLAN: redundant me");
     }
     
     _me = [[LANdiniUser alloc] initWithName:myName IP:myIP port:myPort network:self];

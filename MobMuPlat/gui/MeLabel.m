@@ -83,7 +83,9 @@
             else if ([thing isKindOfClass:[NSNumber class]]){
               NSNumber* thingNumber = (NSNumber*)thing;
               if ([ViewController numberIsFloat:thingNumber] ){ //todo put in separate class
-                [newString appendString:[NSString stringWithFormat:@"%.3f", [thingNumber floatValue]]];
+                //pd sends floats :(
+                if(fmod([thingNumber floatValue],1)==0)[newString appendString:[NSString stringWithFormat:@"%d", (int)[thingNumber floatValue]]];//print whole numbers as ints
+                else [newString appendString:[NSString stringWithFormat:@"%.3f", [thingNumber floatValue]]];
               }
               else {
                 [newString appendString:[NSString stringWithFormat:@"%d", [thingNumber intValue]]];

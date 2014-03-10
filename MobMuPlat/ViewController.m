@@ -883,20 +883,24 @@ extern void sigmund_tilde_setup(void);
         /**/
         
         //look for LANdini - this clause looks for /send, /send/GD, /send/OGD
-        if([[list objectAtIndex:0] rangeOfString:@"/send"].location == 0 ||
-           [[list objectAtIndex:0] rangeOfString:@"/networkTime"].location == 0 ||
+        if([[list objectAtIndex:0] rangeOfString:@"/send"].location == 0) {
+            if (llm.enabled) {
+                [outPortToLANdini sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:list]]];
+            }
+            else {
+                //landini disabled: remake message without the first 2 landini elements and send out normal port
+                if([list count]>2){
+                 NSArray* newList = [list subarrayWithRange:NSMakeRange(2, [list count]-2)];
+                 [outPort sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:newList]]];
+                }
+            }
+        }
+        //other landini messages, keep passing to landini
+        else if ( [[list objectAtIndex:0] rangeOfString:@"/networkTime"].location == 0 ||
            [[list objectAtIndex:0] rangeOfString:@"/numUsers"].location == 0 ||
            [[list objectAtIndex:0] rangeOfString:@"/userNames"].location == 0 ){
-            //NSLog(@"LANDINI!!!!: %@", msg);
-          if (llm.enabled) {
+            
             [outPortToLANdini sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:list]]];
-          }
-          else {
-            //landini disabled: remake message without the first 2 landini elements and send out normal port
-            NSArray* newList = [list subarrayWithRange:NSMakeRange(2, [list count]-2)];
-              
-            [outPort sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:newList]]];
-          }
         }
         //not for landini - send out regular!
         else{
@@ -1294,7 +1298,7 @@ extern void sigmund_tilde_setup(void);
    else {
        UIAlertView *alert = [[UIAlertView alloc]
                              initWithTitle: @"Location Fail"
-                             message: @"Location Services Unavailable"
+                             message: @"Location and/or Compass Unavailable"
                              delegate: nil
                              cancelButtonTitle:@"OK"
                              otherButtonTitles:nil];

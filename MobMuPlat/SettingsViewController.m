@@ -597,17 +597,17 @@ BOOL LANdiniSwitchBool;
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
         
         //add an activity indicator
-        UIActivityIndicatorView* aiv = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+        UIActivityIndicatorView* aiv = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         aiv.frame = CGRectMake(0, 0, 24, 24);
         [cell setAccessoryView:aiv];
         [aiv startAnimating];
-    
-        //load the pd file, then wait
+        
+        //load the pd file
         [self performSelector:@selector(selectHelper:) withObject:indexPath afterDelay:0];
- 
+       
         //done
         [aiv performSelector:@selector(stopAnimating) withObject:nil afterDelay:0];//performSelector: puts method call on next run loop
-        [cell setAccessoryView:nil];//assuming that this causes ARC to release the aiv...
+        
         
     }
     
