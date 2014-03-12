@@ -29,12 +29,6 @@
     
     [self.window makeKeyAndVisible];
     
-    //if app started by clicking on a file and "opening with..." MobMuPlat, get the file
-    NSURL *url = (NSURL *)[launchOptions valueForKey:UIApplicationLaunchOptionsURLKey];
-    if (url != nil && [url isFileURL]) {
-         [self getFileFromURL:url];
-    }
-    
     return YES;
 }
 

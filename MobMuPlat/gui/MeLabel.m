@@ -10,6 +10,8 @@
 #import "ViewController.h"
 #define DEFAULT_FONT @"HelveticaNeue"
 #define WIDTH_PAD 10 //ugly hack - iOS and OSX textview have slighty different padding, so offset the ios labels to more closely match
+#define INSET_X 4
+#define INSET_Y -2
 
 @implementation MeLabel
 
@@ -22,7 +24,7 @@
         self.address=@"/unnamedLabel";
         self.backgroundColor=[UIColor clearColor];
         
-        theLabel = [[UITextView alloc]initWithFrame:CGRectMake(0, 0, self.frame.size.width+WIDTH_PAD, self.frame.size.height)];
+        theLabel = [[UITextView alloc]initWithFrame:CGRectMake(INSET_X, INSET_Y, self.frame.size.width+WIDTH_PAD, self.frame.size.height)];
         theLabel.backgroundColor=[UIColor clearColor];
     
         
@@ -61,6 +63,7 @@
 }
 
 -(void)setColor:(UIColor*)inColor{
+  [super setColor:inColor];
     [theLabel setTextColor:inColor];
 }
 
