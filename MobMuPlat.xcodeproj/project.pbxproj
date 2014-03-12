@@ -241,6 +241,10 @@
 		DCD8DF9317330D8B00767321 /* PGMidi.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCD8DF9217330D8A00767321 /* PGMidi.mm */; };
 		DCEF4F2C188ED1CD00D6EE54 /* SettingsViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */; };
 		DCFF717716B59F3100CDCEAE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DCFF717616B59F3100CDCEAE /* libz.dylib */; };
+		F94958DC18D1223B00C8876F /* MMPExamples-Arp-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F94958D818D1223B00C8876F /* MMPExamples-Arp-ip5.mmp */; };
+		F94958DD18D1223B00C8876F /* MMPExamples-Arp-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F94958D918D1223B00C8876F /* MMPExamples-Arp-Pad.mmp */; };
+		F94958DE18D1223B00C8876F /* MMPExamples-Arp.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F94958DA18D1223B00C8876F /* MMPExamples-Arp.mmp */; };
+		F94958DF18D1223B00C8876F /* MMPExamples-Arp.pd in Resources */ = {isa = PBXBuildFile; fileRef = F94958DB18D1223B00C8876F /* MMPExamples-Arp.pd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -558,6 +562,10 @@
 		DCD8DF9217330D8A00767321 /* PGMidi.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PGMidi.mm; path = PGMidi/PGMidi.mm; sourceTree = "<group>"; };
 		DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "SettingsViewController~iphone.xib"; path = "settings/SettingsViewController~iphone.xib"; sourceTree = "<group>"; };
 		DCFF717616B59F3100CDCEAE /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		F94958D818D1223B00C8876F /* MMPExamples-Arp-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Arp-ip5.mmp"; path = "patches/MMPExamples-Arp-ip5.mmp"; sourceTree = "<group>"; };
+		F94958D918D1223B00C8876F /* MMPExamples-Arp-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Arp-Pad.mmp"; path = "patches/MMPExamples-Arp-Pad.mmp"; sourceTree = "<group>"; };
+		F94958DA18D1223B00C8876F /* MMPExamples-Arp.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Arp.mmp"; path = "patches/MMPExamples-Arp.mmp"; sourceTree = "<group>"; };
+		F94958DB18D1223B00C8876F /* MMPExamples-Arp.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Arp.pd"; path = "patches/MMPExamples-Arp.pd"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -908,6 +916,10 @@
 		DC29445B16584A6E00BF4A50 /* patches */ = {
 			isa = PBXGroup;
 			children = (
+				F94958D818D1223B00C8876F /* MMPExamples-Arp-ip5.mmp */,
+				F94958D918D1223B00C8876F /* MMPExamples-Arp-Pad.mmp */,
+				F94958DA18D1223B00C8876F /* MMPExamples-Arp.mmp */,
+				F94958DB18D1223B00C8876F /* MMPExamples-Arp.pd */,
 				DC456B04176C1A700080BB33 /* MMPExamples-GPS-ip5.mmp */,
 				DC456B05176C1A700080BB33 /* MMPExamples-GPS-Pad.mmp */,
 				DC456B06176C1A700080BB33 /* MMPExamples-GPS.mmp */,
@@ -1180,8 +1192,10 @@
 				DCD8DF6117330C4700767321 /* cats3.jpg in Resources */,
 				90BE0D651880A9EF009446AD /* MMPTutorial6-2DGraphics.pd in Resources */,
 				DCD8DF6217330C4700767321 /* clap.wav in Resources */,
+				F94958DD18D1223B00C8876F /* MMPExamples-Arp-Pad.mmp in Resources */,
 				DCD8DF6317330C4700767321 /* MMPExamples-Motion-ip5.mmp in Resources */,
 				DCD8DF6417330C4700767321 /* MMPExamples-Motion-Pad.mmp in Resources */,
+				F94958DF18D1223B00C8876F /* MMPExamples-Arp.pd in Resources */,
 				DCD8DF6517330C4700767321 /* MMPExamples-Motion.mmp in Resources */,
 				DCB5B94718888BF9003E6C2C /* Images.xcassets in Resources */,
 				90BE0D621880A9EF009446AD /* MMPTutorial6-2DGraphics-Pad.mmp in Resources */,
@@ -1224,6 +1238,7 @@
 				DC89676018870F7D00750137 /* MMPExamples-LANdini-ip5.mmp in Resources */,
 				DC89675E18870F7D00750137 /* MMPExamples-LANdini-Pad.mmp in Resources */,
 				90BE0D641880A9EF009446AD /* MMPTutorial6-2DGraphics.mmp in Resources */,
+				F94958DC18D1223B00C8876F /* MMPExamples-Arp-ip5.mmp in Resources */,
 				DCB5B95718889355003E6C2C /* Icon@2x.png in Resources */,
 				DCB5B95418889355003E6C2C /* Icon-72.png in Resources */,
 				DCD8DF8217330C4700767321 /* MMPTutorial4-Networking.pd in Resources */,
@@ -1231,6 +1246,7 @@
 				DCD8DF8417330C4700767321 /* MMPTutorial5-Files-Pad.mmp in Resources */,
 				DCD8DF8517330C4700767321 /* MMPTutorial5-Files.mmp in Resources */,
 				DCD8DF8617330C4700767321 /* MMPTutorial5-Files.pd in Resources */,
+				F94958DE18D1223B00C8876F /* MMPExamples-Arp.mmp in Resources */,
 				DC7DD717188F2A660068BA66 /* SettingsViewController~ipad.xib in Resources */,
 				DCD8DF8717330C4700767321 /* vocod_channel.pd in Resources */,
 				DCD8DF8817330C4700767321 /* Welcome-ip5.mmp in Resources */,
