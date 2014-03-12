@@ -27,8 +27,8 @@
         _cacheContext = CGBitmapContextCreate (nil, (int)frame.size.width, (int)frame.size.height, 8, 0, CGColorSpaceCreateDeviceRGB(),  kCGImageAlphaPremultipliedLast  );
         CGContextSetRGBFillColor(_cacheContext, 1., 0., 1., 1.);
         penPoint = CGPointMake(0, 0);
-        penWidth = 1;
-        
+      [self setPenWidth:1];
+      
     }
     return self;
 }
