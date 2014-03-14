@@ -133,17 +133,19 @@ extern void sigmund_tilde_setup(void);
     
     //start device motion detection
     motionManager = [[CMMotionManager alloc] init];
-        
-    //start accelerometer
+  
+  //start accelerometer
+  NSOperationQueue *motionQueue = [[NSOperationQueue alloc] init];
+  
     if (motionManager.accelerometerAvailable){
-        [motionManager startAccelerometerUpdatesToQueue:[NSOperationQueue currentQueue] withHandler:^(CMAccelerometerData  *accelerometerData, NSError *error) {
+        [motionManager startAccelerometerUpdatesToQueue:motionQueue withHandler:^(CMAccelerometerData  *accelerometerData, NSError *error) {
             [self accelerometerDidAccelerate:accelerometerData.acceleration];
         }];
     }
     
     if (motionManager.deviceMotionAvailable){
         
-        [motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue currentQueue] withHandler:^ (CMDeviceMotion *devMotion, NSError *error){
+        [motionManager startDeviceMotionUpdatesToQueue:motionQueue withHandler:^ (CMDeviceMotion *devMotion, NSError *error){
          CMAttitude *currentAttitude = devMotion.attitude;
          /*float xRotation = currentAttitude.roll*180/M_PI;
          float yRotation = currentAttitude.pitch*180/M_PI;
@@ -160,7 +162,7 @@ extern void sigmund_tilde_setup(void);
     
     //gyro
     if(motionManager.gyroAvailable){
-        [motionManager startGyroUpdatesToQueue:[NSOperationQueue mainQueue] withHandler:^(CMGyroData *gyroData, NSError *error) {
+        [motionManager startGyroUpdatesToQueue:motionQueue withHandler:^(CMGyroData *gyroData, NSError *error) {
     
             NSArray* gyroArray=[NSArray arrayWithObjects:@"/gyro", [NSNumber numberWithFloat:gyroData.rotationRate.x],[NSNumber numberWithFloat:gyroData.rotationRate.y], [NSNumber numberWithFloat:gyroData.rotationRate.z], nil];
             
