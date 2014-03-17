@@ -878,6 +878,10 @@ extern void sigmund_tilde_setup(void);
 
 //PureData has sent out a message from the patch (from a receive object, we look for messages from "toNetwork","toGUI","toSystem")
 - (void)receiveList:(NSArray *)list fromSource:(NSString *)source{
+    if([list count]==0){
+        NSLog(@"got zero args from %@", source);
+        return;//protect against bad elements that got dropped from array...
+    }
     if([source isEqualToString:@"toNetwork"]){
         //NSLog(@"%@", list);
         /**/
