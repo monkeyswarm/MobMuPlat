@@ -65,6 +65,10 @@
 - (void)viewDidLoad{
     [super viewDidLoad];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(checkReach)
+                                                 name:UIApplicationDidBecomeActiveNotification object:nil];
+    
     //ios 7 don't have it go under the nav bar
     if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
         self.edgesForExtendedLayout = UIRectEdgeNone;
@@ -193,8 +197,7 @@
     _LANdiniUserTableView.delegate = self;
     _LANdiniUserTableView.dataSource = self;
     
-    [self updateNetworkLabel:[self.LANdiniDelegate getReachability] ];
-
+    
     
    
     //
@@ -268,6 +271,16 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(audioRouteChange:) name:AVAudioSessionRouteChangeNotification object:nil];
     }
 }
+
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    [self checkReach];
+    
+}
+-(void)checkReach{
+    [self updateNetworkLabel:[self.LANdiniDelegate getReachability] ];
+}
+
 
 - (void)audioRouteChange:(NSNotification*)notif{
     
@@ -679,10 +692,11 @@ BOOL LANdiniSwitchBool;
 		
         if(cell==nil){
 			cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:currMidiSourceName] ;
-			[cell textLabel].text=currMidiSourceName;
+			
 			if (hardwareCanvasType==canvasTypeIPad)cell.textLabel.font=[UIFont systemFontOfSize:24];
             else cell.textLabel.font=[UIFont systemFontOfSize:12];
 		}
+        [cell textLabel].text=currMidiSourceName;
 		return cell;
 	}
     
@@ -693,10 +707,11 @@ BOOL LANdiniSwitchBool;
 		
         if(cell==nil){
 			cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:currMidiDestName] ;
-			[cell textLabel].text=currMidiDestName;
+			
 			if (hardwareCanvasType==canvasTypeIPad)cell.textLabel.font=[UIFont systemFontOfSize:24];
             else cell.textLabel.font=[UIFont systemFontOfSize:12];
 		}
+        [cell textLabel].text=currMidiDestName;
 		return cell;
 
     }
@@ -707,10 +722,10 @@ BOOL LANdiniSwitchBool;
         
         if(cell==nil){
 			cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"LANdiniUserCell"] ;
-			[cell textLabel].text=[NSString stringWithFormat:@"%@ - %@", user.name, user.ip];
 			if (hardwareCanvasType==canvasTypeIPad)cell.textLabel.font=[UIFont systemFontOfSize:24];
             else cell.textLabel.font=[UIFont systemFontOfSize:12];
 		}
+        [cell textLabel].text=[NSString stringWithFormat:@"%@ - %@", user.name, user.ip];
 		return cell;
     }
 
@@ -741,6 +756,20 @@ BOOL LANdiniSwitchBool;
     [_LANdiniNetworkLabel setText:[NSString stringWithFormat:@"wifi network %@: %@", [reach isReachable] ? @"enabled" : @"disabled", network ? network : @""]];
 }
 
+# pragma mark cleanup
+
+-(void)viewDidUnload{
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIApplicationDidBecomeActiveNotification
+                                                  object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:kReachabilityChangedNotification
+                                                  object:nil];
+    if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"6.0")){
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:AVAudioSessionRouteChangeNotification object:nil];
+    }
+
+}
 
 - (void)didReceiveMemoryWarning
 {

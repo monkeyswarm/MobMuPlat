@@ -29,7 +29,8 @@
     int _toLocalPort;
     int _fromLocalPort;
     
-    float _version;//string?
+    float _version;
+    BOOL _iHaveBeenWarned;
     
     NSTimer* _connectionTimer;
     NSTimer* _broadcastTimer;
@@ -52,6 +53,10 @@
     OSCOutPort* _targetAppAddr;
     OSCInPort* _inPortLocal;
     OSCInPort* _inPortNetwork;
+    
+    
+    
+    
 }
 @end
 
@@ -76,7 +81,6 @@
 -(id)init{
     self = [super init];
     if(self){
-        _version = 0.18;
         
         _lanCheckInterval = .5;
         _dropUserInterval = 2.0;
@@ -92,6 +96,7 @@
         _smallestRtt=1;
         
         _startDate = [NSDate date];
+        _version = .21;
         
         _syncServerName = @"noSyncServer";
         
@@ -99,6 +104,7 @@
         [_oscManager setDelegate:self];
         
         //[self connectOSC:nil];
+        
         
         //not called on startup
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterFG:) name:UIApplicationWillEnterForegroundNotification object:nil];
@@ -465,7 +471,7 @@
 }
 
 -(void)broadcastTimerMethod:(NSTimer*)timer{
-    NSMutableArray* msgArray = [[NSMutableArray alloc]initWithObjects:@"/landini/member/broadcast", _me.name, _me.ip, [NSNumber numberWithInt:_me.port], nil];
+    NSMutableArray* msgArray = [[NSMutableArray alloc]initWithObjects:@"/landini/member/broadcast", _me.name, _me.ip, [NSNumber numberWithInt:_me.port], [NSNumber numberWithFloat:_version], nil];
     
     [self broadcastMsg:msgArray];
 }
@@ -487,17 +493,36 @@
     //member port (NSNumber)
 
     //check types
-    if([msgArray count]!=4 ||
+    if([msgArray count]!=5 ||
        ![[msgArray objectAtIndex:0] isKindOfClass:[NSString class]] ||
        ![[msgArray objectAtIndex:1] isKindOfClass:[NSString class]] ||
        ![[msgArray objectAtIndex:2] isKindOfClass:[NSString class]] ||
-       ![[msgArray objectAtIndex:3] isKindOfClass:[NSNumber class]]
+       ![[msgArray objectAtIndex:3] isKindOfClass:[NSNumber class]] ||
+       ![[msgArray objectAtIndex:4] isKindOfClass:[NSNumber class]]
     ) return;
 
     NSString* theirName = [msgArray objectAtIndex:1];
     NSString* theirIP = [msgArray objectAtIndex:2];
     NSNumber* theirPortNumber = [msgArray objectAtIndex:3];
     int theirPort = [theirPortNumber intValue];
+    NSNumber* theirVersionNumber = [msgArray objectAtIndex:4];
+    float theirVersion = [theirVersionNumber floatValue];
+    
+    
+    
+    if((theirVersion > _version+.001) && (_iHaveBeenWarned == NO)){
+        _iHaveBeenWarned = YES;
+        UIAlertView *alert = [[UIAlertView alloc]
+                              initWithTitle: @"Warning"
+                              message: [NSString stringWithFormat:@"You are not using the latest version of LANdini.\nYou are using version %.2f,\nand someone else is using version %.2f", _version, theirVersion]
+                              delegate: nil
+                              cancelButtonTitle:@"OK"
+                              otherButtonTitles:nil];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [alert show];
+        });
+
+    }
     
     NSMutableArray* replyMsg = [[NSMutableArray alloc]init];
     [replyMsg addObject:@"/landini/member/reply"];
