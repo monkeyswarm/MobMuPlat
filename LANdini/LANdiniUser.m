@@ -64,6 +64,24 @@
     int lastOGDTheyPerformed = [[vals objectAtIndex:5] intValue];
     
     _lastPing = [_network elapsedTime];
+  
+    //new: check if remote user has reset itself (e.g. disconnected and reconnected before this client dropped remote user)
+    // if so, reset all the bookeeping vals
+    if(lastGDIDTheySentMe == -1 && lastOGDIDTheySentMe == -1 && (_lastIncomingGDID > -1 || _lastIncomingOGDID > -1)) {
+      //NSLog(@"RESET!");
+      _lastOutgoingGDID=-1;
+      _lastIncomingGDID=-1;
+      _minGDID=-1;
+      _lastOutgoingOGDID = -1;
+      _lastIncomingOGDID = -1;
+      _lastPerformedOGDID = -1;
+      [_performedGDIDs removeAllObjects];
+      [_sentGDMsgs removeAllObjects];
+      [_missingOGDIDs removeAllObjects];
+      [_msgQueueForOGD removeAllObjects];
+      [_sentOGDMsgs removeAllObjects];
+      
+    }
     //NSLog(@"receive ping %@ time %.2f", _name, _lastPing);
     //update which msg I should be at
     if(lastGDIDTheySentMe > _lastIncomingGDID){
@@ -213,6 +231,7 @@
         _minGDID=min;
         _performedGDIDs=ids;
     }
+  //[self requestMissingGDs:ids];needed? 
 }
 
 -(void)requestMissingGDs:(NSArray*)missingGDs{

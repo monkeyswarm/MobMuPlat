@@ -537,13 +537,16 @@
         if(fromUsr==nil){//no user found, create and add to user list
             fromUsr = [self assimilateMemberInfoName:theirName IP:theirIP port:theirPort];
         }
-        //sending triplets of connected user data?
-       for(LANdiniUser* user in _userList){
+        //WAS sending triplets of connected user data
+       /*for(LANdiniUser* user in _userList){
            [replyMsg addObject:user.name];
            [replyMsg addObject:user.ip];
            [replyMsg addObject:[NSNumber numberWithInt:user.port]];
-       }
-        //[self sendUser:fromUsr msg:replyMsg]; no, this was prepending /landini/msg...through following orig???
+       }*/
+      //NOW sending just my info
+        [replyMsg addObject:_me.name];
+        [replyMsg addObject:_me.ip];
+        [replyMsg addObject:[NSNumber numberWithInt:_me.port]];
         [[fromUsr addr] sendThisPacket:[OSCPacket createWithContent:[LANdiniLANManager OSCMessageFromArray:replyMsg]]];
         
     }
