@@ -1507,6 +1507,8 @@
 				GCC_PREFIX_HEADER = "MobMuPlat/MobMuPlat-Prefix.pch";
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "MobMuPlat/MobMuPlat-Info.plist";
+				INSTALL_GROUP = "";
+				INSTALL_OWNER = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				OTHER_CFLAGS = (
 					"-DHAVE_UNISTD_H",
@@ -1536,6 +1538,8 @@
 				GCC_PREFIX_HEADER = "MobMuPlat/MobMuPlat-Prefix.pch";
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "MobMuPlat/MobMuPlat-Info.plist";
+				INSTALL_GROUP = "";
+				INSTALL_OWNER = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (

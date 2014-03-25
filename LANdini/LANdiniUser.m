@@ -57,6 +57,20 @@
     _addr = [[OSCOutPort alloc]initWithAddress:self.ip andPort:self.port];
 }
 
+-(void)resetMsgVars{
+  _lastOutgoingGDID=-1;
+  _lastIncomingGDID=-1;
+  _minGDID=-1;
+  _lastOutgoingOGDID = -1;
+  _lastIncomingOGDID = -1;
+  _lastPerformedOGDID = -1;
+  [_performedGDIDs removeAllObjects];
+  [_sentGDMsgs removeAllObjects];
+  [_missingOGDIDs removeAllObjects];
+  [_msgQueueForOGD removeAllObjects];
+  [_sentOGDMsgs removeAllObjects];
+}
+
 -(void)receivePing:(NSArray*)vals{//do much error checking to do - their x, their y, lastGDID, etc
     int lastGDIDTheySentMe = [[vals objectAtIndex:2] intValue];
     int theirMinGD = [[vals objectAtIndex:3] intValue];
@@ -69,17 +83,7 @@
     // if so, reset all the bookeeping vals
     if(lastGDIDTheySentMe == -1 && lastOGDIDTheySentMe == -1 && (_lastIncomingGDID > -1 || _lastIncomingOGDID > -1)) {
       //NSLog(@"RESET!");
-      _lastOutgoingGDID=-1;
-      _lastIncomingGDID=-1;
-      _minGDID=-1;
-      _lastOutgoingOGDID = -1;
-      _lastIncomingOGDID = -1;
-      _lastPerformedOGDID = -1;
-      [_performedGDIDs removeAllObjects];
-      [_sentGDMsgs removeAllObjects];
-      [_missingOGDIDs removeAllObjects];
-      [_msgQueueForOGD removeAllObjects];
-      [_sentOGDMsgs removeAllObjects];
+      [self resetMsgVars];
       
     }
     //NSLog(@"receive ping %@ time %.2f", _name, _lastPing);
