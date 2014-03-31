@@ -151,6 +151,7 @@
 		DC6A9FF61878F88900A7585A /* README.markdown in Resources */ = {isa = PBXBuildFile; fileRef = DC6A9FF01878F88900A7585A /* README.markdown */; };
 		DC6A9FF71878F88900A7585A /* MAZeroingWeakRef.m in Sources */ = {isa = PBXBuildFile; fileRef = DC6A9FF31878F88900A7585A /* MAZeroingWeakRef.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DC7DD717188F2A660068BA66 /* SettingsViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = DC7DD716188F2A660068BA66 /* SettingsViewController~ipad.xib */; };
+		DC874B7C18E4DF9500A12672 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = DC874B7B18E4DF9500A12672 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DC89675D18870F7D00750137 /* MMPExamples-LANdini.pd in Resources */ = {isa = PBXBuildFile; fileRef = DC89675918870F7D00750137 /* MMPExamples-LANdini.pd */; };
 		DC89675E18870F7D00750137 /* MMPExamples-LANdini-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DC89675A18870F7D00750137 /* MMPExamples-LANdini-Pad.mmp */; };
 		DC89675F18870F7D00750137 /* MMPExamples-LANdini.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DC89675B18870F7D00750137 /* MMPExamples-LANdini.mmp */; };
@@ -181,6 +182,9 @@
 		DCA9B9451733103B000E59DD /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B93E1733103B000E59DD /* mztools.c */; };
 		DCA9B9461733103B000E59DD /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B9401733103B000E59DD /* unzip.c */; };
 		DCA9B9471733103B000E59DD /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B9421733103B000E59DD /* zip.c */; };
+		DCA9BD9318E31A1100FAD233 /* libAudiobus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DCA9BD9218E31A1100FAD233 /* libAudiobus.a */; };
+		DCA9BD9518E31A9400FAD233 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCA9BD9418E31A9400FAD233 /* Accelerate.framework */; };
+		DCA9BD9718E31AA600FAD233 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCA9BD9618E31AA600FAD233 /* Security.framework */; };
 		DCB11AE11702B315004B92EA /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCB11AE01702B315004B92EA /* CoreMotion.framework */; };
 		DCB5B94718888BF9003E6C2C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DCB5B94618888BF9003E6C2C /* Images.xcassets */; };
 		DCB5B95418889355003E6C2C /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = DCB5B95018889355003E6C2C /* Icon-72.png */; };
@@ -237,7 +241,6 @@
 		DCD8DF8917330C4700767321 /* Welcome-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5C17330C4700767321 /* Welcome-Pad.mmp */; };
 		DCD8DF8A17330C4700767321 /* Welcome.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5D17330C4700767321 /* Welcome.mmp */; };
 		DCD8DF8B17330C4700767321 /* Welcome.pd in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5E17330C4700767321 /* Welcome.pd */; };
-		DCD8DF8E17330C9D00767321 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = DCD8DF8D17330C9D00767321 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DCD8DF9317330D8B00767321 /* PGMidi.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCD8DF9217330D8A00767321 /* PGMidi.mm */; };
 		DCEF4F2C188ED1CD00D6EE54 /* SettingsViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */; };
 		DCFF717716B59F3100CDCEAE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DCFF717616B59F3100CDCEAE /* libz.dylib */; };
@@ -435,6 +438,8 @@
 		DC6A9FF31878F88900A7585A /* MAZeroingWeakRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAZeroingWeakRef.m; sourceTree = "<group>"; };
 		DC6A9FF41878F88900A7585A /* MAZeroingWeakRefNativeZWRNotAllowedTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAZeroingWeakRefNativeZWRNotAllowedTable.h; sourceTree = "<group>"; };
 		DC7DD716188F2A660068BA66 /* SettingsViewController~ipad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "SettingsViewController~ipad.xib"; path = "settings/SettingsViewController~ipad.xib"; sourceTree = "<group>"; };
+		DC874B7A18E4DF9500A12672 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONKit.h; path = JSONKit/JSONKit.h; sourceTree = "<group>"; };
+		DC874B7B18E4DF9500A12672 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JSONKit.m; path = JSONKit/JSONKit.m; sourceTree = "<group>"; };
 		DC89675918870F7D00750137 /* MMPExamples-LANdini.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-LANdini.pd"; path = "patches/MMPExamples-LANdini.pd"; sourceTree = "<group>"; };
 		DC89675A18870F7D00750137 /* MMPExamples-LANdini-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-LANdini-Pad.mmp"; path = "patches/MMPExamples-LANdini-Pad.mmp"; sourceTree = "<group>"; };
 		DC89675B18870F7D00750137 /* MMPExamples-LANdini.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-LANdini.mmp"; path = "patches/MMPExamples-LANdini.mmp"; sourceTree = "<group>"; };
@@ -494,6 +499,9 @@
 		DCA9B9411733103B000E59DD /* unzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unzip.h; path = Zip/minizip/unzip.h; sourceTree = SOURCE_ROOT; };
 		DCA9B9421733103B000E59DD /* zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zip.c; path = Zip/minizip/zip.c; sourceTree = SOURCE_ROOT; };
 		DCA9B9431733103B000E59DD /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zip.h; path = Zip/minizip/zip.h; sourceTree = SOURCE_ROOT; };
+		DCA9BD9218E31A1100FAD233 /* libAudiobus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libAudiobus.a; path = "../../../Downloads/Audiobus-SDK-1/libAudiobus.a"; sourceTree = "<group>"; };
+		DCA9BD9418E31A9400FAD233 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		DCA9BD9618E31AA600FAD233 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		DCB11AE01702B315004B92EA /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		DCB5B94618888BF9003E6C2C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		DCB5B95018889355003E6C2C /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72.png"; path = "graphics/Icon-72.png"; sourceTree = "<group>"; };
@@ -555,8 +563,6 @@
 		DCD8DF5C17330C4700767321 /* Welcome-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "Welcome-Pad.mmp"; path = "patches/Welcome-Pad.mmp"; sourceTree = "<group>"; };
 		DCD8DF5D17330C4700767321 /* Welcome.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Welcome.mmp; path = patches/Welcome.mmp; sourceTree = "<group>"; };
 		DCD8DF5E17330C4700767321 /* Welcome.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Welcome.pd; path = patches/Welcome.pd; sourceTree = "<group>"; };
-		DCD8DF8C17330C9D00767321 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONKit.h; path = JSONKit/JSONKit.h; sourceTree = "<group>"; };
-		DCD8DF8D17330C9D00767321 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JSONKit.m; path = JSONKit/JSONKit.m; sourceTree = "<group>"; };
 		DCD8DF9017330D8A00767321 /* PGArc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGArc.h; path = PGMidi/PGArc.h; sourceTree = "<group>"; };
 		DCD8DF9117330D8A00767321 /* PGMidi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGMidi.h; path = PGMidi/PGMidi.h; sourceTree = "<group>"; };
 		DCD8DF9217330D8A00767321 /* PGMidi.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PGMidi.mm; path = PGMidi/PGMidi.mm; sourceTree = "<group>"; };
@@ -573,6 +579,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DCA9BD9718E31AA600FAD233 /* Security.framework in Frameworks */,
+				DCA9BD9518E31A9400FAD233 /* Accelerate.framework in Frameworks */,
 				DC13B959188E125600647115 /* SystemConfiguration.framework in Frameworks */,
 				90503180188474D9003D85E9 /* MediaPlayer.framework in Frameworks */,
 				DC456B03176BC1540080BB33 /* CoreLocation.framework in Frameworks */,
@@ -584,6 +592,7 @@
 				DC8EFEC71656F782004A88E3 /* CoreMIDI.framework in Frameworks */,
 				DC233DAD1655EDF500AC01C5 /* UIKit.framework in Frameworks */,
 				DC233DAF1655EDF500AC01C5 /* Foundation.framework in Frameworks */,
+				DCA9BD9318E31A1100FAD233 /* libAudiobus.a in Frameworks */,
 				DC233DB11655EDF500AC01C5 /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -611,15 +620,6 @@
 				DCD8DF9217330D8A00767321 /* PGMidi.mm */,
 			);
 			name = PGMidi;
-			sourceTree = "<group>";
-		};
-		DC0FC7E2172D81CB00E895C3 /* JSONKit */ = {
-			isa = PBXGroup;
-			children = (
-				DCD8DF8C17330C9D00767321 /* JSONKit.h */,
-				DCD8DF8D17330C9D00767321 /* JSONKit.m */,
-			);
-			name = JSONKit;
 			sourceTree = "<group>";
 		};
 		DC0FC7E3172D837F00E895C3 /* libpd */ = {
@@ -805,10 +805,10 @@
 		DC233D9D1655EDF500AC01C5 = {
 			isa = PBXGroup;
 			children = (
+				DC874B7918E4DF8700A12672 /* JSON */,
 				DC13B951188E04EB00647115 /* Reachability */,
 				90DFFB22187DC41700DD2149 /* LANdini */,
 				DC0FC7E3172D837F00E895C3 /* libpd */,
-				DC0FC7E2172D81CB00E895C3 /* JSONKit */,
 				DC0FC7E0172D81BC00E895C3 /* PGMidi */,
 				DCE7370F16B5E31300512571 /* VVBasics */,
 				DCE7370D16B5E30300512571 /* VVOSC */,
@@ -830,6 +830,9 @@
 		DC233DAB1655EDF500AC01C5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DCA9BD9618E31AA600FAD233 /* Security.framework */,
+				DCA9BD9418E31A9400FAD233 /* Accelerate.framework */,
+				DCA9BD9218E31A1100FAD233 /* libAudiobus.a */,
 				DC13B958188E125600647115 /* SystemConfiguration.framework */,
 				9050317F188474D9003D85E9 /* MediaPlayer.framework */,
 				DC456B02176BC1540080BB33 /* CoreLocation.framework */,
@@ -999,6 +1002,15 @@
 				DC6A9FF41878F88900A7585A /* MAZeroingWeakRefNativeZWRNotAllowedTable.h */,
 			);
 			path = Source;
+			sourceTree = "<group>";
+		};
+		DC874B7918E4DF8700A12672 /* JSON */ = {
+			isa = PBXGroup;
+			children = (
+				DC874B7A18E4DF9500A12672 /* JSONKit.h */,
+				DC874B7B18E4DF9500A12672 /* JSONKit.m */,
+			);
+			name = JSON;
 			sourceTree = "<group>";
 		};
 		DCD1919A17418E8000580793 /* util */ = {
@@ -1336,6 +1348,7 @@
 				DC0FC915172D84EA00E895C3 /* g_io.c in Sources */,
 				DC0FC916172D84EA00E895C3 /* g_mycanvas.c in Sources */,
 				DC0FC917172D84EA00E895C3 /* g_numbox.c in Sources */,
+				DC874B7C18E4DF9500A12672 /* JSONKit.m in Sources */,
 				DC0FC918172D84EA00E895C3 /* g_readwrite.c in Sources */,
 				DC0FC919172D84EA00E895C3 /* g_rtext.c in Sources */,
 				DC0FC91A172D84EA00E895C3 /* g_scalar.c in Sources */,
@@ -1380,7 +1393,6 @@
 				DC0FC93D172D84EA00E895C3 /* x_qlist.c in Sources */,
 				DC0FC93E172D84EA00E895C3 /* x_time.c in Sources */,
 				DCD5BCA218BAC42200EF3E5D /* MeMultiTouch.m in Sources */,
-				DCD8DF8E17330C9D00767321 /* JSONKit.m in Sources */,
 				DCD8DF9317330D8B00767321 /* PGMidi.mm in Sources */,
 				DCA9B90717330F3D000E59DD /* MutLockArray.m in Sources */,
 				DCA9B90817330F3D000E59DD /* MutLockDict.m in Sources */,
@@ -1505,9 +1517,13 @@
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "MobMuPlat/MobMuPlat-Prefix.pch";
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/**";
 				INFOPLIST_FILE = "MobMuPlat/MobMuPlat-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/daniglesia/Downloads/Audiobus-SDK-1",
+				);
 				OTHER_CFLAGS = (
 					"-DHAVE_UNISTD_H",
 					"-DHAVE_LBDL",
@@ -1515,10 +1531,10 @@
 					"-DPD",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "996CD52E-7925-4976-8723-140FD11F3470";
+				PROVISIONING_PROFILE = "94381842-F7FF-4F90-A680-D543A28CBF45";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";
-				VALID_ARCHS = "armv7 armv7s";
+				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1534,9 +1550,13 @@
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "MobMuPlat/MobMuPlat-Prefix.pch";
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/**";
 				INFOPLIST_FILE = "MobMuPlat/MobMuPlat-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/daniglesia/Downloads/Audiobus-SDK-1",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-DHAVE_UNISTD_H",
@@ -1549,7 +1569,7 @@
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "A3646FCD-4CF0-40ED-A461-190642B768E7";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";
-				VALID_ARCHS = "armv7 armv7s";
+				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

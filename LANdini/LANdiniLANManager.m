@@ -96,7 +96,7 @@
         _smallestRtt=1;
         
         _startDate = [NSDate date];
-        _version = .21;
+        _version = .22;
         
         _syncServerName = @"noSyncServer";
         

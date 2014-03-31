@@ -26,7 +26,6 @@ static const AudioUnitElement kOutputElement = 0;
 - (BOOL)initAudioUnitWithSampleRate:(Float64)sampleRate numberChannels:(int)numChannels inputEnabled:(BOOL)inputEnabled;
 - (void)destroyAudioUnit;
 - (AudioComponentDescription)ioDescription;
-- (AudioStreamBasicDescription)ASBDForSampleRate:(Float64)sampleRate numberChannels:(UInt32)numChannels;
 
 @end
 
@@ -98,7 +97,22 @@ static OSStatus AudioRenderCallback(void *inRefCon,
 	}
     
 	int ticks = inNumberFrames >> pdAudioUnit->blockSizeAsLog_; // this is a faster way of computing (inNumberFrames / blockSize)
-	[PdBase processFloatWithInputBuffer:auBuffer outputBuffer:auBuffer ticks:ticks];
+    //printf("ticks %d datasize %d", ticks, ioData->mBuffers[0].mDataByteSize);
+	//mute when filter active
+    if (!pdAudioUnit->_filterActive) {
+        [PdBase processFloatWithInputBuffer:auBuffer outputBuffer:auBuffer ticks:ticks];
+    }
+    
+    // In an input callback/etc
+    if ( ABOutputPortGetConnectedPortAttributes(pdAudioUnit->_output) ){
+        ABOutputPortSendAudio(pdAudioUnit->_output, ioData, inNumberFrames, inTimeStamp, NULL);
+    }
+    if ( ABOutputPortGetConnectedPortAttributes(pdAudioUnit->_output) & ABInputPortAttributePlaysLiveAudio ) {
+        // Mute your audio output if the connected port plays it for us instead
+        for ( int i=0; i<ioData->mNumberBuffers; i++ ) {
+            memset(ioData->mBuffers[i].mData, 0, ioData->mBuffers[i].mDataByteSize);
+        }
+    }
 	return noErr;
 }
 

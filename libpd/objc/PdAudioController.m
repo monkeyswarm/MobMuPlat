@@ -17,7 +17,6 @@
 
 @interface PdAudioController ()
 
-@property (nonatomic, retain) PdAudioUnit *audioUnit;	// out private PdAudioUnit
 - (PdAudioStatus)updateSampleRate:(int)sampleRate;		// updates the sample rate while verifying it is in sync with the audio session and PdAudioUnit
 - (PdAudioStatus)selectCategoryWithInputs:(BOOL)hasInputs isAmbient:(BOOL)isAmbient allowsMixing:(BOOL)allowsMixing;  // Not all inputs make sense, but that's okay in the private interface.
 - (PdAudioStatus)configureAudioUnitWithNumberChannels:(int)numChannels inputEnabled:(BOOL)inputEnabled;
