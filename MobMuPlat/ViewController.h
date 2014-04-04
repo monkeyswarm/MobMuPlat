@@ -79,6 +79,7 @@
 +(BOOL)numberIsFloat:(NSNumber*)num;
 -(void)connectPorts;
 -(void)disconnectPorts;
+-(BOOL)isAudioBusConnected;
 +(NSString*)fetchSSIDInfo;
 
 @property BOOL backgroundAudioEnabled;
@@ -88,8 +89,8 @@
 //audio bus - make private
 @property (strong, nonatomic) ABAudiobusController *audiobusController;
 @property (strong, nonatomic) ABAudiobusAudioUnitWrapper *audiobusAudioUnitWrapper;
-@property (nonatomic, retain)ABInputPort *input;
-@property (nonatomic, retain)ABOutputPort *output;
+@property (nonatomic, retain)ABInputPort *inputPort;
+@property (nonatomic, retain)ABOutputPort *outputPort;
 @property (strong, nonatomic)ABFilterPort *filterPort;
 @property (assign,nonatomic)NSInteger ticks;
 

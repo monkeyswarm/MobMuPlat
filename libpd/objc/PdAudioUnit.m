@@ -90,29 +90,51 @@ static OSStatus AudioRenderCallback(void *inRefCon,
 									AudioBufferList *ioData) {
 	
 	PdAudioUnit *pdAudioUnit = (PdAudioUnit *)inRefCon;
-	Float32 *auBuffer = (Float32 *)ioData->mBuffers[0].mData;
-    
+	 
 	if (pdAudioUnit->inputEnabled_) {
 		AudioUnitRender(pdAudioUnit->audioUnit_, ioActionFlags, inTimeStamp, kInputElement, inNumberFrames, ioData);
 	}
     
 	int ticks = inNumberFrames >> pdAudioUnit->blockSizeAsLog_; // this is a faster way of computing (inNumberFrames / blockSize)
     //printf("ticks %d datasize %d", ticks, ioData->mBuffers[0].mDataByteSize);
-	//mute when filter active
-    if (!pdAudioUnit->_filterActive) {
-        [PdBase processFloatWithInputBuffer:auBuffer outputBuffer:auBuffer ticks:ticks];
-    }
-    
+	
+  
+
+  
+  //AUDIOBUS INPUT
+  //get audio from audiobus, not incoming iodata
+  if ( ABInputPortIsConnected(pdAudioUnit->_inputPort)) {
+    ABInputPortReceive(pdAudioUnit->_inputPort, /*sourcePortOrNil*/nil, ioData, &inNumberFrames, inTimeStamp, NULL);
+  }
+  
+  
+  
+  //AudioBUs filter
+  if ( ABFilterPortIsConnected(pdAudioUnit->_filterPort) ) {
+    // Pull output audio from the filter port
+    // Note: The following line isn't necessary if you're using the Audio Unit Wrapper - it'll do this for you.
+    ABFilterPortGetOutput(pdAudioUnit->_filterPort, ioData, inNumberFrames, NULL);
+    return noErr;
+  }
+  
+  Float32 *auBuffer = (Float32 *)ioData->mBuffers[0].mData;
+  [PdBase processFloatWithInputBuffer:auBuffer outputBuffer:auBuffer ticks:ticks];
+  
+  
+  //AUDIOBUS OUTPUT
     // In an input callback/etc
-    if ( ABOutputPortGetConnectedPortAttributes(pdAudioUnit->_output) ){
-        ABOutputPortSendAudio(pdAudioUnit->_output, ioData, inNumberFrames, inTimeStamp, NULL);
+    if ( ABOutputPortIsConnected(pdAudioUnit->_outputPort) ){
+        ABOutputPortSendAudio(pdAudioUnit->_outputPort, ioData, inNumberFrames, inTimeStamp, NULL);
+    
+      if ( ABInputPortAttributePlaysLiveAudio ) {
+          // Mute your audio output if the connected port plays it for us instead
+          for ( int i=0; i<ioData->mNumberBuffers; i++ ) {
+              memset(ioData->mBuffers[i].mData, 0, ioData->mBuffers[i].mDataByteSize);
+          }
+      }
     }
-    if ( ABOutputPortGetConnectedPortAttributes(pdAudioUnit->_output) & ABInputPortAttributePlaysLiveAudio ) {
-        // Mute your audio output if the connected port plays it for us instead
-        for ( int i=0; i<ioData->mNumberBuffers; i++ ) {
-            memset(ioData->mBuffers[i].mData, 0, ioData->mBuffers[i].mDataByteSize);
-        }
-    }
+  
+  
 	return noErr;
 }
 

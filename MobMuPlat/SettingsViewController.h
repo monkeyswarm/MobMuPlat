@@ -109,7 +109,7 @@ typedef enum{
 -(void)setMidiDestinationIndex:(int)index;
 -(int)setChannelCount:(int)newChannelCount;
 - (void)setAudioInputEnabled:(BOOL)enabled; //for mic input vs vibration
-
+-(BOOL)isAudioBusConnected;
 @property BOOL backgroundAudioEnabled;
 
 @end

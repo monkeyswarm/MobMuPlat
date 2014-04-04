@@ -40,9 +40,9 @@
 //dei edit
 - (AudioStreamBasicDescription)ASBDForSampleRate:(Float64)sampleRate numberChannels:(UInt32)numChannels;
 //dei edit
-//check whether AudioBus Filter is connected
-@property (nonatomic,assign,getter = filterIsActive)BOOL filterActive;
-@property (nonatomic, assign)ABOutputPort *output;
+@property (nonatomic, assign)ABOutputPort *outputPort;
+@property (nonatomic, assign)ABInputPort *inputPort;
+@property (nonatomic, assign)ABFilterPort *filterPort;
 
 
 @end

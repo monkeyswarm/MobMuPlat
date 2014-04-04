@@ -87,9 +87,14 @@
                                              selector:@selector(reachabilityChanged:)
                                                  name:kReachabilityChangedNotification
                                                object:nil];
-    
-    
-    
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(connectionsChanged:)
+                                               name:ABConnectionsChangedNotification
+                                             object:nil];
+  //doesn't catch it on creation, so check it now
+  [self connectionsChanged:nil];
+  
+  
     //match default pdaudiocontroller settings
     outputChannelCount = 2;
     
@@ -331,19 +336,23 @@
 
 }
 
+-(void)refreshAudioEnableButton{
+  if(self.audioDelegate.backgroundAudioEnabled){
+    [_audioEnableButton setTitle:@"enabled" forState:UIControlStateNormal];
+    [_audioEnableButton setBackgroundColor:[UIColor whiteColor]];
+    [_audioEnableButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+  }
+  
+  else{
+    [_audioEnableButton setTitle:@"disabled" forState:UIControlStateNormal];
+    [_audioEnableButton setBackgroundColor:[UIColor clearColor]];
+    [_audioEnableButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+  }
+}
+
 -(void)audioEnableButtonHit{
     self.audioDelegate.backgroundAudioEnabled=!self.audioDelegate.backgroundAudioEnabled;
-    if(self.audioDelegate.backgroundAudioEnabled){
-        [_audioEnableButton setTitle:@"enabled" forState:UIControlStateNormal];
-        [_audioEnableButton setBackgroundColor:[UIColor whiteColor]];
-        [_audioEnableButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
-    }
-    
-    else{
-        [_audioEnableButton setTitle:@"disabled" forState:UIControlStateNormal];
-        [_audioEnableButton setBackgroundColor:[UIColor clearColor]];
-        [_audioEnableButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    }
+  [self refreshAudioEnableButton];
 }
 
 BOOL audioSwitchBool;
@@ -488,7 +497,7 @@ BOOL LANdiniSwitchBool;
     [_tickValueLabel setText:[NSString stringWithFormat:@"request: %d * block size (%d) = %d samples \nactual: %d * block size (%d) = %d samples", requestedBlockCount, blockSize, requestedBlockCount*blockSize, actualTicks, blockSize, actualTicks*blockSize  ]];
     
     if(actualTicks!=requestedBlockCount){
-        int actualIndex = (int)log2(actualTicks/64);
+        int actualIndex = (int)log2(actualTicks);
         sender.selectedSegmentIndex=actualIndex;
     }
 }
@@ -501,13 +510,19 @@ BOOL LANdiniSwitchBool;
     int blockSize = [self.audioDelegate blockSize];
     
     if (requestedBlockCount!=actualTicks) {
-        actualTicks = [self.audioDelegate setTicksPerBuffer:requestedBlockCount];
+        actualTicks = [self.audioDelegate setTicksPerBuffer:requestedBlockCount];//redundant?
         if( fmod(log2(actualTicks), 1)==0){
             int newBlockIndex = (int)log2(actualTicks);
             [_tickSeg setSelectedSegmentIndex:newBlockIndex];
         }
         else [_tickSeg setSelectedSegmentIndex:UISegmentedControlNoSegment];
         
+    }
+    if(newRate!=actualRate){
+      [_rateSeg setSelectedSegmentIndex:UISegmentedControlNoSegment];
+      for(int i=0;i<6;i++){
+        if(rateValueArray[i]==actualRate) [_rateSeg setSelectedSegmentIndex:i];
+      }
     }
     
     [_tickValueLabel setText:[NSString stringWithFormat:@"request: %d * block size (%d) = %d samples \nactual: %d * block size (%d) = %d samples", requestedBlockCount, blockSize, requestedBlockCount*blockSize, actualTicks, blockSize, actualTicks*blockSize  ]];
@@ -754,6 +769,26 @@ BOOL LANdiniSwitchBool;
 -(void)updateNetworkLabel:(Reachability*)reach{
     NSString* network = [ViewController fetchSSIDInfo];
     [_LANdiniNetworkLabel setText:[NSString stringWithFormat:@"wifi network %@: %@", [reach isReachable] ? @"enabled" : @"disabled", network ? network : @""]];
+}
+
+# pragma mark AudioBus
+
+- (void)connectionsChanged:(NSNotification*)notification {
+  if([self.audioDelegate respondsToSelector:@selector(isAudioBusConnected)]){
+    if([self.audioDelegate isAudioBusConnected]) {
+      _rateSeg.enabled=NO;
+      _tickSeg.enabled=NO;
+      _audioEnableButton.enabled=NO;
+      [_audioEnableButton setTitle:@"AudioBus" forState:UIControlStateNormal];
+    }
+    else{
+      _rateSeg.enabled=YES;
+      _tickSeg.enabled=YES;
+      _audioEnableButton.enabled=YES;
+      [self refreshAudioEnableButton];
+    }
+  }
+
 }
 
 # pragma mark cleanup
