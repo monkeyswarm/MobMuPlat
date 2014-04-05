@@ -53,7 +53,8 @@
 	
     
     BOOL isLandscape;
-    BOOL hasStatusBar;
+    BOOL isFlipped;
+   
     
     void* openPDFile;
     AVCaptureDevice *avCaptureDevice;//for flash

@@ -57,6 +57,7 @@ typedef enum{
 
 @property (nonatomic, strong) IBOutlet UITableView* documentsTableView;
 @property (nonatomic, strong) IBOutlet UIButton* showFilesButton;
+@property (nonatomic, strong) IBOutlet UIButton* flipInterfaceButton;
 
 @property (nonatomic, strong) IBOutlet UITextView* consoleTextView;
 @property (nonatomic, strong) IBOutlet UIButton* clearConsoleButton;
@@ -95,6 +96,7 @@ typedef enum{
 - (void)settingsViewControllerDidFinish:(SettingsViewController *)controller;
 - (BOOL)loadScene:(NSDictionary*)sceneDict;
 - (BOOL)loadScenePatchOnly:(NSString*)filename;
+- (void)flipInterface;
 
 @end
 
