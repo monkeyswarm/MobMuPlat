@@ -237,9 +237,9 @@
 		DCD8DF8917330C4700767321 /* Welcome-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5C17330C4700767321 /* Welcome-Pad.mmp */; };
 		DCD8DF8A17330C4700767321 /* Welcome.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5D17330C4700767321 /* Welcome.mmp */; };
 		DCD8DF8B17330C4700767321 /* Welcome.pd in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5E17330C4700767321 /* Welcome.pd */; };
-		DCD8DF8E17330C9D00767321 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = DCD8DF8D17330C9D00767321 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DCD8DF9317330D8B00767321 /* PGMidi.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCD8DF9217330D8A00767321 /* PGMidi.mm */; };
 		DCEF4F2C188ED1CD00D6EE54 /* SettingsViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */; };
+		DCFE302618F1B1C8001A644D /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = DCFE302518F1B1C8001A644D /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DCFF717716B59F3100CDCEAE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DCFF717616B59F3100CDCEAE /* libz.dylib */; };
 		F94958DC18D1223B00C8876F /* MMPExamples-Arp-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F94958D818D1223B00C8876F /* MMPExamples-Arp-ip5.mmp */; };
 		F94958DD18D1223B00C8876F /* MMPExamples-Arp-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F94958D918D1223B00C8876F /* MMPExamples-Arp-Pad.mmp */; };
@@ -555,12 +555,12 @@
 		DCD8DF5C17330C4700767321 /* Welcome-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "Welcome-Pad.mmp"; path = "patches/Welcome-Pad.mmp"; sourceTree = "<group>"; };
 		DCD8DF5D17330C4700767321 /* Welcome.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Welcome.mmp; path = patches/Welcome.mmp; sourceTree = "<group>"; };
 		DCD8DF5E17330C4700767321 /* Welcome.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Welcome.pd; path = patches/Welcome.pd; sourceTree = "<group>"; };
-		DCD8DF8C17330C9D00767321 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONKit.h; path = JSONKit/JSONKit.h; sourceTree = "<group>"; };
-		DCD8DF8D17330C9D00767321 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JSONKit.m; path = JSONKit/JSONKit.m; sourceTree = "<group>"; };
 		DCD8DF9017330D8A00767321 /* PGArc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGArc.h; path = PGMidi/PGArc.h; sourceTree = "<group>"; };
 		DCD8DF9117330D8A00767321 /* PGMidi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGMidi.h; path = PGMidi/PGMidi.h; sourceTree = "<group>"; };
 		DCD8DF9217330D8A00767321 /* PGMidi.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PGMidi.mm; path = PGMidi/PGMidi.mm; sourceTree = "<group>"; };
 		DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "SettingsViewController~iphone.xib"; path = "settings/SettingsViewController~iphone.xib"; sourceTree = "<group>"; };
+		DCFE302418F1B1C8001A644D /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONKit.h; path = JSONKit/JSONKit.h; sourceTree = "<group>"; };
+		DCFE302518F1B1C8001A644D /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JSONKit.m; path = JSONKit/JSONKit.m; sourceTree = "<group>"; };
 		DCFF717616B59F3100CDCEAE /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		F94958D818D1223B00C8876F /* MMPExamples-Arp-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Arp-ip5.mmp"; path = "patches/MMPExamples-Arp-ip5.mmp"; sourceTree = "<group>"; };
 		F94958D918D1223B00C8876F /* MMPExamples-Arp-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Arp-Pad.mmp"; path = "patches/MMPExamples-Arp-Pad.mmp"; sourceTree = "<group>"; };
@@ -616,8 +616,8 @@
 		DC0FC7E2172D81CB00E895C3 /* JSONKit */ = {
 			isa = PBXGroup;
 			children = (
-				DCD8DF8C17330C9D00767321 /* JSONKit.h */,
-				DCD8DF8D17330C9D00767321 /* JSONKit.m */,
+				DCFE302418F1B1C8001A644D /* JSONKit.h */,
+				DCFE302518F1B1C8001A644D /* JSONKit.m */,
 			);
 			name = JSONKit;
 			sourceTree = "<group>";
@@ -1336,6 +1336,7 @@
 				DC0FC915172D84EA00E895C3 /* g_io.c in Sources */,
 				DC0FC916172D84EA00E895C3 /* g_mycanvas.c in Sources */,
 				DC0FC917172D84EA00E895C3 /* g_numbox.c in Sources */,
+				DCFE302618F1B1C8001A644D /* JSONKit.m in Sources */,
 				DC0FC918172D84EA00E895C3 /* g_readwrite.c in Sources */,
 				DC0FC919172D84EA00E895C3 /* g_rtext.c in Sources */,
 				DC0FC91A172D84EA00E895C3 /* g_scalar.c in Sources */,
@@ -1380,7 +1381,6 @@
 				DC0FC93D172D84EA00E895C3 /* x_qlist.c in Sources */,
 				DC0FC93E172D84EA00E895C3 /* x_time.c in Sources */,
 				DCD5BCA218BAC42200EF3E5D /* MeMultiTouch.m in Sources */,
-				DCD8DF8E17330C9D00767321 /* JSONKit.m in Sources */,
 				DCD8DF9317330D8B00767321 /* PGMidi.mm in Sources */,
 				DCA9B90717330F3D000E59DD /* MutLockArray.m in Sources */,
 				DCA9B90817330F3D000E59DD /* MutLockDict.m in Sources */,
@@ -1520,7 +1520,7 @@
 				PROVISIONING_PROFILE = "996CD52E-7925-4976-8723-140FD11F3470";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";
-				VALID_ARCHS = "armv7 armv7s";
+				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1553,7 +1553,7 @@
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "A3646FCD-4CF0-40ED-A461-190642B768E7";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";
-				VALID_ARCHS = "armv7 armv7s";
+				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
