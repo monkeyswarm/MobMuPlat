@@ -1525,6 +1525,7 @@
 					"/Users/daniglesia/Downloads/Audiobus-SDK-1",
 					/Users/diglesia/Source/MobMuPlat,
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-DHAVE_UNISTD_H",
 					"-DHAVE_LBDL",
@@ -1535,7 +1536,7 @@
 				PROVISIONING_PROFILE = "996CD52E-7925-4976-8723-140FD11F3470";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";
-				VALID_ARCHS = "armv7 armv7s arm64";
+				VALID_ARCHS = "armv7 armv7s";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1559,7 +1560,7 @@
 					"/Users/daniglesia/Downloads/Audiobus-SDK-1",
 					/Users/diglesia/Source/MobMuPlat,
 				);
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-DHAVE_UNISTD_H",
 					"-DHAVE_LBDL",
@@ -1571,7 +1572,7 @@
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "A3646FCD-4CF0-40ED-A461-190642B768E7";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";
-				VALID_ARCHS = "armv7 armv7s arm64";
+				VALID_ARCHS = "armv7 armv7s";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
