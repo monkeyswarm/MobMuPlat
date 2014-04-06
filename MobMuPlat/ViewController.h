@@ -13,7 +13,6 @@
 #import "PdBase.h"
 
 #import "Reachability.h"
-#import "JSONKit.h"
 
 #import "SettingsViewController.h"
 #import "MeControl.h"

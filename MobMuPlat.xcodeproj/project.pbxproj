@@ -1519,6 +1519,8 @@
 				GCC_PREFIX_HEADER = "MobMuPlat/MobMuPlat-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/**";
 				INFOPLIST_FILE = "MobMuPlat/MobMuPlat-Info.plist";
+				INSTALL_GROUP = "";
+				INSTALL_OWNER = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1554,6 +1556,8 @@
 				GCC_PREFIX_HEADER = "MobMuPlat/MobMuPlat-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/**";
 				INFOPLIST_FILE = "MobMuPlat/MobMuPlat-Info.plist";
+				INSTALL_GROUP = "";
+				INSTALL_OWNER = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
