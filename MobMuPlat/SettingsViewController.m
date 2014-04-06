@@ -12,7 +12,6 @@
 //  -consoleView has a TextView to print out PureData console messages (including anything sent to a [print] object in the PD patch)
 
 #import "SettingsViewController.h"
-#import "JSONKit.h"
 #import <QuartzCore/QuartzCore.h>
 #import "ZipArchive.h"
 
@@ -541,8 +540,9 @@ BOOL LANdiniSwitchBool;
     //if an MMP file, open JSONString and load it 
     if([suffix isEqualToString:@"mmp"]){
         NSString* jsonString = [NSString stringWithContentsOfFile:fullPath encoding:NSUTF8StringEncoding error:nil];
-        NSDictionary* sceneDict = [jsonString objectFromJSONString];
-        
+        //NSDictionary* sceneDict = [jsonString JSONValue];
+        NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+        NSDictionary* sceneDict = [NSJSONSerialization JSONObjectWithData:data options:nil error:nil];
         BOOL loaded = [self.delegate loadScene:sceneDict];
         if(loaded)[self.delegate settingsViewControllerDidFinish:self];//successful load, flip back to main ViewController
         else{//failed load

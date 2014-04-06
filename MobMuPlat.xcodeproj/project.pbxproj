@@ -239,7 +239,6 @@
 		DCD8DF8B17330C4700767321 /* Welcome.pd in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5E17330C4700767321 /* Welcome.pd */; };
 		DCD8DF9317330D8B00767321 /* PGMidi.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCD8DF9217330D8A00767321 /* PGMidi.mm */; };
 		DCEF4F2C188ED1CD00D6EE54 /* SettingsViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */; };
-		DCFE302618F1B1C8001A644D /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = DCFE302518F1B1C8001A644D /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DCFF717716B59F3100CDCEAE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DCFF717616B59F3100CDCEAE /* libz.dylib */; };
 		F94958DC18D1223B00C8876F /* MMPExamples-Arp-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F94958D818D1223B00C8876F /* MMPExamples-Arp-ip5.mmp */; };
 		F94958DD18D1223B00C8876F /* MMPExamples-Arp-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F94958D918D1223B00C8876F /* MMPExamples-Arp-Pad.mmp */; };
@@ -559,8 +558,6 @@
 		DCD8DF9117330D8A00767321 /* PGMidi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGMidi.h; path = PGMidi/PGMidi.h; sourceTree = "<group>"; };
 		DCD8DF9217330D8A00767321 /* PGMidi.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PGMidi.mm; path = PGMidi/PGMidi.mm; sourceTree = "<group>"; };
 		DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "SettingsViewController~iphone.xib"; path = "settings/SettingsViewController~iphone.xib"; sourceTree = "<group>"; };
-		DCFE302418F1B1C8001A644D /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONKit.h; path = JSONKit/JSONKit.h; sourceTree = "<group>"; };
-		DCFE302518F1B1C8001A644D /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JSONKit.m; path = JSONKit/JSONKit.m; sourceTree = "<group>"; };
 		DCFF717616B59F3100CDCEAE /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		F94958D818D1223B00C8876F /* MMPExamples-Arp-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Arp-ip5.mmp"; path = "patches/MMPExamples-Arp-ip5.mmp"; sourceTree = "<group>"; };
 		F94958D918D1223B00C8876F /* MMPExamples-Arp-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Arp-Pad.mmp"; path = "patches/MMPExamples-Arp-Pad.mmp"; sourceTree = "<group>"; };
@@ -611,15 +608,6 @@
 				DCD8DF9217330D8A00767321 /* PGMidi.mm */,
 			);
 			name = PGMidi;
-			sourceTree = "<group>";
-		};
-		DC0FC7E2172D81CB00E895C3 /* JSONKit */ = {
-			isa = PBXGroup;
-			children = (
-				DCFE302418F1B1C8001A644D /* JSONKit.h */,
-				DCFE302518F1B1C8001A644D /* JSONKit.m */,
-			);
-			name = JSONKit;
 			sourceTree = "<group>";
 		};
 		DC0FC7E3172D837F00E895C3 /* libpd */ = {
@@ -808,7 +796,6 @@
 				DC13B951188E04EB00647115 /* Reachability */,
 				90DFFB22187DC41700DD2149 /* LANdini */,
 				DC0FC7E3172D837F00E895C3 /* libpd */,
-				DC0FC7E2172D81CB00E895C3 /* JSONKit */,
 				DC0FC7E0172D81BC00E895C3 /* PGMidi */,
 				DCE7370F16B5E31300512571 /* VVBasics */,
 				DCE7370D16B5E30300512571 /* VVOSC */,
@@ -1336,7 +1323,6 @@
 				DC0FC915172D84EA00E895C3 /* g_io.c in Sources */,
 				DC0FC916172D84EA00E895C3 /* g_mycanvas.c in Sources */,
 				DC0FC917172D84EA00E895C3 /* g_numbox.c in Sources */,
-				DCFE302618F1B1C8001A644D /* JSONKit.m in Sources */,
 				DC0FC918172D84EA00E895C3 /* g_readwrite.c in Sources */,
 				DC0FC919172D84EA00E895C3 /* g_rtext.c in Sources */,
 				DC0FC91A172D84EA00E895C3 /* g_scalar.c in Sources */,

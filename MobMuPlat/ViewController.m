@@ -323,7 +323,11 @@ extern void sigmund_tilde_setup(void);
     
     NSString* jsonString = [NSString stringWithContentsOfFile: path encoding:NSUTF8StringEncoding error:nil];
    
-    if(jsonString)[self loadScene:[jsonString objectFromJSONString]];
+    if(jsonString){
+        //[self loadScene:[jsonString objectFromJSONString]];
+        NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+        [self loadScene:[NSJSONSerialization JSONObjectWithData:data options:nil error:nil]];
+    }
   
 }
 
