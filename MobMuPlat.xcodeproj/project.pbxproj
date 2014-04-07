@@ -151,7 +151,6 @@
 		DC6A9FF61878F88900A7585A /* README.markdown in Resources */ = {isa = PBXBuildFile; fileRef = DC6A9FF01878F88900A7585A /* README.markdown */; };
 		DC6A9FF71878F88900A7585A /* MAZeroingWeakRef.m in Sources */ = {isa = PBXBuildFile; fileRef = DC6A9FF31878F88900A7585A /* MAZeroingWeakRef.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DC7DD717188F2A660068BA66 /* SettingsViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = DC7DD716188F2A660068BA66 /* SettingsViewController~ipad.xib */; };
-		DC874B7C18E4DF9500A12672 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = DC874B7B18E4DF9500A12672 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DC89675D18870F7D00750137 /* MMPExamples-LANdini.pd in Resources */ = {isa = PBXBuildFile; fileRef = DC89675918870F7D00750137 /* MMPExamples-LANdini.pd */; };
 		DC89675E18870F7D00750137 /* MMPExamples-LANdini-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DC89675A18870F7D00750137 /* MMPExamples-LANdini-Pad.mmp */; };
 		DC89675F18870F7D00750137 /* MMPExamples-LANdini.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DC89675B18870F7D00750137 /* MMPExamples-LANdini.mmp */; };
@@ -438,8 +437,6 @@
 		DC6A9FF31878F88900A7585A /* MAZeroingWeakRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAZeroingWeakRef.m; sourceTree = "<group>"; };
 		DC6A9FF41878F88900A7585A /* MAZeroingWeakRefNativeZWRNotAllowedTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAZeroingWeakRefNativeZWRNotAllowedTable.h; sourceTree = "<group>"; };
 		DC7DD716188F2A660068BA66 /* SettingsViewController~ipad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "SettingsViewController~ipad.xib"; path = "settings/SettingsViewController~ipad.xib"; sourceTree = "<group>"; };
-		DC874B7A18E4DF9500A12672 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONKit.h; path = JSONKit/JSONKit.h; sourceTree = "<group>"; };
-		DC874B7B18E4DF9500A12672 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JSONKit.m; path = JSONKit/JSONKit.m; sourceTree = "<group>"; };
 		DC89675918870F7D00750137 /* MMPExamples-LANdini.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-LANdini.pd"; path = "patches/MMPExamples-LANdini.pd"; sourceTree = "<group>"; };
 		DC89675A18870F7D00750137 /* MMPExamples-LANdini-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-LANdini-Pad.mmp"; path = "patches/MMPExamples-LANdini-Pad.mmp"; sourceTree = "<group>"; };
 		DC89675B18870F7D00750137 /* MMPExamples-LANdini.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-LANdini.mmp"; path = "patches/MMPExamples-LANdini.mmp"; sourceTree = "<group>"; };
@@ -805,7 +802,6 @@
 		DC233D9D1655EDF500AC01C5 = {
 			isa = PBXGroup;
 			children = (
-				DC874B7918E4DF8700A12672 /* JSON */,
 				DC13B951188E04EB00647115 /* Reachability */,
 				90DFFB22187DC41700DD2149 /* LANdini */,
 				DC0FC7E3172D837F00E895C3 /* libpd */,
@@ -1002,15 +998,6 @@
 				DC6A9FF41878F88900A7585A /* MAZeroingWeakRefNativeZWRNotAllowedTable.h */,
 			);
 			path = Source;
-			sourceTree = "<group>";
-		};
-		DC874B7918E4DF8700A12672 /* JSON */ = {
-			isa = PBXGroup;
-			children = (
-				DC874B7A18E4DF9500A12672 /* JSONKit.h */,
-				DC874B7B18E4DF9500A12672 /* JSONKit.m */,
-			);
-			name = JSON;
 			sourceTree = "<group>";
 		};
 		DCD1919A17418E8000580793 /* util */ = {
@@ -1348,7 +1335,6 @@
 				DC0FC915172D84EA00E895C3 /* g_io.c in Sources */,
 				DC0FC916172D84EA00E895C3 /* g_mycanvas.c in Sources */,
 				DC0FC917172D84EA00E895C3 /* g_numbox.c in Sources */,
-				DC874B7C18E4DF9500A12672 /* JSONKit.m in Sources */,
 				DC0FC918172D84EA00E895C3 /* g_readwrite.c in Sources */,
 				DC0FC919172D84EA00E895C3 /* g_rtext.c in Sources */,
 				DC0FC91A172D84EA00E895C3 /* g_scalar.c in Sources */,
@@ -1535,7 +1521,7 @@
 					"-DPD",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "996CD52E-7925-4976-8723-140FD11F3470";
+				PROVISIONING_PROFILE = "94381842-F7FF-4F90-A680-D543A28CBF45";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = "armv7 armv7s";
@@ -1573,7 +1559,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "A3646FCD-4CF0-40ED-A461-190642B768E7";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "4ADAD4E0-26E7-4102-BEA1-0FADC472C808";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = "armv7 armv7s";
