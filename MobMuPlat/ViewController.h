@@ -52,8 +52,8 @@
 	
     
     BOOL isLandscape;
-    BOOL hasStatusBar;
-    BOOL mixingEnabled; //was NO, try YES for audio bus
+    BOOL isFlipped;
+   
     
     void* openPDFile;
     AVCaptureDevice *avCaptureDevice;//for flash
