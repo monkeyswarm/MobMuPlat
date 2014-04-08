@@ -40,6 +40,16 @@
 #import "MeMultiTouch.h"
 #import "MeUnknown.h"
 
+#import "AudioHelpers.h"
+
+static NSString *const AUDIOBUS_URL_SCHEME = @"MobMuPlat.audiobus://";
+
+static NSString *const AUDIOBUS_INPUTPORT = @"Main-Input";
+static NSString *const AUDIOBUS_OUTPUTPORT = @"Main-Output";
+static NSString *const AUDIOBUS_INPUT_DESCRIPTION = @"Main App Input";
+static NSString *const AUDIOBUS_OUTPUT_DESCRIPTION = @"Main App Output";
+static NSString *const AUDIOBUS_FILTER_TITLE = @"MobMuPlat-Filter";
+static NSString *const AUDIOBUS_FILTERPORT_NAME = @"Main Filter";
 
 extern void expr_setup(void);
 extern void bonk_tilde_setup(void);
@@ -77,6 +87,8 @@ extern void sigmund_tilde_setup(void);
 -(id) init{
     self=[super init];
 
+    mixingEnabled = YES;
+    
     channelCount = 2;
     samplingRate = 44100;
     
@@ -104,7 +116,8 @@ extern void sigmund_tilde_setup(void);
 #if TARGET_IPHONE_SIMULATOR
     ticksPerBuffer = 8;  // No other value seems to work with the simulator.
 #else
-    ticksPerBuffer=16;
+    ticksPerBuffer=8;
+    //was 16 - trying lower for audiobus
 	//was 32 NO - means buffer is 64 blocksize * 64 ticks per buffer=4096
 #endif
     
@@ -116,9 +129,11 @@ extern void sigmund_tilde_setup(void);
     //libPD setup
     
     audioController = [[PdAudioController alloc] init] ;
-	[audioController configurePlaybackWithSampleRate:samplingRate numberChannels:channelCount inputEnabled:YES mixingEnabled:NO];
+	[audioController configurePlaybackWithSampleRate:samplingRate numberChannels:channelCount inputEnabled:YES mixingEnabled:mixingEnabled];
     [audioController configureTicksPerBuffer:ticksPerBuffer];
     //[audioController print];
+    
+    [self setupAudioBus];
     
     //access to PD externals not normally part of libPD
     expr_setup();
@@ -331,6 +346,83 @@ extern void sigmund_tilde_setup(void);
   
 }
 
+-(void)setupAudioBus {
+  
+    //audioBus check for any audio issues restart audio if detected
+    UInt32 channels;
+    UInt32 size; //= sizeof(channels);
+    OSStatus result = AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareInputNumberChannels, &size, &channels);
+    
+    if ( result == kAudioSessionIncompatibleCategory ) {
+        // Audio session error (rdar://13022588). Power-cycle audio session.
+        AudioSessionSetActive(false);
+        AudioSessionSetActive(true);
+        result = AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareInputNumberChannels, &size, &channels);
+        if ( result != noErr ) {
+            NSLog(@"Got error %ld while querying input channels", result);
+        }
+    }
+    
+    
+    self.audiobusController = [[ABAudiobusController alloc]
+                               initWithAppLaunchURL:[NSURL URLWithString:@"MobMuPlat.audiobus://"]
+                               apiKey:@"MCoqKk1vYk11UGxhdCoqKk1vYk11UGxhdC5hdWRpb2J1czovLw==:RLMszjGmD4cXoV8lgbbq7nBvgrGwAXvnbP2eDCNFfrF+6xX+qi0mtsvyzH6Jrl1K9KD1DFKduTCJM7qrKum25eIoVjlA74s6VM3ywHJwVKvvAKu6F1e6cjtlaCaK8Q2H"];
+  
+	self.audiobusController.connectionPanelPosition = ABAudiobusConnectionPanelPositionLeft;
+    _outputPort = [self.audiobusController addOutputPortNamed:@"Audio Output"
+                                                                 title:NSLocalizedString(@"Main App Output", @"")];
+    _outputPort.clientFormat = [self.audioController.audioUnit
+                            ASBDForSampleRate:samplingRate
+                            numberChannels:channelCount];
+    
+    self.audioController.audioUnit.outputPort = _outputPort;
+    _inputPort = [self.audiobusController addInputPortNamed:@"Audio Input"
+                                                              title:NSLocalizedString(@"Main App Input", @"")];
+    _inputPort.attributes = ABInputPortAttributePlaysLiveAudio;
+    _inputPort.clientFormat = [self.audioController.audioUnit
+                          ASBDForSampleRate:samplingRate
+                          numberChannels:channelCount];
+    _inputPort.icon = [UIImage imageNamed:@"Port-Icon.png"];
+    self.audioController.audioUnit.inputPort = _inputPort;
+  
+  //filter callback
+    self.filterPort =  [self.audiobusController
+                        addFilterPortNamed:AUDIOBUS_FILTERPORT_NAME
+                        title:AUDIOBUS_FILTER_TITLE
+                        processBlock:^(AudioBufferList *audio, UInt32 frames, AudioTimeStamp *timestamp) {
+                                Float32 *auBuffer = (Float32 *)audio->mBuffers[0].mData;
+                                int ticks = frames >>  log2int([PdBase getBlockSize]);
+                                [PdBase processFloatWithInputBuffer:auBuffer outputBuffer:auBuffer ticks:ticks];
+                        }];
+    
+    //configure port
+    //int numberFrames = [PdBase getBlockSize] * self.ticks;
+    //self.filterPort.audioBufferSize = numberFrames;
+    self.filterPort.clientFormat = [self.audioController.audioUnit
+                                    ASBDForSampleRate:samplingRate
+                                    numberChannels:channelCount];
+    self.audioController.audioUnit.filterPort = _filterPort;
+    
+    //[self printAudioSessionUnitInfo];
+
+}
+
+- (void)printAudioSessionUnitInfo {
+    //audio info
+    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+    NSLog(@" aft Buffer size %f \n category %@ \n sample rate %f \n input latency %f \n other app playing? %d \n audiosession mode %@ \n audiosession output latency %f",audioSession.IOBufferDuration,audioSession.category,audioSession.sampleRate,audioSession.inputLatency,audioSession.isOtherAudioPlaying,audioSession.mode,audioSession.outputLatency);
+    
+    [self.audioController.audioUnit print];
+    
+}
+
+
+-(BOOL)isAudioBusConnected {
+  //return ABFilterPortIsConnected(self.filterPort) || ABInputPortIsConnected(self.inputPort) || ABOutputPortIsConnected(self.outputPort);
+  return self.audiobusController.connected;
+}
+
+
 //I believe next two methods were neccessary to receive "shake" gesture
 - (void)viewDidAppear:(BOOL)animated
 {
@@ -393,14 +485,16 @@ extern void sigmund_tilde_setup(void);
 
 -(int)setRate:(int)inRate{//return actual value
     samplingRate=inRate;
-    [self.audioController configurePlaybackWithSampleRate:samplingRate numberChannels:channelCount inputEnabled:YES mixingEnabled:NO];
-    NSLog(@"sample rate set to %d", [self.audioController sampleRate]);
-    return [self.audioController sampleRate];
+    [self.audioController configurePlaybackWithSampleRate:samplingRate numberChannels:channelCount inputEnabled:YES mixingEnabled:mixingEnabled];
+   // NSLog(@"sample rate set to %d", [self.audioController sampleRate]);
+  
+  return [self.audioController sampleRate];
 }
 
 -(int)setChannelCount:(int)newChannelCount{
     channelCount = newChannelCount;
-    [self.audioController configurePlaybackWithSampleRate:samplingRate numberChannels:channelCount inputEnabled:YES mixingEnabled:NO];
+    [self.audioController configurePlaybackWithSampleRate:samplingRate numberChannels:channelCount inputEnabled:YES mixingEnabled:mixingEnabled];
+  
     return [self.audioController numberChannels];
 }
 
@@ -859,10 +953,10 @@ extern void sigmund_tilde_setup(void);
 
 - (void)setAudioInputEnabled:(BOOL)enabled {
     if(enabled)
-        [audioController configurePlaybackWithSampleRate:44100 numberChannels:channelCount inputEnabled:YES mixingEnabled:NO];
+        [audioController configurePlaybackWithSampleRate:samplingRate numberChannels:channelCount inputEnabled:YES mixingEnabled:mixingEnabled];
     
     else
-        [audioController configurePlaybackWithSampleRate:44100 numberChannels:channelCount inputEnabled:NO mixingEnabled:NO];
+        [audioController configurePlaybackWithSampleRate:samplingRate numberChannels:channelCount inputEnabled:NO mixingEnabled:mixingEnabled];
     
 }
 

@@ -11,6 +11,8 @@
 #import <Foundation/Foundation.h>
 #import "AudioUnit/AudioUnit.h"
 
+#import "Audiobus.h"
+
 /* PdAudioUnit: object that operates pd's audio input and
  * output through an Audio Unit. The parameters can be changed
  * after it has been instatiated with its configure method,
@@ -34,5 +36,13 @@
 
 // Print info on the audio unit settings to the console
 - (void)print;
+
+//dei edit
+- (AudioStreamBasicDescription)ASBDForSampleRate:(Float64)sampleRate numberChannels:(UInt32)numChannels;
+//dei edit
+@property (nonatomic, assign)ABOutputPort *outputPort;
+@property (nonatomic, assign)ABInputPort *inputPort;
+@property (nonatomic, assign)ABFilterPort *filterPort;
+
 
 @end

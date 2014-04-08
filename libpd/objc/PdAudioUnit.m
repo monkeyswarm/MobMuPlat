@@ -26,7 +26,6 @@ static const AudioUnitElement kOutputElement = 0;
 - (BOOL)initAudioUnitWithSampleRate:(Float64)sampleRate numberChannels:(int)numChannels inputEnabled:(BOOL)inputEnabled;
 - (void)destroyAudioUnit;
 - (AudioComponentDescription)ioDescription;
-- (AudioStreamBasicDescription)ASBDForSampleRate:(Float64)sampleRate numberChannels:(UInt32)numChannels;
 
 @end
 
@@ -91,14 +90,52 @@ static OSStatus AudioRenderCallback(void *inRefCon,
 									AudioBufferList *ioData) {
 	
 	PdAudioUnit *pdAudioUnit = (PdAudioUnit *)inRefCon;
-	Float32 *auBuffer = (Float32 *)ioData->mBuffers[0].mData;
-    
+	 
 	if (pdAudioUnit->inputEnabled_) {
 		AudioUnitRender(pdAudioUnit->audioUnit_, ioActionFlags, inTimeStamp, kInputElement, inNumberFrames, ioData);
 	}
     
 	int ticks = inNumberFrames >> pdAudioUnit->blockSizeAsLog_; // this is a faster way of computing (inNumberFrames / blockSize)
-	[PdBase processFloatWithInputBuffer:auBuffer outputBuffer:auBuffer ticks:ticks];
+    //printf("ticks %d datasize %d", ticks, ioData->mBuffers[0].mDataByteSize);
+	
+  
+
+  
+  //AUDIOBUS INPUT
+  //get audio from audiobus, not incoming iodata
+  if ( ABInputPortIsConnected(pdAudioUnit->_inputPort)) {
+    //ABInputPortReceive(pdAudioUnit->_inputPort, /*sourcePortOrNil*/nil, ioData, &inNumberFrames, inTimeStamp, NULL);
+    ABInputPortReceiveLive(pdAudioUnit->_inputPort, ioData, inNumberFrames, NULL);
+  }
+  
+  
+  
+  //AudioBUs filter
+  if ( ABFilterPortIsConnected(pdAudioUnit->_filterPort) ) {
+    // Pull output audio from the filter port
+    // Note: The following line isn't necessary if you're using the Audio Unit Wrapper - it'll do this for you.
+    ABFilterPortGetOutput(pdAudioUnit->_filterPort, ioData, inNumberFrames, NULL);
+    return noErr;
+  }
+  
+  Float32 *auBuffer = (Float32 *)ioData->mBuffers[0].mData;
+  [PdBase processFloatWithInputBuffer:auBuffer outputBuffer:auBuffer ticks:ticks];
+  
+  
+  //AUDIOBUS OUTPUT
+    // In an input callback/etc
+    if ( ABOutputPortIsConnected(pdAudioUnit->_outputPort) ){
+        ABOutputPortSendAudio(pdAudioUnit->_outputPort, ioData, inNumberFrames, inTimeStamp, NULL);
+    }
+    if ( ABOutputPortGetConnectedPortAttributes(pdAudioUnit->_outputPort) & ABInputPortAttributePlaysLiveAudio ) {
+        // Mute your audio output if the connected port plays it for us instead
+        for ( int i=0; i<ioData->mNumberBuffers; i++ ) {
+            memset(ioData->mBuffers[i].mData, 0, ioData->mBuffers[i].mDataByteSize);
+        }
+    }
+  
+  
+  
 	return noErr;
 }
 

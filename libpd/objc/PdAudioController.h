@@ -32,6 +32,8 @@ typedef enum PdAudioStatus {
 @property (nonatomic, readonly) BOOL inputEnabled;
 @property (nonatomic, readonly) BOOL mixingEnabled;
 @property (nonatomic, readonly) int ticksPerBuffer;
+@property (nonatomic, retain) PdAudioUnit *audioUnit;	// expose private PdAudioUnit
+
 
 // Check or set the active status of the audio unit
 @property (nonatomic, getter=isActive) BOOL active;
