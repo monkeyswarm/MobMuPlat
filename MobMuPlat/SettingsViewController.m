@@ -156,6 +156,7 @@
     _showFilesButton.layer.cornerRadius = buttonRadius;
     _showFilesButton.layer.borderWidth = 1;
     _showFilesButton.layer.borderColor = [UIColor whiteColor].CGColor;
+  _showFilesButton.titleLabel.adjustsFontSizeToFitWidth = YES;
   
     [_flipInterfaceButton addTarget:self action:@selector(flipInterfaceButtonHit:) forControlEvents:UIControlEventTouchUpInside];
     _flipInterfaceButton.layer.cornerRadius = buttonRadius;
@@ -405,12 +406,16 @@ BOOL LANdiniSwitchBool;
         mmpOrAll=YES;
         [self reloadFileTable];
         [_showFilesButton setTitle:@"show only mmp files" forState:UIControlStateNormal];
+      _showFilesButton.backgroundColor = [UIColor whiteColor];
+      [_showFilesButton setTitleColor:[UIColor purpleColor] forState:UIControlStateNormal];
         _showFilesButton.tag=1;
     }
     else{
         mmpOrAll=NO;
         [self reloadFileTable];
         [_showFilesButton setTitle:@"show all files" forState:UIControlStateNormal];
+      _showFilesButton.backgroundColor = [UIColor purpleColor];
+      [_showFilesButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         _showFilesButton.tag=0;
     }
 }
