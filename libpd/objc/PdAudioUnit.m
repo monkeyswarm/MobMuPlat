@@ -104,7 +104,8 @@ static OSStatus AudioRenderCallback(void *inRefCon,
   //AUDIOBUS INPUT
   //get audio from audiobus, not incoming iodata
   if ( ABInputPortIsConnected(pdAudioUnit->_inputPort)) {
-    ABInputPortReceive(pdAudioUnit->_inputPort, /*sourcePortOrNil*/nil, ioData, &inNumberFrames, inTimeStamp, NULL);
+    //ABInputPortReceive(pdAudioUnit->_inputPort, /*sourcePortOrNil*/nil, ioData, &inNumberFrames, inTimeStamp, NULL);
+    ABInputPortReceiveLive(pdAudioUnit->_inputPort, ioData, inNumberFrames, NULL);
   }
   
   
@@ -125,14 +126,14 @@ static OSStatus AudioRenderCallback(void *inRefCon,
     // In an input callback/etc
     if ( ABOutputPortIsConnected(pdAudioUnit->_outputPort) ){
         ABOutputPortSendAudio(pdAudioUnit->_outputPort, ioData, inNumberFrames, inTimeStamp, NULL);
-    
-      if ( ABInputPortAttributePlaysLiveAudio ) {
-          // Mute your audio output if the connected port plays it for us instead
-          for ( int i=0; i<ioData->mNumberBuffers; i++ ) {
-              memset(ioData->mBuffers[i].mData, 0, ioData->mBuffers[i].mDataByteSize);
-          }
-      }
     }
+    if ( ABOutputPortGetConnectedPortAttributes(pdAudioUnit->_outputPort) & ABInputPortAttributePlaysLiveAudio ) {
+        // Mute your audio output if the connected port plays it for us instead
+        for ( int i=0; i<ioData->mNumberBuffers; i++ ) {
+            memset(ioData->mBuffers[i].mData, 0, ioData->mBuffers[i].mDataByteSize);
+        }
+    }
+  
   
   
 	return noErr;
