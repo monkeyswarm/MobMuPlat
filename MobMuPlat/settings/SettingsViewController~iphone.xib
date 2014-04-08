@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="4514" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="4514" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
     <dependencies>
         <deployment defaultVersion="1296" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
@@ -27,6 +27,7 @@
                 <outlet property="documentView" destination="bbb-eu-PYZ" id="miS-N5-9a9"/>
                 <outlet property="documentViewButton" destination="ZAP-q4-kko" id="stg-pu-3XA"/>
                 <outlet property="documentsTableView" destination="7if-bL-GZD" id="7o0-vm-MRq"/>
+                <outlet property="flipInterfaceButton" destination="fEK-gL-YRS" id="oLk-xf-tzR"/>
                 <outlet property="midiDestinationTableView" destination="ag9-Xi-eUi" id="ztw-0j-j35"/>
                 <outlet property="midiSourceTableView" destination="c6h-Vz-iyZ" id="Es9-wy-4xS"/>
                 <outlet property="rateSeg" destination="nel-wk-XYx" id="32h-mU-RS5"/>
@@ -164,15 +165,24 @@ Use a local router only for best results. </string>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES"/>
                     <subviews>
                         <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="7if-bL-GZD">
-                            <rect key="frame" x="10" y="11" width="280" height="370"/>
+                            <rect key="frame" x="10" y="11" width="280" height="335"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         </tableView>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="RKH-wj-XyU">
-                            <rect key="frame" x="10" y="389" width="280" height="30"/>
+                            <rect key="frame" x="10" y="351" width="280" height="30"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                             <state key="normal" title="show all files">
+                                <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="fEK-gL-YRS" userLabel="Button - flip interface">
+                            <rect key="frame" x="10" y="386" width="280" height="30"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                            <state key="normal" title="flip interface">
                                 <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                             </state>

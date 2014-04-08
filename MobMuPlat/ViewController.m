@@ -253,7 +253,7 @@ extern void sigmund_tilde_setup(void);
 - (void)viewDidLoad{
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor grayColor];
-    isLandscape=NO;
+  
     
     //setup upper left info button, but don't add it anywhere yet
     settingsButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -437,6 +437,21 @@ extern void sigmund_tilde_setup(void);
      [self dismissModalViewControllerAnimated:YES];
 }
 
+-(void)flipInterface{
+ // if(self.view.transform.)
+  //CGPoint center = self.view.center;
+  //self.view.transform = CGAffineTransformMakeRotation(M_PI);
+  //self.view.transform = CGAffineTransformMakeRotation(M_PI);
+  //scrollView.center = center;
+  isFlipped = !isFlipped;
+  if(isFlipped) {
+    scrollView.transform = CGAffineTransformMakeRotation(M_PI+isLandscape*M_PI_2);
+  } else {
+    scrollView.transform = CGAffineTransformMakeRotation(isLandscape*M_PI_2);
+  }
+
+}
+
 
 -(BOOL)loadScenePatchOnly:(NSString*)filename{
     
@@ -617,8 +632,19 @@ extern void sigmund_tilde_setup(void);
     [scrollView addSubview:scrollInnerView];
     
     if(isOrientationLandscape){//rotate
+      isLandscape = YES;
         scrollView.center = rotatePoint;
-        scrollView.transform = CGAffineTransformMakeRotation(M_PI/2);
+      if(isFlipped){
+        scrollView.transform = CGAffineTransformMakeRotation(M_PI_2+M_PI);
+      }
+      else {
+        scrollView.transform = CGAffineTransformMakeRotation(M_PI_2);
+      }
+    } else {
+      isLandscape = NO;
+      if(isFlipped){
+        scrollView.transform = CGAffineTransformMakeRotation(M_PI);
+      }
     }
     
     scrollView.pagingEnabled = YES;

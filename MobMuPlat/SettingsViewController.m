@@ -151,8 +151,12 @@
     _showFilesButton.layer.cornerRadius = buttonRadius;
     _showFilesButton.layer.borderWidth = 1;
     _showFilesButton.layer.borderColor = [UIColor whiteColor].CGColor;
-    
-    
+  
+    [_flipInterfaceButton addTarget:self action:@selector(flipInterfaceButtonHit:) forControlEvents:UIControlEventTouchUpInside];
+    _flipInterfaceButton.layer.cornerRadius = buttonRadius;
+    _flipInterfaceButton.layer.borderWidth = 1;
+    _flipInterfaceButton.layer.borderColor = [UIColor whiteColor].CGColor;
+  
     //console
     [_clearConsoleButton addTarget:self action:@selector(clearConsole:) forControlEvents:UIControlEventTouchUpInside];
     _clearConsoleButton.layer.cornerRadius = buttonRadius;
@@ -400,6 +404,24 @@ BOOL LANdiniSwitchBool;
         [_showFilesButton setTitle:@"show all files" forState:UIControlStateNormal];
         _showFilesButton.tag=0;
     }
+}
+
+-(void)flipInterfaceButtonHit:(id)sender{
+  //self.view.transform = CGAffineTransformMakeRotation(M_PI);
+  [self.delegate flipInterface];
+  if([_flipInterfaceButton tag]==0){//is showing mmp, change to show all
+    [_flipInterfaceButton setTitle:@"unflip interface" forState:UIControlStateNormal];
+    _flipInterfaceButton.backgroundColor = [UIColor whiteColor];
+    [_flipInterfaceButton setTitleColor:[UIColor purpleColor] forState:UIControlStateNormal];
+    _flipInterfaceButton.tag=1;
+  }
+  else{
+    
+    [_flipInterfaceButton setTitle:@"flip interface" forState:UIControlStateNormal];
+    _flipInterfaceButton.backgroundColor = [UIColor purpleColor];
+    [_flipInterfaceButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    _flipInterfaceButton.tag=0;
+  }
 }
 
 -(void) showLoadDoc:(id)sender{
