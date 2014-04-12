@@ -13,6 +13,6 @@
     UILabel* theLabel;
 }
 
-@property (nonatomic)NSString* imagePath;
-
+@property (nonatomic, strong)NSString* imagePath;
+@property (nonatomic) BOOL shouldPassTouches;
 @end

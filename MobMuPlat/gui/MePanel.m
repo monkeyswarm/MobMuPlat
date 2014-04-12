@@ -52,6 +52,13 @@
     imageView.backgroundColor=color;
 }
 
+-(void)setShouldPassTouches:(BOOL)shouldPassTouches{
+  _shouldPassTouches = shouldPassTouches;
+  self.userInteractionEnabled = !shouldPassTouches;
+  //theLabel.userInteractionEnabled = !shouldPassTouches;
+  //imageView.userInteractionEnabled = !shouldPassTouches;
+}
+
 //receive messages from PureData (via [send toGUI]), routed from ViewController via the address to this object
 -(void)receiveList:(NSArray *)inArray{
     //image path

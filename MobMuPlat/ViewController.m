@@ -39,6 +39,7 @@
 #import "MeLCD.h"
 #import "MeMultiTouch.h"
 #import "MeUnknown.h"
+#import "MeMenu.h"
 
 #import "AudioHelpers.h"
 
@@ -864,6 +865,7 @@ extern void sigmund_tilde_setup(void);
         else if([newObjectClass isEqualToString:@"MMPPanel"]){
             currObject = [[MePanel alloc]initWithFrame:frame];
             if([currDict objectForKey:@"imagePath"]) [(MePanel*)currObject setImagePath:[currDict objectForKey:@"imagePath"] ];
+            if([currDict objectForKey:@"passTouches"]) ((MePanel*)currObject).shouldPassTouches = [[currDict objectForKey:@"passTouches"] boolValue] ;
         }
        else if([newObjectClass isEqualToString:@"MMPMultiSlider"]){
             currObject = [[MeMultiSlider alloc] initWithFrame:frame];
@@ -874,6 +876,11 @@ extern void sigmund_tilde_setup(void);
         }
         else if([newObjectClass isEqualToString:@"MMPMultiTouch"]){
             currObject = [[MeMultiTouch alloc] initWithFrame:frame];
+        }
+        else if([newObjectClass isEqualToString:@"MMPMenu"]){
+          currObject = [[MeMenu alloc] initWithFrame:frame];
+          if([currDict objectForKey:@"title"])
+            [(MeMenu*)currObject setTitleString:[currDict objectForKey:@"title"] ];
         }
         else{//unkown
             currObject = [[MeUnknown alloc] initWithFrame:frame];
@@ -974,11 +981,31 @@ extern void sigmund_tilde_setup(void);
   //NSLog(@"scrolled: %d", page);
 }
 
+#pragma mark ControlDelegate
 //I want to send a message into PD patch from a gui widget
 -(void)sendGUIMessageArray:(NSArray*)msgArray{
     [PdBase sendList:msgArray toReceiver:@"fromGUI"];
 }
 
+-(UIColor*)patchBackgroundColor{
+  return scrollView.backgroundColor;
+}
+
+-(UIInterfaceOrientation)orientation{
+  if (isLandscape) {
+    if (isFlipped) {
+      return UIInterfaceOrientationLandscapeLeft;
+    } else {
+      return UIInterfaceOrientationLandscapeRight;
+    }
+  } else {
+    if (isFlipped) {
+      return UIInterfaceOrientationPortraitUpsideDown;
+    } else {
+      return UIInterfaceOrientationPortrait;
+    }
+  }
+}
 //not used
 /*- (void)receiveSymbol:(NSString *)symbol fromSource:(NSString *)source{
 }*/

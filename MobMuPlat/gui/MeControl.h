@@ -11,6 +11,8 @@
 
 @protocol ControlDelegate <NSObject>
 -(void)sendGUIMessageArray:(NSArray*)msgArray;
+-(UIColor*)patchBackgroundColor;
+-(UIInterfaceOrientation)orientation;
 @end
 
 @interface MeControl : UIControl{
@@ -25,7 +27,7 @@
 
 
 
-@property (nonatomic) id<ControlDelegate> controlDelegate;
+@property (nonatomic) UIViewController<ControlDelegate> *controlDelegate;
 @property (nonatomic) NSString* address;
 @property (nonatomic) UIColor* color;
 @property (nonatomic) UIColor* highlightColor;

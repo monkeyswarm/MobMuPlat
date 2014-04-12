@@ -247,6 +247,9 @@
 		F94958DD18D1223B00C8876F /* MMPExamples-Arp-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F94958D918D1223B00C8876F /* MMPExamples-Arp-Pad.mmp */; };
 		F94958DE18D1223B00C8876F /* MMPExamples-Arp.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F94958DA18D1223B00C8876F /* MMPExamples-Arp.mmp */; };
 		F94958DF18D1223B00C8876F /* MMPExamples-Arp.pd in Resources */ = {isa = PBXBuildFile; fileRef = F94958DB18D1223B00C8876F /* MMPExamples-Arp.pd */; };
+		F94FB53918F596AB003BFB18 /* MenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F94FB53818F596AB003BFB18 /* MenuViewController.m */; };
+		F9967C3718F8C54D008E3828 /* MenuNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9967C3618F8C54D008E3828 /* MenuNavigationController.m */; };
+		F9DE7DC018F49D62007B9E45 /* MeMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = F9DE7DBF18F49D62007B9E45 /* MeMenu.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -569,6 +572,12 @@
 		F94958D918D1223B00C8876F /* MMPExamples-Arp-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Arp-Pad.mmp"; path = "patches/MMPExamples-Arp-Pad.mmp"; sourceTree = "<group>"; };
 		F94958DA18D1223B00C8876F /* MMPExamples-Arp.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Arp.mmp"; path = "patches/MMPExamples-Arp.mmp"; sourceTree = "<group>"; };
 		F94958DB18D1223B00C8876F /* MMPExamples-Arp.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Arp.pd"; path = "patches/MMPExamples-Arp.pd"; sourceTree = "<group>"; };
+		F94FB53718F596AB003BFB18 /* MenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuViewController.h; path = gui/MenuViewController.h; sourceTree = "<group>"; };
+		F94FB53818F596AB003BFB18 /* MenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MenuViewController.m; path = gui/MenuViewController.m; sourceTree = "<group>"; };
+		F9967C3518F8C54D008E3828 /* MenuNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuNavigationController.h; path = gui/MenuNavigationController.h; sourceTree = "<group>"; };
+		F9967C3618F8C54D008E3828 /* MenuNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MenuNavigationController.m; path = gui/MenuNavigationController.m; sourceTree = "<group>"; };
+		F9DE7DBE18F49D62007B9E45 /* MeMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeMenu.h; path = gui/MeMenu.h; sourceTree = "<group>"; };
+		F9DE7DBF18F49D62007B9E45 /* MeMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeMenu.m; path = gui/MeMenu.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -908,6 +917,12 @@
 				DC5A5AD11882565500FC97D5 /* MeUnknown.m */,
 				DCD5BCA018BAC42200EF3E5D /* MeMultiTouch.h */,
 				DCD5BCA118BAC42200EF3E5D /* MeMultiTouch.m */,
+				F9DE7DBE18F49D62007B9E45 /* MeMenu.h */,
+				F9DE7DBF18F49D62007B9E45 /* MeMenu.m */,
+				F94FB53718F596AB003BFB18 /* MenuViewController.h */,
+				F94FB53818F596AB003BFB18 /* MenuViewController.m */,
+				F9967C3518F8C54D008E3828 /* MenuNavigationController.h */,
+				F9967C3618F8C54D008E3828 /* MenuNavigationController.m */,
 			);
 			name = gui;
 			sourceTree = "<group>";
@@ -1318,11 +1333,13 @@
 				DC0FC905172D84EA00E895C3 /* d_global.c in Sources */,
 				DC0FC906172D84EA00E895C3 /* d_math.c in Sources */,
 				DC0FC907172D84EA00E895C3 /* d_misc.c in Sources */,
+				F94FB53918F596AB003BFB18 /* MenuViewController.m in Sources */,
 				DC0FC908172D84EA00E895C3 /* d_osc.c in Sources */,
 				DC0FC909172D84EA00E895C3 /* d_resample.c in Sources */,
 				DC0FC90A172D84EA00E895C3 /* d_soundfile.c in Sources */,
 				DC0FC90B172D84EA00E895C3 /* d_ugen.c in Sources */,
 				DC0FC90C172D84EA00E895C3 /* g_all_guis.c in Sources */,
+				F9DE7DC018F49D62007B9E45 /* MeMenu.m in Sources */,
 				DC0FC90D172D84EA00E895C3 /* g_array.c in Sources */,
 				DC0FC90E172D84EA00E895C3 /* g_bang.c in Sources */,
 				DC0FC90F172D84EA00E895C3 /* g_canvas.c in Sources */,
@@ -1395,6 +1412,7 @@
 				DCA9B92D17330F90000E59DD /* OSCManager.m in Sources */,
 				DCA9B92E17330F90000E59DD /* OSCMessage.m in Sources */,
 				DCA9B92F17330F90000E59DD /* OSCNode.m in Sources */,
+				F9967C3718F8C54D008E3828 /* MenuNavigationController.m in Sources */,
 				DCA9B93017330F90000E59DD /* OSCOutPort.m in Sources */,
 				DCA9B93117330F90000E59DD /* OSCPacket.m in Sources */,
 				DCA9B93217330F90000E59DD /* OSCStringAdditions.m in Sources */,

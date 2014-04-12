@@ -80,6 +80,7 @@
 -(void)disconnectPorts;
 -(BOOL)isAudioBusConnected;
 +(NSString*)fetchSSIDInfo;
++(canvasType)getCanvasType;
 
 @property BOOL backgroundAudioEnabled;
 @property (retain) PdAudioController* audioController;
