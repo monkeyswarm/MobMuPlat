@@ -29,6 +29,13 @@
   return _orientation;
 }
 
+-(BOOL)shouldAutorotate{
+  return NO;
+}
+
+-(NSUInteger)supportedInterfaceOrientations{
+  return UIInterfaceOrientationMaskAll;
+}
 
 - (void)viewDidLoad
 {

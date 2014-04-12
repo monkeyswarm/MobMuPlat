@@ -617,7 +617,7 @@ extern void sigmund_tilde_setup(void);
     //big switch to get layout of the scrollview that holds the GUI
     float zoomFactor=1;
     CGRect scrollViewFrame;
-    CGSize nativeSize;//portrait
+    //CGSize nativeSize;//portrait
     CGSize docSize;
     
     switch(editorCanvasType){
@@ -689,15 +689,15 @@ extern void sigmund_tilde_setup(void);
     CGPoint rotatePoint;
     switch (hardwareCanvasType) {
         case canvasTypeIPhone3p5Inch:
-            nativeSize = CGSizeMake(320, 480);
+            //nativeSize = CGSizeMake(320, 480);
             rotatePoint = CGPointMake(160,240);
             break;
         case canvasTypeIPhone4Inch:
-            nativeSize = CGSizeMake(320, 568);
+            //nativeSize = CGSizeMake(320, 568);
             rotatePoint = CGPointMake(160,284);
             break;
         case canvasTypeIPad:
-            nativeSize = CGSizeMake(768, 1024);
+            //nativeSize = CGSizeMake(768, 1024);
             rotatePoint = CGPointMake(384,512);
             break;
     }

@@ -104,8 +104,8 @@ static NSString *CellIdentifier = @"Cell";
   navigationController.orientation = [self.controlDelegate orientation];
   navigationController.navigationBar.barStyle = UIBarStyleBlack;
 
-  [self.controlDelegate presentViewController:navigationController animated:YES completion:nil];
-  //[self.controlDelegate presentModalViewController:navigationController animated:YES];
+  //[self.controlDelegate presentViewController:navigationController animated:YES completion:nil];
+  [self.controlDelegate presentModalViewController:navigationController animated:YES];
 }
 
 -(void)buttonHitUp{
