@@ -148,7 +148,7 @@
     for(MyTouch* myTouch in touchesToRemoveArray){
       
       
-      [self.controlDelegate sendGUIMessageArray:[NSArray arrayWithObjects:self.address, @"touch", [NSNumber numberWithInt:myTouch.polyVox], [NSNumber numberWithInt:2], [NSNumber numberWithFloat:myTouch.point.x], [NSNumber numberWithFloat:myTouch.point.y], nil]];
+      [self.controlDelegate sendGUIMessageArray:[NSArray arrayWithObjects:self.address, @"touch", [NSNumber numberWithInt:myTouch.polyVox], [NSNumber numberWithInt:0], [NSNumber numberWithFloat:myTouch.point.x], [NSNumber numberWithFloat:myTouch.point.y], nil]];
       
         [_touchByVoxArray replaceObjectAtIndex:[_touchByVoxArray indexOfObject:myTouch] withObject:[NSNull null]];
     }
