@@ -22,7 +22,7 @@
 
 //@class OSCManager, OSCInPort, OSCOutPort;
 
-#import "Audiobus.h"
+//#import "Audiobus.h"
 
 @interface ViewController : UIViewController<PdReceiverDelegate, UIAccelerometerDelegate,  SettingsViewControllerDelegate, ControlDelegate, UIScrollViewDelegate, AudioSettingsDelegate, PGMidiDelegate, PGMidiSourceDelegate, OSCDelegateProtocol, PdMidiReceiverDelegate, CLLocationManagerDelegate, LANdiniDelegate>{
     
@@ -78,7 +78,7 @@
 +(BOOL)numberIsFloat:(NSNumber*)num;
 -(void)connectPorts;
 -(void)disconnectPorts;
--(BOOL)isAudioBusConnected;
+//-(BOOL)isAudioBusConnected;
 +(NSString*)fetchSSIDInfo;
 +(canvasType)getCanvasType;
 
@@ -87,11 +87,11 @@
 @property (retain) SettingsViewController* settingsVC;
 
 //audio bus - make private
-@property (strong, nonatomic) ABAudiobusController *audiobusController;
+/*@property (strong, nonatomic) ABAudiobusController *audiobusController;
 @property (strong, nonatomic) ABAudiobusAudioUnitWrapper *audiobusAudioUnitWrapper;
 @property (nonatomic, retain)ABInputPort *inputPort;
 @property (nonatomic, retain)ABOutputPort *outputPort;
-@property (strong, nonatomic)ABFilterPort *filterPort;
+@property (strong, nonatomic)ABFilterPort *filterPort;*/
 @property (assign,nonatomic)NSInteger ticks;
 
 

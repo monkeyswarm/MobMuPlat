@@ -24,14 +24,9 @@
                 <outlet property="consoleTextView" destination="aU3-fC-jVS" id="r48-KW-B8h"/>
                 <outlet property="consoleView" destination="tm1-Ey-OH2" id="o0k-YU-1XP"/>
                 <outlet property="consoleViewButton" destination="P20-pN-hWz" id="yzL-nv-0vv"/>
-                <outlet property="documentView" destination="bbb-eu-PYZ" id="miS-N5-9a9"/>
-                <outlet property="documentViewButton" destination="ZAP-q4-kko" id="stg-pu-3XA"/>
-                <outlet property="documentsTableView" destination="7if-bL-GZD" id="7o0-vm-MRq"/>
-                <outlet property="flipInterfaceButton" destination="fEK-gL-YRS" id="oLk-xf-tzR"/>
                 <outlet property="midiDestinationTableView" destination="ag9-Xi-eUi" id="ztw-0j-j35"/>
                 <outlet property="midiSourceTableView" destination="c6h-Vz-iyZ" id="Es9-wy-4xS"/>
                 <outlet property="rateSeg" destination="nel-wk-XYx" id="32h-mU-RS5"/>
-                <outlet property="showFilesButton" destination="RKH-wj-XyU" id="A5U-A7-f6O"/>
                 <outlet property="tickSeg" destination="7ZM-S8-9hq" id="ygi-QD-JFv"/>
                 <outlet property="tickValueLabel" destination="pm3-MB-iI4" id="s4u-Dz-BhL"/>
                 <outlet property="view" destination="1" id="KQE-yP-qfo"/>
@@ -85,21 +80,6 @@
                     </state>
                     <state key="highlighted">
                         <color key="titleColor" white="0.0" alpha="0.51000000000000001" colorSpace="calibratedWhite"/>
-                    </state>
-                </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ZAP-q4-kko">
-                    <rect key="frame" x="10" y="482" width="300" height="30"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                    <state key="normal" title="Select Document">
-                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                    </state>
-                    <state key="disabled">
-                        <color key="titleColor" white="0.49962197580645162" alpha="1" colorSpace="calibratedWhite"/>
-                    </state>
-                    <state key="highlighted">
-                        <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                 </button>
                 <view contentMode="scaleToFill" id="OHo-WM-0TI">
@@ -159,37 +139,6 @@ Use a local router only for best results. </string>
                         </label>
                     </subviews>
                     <color key="backgroundColor" red="0.45620438460000001" green="0.80656933779999995" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                </view>
-                <view contentMode="scaleToFill" id="bbb-eu-PYZ">
-                    <rect key="frame" x="10" y="8" width="300" height="425"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES"/>
-                    <subviews>
-                        <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="7if-bL-GZD">
-                            <rect key="frame" x="10" y="11" width="280" height="370"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        </tableView>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="RKH-wj-XyU">
-                            <rect key="frame" x="10" y="389" width="135" height="30"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                            <state key="normal" title="show all files">
-                                <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                            </state>
-                        </button>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="fEK-gL-YRS" userLabel="Button - flip interface">
-                            <rect key="frame" x="155" y="389" width="135" height="30"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                            <state key="normal" title="flip interface">
-                                <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                            </state>
-                        </button>
-                    </subviews>
-                    <color key="backgroundColor" red="0.5" green="0.0" blue="0.5" alpha="1" colorSpace="calibratedRGB"/>
-                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                 </view>
                 <view contentMode="scaleToFill" id="tm1-Ey-OH2">
                     <rect key="frame" x="10" y="8" width="300" height="425"/>

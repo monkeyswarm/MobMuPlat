@@ -86,12 +86,12 @@
                                              selector:@selector(reachabilityChanged:)
                                                  name:kReachabilityChangedNotification
                                                object:nil];
-  [[NSNotificationCenter defaultCenter] addObserver:self
+  /*[[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(connectionsChanged:)
                                                name:ABConnectionsChangedNotification
-                                             object:nil];
+                                             object:nil];*/
   //doesn't catch it on creation, so check it now
-  [self connectionsChanged:nil];
+  /*[self connectionsChanged:nil];*/
   
   
     //match default pdaudiocontroller settings
@@ -599,7 +599,7 @@ BOOL LANdiniSwitchBool;
     }
     
     //zip file, attempt to unarchive and copy contents into documents folder
-    else if ([suffix isEqualToString:@"zip"]){
+    /*else if ([suffix isEqualToString:@"zip"]){
         ZipArchive* za = [[ZipArchive alloc] init];
         
         if( [za UnzipOpenFile:fullPath] ) {
@@ -627,22 +627,22 @@ BOOL LANdiniSwitchBool;
             
             [za UnzipCloseFile];
         }
-    }
-    
+    }*/
+    /*
     //pd file, load the file via "loadScenePatchOnly"
     else if ([suffix isEqualToString:@"pd"]){
         BOOL loaded = [self.delegate loadScenePatchOnly:filename];
         if(loaded)[self.delegate settingsViewControllerDidFinish:self];
         else{//not sure why I commented this out...
-            /*UIAlertView *alert = [[UIAlertView alloc]
+            COMMENT: UIAlertView *alert = [[UIAlertView alloc]
                                   initWithTitle: @"Bad PD format"
                                   message: @"Could not open PD file"
                                   delegate: nil
                                   cancelButtonTitle:@"OK"
                                   otherButtonTitles:nil];
-            [alert show];*/
+            [alert show]; END COMMENT
         }
-    }
+    }*/
 }
 
 //tableView delegate methods
@@ -800,7 +800,7 @@ BOOL LANdiniSwitchBool;
 
 # pragma mark AudioBus
 
-- (void)connectionsChanged:(NSNotification*)notification {
+/*- (void)connectionsChanged:(NSNotification*)notification {
   if([self.audioDelegate respondsToSelector:@selector(isAudioBusConnected)]){
     if([self.audioDelegate isAudioBusConnected]) {
       _rateSeg.enabled=NO;
@@ -816,7 +816,7 @@ BOOL LANdiniSwitchBool;
     }
   }
 
-}
+}*/
 
 # pragma mark cleanup
 

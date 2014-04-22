@@ -95,7 +95,7 @@ typedef enum{
 @protocol SettingsViewControllerDelegate <NSObject>
 - (void)settingsViewControllerDidFinish:(SettingsViewController *)controller;
 - (BOOL)loadScene:(NSDictionary*)sceneDict;
-- (BOOL)loadScenePatchOnly:(NSString*)filename;
+//- (BOOL)loadScenePatchOnly:(NSString*)filename;
 - (void)flipInterface;
 
 @end

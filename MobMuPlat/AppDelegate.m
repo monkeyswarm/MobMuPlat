@@ -17,23 +17,12 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    
-    //intro splash
-    SplashViewController* splashController = [[SplashViewController alloc]init];
-    splashController.delegate=self;
-    [self.window setRootViewController:splashController];
-    [splashController launchSplash];
-   
-    //main VC - loads and then is set as rootVC when splash is finished
+  
     self.viewController = [[ViewController alloc] init];
-    
+    [self.window setRootViewController:self.viewController];
     [self.window makeKeyAndVisible];
     
     return YES;
-}
-
--(void)dismissSplash{
-    [self.window setRootViewController:self.viewController];
 }
 
 //app opened with file
@@ -125,7 +114,7 @@
 {
     [self.viewController disconnectPorts];//disconnect OSC ports on resign, to avoid conflicts
     
-    if(![self.viewController backgroundAudioEnabled] && ![self.viewController isAudioBusConnected])//if not keeping audio in background
+    if(![self.viewController backgroundAudioEnabled] /*&& ![self.viewController isAudioBusConnected]*/)//if not keeping audio in background
         [[self.viewController audioController] setActive:NO];//shut down audio processing
 
 }

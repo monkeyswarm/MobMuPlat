@@ -43,7 +43,8 @@
 
 #import "AudioHelpers.h"
 
-static NSString *const AUDIOBUS_URL_SCHEME = @"MobMuPlat.audiobus://";
+// MAKEYOUROWNAPP: if you support audiobus, define the schemes
+/*static NSString *const AUDIOBUS_URL_SCHEME = @"YOUR APP.audiobus://";
 
 static NSString *const AUDIOBUS_INPUTPORT = @"Main-Input";
 static NSString *const AUDIOBUS_OUTPUTPORT = @"Main-Output";
@@ -51,6 +52,7 @@ static NSString *const AUDIOBUS_INPUT_DESCRIPTION = @"Main App Input";
 static NSString *const AUDIOBUS_OUTPUT_DESCRIPTION = @"Main App Output";
 static NSString *const AUDIOBUS_FILTER_TITLE = @"MobMuPlat-Filter";
 static NSString *const AUDIOBUS_FILTERPORT_NAME = @"Main Filter";
+ */
 
 extern void expr_setup(void);
 extern void bonk_tilde_setup(void);
@@ -133,8 +135,9 @@ extern void sigmund_tilde_setup(void);
 	[audioController configurePlaybackWithSampleRate:samplingRate numberChannels:channelCount inputEnabled:YES mixingEnabled:mixingEnabled];
     [audioController configureTicksPerBuffer:ticksPerBuffer];
     //[audioController print];
-    
-    [self setupAudioBus];
+  
+    // MAKEYOUROWNAPP if you use audiobus, then uncomment this
+    //[self setupAudioBus];
     
     //access to PD externals not normally part of libPD
     expr_setup();
@@ -214,7 +217,7 @@ extern void sigmund_tilde_setup(void);
     reach.reachableOnWWAN = NO;
     [reach startNotifier];
     
-    
+  /*
     //copy bundle stuff if not there, i.e. first time we are running it on a new version #
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *publicDocumentsDir = [paths objectAtIndex:0];
@@ -260,7 +263,7 @@ extern void sigmund_tilde_setup(void);
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:appFirstStartOfVersionKey];
     }
     //end first run and copy
-
+*/
        
     return self;
 }
@@ -328,14 +331,18 @@ extern void sigmund_tilde_setup(void);
 	
     [audioController setActive:YES];
 	
+    // MAKEYOUROWNAPP: replace the name of the MobMuPlat interface below (instead of "MMPTutorial0-
+    //   HelloSine"), based on what type of device is opening it. You can use the same interface in all
+    //   three cases, it will still open.
+  
     //start default intro patch
     NSString* path;
     if(hardwareCanvasType==canvasTypeIPhone3p5Inch )
-        path = [[NSBundle mainBundle] pathForResource:@"Welcome" ofType:@"mmp"];
+        path = [[NSBundle mainBundle] pathForResource:@"MMPTutorial0-HelloSine" ofType:@"mmp"];
     else if (hardwareCanvasType==canvasTypeIPhone4Inch)
-        path = [[NSBundle mainBundle] pathForResource:@"Welcome-ip5" ofType:@"mmp"];
+        path = [[NSBundle mainBundle] pathForResource:@"MMPTutorial0-HelloSine-ip5" ofType:@"mmp"];
     else//pad
-        path = [[NSBundle mainBundle] pathForResource:@"Welcome-Pad" ofType:@"mmp"];
+        path = [[NSBundle mainBundle] pathForResource:@"MMPTutorial0-HelloSine-Pad.mmp" ofType:@"mmp"];
     
     NSString* jsonString = [NSString stringWithContentsOfFile: path encoding:NSUTF8StringEncoding error:nil];
    
@@ -347,6 +354,8 @@ extern void sigmund_tilde_setup(void);
   
 }
 
+// MAKEYOUROWNAPP if you use audiobus, put your api key in here, and decide which ports you want to support.
+/*
 -(void)setupAudioBus {
   
     //audioBus check for any audio issues restart audio if detected
@@ -364,12 +373,14 @@ extern void sigmund_tilde_setup(void);
         }
     }
     
-    
+  
     self.audiobusController = [[ABAudiobusController alloc]
                                initWithAppLaunchURL:[NSURL URLWithString:@"MobMuPlat.audiobus://"]
-                               apiKey:@"MCoqKk1vYk11UGxhdCoqKk1vYk11UGxhdC5hdWRpb2J1czovLw==:RLMszjGmD4cXoV8lgbbq7nBvgrGwAXvnbP2eDCNFfrF+6xX+qi0mtsvyzH6Jrl1K9KD1DFKduTCJM7qrKum25eIoVjlA74s6VM3ywHJwVKvvAKu6F1e6cjtlaCaK8Q2H"];
+                               apiKey:@"FILL THIS IN!"];
   
 	self.audiobusController.connectionPanelPosition = ABAudiobusConnectionPanelPositionLeft;
+  
+  
     _outputPort = [self.audiobusController addOutputPortNamed:@"Audio Output"
                                                                  title:NSLocalizedString(@"Main App Output", @"")];
     _outputPort.clientFormat = [self.audioController.audioUnit
@@ -406,7 +417,7 @@ extern void sigmund_tilde_setup(void);
     
     //[self printAudioSessionUnitInfo];
 
-}
+}*/
 
 - (void)printAudioSessionUnitInfo {
     //audio info
@@ -418,10 +429,10 @@ extern void sigmund_tilde_setup(void);
 }
 
 
--(BOOL)isAudioBusConnected {
+/*-(BOOL)isAudioBusConnected {
   //return ABFilterPortIsConnected(self.filterPort) || ABInputPortIsConnected(self.inputPort) || ABOutputPortIsConnected(self.outputPort);
   return self.audiobusController.connected;
-}
+}*/
 
 
 //I believe next two methods were neccessary to receive "shake" gesture
@@ -548,7 +559,7 @@ extern void sigmund_tilde_setup(void);
 }
 
 
--(BOOL)loadScenePatchOnly:(NSString*)filename{
+/*-(BOOL)loadScenePatchOnly:(NSString*)filename{
     
     if(scrollView)[scrollView removeFromSuperview];
     
@@ -570,12 +581,15 @@ extern void sigmund_tilde_setup(void);
     openPDFile = [PdBase openFile:filename path:publicDocumentsDir];
     if(!openPDFile) return NO;
     NSLog(@"open pd file %@", filename);
-    
-    [self.view addSubview:settingsButton];
+  
+    // MAKEYOUROWNAPP: if you want to allow access to the settings menus, then uncomment this to show the settings button. Otherwise the settings button is hidden.
+    // [self.view addSubview:settingsButton];
+    //
+  
     patchOnlyLabel.text = [NSString stringWithFormat:@"running %@ \nwith no interface\n\n(any network data will be\n on default port %d)", filename, DEFAULT_PORT_NUMBER];
     
     return YES;
-}
+}*/
 
 -(BOOL)loadScene:(NSDictionary*) sceneDict{
     if(!sceneDict)return NO;
@@ -913,8 +927,11 @@ extern void sigmund_tilde_setup(void);
     
     //scroll to start page, and put settings button on top
     [scrollView zoomToRect:CGRectMake(docSize.width*startPageIndex, 0, docSize.width, docSize.height) animated:NO];
+  
+    // MAKEYOUROWNAPP: if you want to allow access to the settings menus, then uncomment this to show the settings button. Otherwise the settings button is hidden.
     [scrollView addSubview:settingsButton];
-    
+    //
+  
     ///===PureData patch
     //if one is open, close it
     if(openPDFile!=nil)[PdBase closeFile:openPDFile];

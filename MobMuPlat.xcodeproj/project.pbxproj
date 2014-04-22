@@ -8,13 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		90503180188474D9003D85E9 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9050317F188474D9003D85E9 /* MediaPlayer.framework */; };
-		90BE0D621880A9EF009446AD /* MMPTutorial6-2DGraphics-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = 90BE0D5E1880A9EF009446AD /* MMPTutorial6-2DGraphics-Pad.mmp */; };
-		90BE0D631880A9EF009446AD /* MMPTutorial6-2DGraphics-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = 90BE0D5F1880A9EF009446AD /* MMPTutorial6-2DGraphics-ip5.mmp */; };
-		90BE0D641880A9EF009446AD /* MMPTutorial6-2DGraphics.mmp in Resources */ = {isa = PBXBuildFile; fileRef = 90BE0D601880A9EF009446AD /* MMPTutorial6-2DGraphics.mmp */; };
-		90BE0D651880A9EF009446AD /* MMPTutorial6-2DGraphics.pd in Resources */ = {isa = PBXBuildFile; fileRef = 90BE0D611880A9EF009446AD /* MMPTutorial6-2DGraphics.pd */; };
 		90DFFB2B187DF85B00DD2149 /* MeLCD.m in Sources */ = {isa = PBXBuildFile; fileRef = 90DFFB2A187DF85B00DD2149 /* MeLCD.m */; };
 		DC03516A16AA67E600708C0D /* AlertHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DC03516916AA67E600708C0D /* AlertHelper.m */; };
-		DC035A1D16D96FC600F4FA62 /* SplashViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DC035A1C16D96FC600F4FA62 /* SplashViewController.m */; };
 		DC0FC7F8172D846900E895C3 /* AudioHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC7EB172D846900E895C3 /* AudioHelpers.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DC0FC7F9172D846900E895C3 /* PdAudioController.m in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC7ED172D846900E895C3 /* PdAudioController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DC0FC7FA172D846900E895C3 /* PdAudioUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = DC0FC7EF172D846900E895C3 /* PdAudioUnit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -112,13 +107,8 @@
 		DC233DBD1655EDF500AC01C5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DC233DBC1655EDF500AC01C5 /* AppDelegate.m */; };
 		DC233DC61655EDF500AC01C5 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DC233DC51655EDF500AC01C5 /* ViewController.m */; };
 		DC29445F16584ABE00BF4A50 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC29445E16584ABE00BF4A50 /* AVFoundation.framework */; };
-		DC29446916584B0100BF4A50 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC29446816584B0100BF4A50 /* AudioToolbox.framework */; };
 		DC3DB0A11668C3840056DF1A /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DC3DB0A01668C3840056DF1A /* SettingsViewController.m */; };
 		DC456B03176BC1540080BB33 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC456B02176BC1540080BB33 /* CoreLocation.framework */; };
-		DC456B08176C1A700080BB33 /* MMPExamples-GPS-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DC456B04176C1A700080BB33 /* MMPExamples-GPS-ip5.mmp */; };
-		DC456B09176C1A700080BB33 /* MMPExamples-GPS-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DC456B05176C1A700080BB33 /* MMPExamples-GPS-Pad.mmp */; };
-		DC456B0A176C1A700080BB33 /* MMPExamples-GPS.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DC456B06176C1A700080BB33 /* MMPExamples-GPS.mmp */; };
-		DC456B0B176C1A700080BB33 /* MMPExamples-GPS.pd in Resources */ = {isa = PBXBuildFile; fileRef = DC456B07176C1A700080BB33 /* MMPExamples-GPS.pd */; };
 		DC59570A1733800500CEBECC /* MeButton.m in Sources */ = {isa = PBXBuildFile; fileRef = DC5956F71733800500CEBECC /* MeButton.m */; };
 		DC59570B1733800500CEBECC /* MeControl.m in Sources */ = {isa = PBXBuildFile; fileRef = DC5956F91733800500CEBECC /* MeControl.m */; };
 		DC59570C1733800500CEBECC /* MeGrid.m in Sources */ = {isa = PBXBuildFile; fileRef = DC5956FB1733800500CEBECC /* MeGrid.m */; };
@@ -151,10 +141,6 @@
 		DC6A9FF61878F88900A7585A /* README.markdown in Resources */ = {isa = PBXBuildFile; fileRef = DC6A9FF01878F88900A7585A /* README.markdown */; };
 		DC6A9FF71878F88900A7585A /* MAZeroingWeakRef.m in Sources */ = {isa = PBXBuildFile; fileRef = DC6A9FF31878F88900A7585A /* MAZeroingWeakRef.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DC7DD717188F2A660068BA66 /* SettingsViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = DC7DD716188F2A660068BA66 /* SettingsViewController~ipad.xib */; };
-		DC89675D18870F7D00750137 /* MMPExamples-LANdini.pd in Resources */ = {isa = PBXBuildFile; fileRef = DC89675918870F7D00750137 /* MMPExamples-LANdini.pd */; };
-		DC89675E18870F7D00750137 /* MMPExamples-LANdini-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DC89675A18870F7D00750137 /* MMPExamples-LANdini-Pad.mmp */; };
-		DC89675F18870F7D00750137 /* MMPExamples-LANdini.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DC89675B18870F7D00750137 /* MMPExamples-LANdini.mmp */; };
-		DC89676018870F7D00750137 /* MMPExamples-LANdini-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DC89675C18870F7D00750137 /* MMPExamples-LANdini-ip5.mmp */; };
 		DC8EBBB91660F3B4003C3162 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC8EBBB81660F3B4003C3162 /* QuartzCore.framework */; };
 		DC8EFEC71656F782004A88E3 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC8EFEC61656F782004A88E3 /* CoreMIDI.framework */; };
 		DCA9B90717330F3D000E59DD /* MutLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = DCA9B8F717330F3D000E59DD /* MutLockArray.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -194,70 +180,21 @@
 		DCD191A517418E9600580793 /* z_print_util.c in Sources */ = {isa = PBXBuildFile; fileRef = DCD1919F17418E9600580793 /* z_print_util.c */; };
 		DCD191A617418E9600580793 /* z_queued.c in Sources */ = {isa = PBXBuildFile; fileRef = DCD191A117418E9600580793 /* z_queued.c */; };
 		DCD5BCA218BAC42200EF3E5D /* MeMultiTouch.m in Sources */ = {isa = PBXBuildFile; fileRef = DCD5BCA118BAC42200EF3E5D /* MeMultiTouch.m */; };
-		DCD8DF5F17330C4700767321 /* cats1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3217330C4700767321 /* cats1.jpg */; };
-		DCD8DF6017330C4700767321 /* cats2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3317330C4700767321 /* cats2.jpg */; };
-		DCD8DF6117330C4700767321 /* cats3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3417330C4700767321 /* cats3.jpg */; };
-		DCD8DF6217330C4700767321 /* clap.wav in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3517330C4700767321 /* clap.wav */; };
-		DCD8DF6317330C4700767321 /* MMPExamples-Motion-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3617330C4700767321 /* MMPExamples-Motion-ip5.mmp */; };
-		DCD8DF6417330C4700767321 /* MMPExamples-Motion-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3717330C4700767321 /* MMPExamples-Motion-Pad.mmp */; };
-		DCD8DF6517330C4700767321 /* MMPExamples-Motion.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3817330C4700767321 /* MMPExamples-Motion.mmp */; };
-		DCD8DF6617330C4700767321 /* MMPExamples-Motion.pd in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3917330C4700767321 /* MMPExamples-Motion.pd */; };
-		DCD8DF6717330C4700767321 /* MMPExamples-Sequencer-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3A17330C4700767321 /* MMPExamples-Sequencer-ip5.mmp */; };
-		DCD8DF6817330C4700767321 /* MMPExamples-Sequencer-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3B17330C4700767321 /* MMPExamples-Sequencer-Pad.mmp */; };
-		DCD8DF6917330C4700767321 /* MMPExamples-Sequencer.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3C17330C4700767321 /* MMPExamples-Sequencer.mmp */; };
-		DCD8DF6A17330C4700767321 /* MMPExamples-Sequencer.pd in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3D17330C4700767321 /* MMPExamples-Sequencer.pd */; };
-		DCD8DF6B17330C4700767321 /* MMPExamples-Vocoder-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3E17330C4700767321 /* MMPExamples-Vocoder-ip5.mmp */; };
-		DCD8DF6C17330C4700767321 /* MMPExamples-Vocoder-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF3F17330C4700767321 /* MMPExamples-Vocoder-Pad.mmp */; };
-		DCD8DF6D17330C4700767321 /* MMPExamples-Vocoder.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF4017330C4700767321 /* MMPExamples-Vocoder.mmp */; };
-		DCD8DF6E17330C4700767321 /* MMPExamples-Vocoder.pd in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF4117330C4700767321 /* MMPExamples-Vocoder.pd */; };
 		DCD8DF6F17330C4700767321 /* MMPTutorial0-HelloSine-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF4217330C4700767321 /* MMPTutorial0-HelloSine-ip5.mmp */; };
 		DCD8DF7017330C4700767321 /* MMPTutorial0-HelloSine-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF4317330C4700767321 /* MMPTutorial0-HelloSine-Pad.mmp */; };
 		DCD8DF7117330C4700767321 /* MMPTutorial0-HelloSine.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF4417330C4700767321 /* MMPTutorial0-HelloSine.mmp */; };
 		DCD8DF7217330C4700767321 /* MMPTutorial0-HelloSine.pd in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF4517330C4700767321 /* MMPTutorial0-HelloSine.pd */; };
-		DCD8DF7317330C4700767321 /* MMPTutorial1-GUI-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF4617330C4700767321 /* MMPTutorial1-GUI-ip5.mmp */; };
-		DCD8DF7417330C4700767321 /* MMPTutorial1-GUI-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF4717330C4700767321 /* MMPTutorial1-GUI-Pad.mmp */; };
-		DCD8DF7517330C4700767321 /* MMPTutorial1-GUI.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF4817330C4700767321 /* MMPTutorial1-GUI.mmp */; };
-		DCD8DF7617330C4700767321 /* MMPTutorial1-GUI.pd in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF4917330C4700767321 /* MMPTutorial1-GUI.pd */; };
-		DCD8DF7717330C4700767321 /* MMPTutorial2-Input-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF4A17330C4700767321 /* MMPTutorial2-Input-ip5.mmp */; };
-		DCD8DF7817330C4700767321 /* MMPTutorial2-Input-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF4B17330C4700767321 /* MMPTutorial2-Input-Pad.mmp */; };
-		DCD8DF7917330C4700767321 /* MMPTutorial2-Input.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF4C17330C4700767321 /* MMPTutorial2-Input.mmp */; };
-		DCD8DF7A17330C4700767321 /* MMPTutorial2-Input.pd in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF4D17330C4700767321 /* MMPTutorial2-Input.pd */; };
-		DCD8DF7B17330C4700767321 /* MMPTutorial3-Hardware-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF4E17330C4700767321 /* MMPTutorial3-Hardware-ip5.mmp */; };
-		DCD8DF7C17330C4700767321 /* MMPTutorial3-Hardware-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF4F17330C4700767321 /* MMPTutorial3-Hardware-Pad.mmp */; };
-		DCD8DF7D17330C4700767321 /* MMPTutorial3-Hardware.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5017330C4700767321 /* MMPTutorial3-Hardware.mmp */; };
-		DCD8DF7E17330C4700767321 /* MMPTutorial3-Hardware.pd in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5117330C4700767321 /* MMPTutorial3-Hardware.pd */; };
-		DCD8DF7F17330C4700767321 /* MMPTutorial4-Networking-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5217330C4700767321 /* MMPTutorial4-Networking-ip5.mmp */; };
-		DCD8DF8017330C4700767321 /* MMPTutorial4-Networking-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5317330C4700767321 /* MMPTutorial4-Networking-Pad.mmp */; };
-		DCD8DF8117330C4700767321 /* MMPTutorial4-Networking.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5417330C4700767321 /* MMPTutorial4-Networking.mmp */; };
-		DCD8DF8217330C4700767321 /* MMPTutorial4-Networking.pd in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5517330C4700767321 /* MMPTutorial4-Networking.pd */; };
-		DCD8DF8317330C4700767321 /* MMPTutorial5-Files-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5617330C4700767321 /* MMPTutorial5-Files-ip5.mmp */; };
-		DCD8DF8417330C4700767321 /* MMPTutorial5-Files-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5717330C4700767321 /* MMPTutorial5-Files-Pad.mmp */; };
-		DCD8DF8517330C4700767321 /* MMPTutorial5-Files.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5817330C4700767321 /* MMPTutorial5-Files.mmp */; };
-		DCD8DF8617330C4700767321 /* MMPTutorial5-Files.pd in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5917330C4700767321 /* MMPTutorial5-Files.pd */; };
-		DCD8DF8717330C4700767321 /* vocod_channel.pd in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5A17330C4700767321 /* vocod_channel.pd */; };
-		DCD8DF8817330C4700767321 /* Welcome-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5B17330C4700767321 /* Welcome-ip5.mmp */; };
-		DCD8DF8917330C4700767321 /* Welcome-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5C17330C4700767321 /* Welcome-Pad.mmp */; };
-		DCD8DF8A17330C4700767321 /* Welcome.mmp in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5D17330C4700767321 /* Welcome.mmp */; };
-		DCD8DF8B17330C4700767321 /* Welcome.pd in Resources */ = {isa = PBXBuildFile; fileRef = DCD8DF5E17330C4700767321 /* Welcome.pd */; };
 		DCD8DF9317330D8B00767321 /* PGMidi.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCD8DF9217330D8A00767321 /* PGMidi.mm */; };
 		DCEF4F2C188ED1CD00D6EE54 /* SettingsViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */; };
 		DCFF717716B59F3100CDCEAE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DCFF717616B59F3100CDCEAE /* libz.dylib */; };
-		F91BAD3218EB15FC007E0DC6 /* libAudiobus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F91BAD3118EB15FC007E0DC6 /* libAudiobus.a */; };
-		F94958DC18D1223B00C8876F /* MMPExamples-Arp-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F94958D818D1223B00C8876F /* MMPExamples-Arp-ip5.mmp */; };
-		F94958DD18D1223B00C8876F /* MMPExamples-Arp-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F94958D918D1223B00C8876F /* MMPExamples-Arp-Pad.mmp */; };
-		F94958DE18D1223B00C8876F /* MMPExamples-Arp.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F94958DA18D1223B00C8876F /* MMPExamples-Arp.mmp */; };
-		F94958DF18D1223B00C8876F /* MMPExamples-Arp.pd in Resources */ = {isa = PBXBuildFile; fileRef = F94958DB18D1223B00C8876F /* MMPExamples-Arp.pd */; };
 		F94FB53918F596AB003BFB18 /* MenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F94FB53818F596AB003BFB18 /* MenuViewController.m */; };
 		F9967C3718F8C54D008E3828 /* MenuNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9967C3618F8C54D008E3828 /* MenuNavigationController.m */; };
+		F9B9EA2B1905E3FA0066206B /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9B9EA2A1905E3FA0066206B /* AudioToolbox.framework */; };
 		F9DE7DC018F49D62007B9E45 /* MeMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = F9DE7DBF18F49D62007B9E45 /* MeMenu.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		9050317F188474D9003D85E9 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
-		90BE0D5E1880A9EF009446AD /* MMPTutorial6-2DGraphics-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial6-2DGraphics-Pad.mmp"; path = "patches/MMPTutorial6-2DGraphics-Pad.mmp"; sourceTree = "<group>"; };
-		90BE0D5F1880A9EF009446AD /* MMPTutorial6-2DGraphics-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial6-2DGraphics-ip5.mmp"; path = "patches/MMPTutorial6-2DGraphics-ip5.mmp"; sourceTree = "<group>"; };
-		90BE0D601880A9EF009446AD /* MMPTutorial6-2DGraphics.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial6-2DGraphics.mmp"; path = "patches/MMPTutorial6-2DGraphics.mmp"; sourceTree = "<group>"; };
-		90BE0D611880A9EF009446AD /* MMPTutorial6-2DGraphics.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial6-2DGraphics.pd"; path = "patches/MMPTutorial6-2DGraphics.pd"; sourceTree = "<group>"; };
 		90DFFB29187DF85B00DD2149 /* MeLCD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeLCD.h; path = gui/MeLCD.h; sourceTree = "<group>"; };
 		90DFFB2A187DF85B00DD2149 /* MeLCD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeLCD.m; path = gui/MeLCD.m; sourceTree = "<group>"; };
 		DC03516816AA67E600708C0D /* AlertHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertHelper.h; sourceTree = "<group>"; };
@@ -385,14 +322,9 @@
 		DC233DC41655EDF500AC01C5 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		DC233DC51655EDF500AC01C5 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		DC29445E16584ABE00BF4A50 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		DC29446816584B0100BF4A50 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		DC3DB09F1668C3840056DF1A /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		DC3DB0A01668C3840056DF1A /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		DC456B02176BC1540080BB33 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
-		DC456B04176C1A700080BB33 /* MMPExamples-GPS-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-GPS-ip5.mmp"; path = "patches/MMPExamples-GPS-ip5.mmp"; sourceTree = "<group>"; };
-		DC456B05176C1A700080BB33 /* MMPExamples-GPS-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-GPS-Pad.mmp"; path = "patches/MMPExamples-GPS-Pad.mmp"; sourceTree = "<group>"; };
-		DC456B06176C1A700080BB33 /* MMPExamples-GPS.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-GPS.mmp"; path = "patches/MMPExamples-GPS.mmp"; sourceTree = "<group>"; };
-		DC456B07176C1A700080BB33 /* MMPExamples-GPS.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-GPS.pd"; path = "patches/MMPExamples-GPS.pd"; sourceTree = "<group>"; };
 		DC5956F61733800500CEBECC /* MeButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeButton.h; path = gui/MeButton.h; sourceTree = "<group>"; };
 		DC5956F71733800500CEBECC /* MeButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeButton.m; path = gui/MeButton.m; sourceTree = "<group>"; };
 		DC5956F81733800500CEBECC /* MeControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeControl.h; path = gui/MeControl.h; sourceTree = "<group>"; };
@@ -440,10 +372,6 @@
 		DC6A9FF31878F88900A7585A /* MAZeroingWeakRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAZeroingWeakRef.m; sourceTree = "<group>"; };
 		DC6A9FF41878F88900A7585A /* MAZeroingWeakRefNativeZWRNotAllowedTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAZeroingWeakRefNativeZWRNotAllowedTable.h; sourceTree = "<group>"; };
 		DC7DD716188F2A660068BA66 /* SettingsViewController~ipad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "SettingsViewController~ipad.xib"; path = "settings/SettingsViewController~ipad.xib"; sourceTree = "<group>"; };
-		DC89675918870F7D00750137 /* MMPExamples-LANdini.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-LANdini.pd"; path = "patches/MMPExamples-LANdini.pd"; sourceTree = "<group>"; };
-		DC89675A18870F7D00750137 /* MMPExamples-LANdini-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-LANdini-Pad.mmp"; path = "patches/MMPExamples-LANdini-Pad.mmp"; sourceTree = "<group>"; };
-		DC89675B18870F7D00750137 /* MMPExamples-LANdini.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-LANdini.mmp"; path = "patches/MMPExamples-LANdini.mmp"; sourceTree = "<group>"; };
-		DC89675C18870F7D00750137 /* MMPExamples-LANdini-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-LANdini-ip5.mmp"; path = "patches/MMPExamples-LANdini-ip5.mmp"; sourceTree = "<group>"; };
 		DC8EBBB81660F3B4003C3162 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		DC8EFEC61656F782004A88E3 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		DCA9B8F617330F3D000E59DD /* MutLockArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutLockArray.h; path = VVBasics/src/MutLockArray.h; sourceTree = SOURCE_ROOT; };
@@ -517,65 +445,20 @@
 		DCD191A217418E9600580793 /* z_queued.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = z_queued.h; path = util/z_queued.h; sourceTree = "<group>"; };
 		DCD5BCA018BAC42200EF3E5D /* MeMultiTouch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeMultiTouch.h; sourceTree = "<group>"; };
 		DCD5BCA118BAC42200EF3E5D /* MeMultiTouch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeMultiTouch.m; sourceTree = "<group>"; };
-		DCD8DF3217330C4700767321 /* cats1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = cats1.jpg; path = patches/cats1.jpg; sourceTree = "<group>"; };
-		DCD8DF3317330C4700767321 /* cats2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = cats2.jpg; path = patches/cats2.jpg; sourceTree = "<group>"; };
-		DCD8DF3417330C4700767321 /* cats3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = cats3.jpg; path = patches/cats3.jpg; sourceTree = "<group>"; };
-		DCD8DF3517330C4700767321 /* clap.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = clap.wav; path = patches/clap.wav; sourceTree = "<group>"; };
-		DCD8DF3617330C4700767321 /* MMPExamples-Motion-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Motion-ip5.mmp"; path = "patches/MMPExamples-Motion-ip5.mmp"; sourceTree = "<group>"; };
-		DCD8DF3717330C4700767321 /* MMPExamples-Motion-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Motion-Pad.mmp"; path = "patches/MMPExamples-Motion-Pad.mmp"; sourceTree = "<group>"; };
-		DCD8DF3817330C4700767321 /* MMPExamples-Motion.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Motion.mmp"; path = "patches/MMPExamples-Motion.mmp"; sourceTree = "<group>"; };
-		DCD8DF3917330C4700767321 /* MMPExamples-Motion.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Motion.pd"; path = "patches/MMPExamples-Motion.pd"; sourceTree = "<group>"; };
-		DCD8DF3A17330C4700767321 /* MMPExamples-Sequencer-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Sequencer-ip5.mmp"; path = "patches/MMPExamples-Sequencer-ip5.mmp"; sourceTree = "<group>"; };
-		DCD8DF3B17330C4700767321 /* MMPExamples-Sequencer-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Sequencer-Pad.mmp"; path = "patches/MMPExamples-Sequencer-Pad.mmp"; sourceTree = "<group>"; };
-		DCD8DF3C17330C4700767321 /* MMPExamples-Sequencer.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Sequencer.mmp"; path = "patches/MMPExamples-Sequencer.mmp"; sourceTree = "<group>"; };
-		DCD8DF3D17330C4700767321 /* MMPExamples-Sequencer.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Sequencer.pd"; path = "patches/MMPExamples-Sequencer.pd"; sourceTree = "<group>"; };
-		DCD8DF3E17330C4700767321 /* MMPExamples-Vocoder-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Vocoder-ip5.mmp"; path = "patches/MMPExamples-Vocoder-ip5.mmp"; sourceTree = "<group>"; };
-		DCD8DF3F17330C4700767321 /* MMPExamples-Vocoder-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Vocoder-Pad.mmp"; path = "patches/MMPExamples-Vocoder-Pad.mmp"; sourceTree = "<group>"; };
-		DCD8DF4017330C4700767321 /* MMPExamples-Vocoder.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Vocoder.mmp"; path = "patches/MMPExamples-Vocoder.mmp"; sourceTree = "<group>"; };
-		DCD8DF4117330C4700767321 /* MMPExamples-Vocoder.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Vocoder.pd"; path = "patches/MMPExamples-Vocoder.pd"; sourceTree = "<group>"; };
 		DCD8DF4217330C4700767321 /* MMPTutorial0-HelloSine-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial0-HelloSine-ip5.mmp"; path = "patches/MMPTutorial0-HelloSine-ip5.mmp"; sourceTree = "<group>"; };
 		DCD8DF4317330C4700767321 /* MMPTutorial0-HelloSine-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial0-HelloSine-Pad.mmp"; path = "patches/MMPTutorial0-HelloSine-Pad.mmp"; sourceTree = "<group>"; };
 		DCD8DF4417330C4700767321 /* MMPTutorial0-HelloSine.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial0-HelloSine.mmp"; path = "patches/MMPTutorial0-HelloSine.mmp"; sourceTree = "<group>"; };
 		DCD8DF4517330C4700767321 /* MMPTutorial0-HelloSine.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial0-HelloSine.pd"; path = "patches/MMPTutorial0-HelloSine.pd"; sourceTree = "<group>"; };
-		DCD8DF4617330C4700767321 /* MMPTutorial1-GUI-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial1-GUI-ip5.mmp"; path = "patches/MMPTutorial1-GUI-ip5.mmp"; sourceTree = "<group>"; };
-		DCD8DF4717330C4700767321 /* MMPTutorial1-GUI-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial1-GUI-Pad.mmp"; path = "patches/MMPTutorial1-GUI-Pad.mmp"; sourceTree = "<group>"; };
-		DCD8DF4817330C4700767321 /* MMPTutorial1-GUI.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial1-GUI.mmp"; path = "patches/MMPTutorial1-GUI.mmp"; sourceTree = "<group>"; };
-		DCD8DF4917330C4700767321 /* MMPTutorial1-GUI.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial1-GUI.pd"; path = "patches/MMPTutorial1-GUI.pd"; sourceTree = "<group>"; };
-		DCD8DF4A17330C4700767321 /* MMPTutorial2-Input-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial2-Input-ip5.mmp"; path = "patches/MMPTutorial2-Input-ip5.mmp"; sourceTree = "<group>"; };
-		DCD8DF4B17330C4700767321 /* MMPTutorial2-Input-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial2-Input-Pad.mmp"; path = "patches/MMPTutorial2-Input-Pad.mmp"; sourceTree = "<group>"; };
-		DCD8DF4C17330C4700767321 /* MMPTutorial2-Input.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial2-Input.mmp"; path = "patches/MMPTutorial2-Input.mmp"; sourceTree = "<group>"; };
-		DCD8DF4D17330C4700767321 /* MMPTutorial2-Input.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial2-Input.pd"; path = "patches/MMPTutorial2-Input.pd"; sourceTree = "<group>"; };
-		DCD8DF4E17330C4700767321 /* MMPTutorial3-Hardware-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial3-Hardware-ip5.mmp"; path = "patches/MMPTutorial3-Hardware-ip5.mmp"; sourceTree = "<group>"; };
-		DCD8DF4F17330C4700767321 /* MMPTutorial3-Hardware-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial3-Hardware-Pad.mmp"; path = "patches/MMPTutorial3-Hardware-Pad.mmp"; sourceTree = "<group>"; };
-		DCD8DF5017330C4700767321 /* MMPTutorial3-Hardware.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial3-Hardware.mmp"; path = "patches/MMPTutorial3-Hardware.mmp"; sourceTree = "<group>"; };
-		DCD8DF5117330C4700767321 /* MMPTutorial3-Hardware.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial3-Hardware.pd"; path = "patches/MMPTutorial3-Hardware.pd"; sourceTree = "<group>"; };
-		DCD8DF5217330C4700767321 /* MMPTutorial4-Networking-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial4-Networking-ip5.mmp"; path = "patches/MMPTutorial4-Networking-ip5.mmp"; sourceTree = "<group>"; };
-		DCD8DF5317330C4700767321 /* MMPTutorial4-Networking-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial4-Networking-Pad.mmp"; path = "patches/MMPTutorial4-Networking-Pad.mmp"; sourceTree = "<group>"; };
-		DCD8DF5417330C4700767321 /* MMPTutorial4-Networking.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial4-Networking.mmp"; path = "patches/MMPTutorial4-Networking.mmp"; sourceTree = "<group>"; };
-		DCD8DF5517330C4700767321 /* MMPTutorial4-Networking.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial4-Networking.pd"; path = "patches/MMPTutorial4-Networking.pd"; sourceTree = "<group>"; };
-		DCD8DF5617330C4700767321 /* MMPTutorial5-Files-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial5-Files-ip5.mmp"; path = "patches/MMPTutorial5-Files-ip5.mmp"; sourceTree = "<group>"; };
-		DCD8DF5717330C4700767321 /* MMPTutorial5-Files-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial5-Files-Pad.mmp"; path = "patches/MMPTutorial5-Files-Pad.mmp"; sourceTree = "<group>"; };
-		DCD8DF5817330C4700767321 /* MMPTutorial5-Files.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial5-Files.mmp"; path = "patches/MMPTutorial5-Files.mmp"; sourceTree = "<group>"; };
-		DCD8DF5917330C4700767321 /* MMPTutorial5-Files.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPTutorial5-Files.pd"; path = "patches/MMPTutorial5-Files.pd"; sourceTree = "<group>"; };
-		DCD8DF5A17330C4700767321 /* vocod_channel.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = vocod_channel.pd; path = patches/vocod_channel.pd; sourceTree = "<group>"; };
-		DCD8DF5B17330C4700767321 /* Welcome-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "Welcome-ip5.mmp"; path = "patches/Welcome-ip5.mmp"; sourceTree = "<group>"; };
-		DCD8DF5C17330C4700767321 /* Welcome-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "Welcome-Pad.mmp"; path = "patches/Welcome-Pad.mmp"; sourceTree = "<group>"; };
-		DCD8DF5D17330C4700767321 /* Welcome.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Welcome.mmp; path = patches/Welcome.mmp; sourceTree = "<group>"; };
-		DCD8DF5E17330C4700767321 /* Welcome.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Welcome.pd; path = patches/Welcome.pd; sourceTree = "<group>"; };
 		DCD8DF9017330D8A00767321 /* PGArc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGArc.h; path = PGMidi/PGArc.h; sourceTree = "<group>"; };
 		DCD8DF9117330D8A00767321 /* PGMidi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGMidi.h; path = PGMidi/PGMidi.h; sourceTree = "<group>"; };
 		DCD8DF9217330D8A00767321 /* PGMidi.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PGMidi.mm; path = PGMidi/PGMidi.mm; sourceTree = "<group>"; };
 		DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "SettingsViewController~iphone.xib"; path = "settings/SettingsViewController~iphone.xib"; sourceTree = "<group>"; };
 		DCFF717616B59F3100CDCEAE /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		F91BAD3118EB15FC007E0DC6 /* libAudiobus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libAudiobus.a; sourceTree = "<group>"; };
-		F94958D818D1223B00C8876F /* MMPExamples-Arp-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Arp-ip5.mmp"; path = "patches/MMPExamples-Arp-ip5.mmp"; sourceTree = "<group>"; };
-		F94958D918D1223B00C8876F /* MMPExamples-Arp-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Arp-Pad.mmp"; path = "patches/MMPExamples-Arp-Pad.mmp"; sourceTree = "<group>"; };
-		F94958DA18D1223B00C8876F /* MMPExamples-Arp.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Arp.mmp"; path = "patches/MMPExamples-Arp.mmp"; sourceTree = "<group>"; };
-		F94958DB18D1223B00C8876F /* MMPExamples-Arp.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Arp.pd"; path = "patches/MMPExamples-Arp.pd"; sourceTree = "<group>"; };
 		F94FB53718F596AB003BFB18 /* MenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuViewController.h; path = gui/MenuViewController.h; sourceTree = "<group>"; };
 		F94FB53818F596AB003BFB18 /* MenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MenuViewController.m; path = gui/MenuViewController.m; sourceTree = "<group>"; };
 		F9967C3518F8C54D008E3828 /* MenuNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuNavigationController.h; path = gui/MenuNavigationController.h; sourceTree = "<group>"; };
 		F9967C3618F8C54D008E3828 /* MenuNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MenuNavigationController.m; path = gui/MenuNavigationController.m; sourceTree = "<group>"; };
+		F9B9EA2A1905E3FA0066206B /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F9DE7DBE18F49D62007B9E45 /* MeMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeMenu.h; path = gui/MeMenu.h; sourceTree = "<group>"; };
 		F9DE7DBF18F49D62007B9E45 /* MeMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeMenu.m; path = gui/MeMenu.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -585,6 +468,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F9B9EA2B1905E3FA0066206B /* AudioToolbox.framework in Frameworks */,
 				DCA9BD9718E31AA600FAD233 /* Security.framework in Frameworks */,
 				DCA9BD9518E31A9400FAD233 /* Accelerate.framework in Frameworks */,
 				DC13B959188E125600647115 /* SystemConfiguration.framework in Frameworks */,
@@ -593,12 +477,10 @@
 				DCB11AE11702B315004B92EA /* CoreMotion.framework in Frameworks */,
 				DCFF717716B59F3100CDCEAE /* libz.dylib in Frameworks */,
 				DC8EBBB91660F3B4003C3162 /* QuartzCore.framework in Frameworks */,
-				DC29446916584B0100BF4A50 /* AudioToolbox.framework in Frameworks */,
 				DC29445F16584ABE00BF4A50 /* AVFoundation.framework in Frameworks */,
 				DC8EFEC71656F782004A88E3 /* CoreMIDI.framework in Frameworks */,
 				DC233DAD1655EDF500AC01C5 /* UIKit.framework in Frameworks */,
 				DC233DAF1655EDF500AC01C5 /* Foundation.framework in Frameworks */,
-				F91BAD3218EB15FC007E0DC6 /* libAudiobus.a in Frameworks */,
 				DC233DB11655EDF500AC01C5 /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -835,7 +717,7 @@
 		DC233DAB1655EDF500AC01C5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F91BAD3118EB15FC007E0DC6 /* libAudiobus.a */,
+				F9B9EA2A1905E3FA0066206B /* AudioToolbox.framework */,
 				DCA9BD9618E31AA600FAD233 /* Security.framework */,
 				DCA9BD9418E31A9400FAD233 /* Accelerate.framework */,
 				DC13B958188E125600647115 /* SystemConfiguration.framework */,
@@ -844,7 +726,6 @@
 				DCB11AE01702B315004B92EA /* CoreMotion.framework */,
 				DCFF717616B59F3100CDCEAE /* libz.dylib */,
 				DC8EBBB81660F3B4003C3162 /* QuartzCore.framework */,
-				DC29446816584B0100BF4A50 /* AudioToolbox.framework */,
 				DC29445E16584ABE00BF4A50 /* AVFoundation.framework */,
 				DC8EFEC61656F782004A88E3 /* CoreMIDI.framework */,
 				DC233DAC1655EDF500AC01C5 /* UIKit.framework */,
@@ -930,67 +811,10 @@
 		DC29445B16584A6E00BF4A50 /* patches */ = {
 			isa = PBXGroup;
 			children = (
-				F94958D818D1223B00C8876F /* MMPExamples-Arp-ip5.mmp */,
-				F94958D918D1223B00C8876F /* MMPExamples-Arp-Pad.mmp */,
-				F94958DA18D1223B00C8876F /* MMPExamples-Arp.mmp */,
-				F94958DB18D1223B00C8876F /* MMPExamples-Arp.pd */,
-				DC456B04176C1A700080BB33 /* MMPExamples-GPS-ip5.mmp */,
-				DC456B05176C1A700080BB33 /* MMPExamples-GPS-Pad.mmp */,
-				DC456B06176C1A700080BB33 /* MMPExamples-GPS.mmp */,
-				DC456B07176C1A700080BB33 /* MMPExamples-GPS.pd */,
-				DCD8DF3217330C4700767321 /* cats1.jpg */,
-				DCD8DF3317330C4700767321 /* cats2.jpg */,
-				DCD8DF3417330C4700767321 /* cats3.jpg */,
-				DCD8DF3517330C4700767321 /* clap.wav */,
-				DC89675918870F7D00750137 /* MMPExamples-LANdini.pd */,
-				DC89675A18870F7D00750137 /* MMPExamples-LANdini-Pad.mmp */,
-				DC89675B18870F7D00750137 /* MMPExamples-LANdini.mmp */,
-				DC89675C18870F7D00750137 /* MMPExamples-LANdini-ip5.mmp */,
-				90BE0D5E1880A9EF009446AD /* MMPTutorial6-2DGraphics-Pad.mmp */,
-				90BE0D5F1880A9EF009446AD /* MMPTutorial6-2DGraphics-ip5.mmp */,
-				90BE0D601880A9EF009446AD /* MMPTutorial6-2DGraphics.mmp */,
-				90BE0D611880A9EF009446AD /* MMPTutorial6-2DGraphics.pd */,
-				DCD8DF3617330C4700767321 /* MMPExamples-Motion-ip5.mmp */,
-				DCD8DF3717330C4700767321 /* MMPExamples-Motion-Pad.mmp */,
-				DCD8DF3817330C4700767321 /* MMPExamples-Motion.mmp */,
-				DCD8DF3917330C4700767321 /* MMPExamples-Motion.pd */,
-				DCD8DF3A17330C4700767321 /* MMPExamples-Sequencer-ip5.mmp */,
-				DCD8DF3B17330C4700767321 /* MMPExamples-Sequencer-Pad.mmp */,
-				DCD8DF3C17330C4700767321 /* MMPExamples-Sequencer.mmp */,
-				DCD8DF3D17330C4700767321 /* MMPExamples-Sequencer.pd */,
-				DCD8DF3E17330C4700767321 /* MMPExamples-Vocoder-ip5.mmp */,
-				DCD8DF3F17330C4700767321 /* MMPExamples-Vocoder-Pad.mmp */,
-				DCD8DF4017330C4700767321 /* MMPExamples-Vocoder.mmp */,
-				DCD8DF4117330C4700767321 /* MMPExamples-Vocoder.pd */,
 				DCD8DF4217330C4700767321 /* MMPTutorial0-HelloSine-ip5.mmp */,
 				DCD8DF4317330C4700767321 /* MMPTutorial0-HelloSine-Pad.mmp */,
 				DCD8DF4417330C4700767321 /* MMPTutorial0-HelloSine.mmp */,
 				DCD8DF4517330C4700767321 /* MMPTutorial0-HelloSine.pd */,
-				DCD8DF4617330C4700767321 /* MMPTutorial1-GUI-ip5.mmp */,
-				DCD8DF4717330C4700767321 /* MMPTutorial1-GUI-Pad.mmp */,
-				DCD8DF4817330C4700767321 /* MMPTutorial1-GUI.mmp */,
-				DCD8DF4917330C4700767321 /* MMPTutorial1-GUI.pd */,
-				DCD8DF4A17330C4700767321 /* MMPTutorial2-Input-ip5.mmp */,
-				DCD8DF4B17330C4700767321 /* MMPTutorial2-Input-Pad.mmp */,
-				DCD8DF4C17330C4700767321 /* MMPTutorial2-Input.mmp */,
-				DCD8DF4D17330C4700767321 /* MMPTutorial2-Input.pd */,
-				DCD8DF4E17330C4700767321 /* MMPTutorial3-Hardware-ip5.mmp */,
-				DCD8DF4F17330C4700767321 /* MMPTutorial3-Hardware-Pad.mmp */,
-				DCD8DF5017330C4700767321 /* MMPTutorial3-Hardware.mmp */,
-				DCD8DF5117330C4700767321 /* MMPTutorial3-Hardware.pd */,
-				DCD8DF5217330C4700767321 /* MMPTutorial4-Networking-ip5.mmp */,
-				DCD8DF5317330C4700767321 /* MMPTutorial4-Networking-Pad.mmp */,
-				DCD8DF5417330C4700767321 /* MMPTutorial4-Networking.mmp */,
-				DCD8DF5517330C4700767321 /* MMPTutorial4-Networking.pd */,
-				DCD8DF5617330C4700767321 /* MMPTutorial5-Files-ip5.mmp */,
-				DCD8DF5717330C4700767321 /* MMPTutorial5-Files-Pad.mmp */,
-				DCD8DF5817330C4700767321 /* MMPTutorial5-Files.mmp */,
-				DCD8DF5917330C4700767321 /* MMPTutorial5-Files.pd */,
-				DCD8DF5A17330C4700767321 /* vocod_channel.pd */,
-				DCD8DF5B17330C4700767321 /* Welcome-ip5.mmp */,
-				DCD8DF5C17330C4700767321 /* Welcome-Pad.mmp */,
-				DCD8DF5D17330C4700767321 /* Welcome.mmp */,
-				DCD8DF5E17330C4700767321 /* Welcome.pd */,
 			);
 			name = patches;
 			sourceTree = "<group>";
@@ -1175,6 +999,11 @@
 				TargetAttributes = {
 					DC233DA71655EDF500AC01C5 = {
 						DevelopmentTeam = RJC7S963JF;
+						SystemCapabilities = {
+							com.apple.InterAppAudio = {
+								enabled = 0;
+							};
+						};
 					};
 				};
 			};
@@ -1201,72 +1030,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				DC233DB71655EDF500AC01C5 /* InfoPlist.strings in Resources */,
-				DCD8DF5F17330C4700767321 /* cats1.jpg in Resources */,
-				DCD8DF6017330C4700767321 /* cats2.jpg in Resources */,
-				DCD8DF6117330C4700767321 /* cats3.jpg in Resources */,
-				90BE0D651880A9EF009446AD /* MMPTutorial6-2DGraphics.pd in Resources */,
-				DCD8DF6217330C4700767321 /* clap.wav in Resources */,
-				F94958DD18D1223B00C8876F /* MMPExamples-Arp-Pad.mmp in Resources */,
-				DCD8DF6317330C4700767321 /* MMPExamples-Motion-ip5.mmp in Resources */,
-				DCD8DF6417330C4700767321 /* MMPExamples-Motion-Pad.mmp in Resources */,
-				F94958DF18D1223B00C8876F /* MMPExamples-Arp.pd in Resources */,
-				DCD8DF6517330C4700767321 /* MMPExamples-Motion.mmp in Resources */,
 				DCB5B94718888BF9003E6C2C /* Images.xcassets in Resources */,
-				90BE0D621880A9EF009446AD /* MMPTutorial6-2DGraphics-Pad.mmp in Resources */,
 				DC6A9FF51878F88900A7585A /* LICENSE in Resources */,
-				DCD8DF6617330C4700767321 /* MMPExamples-Motion.pd in Resources */,
-				DCD8DF6717330C4700767321 /* MMPExamples-Sequencer-ip5.mmp in Resources */,
-				DCD8DF6817330C4700767321 /* MMPExamples-Sequencer-Pad.mmp in Resources */,
-				DCD8DF6917330C4700767321 /* MMPExamples-Sequencer.mmp in Resources */,
-				DCD8DF6A17330C4700767321 /* MMPExamples-Sequencer.pd in Resources */,
-				DCD8DF6B17330C4700767321 /* MMPExamples-Vocoder-ip5.mmp in Resources */,
-				DCD8DF6C17330C4700767321 /* MMPExamples-Vocoder-Pad.mmp in Resources */,
-				DCD8DF6D17330C4700767321 /* MMPExamples-Vocoder.mmp in Resources */,
-				DCD8DF6E17330C4700767321 /* MMPExamples-Vocoder.pd in Resources */,
 				DCB5B95618889355003E6C2C /* Icon.png in Resources */,
 				DCD8DF6F17330C4700767321 /* MMPTutorial0-HelloSine-ip5.mmp in Resources */,
 				DCD8DF7017330C4700767321 /* MMPTutorial0-HelloSine-Pad.mmp in Resources */,
 				DCD8DF7117330C4700767321 /* MMPTutorial0-HelloSine.mmp in Resources */,
 				DCD8DF7217330C4700767321 /* MMPTutorial0-HelloSine.pd in Resources */,
-				DCD8DF7317330C4700767321 /* MMPTutorial1-GUI-ip5.mmp in Resources */,
-				DCD8DF7417330C4700767321 /* MMPTutorial1-GUI-Pad.mmp in Resources */,
-				DCD8DF7517330C4700767321 /* MMPTutorial1-GUI.mmp in Resources */,
-				DC89675F18870F7D00750137 /* MMPExamples-LANdini.mmp in Resources */,
-				DCD8DF7617330C4700767321 /* MMPTutorial1-GUI.pd in Resources */,
 				DC6A9FF61878F88900A7585A /* README.markdown in Resources */,
-				DCD8DF7717330C4700767321 /* MMPTutorial2-Input-ip5.mmp in Resources */,
-				DCD8DF7817330C4700767321 /* MMPTutorial2-Input-Pad.mmp in Resources */,
-				90BE0D631880A9EF009446AD /* MMPTutorial6-2DGraphics-ip5.mmp in Resources */,
-				DCD8DF7917330C4700767321 /* MMPTutorial2-Input.mmp in Resources */,
-				DCD8DF7A17330C4700767321 /* MMPTutorial2-Input.pd in Resources */,
-				DCD8DF7B17330C4700767321 /* MMPTutorial3-Hardware-ip5.mmp in Resources */,
-				DCD8DF7C17330C4700767321 /* MMPTutorial3-Hardware-Pad.mmp in Resources */,
 				DCB5B95518889355003E6C2C /* Icon-72@2x.png in Resources */,
-				DCD8DF7D17330C4700767321 /* MMPTutorial3-Hardware.mmp in Resources */,
-				DCD8DF7E17330C4700767321 /* MMPTutorial3-Hardware.pd in Resources */,
-				DCD8DF7F17330C4700767321 /* MMPTutorial4-Networking-ip5.mmp in Resources */,
-				DC89675D18870F7D00750137 /* MMPExamples-LANdini.pd in Resources */,
-				DCD8DF8017330C4700767321 /* MMPTutorial4-Networking-Pad.mmp in Resources */,
-				DCD8DF8117330C4700767321 /* MMPTutorial4-Networking.mmp in Resources */,
 				DCEF4F2C188ED1CD00D6EE54 /* SettingsViewController~iphone.xib in Resources */,
-				DC89676018870F7D00750137 /* MMPExamples-LANdini-ip5.mmp in Resources */,
-				DC89675E18870F7D00750137 /* MMPExamples-LANdini-Pad.mmp in Resources */,
-				90BE0D641880A9EF009446AD /* MMPTutorial6-2DGraphics.mmp in Resources */,
-				F94958DC18D1223B00C8876F /* MMPExamples-Arp-ip5.mmp in Resources */,
 				DCB5B95718889355003E6C2C /* Icon@2x.png in Resources */,
 				DCB5B95418889355003E6C2C /* Icon-72.png in Resources */,
-				DCD8DF8217330C4700767321 /* MMPTutorial4-Networking.pd in Resources */,
-				DCD8DF8317330C4700767321 /* MMPTutorial5-Files-ip5.mmp in Resources */,
-				DCD8DF8417330C4700767321 /* MMPTutorial5-Files-Pad.mmp in Resources */,
-				DCD8DF8517330C4700767321 /* MMPTutorial5-Files.mmp in Resources */,
-				DCD8DF8617330C4700767321 /* MMPTutorial5-Files.pd in Resources */,
-				F94958DE18D1223B00C8876F /* MMPExamples-Arp.mmp in Resources */,
 				DC7DD717188F2A660068BA66 /* SettingsViewController~ipad.xib in Resources */,
-				DCD8DF8717330C4700767321 /* vocod_channel.pd in Resources */,
-				DCD8DF8817330C4700767321 /* Welcome-ip5.mmp in Resources */,
-				DCD8DF8917330C4700767321 /* Welcome-Pad.mmp in Resources */,
-				DCD8DF8A17330C4700767321 /* Welcome.mmp in Resources */,
-				DCD8DF8B17330C4700767321 /* Welcome.pd in Resources */,
 				DC5957311733805000CEBECC /* infoicon_100x100.png in Resources */,
 				DC5957321733805000CEBECC /* title_cross_30x30.png in Resources */,
 				DC5957331733805000CEBECC /* title_resistor_13x40.png in Resources */,
@@ -1282,10 +1058,6 @@
 				DC59573D1733805000CEBECC /* titlepad_ring_185x110.png in Resources */,
 				DC59573E1733805000CEBECC /* titlepad_text_46x142.png in Resources */,
 				DC59573F1733805000CEBECC /* titlepad_text_142x46.png in Resources */,
-				DC456B08176C1A700080BB33 /* MMPExamples-GPS-ip5.mmp in Resources */,
-				DC456B09176C1A700080BB33 /* MMPExamples-GPS-Pad.mmp in Resources */,
-				DC456B0A176C1A700080BB33 /* MMPExamples-GPS.mmp in Resources */,
-				DC456B0B176C1A700080BB33 /* MMPExamples-GPS.pd in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1301,7 +1073,6 @@
 				DC233DC61655EDF500AC01C5 /* ViewController.m in Sources */,
 				DC3DB0A11668C3840056DF1A /* SettingsViewController.m in Sources */,
 				DC03516A16AA67E600708C0D /* AlertHelper.m in Sources */,
-				DC035A1D16D96FC600F4FA62 /* SplashViewController.m in Sources */,
 				DC0FC7F8172D846900E895C3 /* AudioHelpers.m in Sources */,
 				DC0FC7F9172D846900E895C3 /* PdAudioController.m in Sources */,
 				DC0FC7FA172D846900E895C3 /* PdAudioUnit.m in Sources */,
@@ -1517,7 +1288,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: daniel Iglesia (6Y3ENEJPL8)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "MobMuPlat/MobMuPlat-Prefix.pch";
@@ -1528,7 +1299,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/daniglesia/Downloads/Audiobus-SDK-1",
 					/Users/diglesia/Source/MobMuPlat,
 				);
 				ONLY_ACTIVE_ARCH = NO;
@@ -1539,7 +1309,7 @@
 					"-DPD",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "996CD52E-7925-4976-8723-140FD11F3470";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = "armv7 armv7s";
@@ -1554,7 +1324,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: daniel Iglesia (RJC7S963JF)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "MobMuPlat/MobMuPlat-Prefix.pch";
@@ -1565,7 +1335,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/daniglesia/Downloads/Audiobus-SDK-1",
 					/Users/diglesia/Source/MobMuPlat,
 				);
 				ONLY_ACTIVE_ARCH = NO;
