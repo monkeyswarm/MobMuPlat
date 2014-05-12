@@ -1,0 +1,319 @@
+//
+//  MeTable.m
+//  MobMuPlat
+//
+//  Created by diglesia on 4/24/14.
+//  Copyright (c) 2014 Daniel Iglesia. All rights reserved.
+//
+
+#import "MeTable.h"
+
+@implementation MeTable {
+  CGContextRef _cacheContext;
+  CGContextRef _cacheContextSelection;
+  float fR,fG,fB,fA;//FRGBA
+  float sR,sG,sB,sA;//FRGBA
+  NSUInteger tableSize;
+  float *tableData;
+  
+  CGPoint touchDownPoint;
+  CGPoint lastPoint;//not normalized
+  int lastTableIndex;
+  //int touchDownTableIndex;
+  BOOL _tableSeemsBad;
+}
+
+- (id)initWithFrame:(CGRect)frame
+{
+  self = [super initWithFrame:frame];
+  if (self) {
+    self.userInteractionEnabled = NO;//until table load
+    self.selectionColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:.5];
+    // Initialization code
+    _cacheContext = CGBitmapContextCreate (nil, (int)frame.size.width, (int)frame.size.height, 8, 0, CGColorSpaceCreateDeviceRGB(),  kCGImageAlphaPremultipliedLast  );
+    //CGContextSetRGBFillColor(_cacheContext, 1., 0., 1., 1.);
+    CGContextSetLineWidth(_cacheContext, 2);
+    _cacheContextSelection = CGBitmapContextCreate (nil, (int)frame.size.width, (int)frame.size.height, 8, 0, CGColorSpaceCreateDeviceRGB(),  kCGImageAlphaPremultipliedLast  );
+    //CGContextSetRGBFillColor(_cacheContextSelection, 1., 1., 1., .5);
+    
+   
+  }
+  return self;
+}
+
+-(void)loadTable {
+  [self copyFromPDAndDraw];
+}
+
+-(void)copyFromPDAndDraw{//
+  
+  int newSize = [PdBase arraySizeForArrayNamed:self.address];
+  if(newSize!=tableSize){//new, or resize if needed
+    tableSize = newSize;
+    if(tableData)free(tableData);
+    tableData = (float*)malloc(tableSize*sizeof(float));
+    if(!tableData){//bad table - no good way to test for no table of "name"
+      free(tableData);
+      _tableSeemsBad = YES;
+      return;
+    }
+    _tableSeemsBad = NO;
+    self.userInteractionEnabled = YES;
+  }
+  //but copy even if no resize
+  [PdBase copyArrayNamed:self.address withOffset:0 toArray:tableData count:tableSize];
+  
+  if(!_tableSeemsBad)[self draw];
+}
+
+-(void)draw{
+  [self drawFromIndex:0 toIndex:tableSize-1];
+}
+
+-(void)drawFromIndex:(int)indexA toIndex:(int)indexB {
+  CGContextSetRGBStrokeColor(_cacheContext, fR,fG,fB,fA);
+  CGContextMoveToPoint(_cacheContext, 0,0);
+	int padding = 3;
+  int indexDrawPointA = (int)((float)MIN(indexA,indexB)/tableSize*self.frame.size.width)-padding;
+  indexDrawPointA = MIN(MAX(indexDrawPointA,0),self.frame.size.width-1);
+  int indexDrawPointB = (int)((float)(MAX(indexA,indexB)+1)/(tableSize)*self.frame.size.width)+padding;
+  indexDrawPointB = MIN(MAX(indexDrawPointB,0),self.frame.size.width-1);
+  //NSLog(@"index AB drawpoint AB %d %d %d %d", indexA, indexB, indexDrawPointA, indexDrawPointB);
+  CGRect rect = CGRectMake(indexDrawPointA, 0, indexDrawPointB-indexDrawPointA, self.frame.size.height);
+  CGContextClearRect(_cacheContext, rect);
+  
+  
+  for(int i=indexDrawPointA; i<=indexDrawPointB; i++){
+    float x = (float)i;//(float)i/self.frame.size.width;
+    int index = (int)((float)i/self.frame.size.width*tableSize);
+    
+    //if touch down one point, make sure that point is represented in redraw and not skipped over
+    int prevIndex = (int)((float)(i-1)/self.frame.size.width*tableSize);
+    if(indexA==indexB && indexA<index && indexA>prevIndex) index = indexA;
+    
+    float y = tableData[index];
+    float unflippedY = (1-((y+1)/2)) *self.frame.size.height;
+    //NSLog(@"i %d x %.2f index %d y %.2f unflip %.2f", i,x,index,y, unflippedY);
+    if(i==indexDrawPointA){
+      CGContextMoveToPoint(_cacheContext, x,unflippedY);
+    }
+    else {
+      CGContextAddLineToPoint(_cacheContext, x, unflippedY);
+      CGContextMoveToPoint(_cacheContext, x,unflippedY);
+    }
+  }
+  
+  
+  
+  CGContextStrokePath(_cacheContext);
+  /*
+  CGRect newRect = CGRectMake(MIN(penPoint.x, x)-penWidth, MIN(penPoint.y, y)-penWidth, fabs(penPoint.x-x)+(2*penWidth), fabs(penPoint.y-y)+(2*penWidth));
+  [self setNeedsDisplayInRect:newRect];*/
+  [self setNeedsDisplay ];//]InRect:rect];
+}
+
+-(void)drawHighlightBetween:(CGPoint)pointA and:(CGPoint)pointB{
+  CGContextSetRGBFillColor(_cacheContextSelection, sR,sG,sB,sA);
+	CGRect newRect = CGRectMake( MIN(pointA.x,pointB.x), 0, MAX(fabsf(pointB.x-pointA.x),2), self.frame.size.height);
+  CGContextClearRect(_cacheContextSelection, newRect);
+  CGContextFillRect(_cacheContextSelection, newRect);
+  [self setNeedsDisplayInRect:newRect];
+}
+
+-(void)setColor:(UIColor *)color{
+  [super setColor:color];
+  self.backgroundColor = color;
+  
+}
+
+-(void)setHighlightColor:(UIColor *)highlightColor{
+  [super setHighlightColor:highlightColor];
+  
+  CGColorRef color = [highlightColor CGColor];
+  int numComponents = CGColorGetNumberOfComponents(color);
+  
+  if (numComponents == 4)
+  {
+    const CGFloat *components = CGColorGetComponents(color);
+    fR = components[0];
+    fG = components[1];
+    fB = components[2];
+    fA = components[3];
+  }
+  
+}
+
+-(void)setSelectionColor:(UIColor *)selectionColor{
+  _selectionColor = selectionColor;
+  
+  CGColorRef color = [_selectionColor CGColor];
+  int numComponents = CGColorGetNumberOfComponents(color);
+  
+  if (numComponents == 4)
+  {
+    const CGFloat *components = CGColorGetComponents(color);
+    sR = components[0];
+    sG = components[1];
+    sB = components[2];
+    sA = components[3];
+  }
+  
+}
+
+- (void)drawRect:(CGRect)rect {
+  
+  CGContextRef context = UIGraphicsGetCurrentContext();
+  
+  CGImageRef cacheImageSelection = CGBitmapContextCreateImage(_cacheContextSelection);
+  CGContextDrawImage(context, self.bounds, cacheImageSelection);
+  CGImageRelease(cacheImageSelection);
+  
+  CGImageRef cacheImage = CGBitmapContextCreateImage(_cacheContext);
+  CGContextDrawImage(context, self.bounds, cacheImage);
+  CGImageRelease(cacheImage);
+  
+}
+
+//
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+  lastPoint = [[touches anyObject] locationInView:self];
+  touchDownPoint = lastPoint;
+  if(_mode==0){
+    //float normalizedX = touchDownPoint.x/self.frame.size.width;
+    //touchDownTableIndex = (int)(normalizedX*tableSize);
+    //NSLog(@"touchDownTableIndex %d", touchDownTableIndex);
+    //clear prev selection
+    CGContextClearRect(_cacheContextSelection, self.bounds);
+    [self setNeedsDisplay];
+    [self drawHighlightBetween:lastPoint and:lastPoint];//sliver
+   
+  } else if (_mode==1){//draw mode
+    float normalizedX = lastPoint.x/self.frame.size.width;
+    int touchDownTableIndex = (int)(normalizedX*tableSize);
+    lastTableIndex = touchDownTableIndex;
+    float normalizedY = lastPoint.y/self.frame.size.height;//change to -1 to 1
+    float flippedY = (1-normalizedY)*2-1;
+    //NSLog(@"touchDownTableIndex %d", touchDownTableIndex);
+    
+    tableData[touchDownTableIndex] = flippedY;//check bounds
+    [self drawFromIndex:touchDownTableIndex toIndex:touchDownTableIndex];
+    
+    //make one-element array to send in
+    float* touchValArray = (float*)malloc(1*sizeof(float));
+    touchValArray[0] = flippedY;
+    [PdBase copyArray:touchValArray toArrayNamed:self.address withOffset:touchDownTableIndex count:1];//put this in draw?
+    free(touchValArray);
+    
+  }
+	/*CGPoint point = [[touches anyObject] locationInView:self];
+  float valX = point.x/self.frame.size.width;
+	float valY = point.y/self.frame.size.height;
+  if(valX>1)valX=1; if(valX<0)valX=0;
+  if(valY>1)valY=1; if(valY<0)valY=0;
+  
+  [self sendValueState:1.f X:valX Y:valY];*/
+}
+
+-(void)sendRangeMessageFromIndex:(int)indexA toIndex:(int)indexB {
+  [self.controlDelegate sendGUIMessageArray:[NSArray arrayWithObjects:self.address, @"range", [NSNumber numberWithInt:indexA], [NSNumber numberWithInt:indexB], nil]];
+}
+
+-(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
+  CGPoint dragPoint = [[touches anyObject] locationInView:self];
+  
+  if(_mode==0){
+    
+    float normalizedXA = touchDownPoint.x/self.frame.size.width;
+    normalizedXA = MAX(MIN(normalizedXA,1),0);
+    int dragTableIndexA = (int)(normalizedXA*tableSize);
+    
+    float normalizedXB = dragPoint.x/self.frame.size.width;
+    normalizedXB = MAX(MIN(normalizedXB,1),0);
+    int dragTableIndexB = (int)(normalizedXB*tableSize);
+    
+    [self sendRangeMessageFromIndex:MIN(dragTableIndexA,dragTableIndexB) toIndex:MAX(dragTableIndexA,dragTableIndexB)];
+    
+    [self drawHighlightBetween:touchDownPoint and:dragPoint];
+    //touchDownTableIndex = (int)(normalizedX*tableSize);
+    //NSLog(@"touchDownTableIndex %d", touchDownTableIndex);
+    
+    
+
+  } else if(_mode==1){ //draw mode
+    float normalizedX = dragPoint.x/self.frame.size.width;
+    normalizedX = MAX(MIN(normalizedX,1),0);
+    int dragTableIndex = (int)(normalizedX*tableSize);
+    float normalizedY = dragPoint.y/self.frame.size.height;//change to -1 to 1
+    normalizedY = MAX(MIN(normalizedY,1),0);
+    float flippedY = (1-normalizedY)*2-1;
+    //NSLog(@"dragTableIndex %d", dragTableIndex);
+    
+    //compute size, including self but not prev
+    int traversedElementCount = abs(dragTableIndex-lastTableIndex);
+    if(traversedElementCount==0)traversedElementCount=1;
+    float* touchValArray = (float*)malloc(traversedElementCount*sizeof(float));
+    
+    tableData[dragTableIndex] = flippedY;
+    //just one
+    if(traversedElementCount==1) {
+      
+      [self drawFromIndex:dragTableIndex toIndex:dragTableIndex];
+      touchValArray[0] = flippedY;
+      [PdBase copyArray:touchValArray toArrayNamed:self.address withOffset:dragTableIndex count:1];
+      free(touchValArray);
+    } else {
+      //NSLog(@"multi!");
+      int minIndex = MIN(lastTableIndex, dragTableIndex);
+      int maxIndex = MAX(lastTableIndex, dragTableIndex);
+      
+      float minValue = tableData[minIndex];
+      float maxValue = tableData[maxIndex];
+      //NSLog(@"skip within %d (%.2f) to %d(%.2f)", minTouchIndex, [[_valueArray objectAtIndex:minTouchIndex] floatValue], maxTouchIndex, [[_valueArray objectAtIndex:maxTouchIndex] floatValue]);
+      for(int i=minIndex+1;i<=maxIndex;i++){
+        float percent = ((float)(i-minIndex))/(maxIndex-minIndex);
+        float interpVal = (maxValue - minValue) * percent  + minValue ;
+        //NSLog(@"%d %.2f %.2f", i, percent, interpVal);
+        tableData[i]=interpVal;
+        touchValArray[i-(minIndex+1)]=interpVal;
+      }
+      [self drawFromIndex:minIndex toIndex:maxIndex];
+      [PdBase copyArray:touchValArray toArrayNamed:self.address withOffset:minIndex+1 count:traversedElementCount];
+      free(touchValArray);
+    }
+    
+  
+    lastTableIndex = dragTableIndex;
+  }
+
+  lastPoint = dragPoint;
+  
+	/*CGPoint point = [[touches anyObject] locationInView:self];
+  float valX = point.x/self.frame.size.width;
+	float valY = point.y/self.frame.size.height;
+  if(valX>1)valX=1; if(valX<0)valX=0;
+  if(valY>1)valY=1; if(valY<0)valY=0;
+  
+  [self sendValueState:2.f X:valX Y:valY];*/
+}
+
+/*-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
+ 
+}
+-(void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event{
+	[self touchesEnded:touches withEvent:event];
+}*/
+
+
+
+
+-(void)receiveList:(NSArray *)inArray{
+  if ([inArray count]==1 && [[inArray objectAtIndex:0] isKindOfClass:[NSString class]] && [[inArray objectAtIndex:0] isEqualToString:@"refresh"] ){
+    
+    [self copyFromPDAndDraw];//add range arguments?
+    //[self draw];
+  }
+}
+
+
+
+@end

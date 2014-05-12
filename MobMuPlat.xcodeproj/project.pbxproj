@@ -248,6 +248,7 @@
 		F94958DE18D1223B00C8876F /* MMPExamples-Arp.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F94958DA18D1223B00C8876F /* MMPExamples-Arp.mmp */; };
 		F94958DF18D1223B00C8876F /* MMPExamples-Arp.pd in Resources */ = {isa = PBXBuildFile; fileRef = F94958DB18D1223B00C8876F /* MMPExamples-Arp.pd */; };
 		F94FB53918F596AB003BFB18 /* MenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F94FB53818F596AB003BFB18 /* MenuViewController.m */; };
+		F95C52021909B1230074E0A6 /* MeTable.m in Sources */ = {isa = PBXBuildFile; fileRef = F95C52011909B1230074E0A6 /* MeTable.m */; };
 		F9967C3718F8C54D008E3828 /* MenuNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9967C3618F8C54D008E3828 /* MenuNavigationController.m */; };
 		F9DE7DC018F49D62007B9E45 /* MeMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = F9DE7DBF18F49D62007B9E45 /* MeMenu.m */; };
 /* End PBXBuildFile section */
@@ -574,6 +575,8 @@
 		F94958DB18D1223B00C8876F /* MMPExamples-Arp.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Arp.pd"; path = "patches/MMPExamples-Arp.pd"; sourceTree = "<group>"; };
 		F94FB53718F596AB003BFB18 /* MenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuViewController.h; path = gui/MenuViewController.h; sourceTree = "<group>"; };
 		F94FB53818F596AB003BFB18 /* MenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MenuViewController.m; path = gui/MenuViewController.m; sourceTree = "<group>"; };
+		F95C52001909B1230074E0A6 /* MeTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeTable.h; path = gui/MeTable.h; sourceTree = "<group>"; };
+		F95C52011909B1230074E0A6 /* MeTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeTable.m; path = gui/MeTable.m; sourceTree = "<group>"; };
 		F9967C3518F8C54D008E3828 /* MenuNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuNavigationController.h; path = gui/MenuNavigationController.h; sourceTree = "<group>"; };
 		F9967C3618F8C54D008E3828 /* MenuNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MenuNavigationController.m; path = gui/MenuNavigationController.m; sourceTree = "<group>"; };
 		F9DE7DBE18F49D62007B9E45 /* MeMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeMenu.h; path = gui/MeMenu.h; sourceTree = "<group>"; };
@@ -923,6 +926,8 @@
 				F94FB53818F596AB003BFB18 /* MenuViewController.m */,
 				F9967C3518F8C54D008E3828 /* MenuNavigationController.h */,
 				F9967C3618F8C54D008E3828 /* MenuNavigationController.m */,
+				F95C52001909B1230074E0A6 /* MeTable.h */,
+				F95C52011909B1230074E0A6 /* MeTable.m */,
 			);
 			name = gui;
 			sourceTree = "<group>";
@@ -1426,6 +1431,7 @@
 				DCA9B9471733103B000E59DD /* zip.c in Sources */,
 				DC59570A1733800500CEBECC /* MeButton.m in Sources */,
 				DC59570B1733800500CEBECC /* MeControl.m in Sources */,
+				F95C52021909B1230074E0A6 /* MeTable.m in Sources */,
 				DC59570C1733800500CEBECC /* MeGrid.m in Sources */,
 				DC59570D1733800500CEBECC /* MeKnob.m in Sources */,
 				DC59570E1733800500CEBECC /* MeLabel.m in Sources */,

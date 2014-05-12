@@ -40,6 +40,7 @@
 #import "MeMultiTouch.h"
 #import "MeUnknown.h"
 #import "MeMenu.h"
+#import "MeTable.h"
 
 #import "AudioHelpers.h"
 
@@ -882,6 +883,13 @@ extern void sigmund_tilde_setup(void);
           if([currDict objectForKey:@"title"])
             [(MeMenu*)currObject setTitleString:[currDict objectForKey:@"title"] ];
         }
+        else if([newObjectClass isEqualToString:@"MMPTable"]){
+          currObject = [[MeTable alloc] initWithFrame:frame];
+          if([currDict objectForKey:@"mode"])
+            [(MeTable*)currObject setMode:[[currDict objectForKey:@"mode"] intValue]];
+          if([currDict objectForKey:@"selectionColor"])
+            [(MeTable*)currObject setSelectionColor:[MeControl colorFromRGBAArray:[currDict objectForKey:@"selectionColor"]]];
+        }
         else{//unkown
             currObject = [[MeUnknown alloc] initWithFrame:frame];
             [(MeUnknown*)currObject setWarning:newObjectClass];
@@ -938,6 +946,21 @@ extern void sigmund_tilde_setup(void);
                                   otherButtonTitles:nil];
             [alert show];
             
+        } else {//success
+          //refresh tables
+          //TODO optimize! make an array of tables only
+          NSMutableSet* addedTableNamesSet = [[NSMutableSet alloc] init];
+          for(MeControl *control in allGUIControl){
+            if ([control isKindOfClass:[MeTable class]]) {
+              // use set to quash multiple loads of same table/address
+              if (![addedTableNamesSet containsObject:control.address]) {
+                [(MeTable*)control loadTable];
+                [addedTableNamesSet addObject:control.address];
+              }
+
+            }
+          }
+        
         }
     }
     else{//if no JSON entry found for file, say so
