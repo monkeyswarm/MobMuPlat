@@ -28,7 +28,7 @@ typedef enum{
 @interface SettingsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, LANdiniUserStateDelegate>{
     canvasType hardwareCanvasType;
     
-    NSArray *MMPFiles, *allFiles;
+    NSMutableArray *MMPFiles, *allFiles;
     BOOL mmpOrAll;
 
     NSString* consoleTextString;

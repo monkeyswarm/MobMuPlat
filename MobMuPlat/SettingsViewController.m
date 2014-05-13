@@ -41,7 +41,7 @@
 }
 
 //return a list of items in documents. if argument==NO, get everything, if YES, only get .mmp files
-+ (NSArray *)getDocumentsOnlyMMP:(BOOL)onlyMMP{
++ (NSMutableArray *)getDocumentsOnlyMMP:(BOOL)onlyMMP{
     
     NSMutableArray *retval = [[NSMutableArray alloc]init];
     
@@ -645,7 +645,59 @@ BOOL LANdiniSwitchBool;
     }
 }
 
+-(void)deleteHelper:(NSIndexPath*)indexPath {
+  NSFileManager *fileManager = [NSFileManager defaultManager];
+  NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+  NSString *publicDocumentsDir = [paths objectAtIndex:0];
+  
+  //pull filename from either allFiles or MMPFiles, depending on which list we are looking at
+  NSString* filename = [(mmpOrAll ? allFiles : MMPFiles)objectAtIndex:[indexPath row]];
+  NSString* fullPath = [publicDocumentsDir stringByAppendingPathComponent:filename];
+  //NSString* suffix = [[filename componentsSeparatedByString: @"."] lastObject];
+  
+  if([fileManager fileExistsAtPath:fullPath]){
+    BOOL success = [fileManager removeItemAtPath:fullPath error:nil];
+    if (!success) {
+      UIAlertView *alert = [[UIAlertView alloc]
+                            initWithTitle: @"Hmm"
+                            message: @"Could not delete file from Documents."
+                            delegate: nil
+                            cancelButtonTitle:@"OK"
+                            otherButtonTitles:nil];
+      [alert show];
+
+    } else{//success
+      [(mmpOrAll ? allFiles : MMPFiles) removeObjectAtIndex:[indexPath row]];
+    }
+  }
+  //else error?
+  
+}
+
 //tableView delegate methods
+
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView
+           editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
+  if(tableView==_documentsTableView) return UITableViewCellEditingStyleDelete;
+  else return UITableViewCellEditingStyleNone;
+}
+
+- (void)tableView:(UITableView *)tableView
+    commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
+     forRowAtIndexPath:(NSIndexPath *)indexPath {
+  if (editingStyle == UITableViewCellEditingStyleDelete && tableView==_documentsTableView) {
+    [tableView beginUpdates];
+    
+    [self deleteHelper:indexPath];
+    
+    [tableView deleteRowsAtIndexPaths:@[indexPath]
+                     withRowAnimation:UITableViewRowAnimationFade];
+    [tableView endUpdates];
+  }
+}
+
+
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
     if(tableView==_documentsTableView){
@@ -701,6 +753,20 @@ BOOL LANdiniSwitchBool;
     }
 }
 
+- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+  //if we are looking at MMP files only, then everything is highlightable.
+  if(!mmpOrAll)return YES;
+  
+  UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+  //todo centralize this repeated logic
+  NSString* suffix = [[cell.textLabel.text componentsSeparatedByString: @"."] lastObject];
+  if([suffix isEqualToString:@"mmp"] || [suffix isEqualToString:@"zip"] || [suffix isEqualToString:@"pd"]){
+    return YES;
+  }
+  else return NO;
+}
+
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     if(tableView == _documentsTableView){
         static NSString* CellIdentifier = @"ValueCell";
@@ -716,12 +782,11 @@ BOOL LANdiniSwitchBool;
         NSString* suffix = [[[(mmpOrAll ? allFiles : MMPFiles) objectAtIndex:[indexPath row]] componentsSeparatedByString: @"."] lastObject];
         if([suffix isEqualToString:@"mmp"] || [suffix isEqualToString:@"zip"] || [suffix isEqualToString:@"pd"]){
             cell.textLabel.textColor = [UIColor blackColor];
-            cell.userInteractionEnabled=YES;
+            //cell.userInteractionEnabled=YES;
         }
         else{
             cell.textLabel.textColor = [UIColor grayColor];
-            cell.userInteractionEnabled=NO;
-
+            //cell.userInteractionEnabled=NO;
         }
     
         return cell;
