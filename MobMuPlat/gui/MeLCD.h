@@ -12,7 +12,4 @@
 @interface MeLCD : MeControl
 
 
-@property (nonatomic) int borderThickness;
-
-
 @end
