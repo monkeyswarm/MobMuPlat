@@ -29,14 +29,11 @@
   if (self) {
     self.userInteractionEnabled = NO;//until table load
     self.selectionColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:.5];
-    // Initialization code
-    _cacheContext = CGBitmapContextCreate (nil, (int)frame.size.width, (int)frame.size.height, 8, 0, CGColorSpaceCreateDeviceRGB(),  kCGImageAlphaPremultipliedLast  );
-    //CGContextSetRGBFillColor(_cacheContext, 1., 0., 1., 1.);
-    CGContextSetLineWidth(_cacheContext, 2);
-    _cacheContextSelection = CGBitmapContextCreate (nil, (int)frame.size.width, (int)frame.size.height, 8, 0, CGColorSpaceCreateDeviceRGB(),  kCGImageAlphaPremultipliedLast  );
-    //CGContextSetRGBFillColor(_cacheContextSelection, 1., 1., 1., .5);
     
-   
+    _cacheContext = CGBitmapContextCreate (nil, (int)frame.size.width, (int)frame.size.height, 8, 0, CGColorSpaceCreateDeviceRGB(),  kCGImageAlphaPremultipliedLast  );
+    CGContextSetLineWidth(_cacheContext, 2);
+    _cacheContextSelection = CGBitmapContextCreate (nil, (int)frame.size.width, (int)frame.size.height, 8, 0, CGColorSpaceCreateDeviceRGB(),kCGImageAlphaPremultipliedLast  );
+    
   }
   return self;
 }
@@ -45,7 +42,7 @@
   [self copyFromPDAndDraw];
 }
 
--(void)copyFromPDAndDraw{//
+-(void)copyFromPDAndDraw{
   
   int newSize = [PdBase arraySizeForArrayNamed:self.address];
   if(newSize!=tableSize){//new, or resize if needed
@@ -78,7 +75,7 @@
   indexDrawPointA = MIN(MAX(indexDrawPointA,0),self.frame.size.width-1);
   int indexDrawPointB = (int)((float)(MAX(indexA,indexB)+1)/(tableSize)*self.frame.size.width)+padding;
   indexDrawPointB = MIN(MAX(indexDrawPointB,0),self.frame.size.width-1);
-  //NSLog(@"index AB drawpoint AB %d %d %d %d", indexA, indexB, indexDrawPointA, indexDrawPointB);
+  
   CGRect rect = CGRectMake(indexDrawPointA, 0, indexDrawPointB-indexDrawPointA, self.frame.size.height);
   CGContextClearRect(_cacheContext, rect);
   
@@ -103,13 +100,10 @@
     }
   }
   
-  
-  
   CGContextStrokePath(_cacheContext);
-  /*
-  CGRect newRect = CGRectMake(MIN(penPoint.x, x)-penWidth, MIN(penPoint.y, y)-penWidth, fabs(penPoint.x-x)+(2*penWidth), fabs(penPoint.y-y)+(2*penWidth));
-  [self setNeedsDisplayInRect:newRect];*/
-  [self setNeedsDisplay ];//]InRect:rect];
+  
+  CGRect newRect = CGRectMake(indexDrawPointA, 0, indexDrawPointB,self.frame.size.height);
+  [self setNeedsDisplayInRect:newRect];
 }
 
 -(void)drawHighlightBetween:(CGPoint)pointA and:(CGPoint)pointB{
@@ -205,13 +199,7 @@
     free(touchValArray);
     
   }
-	/*CGPoint point = [[touches anyObject] locationInView:self];
-  float valX = point.x/self.frame.size.width;
-	float valY = point.y/self.frame.size.height;
-  if(valX>1)valX=1; if(valX<0)valX=0;
-  if(valY>1)valY=1; if(valY<0)valY=0;
-  
-  [self sendValueState:1.f X:valX Y:valY];*/
+	
 }
 
 -(void)sendRangeMessageFromIndex:(int)indexA toIndex:(int)indexB {
