@@ -72,6 +72,7 @@
     LANdiniLANManager* llm;
    
     Reachability* reach;
+  int pageCount;
    
 }
 

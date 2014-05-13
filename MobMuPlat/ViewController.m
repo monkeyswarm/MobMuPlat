@@ -602,7 +602,7 @@ extern void sigmund_tilde_setup(void);
     
     //get two necessary layout values from the JSON file
     // page count
-    int pageCount = 1;
+    pageCount = 1;
     if([sceneDict objectForKey:@"pageCount"]){
         pageCount = [[sceneDict objectForKey:@"pageCount"] intValue];
         if(pageCount<=0)pageCount=1;
@@ -978,7 +978,7 @@ extern void sigmund_tilde_setup(void);
     int page = inScrollView.contentOffset.x / inScrollView.frame.size.width;
     [PdBase sendList:[NSArray arrayWithObjects:@"/page", [NSNumber numberWithInt:page], nil] toReceiver:@"fromSystem"];
   }
-  //NSLog(@"scrolled: %d", page);
+  
 }
 
 #pragma mark ControlDelegate
@@ -1161,6 +1161,14 @@ extern void sigmund_tilde_setup(void);
         else if([[list objectAtIndex:0] isEqualToString:@"/getReachability"]){
             NSArray* msgArray=[NSArray arrayWithObjects:@"/reachability", [NSNumber numberWithFloat:[reach isReachable]? 1.0f : 0.0f ], [ViewController fetchSSIDInfo], nil];
             [PdBase sendList:msgArray toReceiver:@"fromSystem"];
+        }
+        else if([[list objectAtIndex:0] isEqualToString:@"/setPage"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+          int page = [[list objectAtIndex:1] intValue];
+          if(page<0)page=0; if (page>pageCount-1)page=pageCount-1;
+          NSLog(@"setting page %d width %2f", page, scrollView.frame.size.width);
+          // WHY DOES THIS BOUNCE US SOMEWHERE ELSE???
+          //[scrollView setContentOffset:CGPointMake(page * scrollView.frame.size.width, 0) animated:YES];
+          [scrollView zoomToRect:CGRectMake(page * scrollView.frame.size.width, 0, scrollView.frame.size.width, scrollView.frame.size.height) animated:YES];
         }
 
     }
