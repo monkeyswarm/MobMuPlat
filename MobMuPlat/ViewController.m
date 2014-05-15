@@ -856,6 +856,7 @@ extern void sigmund_tilde_setup(void);
         }
         else if([newObjectClass isEqualToString:@"MMPGrid"]){
             currObject = [[MeGrid alloc]initWithFrame:frame];
+            if([currDict objectForKey:@"mode"])[(MeGrid*)currObject setMode:[[currDict objectForKey:@"mode"] intValue]];//needs to be done before setting dim.
             if([currDict objectForKey:@"dim"]){
                 NSArray* dimArray =[currDict objectForKey:@"dim"];
                 [(MeGrid*)currObject setDimX: [[dimArray objectAtIndex:0]intValue] Y:[[dimArray objectAtIndex:1]intValue] ];
@@ -949,14 +950,11 @@ extern void sigmund_tilde_setup(void);
         } else {//success
           //refresh tables
           //TODO optimize! make an array of tables only
-          NSMutableSet* addedTableNamesSet = [[NSMutableSet alloc] init];
           for(MeControl *control in allGUIControl){
             if ([control isKindOfClass:[MeTable class]]) {
-              // use set to quash multiple loads of same table/address
-              if (![addedTableNamesSet containsObject:control.address]) {
+              // use set to quash multiple loads of same table/address - not needed in app, but needed in editor.
                 [(MeTable*)control loadTable];
-                [addedTableNamesSet addObject:control.address];
-              }
+                
 
             }
           }

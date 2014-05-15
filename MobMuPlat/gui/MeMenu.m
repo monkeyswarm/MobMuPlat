@@ -30,7 +30,7 @@
 
 @implementation MeMenu
 
-static NSString *CellIdentifier = @"Cell";
+static NSString *CellIdentifier = @"MenuCell";
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -120,16 +120,15 @@ static NSString *CellIdentifier = @"Cell";
   return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
   // Return the number of rows in the section.
   return [_dataArray count];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
   
-  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+  //still supporting ios5, so not yet: [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
   
   // Configure the cell...
   [cell.textLabel setText:[_dataArray objectAtIndex:indexPath.row]];

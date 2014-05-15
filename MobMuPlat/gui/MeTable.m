@@ -27,6 +27,7 @@
 {
   self = [super initWithFrame:frame];
   if (self) {
+    self.address = @"/unnamedTable";
     self.userInteractionEnabled = NO;//until table load
     self.selectionColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:.5];
     

@@ -27,6 +27,10 @@
 
 @implementation SettingsViewController
 @synthesize delegate;
+static NSString *documentsTableCellIdentifier = @"documentsTableCell";
+static NSString *midiTableCellIdentifier = @"midiTableCell";
+static NSString *landiniTableCellIdentifier = @"landiniTableCell";
+
 
 //what kind of device am I one? iphone 3.5", iphone 4", or ipad
 +(canvasType)getCanvasType{
@@ -769,11 +773,10 @@ BOOL LANdiniSwitchBool;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     if(tableView == _documentsTableView){
-        static NSString* CellIdentifier = @"ValueCell";
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:documentsTableCellIdentifier];
     
         if (cell == nil) {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:documentsTableCellIdentifier];
             if (hardwareCanvasType==canvasTypeIPad)cell.textLabel.font=[UIFont systemFontOfSize:32];
             else cell.textLabel.font=[UIFont systemFontOfSize:16];
         }
@@ -795,10 +798,10 @@ BOOL LANdiniSwitchBool;
     else if (tableView==_midiSourceTableView){
         PGMidiConnection* currSource = [[[self.audioDelegate midi] sources] objectAtIndex: [indexPath indexAtPosition:1]];
 		NSString* currMidiSourceName = currSource.name;
-		UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:currMidiSourceName];
+		UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:midiTableCellIdentifier];
 		
         if(cell==nil){
-			cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:currMidiSourceName] ;
+			cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:midiTableCellIdentifier] ;
 			
 			if (hardwareCanvasType==canvasTypeIPad)cell.textLabel.font=[UIFont systemFontOfSize:24];
             else cell.textLabel.font=[UIFont systemFontOfSize:12];
@@ -810,10 +813,10 @@ BOOL LANdiniSwitchBool;
     else if (tableView==_midiDestinationTableView){
         PGMidiConnection* currDestination = [[[self.audioDelegate midi] destinations] objectAtIndex: [indexPath indexAtPosition:1]];
 		NSString* currMidiDestName = currDestination.name;
-		UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:currMidiDestName];
+		UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:midiTableCellIdentifier];
 		
         if(cell==nil){
-			cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:currMidiDestName] ;
+			cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:midiTableCellIdentifier] ;
 			
 			if (hardwareCanvasType==canvasTypeIPad)cell.textLabel.font=[UIFont systemFontOfSize:24];
             else cell.textLabel.font=[UIFont systemFontOfSize:12];
@@ -824,18 +827,17 @@ BOOL LANdiniSwitchBool;
     }
     
     else /*if (tableView==_LANdiniUserTableView)*/{
-        UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"LANdiniUserCell"];
-		LANdiniUser* user = [_LANdiniUserArray objectAtIndex:[indexPath row]];
+      UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:landiniTableCellIdentifier];
+      LANdiniUser* user = [_LANdiniUserArray objectAtIndex:[indexPath row]];
         
-        if(cell==nil){
-			cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"LANdiniUserCell"] ;
-			if (hardwareCanvasType==canvasTypeIPad)cell.textLabel.font=[UIFont systemFontOfSize:24];
-            else cell.textLabel.font=[UIFont systemFontOfSize:12];
-		}
-        [cell textLabel].text=[NSString stringWithFormat:@"%@ - %@", user.name, user.ip];
-		return cell;
+      if(cell==nil){
+			  cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:landiniTableCellIdentifier] ;
+			  if (hardwareCanvasType==canvasTypeIPad)cell.textLabel.font=[UIFont systemFontOfSize:24];
+        else cell.textLabel.font=[UIFont systemFontOfSize:12];
+      }
+      [cell textLabel].text=[NSString stringWithFormat:@"%@ - %@", user.name, user.ip];
+      return cell;
     }
-
 }
 
 #pragma mark LANdiniUserDelegate - can be on non-main threads
