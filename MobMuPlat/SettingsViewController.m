@@ -868,6 +868,15 @@ BOOL LANdiniSwitchBool;
 # pragma mark AudioBus
 
 - (void)connectionsChanged:(NSNotification*)notification {
+  /*TODO
+  // Cancel any scheduled shutdown
+  [NSObject cancelPreviousPerformRequestsWithTarget:_audioEngine selector:@selector(stop) object:nil];
+  if ( !_audiobusController.connected && _audioEngine.running
+      && [[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground ) {
+    // Shut down after 10 seconds if we disconnected while in the background
+    [_audioEngine performSelector:@selector(stop) withObject:nil afterDelay:10.0];
+  }*/
+
   if([self.audioDelegate respondsToSelector:@selector(isAudioBusConnected)]){
     if([self.audioDelegate isAudioBusConnected]) {
       _rateSeg.enabled=NO;
