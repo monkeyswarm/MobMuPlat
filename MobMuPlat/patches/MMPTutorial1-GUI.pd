@@ -69,6 +69,7 @@
 #X msg 612 386 list /myMenu this is a list of strings defined in the
 PureData patch;
 #X obj 607 644 table /myTable 500;
+#X msg 749 624 list /myTable refresh;
 #X connect 0 0 55 0;
 #X connect 1 0 5 0;
 #X connect 1 1 6 0;
@@ -133,3 +134,4 @@ PureData patch;
 #X connect 58 0 61 0;
 #X connect 61 0 60 0;
 #X connect 62 0 53 0;
+#X connect 64 0 60 0;

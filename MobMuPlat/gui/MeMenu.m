@@ -18,19 +18,16 @@
 
 
 
-@interface MeMenu () {
+
+
+@implementation MeMenu {
   UIButton* theButton;
   UIView* downView;
   MenuViewController* mvc;
   NSMutableArray* _dataArray;
 }
-
-@end
-
-
-@implementation MeMenu
-
 static NSString *CellIdentifier = @"MenuCell";
+
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -97,7 +94,7 @@ static NSString *CellIdentifier = @"MenuCell";
   mvc.tableView.delegate = self;
   mvc.title = _titleString;
   mvc.tableView.backgroundColor = self.controlDelegate.patchBackgroundColor;
-  [mvc.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:CellIdentifier];
+  //once we stop supporting ios5: [mvc.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:CellIdentifier];
   
   //set orientation
   MenuNavigationController* navigationController = [[MenuNavigationController alloc] initWithRootViewController:mvc ];
@@ -130,6 +127,10 @@ static NSString *CellIdentifier = @"MenuCell";
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
   //still supporting ios5, so not yet: [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
   
+  //remove this on stop supporting ios5
+  if (cell == nil) {
+    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+  }
   // Configure the cell...
   [cell.textLabel setText:[_dataArray objectAtIndex:indexPath.row]];
   cell.textLabel.textAlignment = UITextAlignmentCenter;
