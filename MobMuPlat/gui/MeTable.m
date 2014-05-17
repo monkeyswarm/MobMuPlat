@@ -107,12 +107,17 @@
   [self setNeedsDisplayInRect:newRect];
 }
 
+-(void)clearHighlight{
+  CGContextClearRect(_cacheContextSelection, self.bounds);
+  [self setNeedsDisplay];
+}
+
 -(void)drawHighlightBetween:(CGPoint)pointA and:(CGPoint)pointB{
   CGContextSetRGBFillColor(_cacheContextSelection, sR,sG,sB,sA);
 	CGRect newRect = CGRectMake( MIN(pointA.x,pointB.x), 0, MAX(fabsf(pointB.x-pointA.x),2), self.frame.size.height);
-  CGContextClearRect(_cacheContextSelection, newRect);
+  CGContextClearRect(_cacheContextSelection, self.bounds);//todo could optimize by computing what needs to be cleared
   CGContextFillRect(_cacheContextSelection, newRect);
-  [self setNeedsDisplayInRect:newRect];
+  [self setNeedsDisplay];
 }
 
 -(void)setColor:(UIColor *)color{
@@ -276,30 +281,18 @@
 
   lastPoint = dragPoint;
   
-	/*CGPoint point = [[touches anyObject] locationInView:self];
-  float valX = point.x/self.frame.size.width;
-	float valY = point.y/self.frame.size.height;
-  if(valX>1)valX=1; if(valX<0)valX=0;
-  if(valY>1)valY=1; if(valY<0)valY=0;
-  
-  [self sendValueState:2.f X:valX Y:valY];*/
-}
-
-/*-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
- 
-}
--(void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event{
-	[self touchesEnded:touches withEvent:event];
-}*/
-
+	}
 
 
 
 -(void)receiveList:(NSArray *)inArray{
-  if ([inArray count]==1 && [[inArray objectAtIndex:0] isKindOfClass:[NSString class]] && [[inArray objectAtIndex:0] isEqualToString:@"refresh"] ){
-    
-    [self copyFromPDAndDraw];//add range arguments?
-    //[self draw];
+  if ([inArray count]==1 && [[inArray objectAtIndex:0] isKindOfClass:[NSString class]] && [[inArray objectAtIndex:0] isEqualToString:@"refresh"]) {
+      [self copyFromPDAndDraw];//add range arguments?
+  }
+  else if ([inArray count]==1 && [[inArray objectAtIndex:0] isKindOfClass:[NSString class]] && [[inArray objectAtIndex:0] isEqualToString:@"clearSelection"]) {
+    if (_mode==0) {
+      [self clearHighlight];
+    }
   }
 }
 
