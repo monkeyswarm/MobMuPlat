@@ -1186,8 +1186,8 @@ extern void sigmund_tilde_setup(void);
         else if([[list objectAtIndex:0] isEqualToString:@"/setPage"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
           int page = [[list objectAtIndex:1] intValue];
           if(page<0)page=0; if (page>pageCount-1)page=pageCount-1;
-          NSLog(@"setting page %d width %2f", page, scrollView.frame.size.width);
-          // WHY DOES THIS BOUNCE US SOMEWHERE ELSE???
+          //NSLog(@"setting page %d width %2f", page, scrollView.frame.size.width);
+          // WHY DOES THIS BOUNCE US SOMEWHERE ELSE??? could have just been touch
           //[scrollView setContentOffset:CGPointMake(page * scrollView.frame.size.width, 0) animated:YES];
           [scrollView zoomToRect:CGRectMake(page * scrollView.frame.size.width, 0, scrollView.frame.size.width, scrollView.frame.size.height) animated:YES];
         }
