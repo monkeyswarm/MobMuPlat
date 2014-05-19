@@ -17,6 +17,7 @@
 
 @property(nonatomic)int borderThickness;
 @property(nonatomic)int cellPadding;//spacing between cells
+@property(nonatomic)int mode;
 
 
 @end

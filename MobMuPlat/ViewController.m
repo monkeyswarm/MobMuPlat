@@ -40,6 +40,7 @@
 #import "MeMultiTouch.h"
 #import "MeUnknown.h"
 #import "MeMenu.h"
+#import "MeTable.h"
 
 #import "AudioHelpers.h"
 
@@ -236,16 +237,16 @@ extern void sigmund_tilde_setup(void);
     if(!alreadyStartedOnVersion || [alreadyStartedOnVersion boolValue] == NO) {
          NSArray* defaultPatches;
         if(hardwareCanvasType==canvasTypeIPhone3p5Inch ){
-            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine.mmp", @"MMPTutorial1-GUI.mmp", @"MMPTutorial2-Input.mmp", @"MMPTutorial3-Hardware.mmp", @"MMPTutorial4-Networking.mmp",@"MMPTutorial5-Files.mmp",@"MMPExamples-Vocoder.mmp", @"MMPExamples-Motion.mmp", @"MMPExamples-Sequencer.mmp", @"MMPExamples-GPS.mmp", @"MMPTutorial6-2DGraphics.mmp", @"MMPExamples-LANdini.mmp", @"MMPExamples-Arp.mmp", nil];
+            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine.mmp", @"MMPTutorial1-GUI.mmp", @"MMPTutorial2-Input.mmp", @"MMPTutorial3-Hardware.mmp", @"MMPTutorial4-Networking.mmp",@"MMPTutorial5-Files.mmp",@"MMPExamples-Vocoder.mmp", @"MMPExamples-Motion.mmp", @"MMPExamples-Sequencer.mmp", @"MMPExamples-GPS.mmp", @"MMPTutorial6-2DGraphics.mmp", @"MMPExamples-LANdini.mmp", @"MMPExamples-Arp.mmp", @"MMPExamples-TableGlitch.mmp", nil];
         }
         else if (hardwareCanvasType==canvasTypeIPhone4Inch){
-            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine-ip5.mmp", @"MMPTutorial1-GUI-ip5.mmp", @"MMPTutorial2-Input-ip5.mmp", @"MMPTutorial3-Hardware-ip5.mmp", @"MMPTutorial4-Networking-ip5.mmp",@"MMPTutorial5-Files-ip5.mmp", @"MMPExamples-Vocoder-ip5.mmp", @"MMPExamples-Motion-ip5.mmp", @"MMPExamples-Sequencer-ip5.mmp",@"MMPExamples-GPS-ip5.mmp", @"MMPTutorial6-2DGraphics-ip5.mmp", @"MMPExamples-LANdini-ip5.mmp", @"MMPExamples-Arp-ip5.mmp", nil];
+            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine-ip5.mmp", @"MMPTutorial1-GUI-ip5.mmp", @"MMPTutorial2-Input-ip5.mmp", @"MMPTutorial3-Hardware-ip5.mmp", @"MMPTutorial4-Networking-ip5.mmp",@"MMPTutorial5-Files-ip5.mmp", @"MMPExamples-Vocoder-ip5.mmp", @"MMPExamples-Motion-ip5.mmp", @"MMPExamples-Sequencer-ip5.mmp",@"MMPExamples-GPS-ip5.mmp", @"MMPTutorial6-2DGraphics-ip5.mmp", @"MMPExamples-LANdini-ip5.mmp", @"MMPExamples-Arp-ip5.mmp",  @"MMPExamples-TableGlitch-ip5.mmp", nil];
         }
         else{//pad
-            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine-Pad.mmp", @"MMPTutorial1-GUI-Pad.mmp", @"MMPTutorial2-Input-Pad.mmp", @"MMPTutorial3-Hardware-Pad.mmp", @"MMPTutorial4-Networking-Pad.mmp",@"MMPTutorial5-Files-Pad.mmp", @"MMPExamples-Vocoder-Pad.mmp", @"MMPExamples-Motion-Pad.mmp", @"MMPExamples-Sequencer-Pad.mmp",@"MMPExamples-GPS-Pad.mmp", @"MMPTutorial6-2DGraphics-Pad.mmp", @"MMPExamples-LANdini-Pad.mmp", @"MMPExamples-Arp-Pad.mmp", nil];
+            defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine-Pad.mmp", @"MMPTutorial1-GUI-Pad.mmp", @"MMPTutorial2-Input-Pad.mmp", @"MMPTutorial3-Hardware-Pad.mmp", @"MMPTutorial4-Networking-Pad.mmp",@"MMPTutorial5-Files-Pad.mmp", @"MMPExamples-Vocoder-Pad.mmp", @"MMPExamples-Motion-Pad.mmp", @"MMPExamples-Sequencer-Pad.mmp",@"MMPExamples-GPS-Pad.mmp", @"MMPTutorial6-2DGraphics-Pad.mmp", @"MMPExamples-LANdini-Pad.mmp", @"MMPExamples-Arp-Pad.mmp",  @"MMPExamples-TableGlitch-Pad.mmp",nil];
         }
         
-        NSArray* commonFiles = [NSArray arrayWithObjects:@"MMPTutorial0-HelloSine.pd",@"MMPTutorial1-GUI.pd", @"MMPTutorial2-Input.pd", @"MMPTutorial3-Hardware.pd", @"MMPTutorial4-Networking.pd",@"MMPTutorial5-Files.pd",@"cats1.jpg", @"cats2.jpg",@"cats3.jpg",@"clap.wav",@"Welcome.pd",  @"MMPExamples-Vocoder.pd", @"vocod_channel.pd", @"MMPExamples-Motion.pd", @"MMPExamples-Sequencer.pd", @"MMPExamples-GPS.pd", @"MMPTutorial6-2DGraphics.pd", @"MMPExamples-LANdini.pd", @"MMPExamples-Arp.pd", nil];
+        NSArray* commonFiles = [NSArray arrayWithObjects:@"MMPTutorial0-HelloSine.pd",@"MMPTutorial1-GUI.pd", @"MMPTutorial2-Input.pd", @"MMPTutorial3-Hardware.pd", @"MMPTutorial4-Networking.pd",@"MMPTutorial5-Files.pd",@"cats1.jpg", @"cats2.jpg",@"cats3.jpg",@"clap.wav",@"Welcome.pd",  @"MMPExamples-Vocoder.pd", @"vocod_channel.pd", @"MMPExamples-Motion.pd", @"MMPExamples-Sequencer.pd", @"MMPExamples-GPS.pd", @"MMPTutorial6-2DGraphics.pd", @"MMPExamples-LANdini.pd", @"MMPExamples-Arp.pd", @"MMPExamples-TableGlitch.pd", @"anderson1.wav", nil];
         
         defaultPatches = [defaultPatches arrayByAddingObjectsFromArray:commonFiles];
         
@@ -616,7 +617,7 @@ extern void sigmund_tilde_setup(void);
     
     //get two necessary layout values from the JSON file
     // page count
-    int pageCount = 1;
+    pageCount = 1;
     if([sceneDict objectForKey:@"pageCount"]){
         pageCount = [[sceneDict objectForKey:@"pageCount"] intValue];
         if(pageCount<=0)pageCount=1;
@@ -869,6 +870,7 @@ extern void sigmund_tilde_setup(void);
         }
         else if([newObjectClass isEqualToString:@"MMPGrid"]){
             currObject = [[MeGrid alloc]initWithFrame:frame];
+            if([currDict objectForKey:@"mode"])[(MeGrid*)currObject setMode:[[currDict objectForKey:@"mode"] intValue]];//needs to be done before setting dim.
             if([currDict objectForKey:@"dim"]){
                 NSArray* dimArray =[currDict objectForKey:@"dim"];
                 [(MeGrid*)currObject setDimX: [[dimArray objectAtIndex:0]intValue] Y:[[dimArray objectAtIndex:1]intValue] ];
@@ -895,6 +897,13 @@ extern void sigmund_tilde_setup(void);
           currObject = [[MeMenu alloc] initWithFrame:frame];
           if([currDict objectForKey:@"title"])
             [(MeMenu*)currObject setTitleString:[currDict objectForKey:@"title"] ];
+        }
+        else if([newObjectClass isEqualToString:@"MMPTable"]){
+          currObject = [[MeTable alloc] initWithFrame:frame];
+          if([currDict objectForKey:@"mode"])
+            [(MeTable*)currObject setMode:[[currDict objectForKey:@"mode"] intValue]];
+          if([currDict objectForKey:@"selectionColor"])
+            [(MeTable*)currObject setSelectionColor:[MeControl colorFromRGBAArray:[currDict objectForKey:@"selectionColor"]]];
         }
         else{//unkown
             currObject = [[MeUnknown alloc] initWithFrame:frame];
@@ -955,6 +964,18 @@ extern void sigmund_tilde_setup(void);
                                   otherButtonTitles:nil];
             [alert show];
             
+        } else {//success
+          //refresh tables
+          //TODO optimize! make an array of tables only
+          for(MeControl *control in allGUIControl){
+            if ([control isKindOfClass:[MeTable class]]) {
+              // use set to quash multiple loads of same table/address - not needed in app, but needed in editor.
+                [(MeTable*)control loadTable];
+                
+
+            }
+          }
+        
         }
     }
     else{//if no JSON entry found for file, say so
@@ -995,7 +1016,7 @@ extern void sigmund_tilde_setup(void);
     int page = inScrollView.contentOffset.x / inScrollView.frame.size.width;
     [PdBase sendList:[NSArray arrayWithObjects:@"/page", [NSNumber numberWithInt:page], nil] toReceiver:@"fromSystem"];
   }
-  //NSLog(@"scrolled: %d", page);
+  
 }
 
 #pragma mark ControlDelegate
@@ -1178,6 +1199,14 @@ extern void sigmund_tilde_setup(void);
         else if([[list objectAtIndex:0] isEqualToString:@"/getReachability"]){
             NSArray* msgArray=[NSArray arrayWithObjects:@"/reachability", [NSNumber numberWithFloat:[reach isReachable]? 1.0f : 0.0f ], [ViewController fetchSSIDInfo], nil];
             [PdBase sendList:msgArray toReceiver:@"fromSystem"];
+        }
+        else if([[list objectAtIndex:0] isEqualToString:@"/setPage"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+          int page = [[list objectAtIndex:1] intValue];
+          if(page<0)page=0; if (page>pageCount-1)page=pageCount-1;
+          //NSLog(@"setting page %d width %2f", page, scrollView.frame.size.width);
+          // WHY DOES THIS BOUNCE US SOMEWHERE ELSE??? could have just been touch
+          //[scrollView setContentOffset:CGPointMake(page * scrollView.frame.size.width, 0) animated:YES];
+          [scrollView zoomToRect:CGRectMake(page * scrollView.frame.size.width, 0, scrollView.frame.size.width, scrollView.frame.size.height) animated:YES];
         }
 
     }

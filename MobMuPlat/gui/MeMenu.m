@@ -18,19 +18,16 @@
 
 
 
-@interface MeMenu () {
+
+
+@implementation MeMenu {
   UIButton* theButton;
   UIView* downView;
   MenuViewController* mvc;
   NSMutableArray* _dataArray;
 }
+static NSString *CellIdentifier = @"MenuCell";
 
-@end
-
-
-@implementation MeMenu
-
-static NSString *CellIdentifier = @"Cell";
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -97,7 +94,7 @@ static NSString *CellIdentifier = @"Cell";
   mvc.tableView.delegate = self;
   mvc.title = _titleString;
   mvc.tableView.backgroundColor = self.controlDelegate.patchBackgroundColor;
-  [mvc.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:CellIdentifier];
+  //once we stop supporting ios5: [mvc.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:CellIdentifier];
   
   //set orientation
   MenuNavigationController* navigationController = [[MenuNavigationController alloc] initWithRootViewController:mvc ];
@@ -120,17 +117,20 @@ static NSString *CellIdentifier = @"Cell";
   return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
   // Return the number of rows in the section.
   return [_dataArray count];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
   
-  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+  //still supporting ios5, so not yet: [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
   
+  //remove this on stop supporting ios5
+  if (cell == nil) {
+    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+  }
   // Configure the cell...
   [cell.textLabel setText:[_dataArray objectAtIndex:indexPath.row]];
   cell.textLabel.textAlignment = UITextAlignmentCenter;

@@ -19,7 +19,7 @@
         _cellPadding=1;
         _borderThickness=2;
         [self setDimX:4 Y:3];
-    }
+  }
     return self;
 }
 
@@ -49,7 +49,13 @@
             UIButton* newButton = [UIButton buttonWithType:UIButtonTypeCustom];
             newButton.frame = CGRectMake(i*buttonWidth, j*buttonHeight, buttonWidth-_cellPadding, buttonHeight-_cellPadding);
             [newButton addTarget:self action:@selector(buttonDown:) forControlEvents:UIControlEventTouchDown];
-            [newButton addTarget:self action:@selector(buttonCancel:) forControlEvents:UIControlEventTouchCancel|UIControlEventTouchDragExit];
+           
+           if(_mode==1)
+              [newButton addTarget:self action:@selector(buttonUp:) forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchDragOutside];
+            else if (_mode==2)
+              [newButton addTarget:self action:@selector(buttonUp:) forControlEvents:UIControlEventTouchUpInside ];
+           
+            [newButton addTarget:self action:@selector(buttonCancel:) forControlEvents:UIControlEventTouchCancel/*|UIControlEventTouchDragExit*/];
             newButton.layer.cornerRadius=2;
             newButton.layer.borderWidth=1;
             newButton.layer.borderColor=[[UIColor whiteColor]CGColor];
@@ -61,6 +67,23 @@
     
 }
 
+-(void)doOn:(UIButton*)button{
+  button.tag = 1;
+  button.backgroundColor=[self highlightColor];
+  [self sendValueForButton:button];
+}
+
+-(void)doOff:(UIButton*)button{
+  button.tag=0;
+  button.backgroundColor=[UIColor clearColor];
+  [self sendValueForButton:button];
+}
+
+- (void)sendValueForButton:(UIButton*)button{
+  int objIndex=[gridButtons indexOfObject:button];
+  
+  [self.controlDelegate sendGUIMessageArray:[NSArray arrayWithObjects:self.address , [NSNumber numberWithInt:objIndex%dimX], [NSNumber numberWithInt:objIndex/dimX], [NSNumber numberWithInt:button.tag], nil]];
+}
 
 -(void)buttonCancel:(UIButton*)theButton{//not super elegant, but oh well...
     if(theButton.tag==1){
@@ -73,18 +96,24 @@
 
 
 -(void)buttonDown:(UIButton*)theButton{
-    if(theButton.tag==0){
-        theButton.tag=1;
-        theButton.backgroundColor=[self highlightColor];
-    }
-    else if(theButton.tag==1){
-        theButton.tag=0;
-        theButton.backgroundColor=[UIColor clearColor];
-    }
-    
-    int objIndex=[gridButtons indexOfObject:theButton];
+  
+  if(_mode==0){//toggle
+    if(theButton.tag==0)[self doOn:theButton];
+    else [self doOff:theButton];
+  }
+  else if (_mode==1){//momentary, so just set on
+    if(theButton.tag==0)[self doOn:theButton];
+  }
+  else {//hybrid, toggle
+    if(theButton.tag==0)[self doOn:theButton];
+    else [self doOff:theButton];
+  }
+}
 
-    [self.controlDelegate sendGUIMessageArray:[NSArray arrayWithObjects:self.address , [NSNumber numberWithInt:objIndex%dimX], [NSNumber numberWithInt:objIndex/dimX], [NSNumber numberWithInt:theButton.tag], nil]];
+-(void)buttonUp:(UIButton*)theButton{
+  if((_mode == 1 || _mode==2) && theButton.tag==1){
+    [self doOff:theButton];
+  }
 }
 
 

@@ -27,6 +27,10 @@
 
 @implementation SettingsViewController
 @synthesize delegate;
+static NSString *documentsTableCellIdentifier = @"documentsTableCell";
+static NSString *midiTableCellIdentifier = @"midiTableCell";
+static NSString *landiniTableCellIdentifier = @"landiniTableCell";
+
 
 //what kind of device am I one? iphone 3.5", iphone 4", or ipad
 +(canvasType)getCanvasType{
@@ -41,7 +45,7 @@
 }
 
 //return a list of items in documents. if argument==NO, get everything, if YES, only get .mmp files
-+ (NSArray *)getDocumentsOnlyMMP:(BOOL)onlyMMP{
++ (NSMutableArray *)getDocumentsOnlyMMP:(BOOL)onlyMMP{
     
     NSMutableArray *retval = [[NSMutableArray alloc]init];
     
@@ -645,7 +649,59 @@ BOOL LANdiniSwitchBool;
     }*/
 }
 
+-(void)deleteHelper:(NSIndexPath*)indexPath {
+  NSFileManager *fileManager = [NSFileManager defaultManager];
+  NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+  NSString *publicDocumentsDir = [paths objectAtIndex:0];
+  
+  //pull filename from either allFiles or MMPFiles, depending on which list we are looking at
+  NSString* filename = [(mmpOrAll ? allFiles : MMPFiles)objectAtIndex:[indexPath row]];
+  NSString* fullPath = [publicDocumentsDir stringByAppendingPathComponent:filename];
+  //NSString* suffix = [[filename componentsSeparatedByString: @"."] lastObject];
+  
+  if([fileManager fileExistsAtPath:fullPath]){
+    BOOL success = [fileManager removeItemAtPath:fullPath error:nil];
+    if (!success) {
+      UIAlertView *alert = [[UIAlertView alloc]
+                            initWithTitle: @"Hmm"
+                            message: @"Could not delete file from Documents."
+                            delegate: nil
+                            cancelButtonTitle:@"OK"
+                            otherButtonTitles:nil];
+      [alert show];
+
+    } else{//success
+      [(mmpOrAll ? allFiles : MMPFiles) removeObjectAtIndex:[indexPath row]];
+    }
+  }
+  //else error?
+  
+}
+
 //tableView delegate methods
+
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView
+           editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
+  if(tableView==_documentsTableView) return UITableViewCellEditingStyleDelete;
+  else return UITableViewCellEditingStyleNone;
+}
+
+- (void)tableView:(UITableView *)tableView
+    commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
+     forRowAtIndexPath:(NSIndexPath *)indexPath {
+  if (editingStyle == UITableViewCellEditingStyleDelete && tableView==_documentsTableView) {
+    [tableView beginUpdates];
+    
+    [self deleteHelper:indexPath];
+    
+    [tableView deleteRowsAtIndexPaths:@[indexPath]
+                     withRowAnimation:UITableViewRowAnimationFade];
+    [tableView endUpdates];
+  }
+}
+
+
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
     if(tableView==_documentsTableView){
@@ -701,13 +757,26 @@ BOOL LANdiniSwitchBool;
     }
 }
 
+- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+  //if we are looking at MMP files only, then everything is highlightable.
+  if(!mmpOrAll)return YES;
+  
+  UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+  //todo centralize this repeated logic
+  NSString* suffix = [[cell.textLabel.text componentsSeparatedByString: @"."] lastObject];
+  if([suffix isEqualToString:@"mmp"] || [suffix isEqualToString:@"zip"] || [suffix isEqualToString:@"pd"]){
+    return YES;
+  }
+  else return NO;
+}
+
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     if(tableView == _documentsTableView){
-        static NSString* CellIdentifier = @"ValueCell";
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:documentsTableCellIdentifier];
     
         if (cell == nil) {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:documentsTableCellIdentifier];
             if (hardwareCanvasType==canvasTypeIPad)cell.textLabel.font=[UIFont systemFontOfSize:32];
             else cell.textLabel.font=[UIFont systemFontOfSize:16];
         }
@@ -716,12 +785,11 @@ BOOL LANdiniSwitchBool;
         NSString* suffix = [[[(mmpOrAll ? allFiles : MMPFiles) objectAtIndex:[indexPath row]] componentsSeparatedByString: @"."] lastObject];
         if([suffix isEqualToString:@"mmp"] || [suffix isEqualToString:@"zip"] || [suffix isEqualToString:@"pd"]){
             cell.textLabel.textColor = [UIColor blackColor];
-            cell.userInteractionEnabled=YES;
+            //cell.userInteractionEnabled=YES;
         }
         else{
             cell.textLabel.textColor = [UIColor grayColor];
-            cell.userInteractionEnabled=NO;
-
+            //cell.userInteractionEnabled=NO;
         }
     
         return cell;
@@ -730,10 +798,10 @@ BOOL LANdiniSwitchBool;
     else if (tableView==_midiSourceTableView){
         PGMidiConnection* currSource = [[[self.audioDelegate midi] sources] objectAtIndex: [indexPath indexAtPosition:1]];
 		NSString* currMidiSourceName = currSource.name;
-		UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:currMidiSourceName];
+		UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:midiTableCellIdentifier];
 		
         if(cell==nil){
-			cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:currMidiSourceName] ;
+			cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:midiTableCellIdentifier] ;
 			
 			if (hardwareCanvasType==canvasTypeIPad)cell.textLabel.font=[UIFont systemFontOfSize:24];
             else cell.textLabel.font=[UIFont systemFontOfSize:12];
@@ -745,10 +813,10 @@ BOOL LANdiniSwitchBool;
     else if (tableView==_midiDestinationTableView){
         PGMidiConnection* currDestination = [[[self.audioDelegate midi] destinations] objectAtIndex: [indexPath indexAtPosition:1]];
 		NSString* currMidiDestName = currDestination.name;
-		UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:currMidiDestName];
+		UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:midiTableCellIdentifier];
 		
         if(cell==nil){
-			cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:currMidiDestName] ;
+			cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:midiTableCellIdentifier] ;
 			
 			if (hardwareCanvasType==canvasTypeIPad)cell.textLabel.font=[UIFont systemFontOfSize:24];
             else cell.textLabel.font=[UIFont systemFontOfSize:12];
@@ -759,18 +827,17 @@ BOOL LANdiniSwitchBool;
     }
     
     else /*if (tableView==_LANdiniUserTableView)*/{
-        UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"LANdiniUserCell"];
-		LANdiniUser* user = [_LANdiniUserArray objectAtIndex:[indexPath row]];
+      UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:landiniTableCellIdentifier];
+      LANdiniUser* user = [_LANdiniUserArray objectAtIndex:[indexPath row]];
         
-        if(cell==nil){
-			cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"LANdiniUserCell"] ;
-			if (hardwareCanvasType==canvasTypeIPad)cell.textLabel.font=[UIFont systemFontOfSize:24];
-            else cell.textLabel.font=[UIFont systemFontOfSize:12];
-		}
-        [cell textLabel].text=[NSString stringWithFormat:@"%@ - %@", user.name, user.ip];
-		return cell;
+      if(cell==nil){
+			  cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:landiniTableCellIdentifier] ;
+			  if (hardwareCanvasType==canvasTypeIPad)cell.textLabel.font=[UIFont systemFontOfSize:24];
+        else cell.textLabel.font=[UIFont systemFontOfSize:12];
+      }
+      [cell textLabel].text=[NSString stringWithFormat:@"%@ - %@", user.name, user.ip];
+      return cell;
     }
-
 }
 
 #pragma mark LANdiniUserDelegate - can be on non-main threads
@@ -800,7 +867,16 @@ BOOL LANdiniSwitchBool;
 
 # pragma mark AudioBus
 
-/*- (void)connectionsChanged:(NSNotification*)notification {
+- (void)connectionsChanged:(NSNotification*)notification {
+  /*TODO
+  // Cancel any scheduled shutdown
+  [NSObject cancelPreviousPerformRequestsWithTarget:_audioEngine selector:@selector(stop) object:nil];
+  if ( !_audiobusController.connected && _audioEngine.running
+      && [[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground ) {
+    // Shut down after 10 seconds if we disconnected while in the background
+    [_audioEngine performSelector:@selector(stop) withObject:nil afterDelay:10.0];
+  }*/
+
   if([self.audioDelegate respondsToSelector:@selector(isAudioBusConnected)]){
     if([self.audioDelegate isAudioBusConnected]) {
       _rateSeg.enabled=NO;
@@ -816,7 +892,7 @@ BOOL LANdiniSwitchBool;
     }
   }
 
-}*/
+}
 
 # pragma mark cleanup
 
