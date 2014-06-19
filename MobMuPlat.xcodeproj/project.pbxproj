@@ -188,11 +188,6 @@
 		DCEF4F2C188ED1CD00D6EE54 /* SettingsViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */; };
 		DCFF717716B59F3100CDCEAE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DCFF717616B59F3100CDCEAE /* libz.dylib */; };
 		F94FB53918F596AB003BFB18 /* MenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F94FB53818F596AB003BFB18 /* MenuViewController.m */; };
-		F9579B481926EACC00369D8E /* MMPExamples-TableGlitch-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F9579B441926EACC00369D8E /* MMPExamples-TableGlitch-Pad.mmp */; };
-		F9579B491926EACC00369D8E /* MMPExamples-TableGlitch.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F9579B451926EACC00369D8E /* MMPExamples-TableGlitch.mmp */; };
-		F9579B4A1926EACC00369D8E /* MMPExamples-TableGlitch-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F9579B461926EACC00369D8E /* MMPExamples-TableGlitch-ip5.mmp */; };
-		F9579B4B1926EACC00369D8E /* MMPExamples-TableGlitch.pd in Resources */ = {isa = PBXBuildFile; fileRef = F9579B471926EACC00369D8E /* MMPExamples-TableGlitch.pd */; };
-		F9579B4D1926EAD800369D8E /* anderson1.wav in Resources */ = {isa = PBXBuildFile; fileRef = F9579B4C1926EAD800369D8E /* anderson1.wav */; };
 		F95C52021909B1230074E0A6 /* MeTable.m in Sources */ = {isa = PBXBuildFile; fileRef = F95C52011909B1230074E0A6 /* MeTable.m */; };
 		F9967C3718F8C54D008E3828 /* MenuNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9967C3618F8C54D008E3828 /* MenuNavigationController.m */; };
 		F9B9EA2B1905E3FA0066206B /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9B9EA2A1905E3FA0066206B /* AudioToolbox.framework */; };
@@ -462,11 +457,6 @@
 		DCFF717616B59F3100CDCEAE /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		F94FB53718F596AB003BFB18 /* MenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuViewController.h; path = gui/MenuViewController.h; sourceTree = "<group>"; };
 		F94FB53818F596AB003BFB18 /* MenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MenuViewController.m; path = gui/MenuViewController.m; sourceTree = "<group>"; };
-		F9579B441926EACC00369D8E /* MMPExamples-TableGlitch-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-TableGlitch-Pad.mmp"; path = "patches/MMPExamples-TableGlitch-Pad.mmp"; sourceTree = "<group>"; };
-		F9579B451926EACC00369D8E /* MMPExamples-TableGlitch.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-TableGlitch.mmp"; path = "patches/MMPExamples-TableGlitch.mmp"; sourceTree = "<group>"; };
-		F9579B461926EACC00369D8E /* MMPExamples-TableGlitch-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-TableGlitch-ip5.mmp"; path = "patches/MMPExamples-TableGlitch-ip5.mmp"; sourceTree = "<group>"; };
-		F9579B471926EACC00369D8E /* MMPExamples-TableGlitch.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-TableGlitch.pd"; path = "patches/MMPExamples-TableGlitch.pd"; sourceTree = "<group>"; };
-		F9579B4C1926EAD800369D8E /* anderson1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = anderson1.wav; path = patches/anderson1.wav; sourceTree = "<group>"; };
 		F95C52001909B1230074E0A6 /* MeTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeTable.h; path = gui/MeTable.h; sourceTree = "<group>"; };
 		F95C52011909B1230074E0A6 /* MeTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeTable.m; path = gui/MeTable.m; sourceTree = "<group>"; };
 		F9967C3518F8C54D008E3828 /* MenuNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuNavigationController.h; path = gui/MenuNavigationController.h; sourceTree = "<group>"; };
@@ -826,43 +816,6 @@
 		DC29445B16584A6E00BF4A50 /* patches */ = {
 			isa = PBXGroup;
 			children = (
-				F9579B4C1926EAD800369D8E /* anderson1.wav */,
-				F9579B441926EACC00369D8E /* MMPExamples-TableGlitch-Pad.mmp */,
-				F9579B451926EACC00369D8E /* MMPExamples-TableGlitch.mmp */,
-				F9579B461926EACC00369D8E /* MMPExamples-TableGlitch-ip5.mmp */,
-				F9579B471926EACC00369D8E /* MMPExamples-TableGlitch.pd */,
-				F94958D818D1223B00C8876F /* MMPExamples-Arp-ip5.mmp */,
-				F94958D918D1223B00C8876F /* MMPExamples-Arp-Pad.mmp */,
-				F94958DA18D1223B00C8876F /* MMPExamples-Arp.mmp */,
-				F94958DB18D1223B00C8876F /* MMPExamples-Arp.pd */,
-				DC456B04176C1A700080BB33 /* MMPExamples-GPS-ip5.mmp */,
-				DC456B05176C1A700080BB33 /* MMPExamples-GPS-Pad.mmp */,
-				DC456B06176C1A700080BB33 /* MMPExamples-GPS.mmp */,
-				DC456B07176C1A700080BB33 /* MMPExamples-GPS.pd */,
-				DCD8DF3217330C4700767321 /* cats1.jpg */,
-				DCD8DF3317330C4700767321 /* cats2.jpg */,
-				DCD8DF3417330C4700767321 /* cats3.jpg */,
-				DCD8DF3517330C4700767321 /* clap.wav */,
-				DC89675918870F7D00750137 /* MMPExamples-LANdini.pd */,
-				DC89675A18870F7D00750137 /* MMPExamples-LANdini-Pad.mmp */,
-				DC89675B18870F7D00750137 /* MMPExamples-LANdini.mmp */,
-				DC89675C18870F7D00750137 /* MMPExamples-LANdini-ip5.mmp */,
-				90BE0D5E1880A9EF009446AD /* MMPTutorial6-2DGraphics-Pad.mmp */,
-				90BE0D5F1880A9EF009446AD /* MMPTutorial6-2DGraphics-ip5.mmp */,
-				90BE0D601880A9EF009446AD /* MMPTutorial6-2DGraphics.mmp */,
-				90BE0D611880A9EF009446AD /* MMPTutorial6-2DGraphics.pd */,
-				DCD8DF3617330C4700767321 /* MMPExamples-Motion-ip5.mmp */,
-				DCD8DF3717330C4700767321 /* MMPExamples-Motion-Pad.mmp */,
-				DCD8DF3817330C4700767321 /* MMPExamples-Motion.mmp */,
-				DCD8DF3917330C4700767321 /* MMPExamples-Motion.pd */,
-				DCD8DF3A17330C4700767321 /* MMPExamples-Sequencer-ip5.mmp */,
-				DCD8DF3B17330C4700767321 /* MMPExamples-Sequencer-Pad.mmp */,
-				DCD8DF3C17330C4700767321 /* MMPExamples-Sequencer.mmp */,
-				DCD8DF3D17330C4700767321 /* MMPExamples-Sequencer.pd */,
-				DCD8DF3E17330C4700767321 /* MMPExamples-Vocoder-ip5.mmp */,
-				DCD8DF3F17330C4700767321 /* MMPExamples-Vocoder-Pad.mmp */,
-				DCD8DF4017330C4700767321 /* MMPExamples-Vocoder.mmp */,
-				DCD8DF4117330C4700767321 /* MMPExamples-Vocoder.pd */,
 				DCD8DF4217330C4700767321 /* MMPTutorial0-HelloSine-ip5.mmp */,
 				DCD8DF4317330C4700767321 /* MMPTutorial0-HelloSine-Pad.mmp */,
 				DCD8DF4417330C4700767321 /* MMPTutorial0-HelloSine.mmp */,
@@ -1083,55 +1036,17 @@
 			files = (
 				DC233DB71655EDF500AC01C5 /* InfoPlist.strings in Resources */,
 				DCB5B94718888BF9003E6C2C /* Images.xcassets in Resources */,
-				F9579B491926EACC00369D8E /* MMPExamples-TableGlitch.mmp in Resources */,
-				90BE0D621880A9EF009446AD /* MMPTutorial6-2DGraphics-Pad.mmp in Resources */,
 				DC6A9FF51878F88900A7585A /* LICENSE in Resources */,
-				DCD8DF6617330C4700767321 /* MMPExamples-Motion.pd in Resources */,
-				DCD8DF6717330C4700767321 /* MMPExamples-Sequencer-ip5.mmp in Resources */,
-				DCD8DF6817330C4700767321 /* MMPExamples-Sequencer-Pad.mmp in Resources */,
-				DCD8DF6917330C4700767321 /* MMPExamples-Sequencer.mmp in Resources */,
-				DCD8DF6A17330C4700767321 /* MMPExamples-Sequencer.pd in Resources */,
-				DCD8DF6B17330C4700767321 /* MMPExamples-Vocoder-ip5.mmp in Resources */,
-				DCD8DF6C17330C4700767321 /* MMPExamples-Vocoder-Pad.mmp in Resources */,
-				DCD8DF6D17330C4700767321 /* MMPExamples-Vocoder.mmp in Resources */,
-				DCD8DF6E17330C4700767321 /* MMPExamples-Vocoder.pd in Resources */,
 				DCB5B95618889355003E6C2C /* Icon.png in Resources */,
 				DCD8DF6F17330C4700767321 /* MMPTutorial0-HelloSine-ip5.mmp in Resources */,
 				DCD8DF7017330C4700767321 /* MMPTutorial0-HelloSine-Pad.mmp in Resources */,
 				DCD8DF7117330C4700767321 /* MMPTutorial0-HelloSine.mmp in Resources */,
 				DCD8DF7217330C4700767321 /* MMPTutorial0-HelloSine.pd in Resources */,
-				DCD8DF7317330C4700767321 /* MMPTutorial1-GUI-ip5.mmp in Resources */,
-				DCD8DF7417330C4700767321 /* MMPTutorial1-GUI-Pad.mmp in Resources */,
-				DCD8DF7517330C4700767321 /* MMPTutorial1-GUI.mmp in Resources */,
-				DC89675F18870F7D00750137 /* MMPExamples-LANdini.mmp in Resources */,
-				DCD8DF7617330C4700767321 /* MMPTutorial1-GUI.pd in Resources */,
 				DC6A9FF61878F88900A7585A /* README.markdown in Resources */,
-				F9579B481926EACC00369D8E /* MMPExamples-TableGlitch-Pad.mmp in Resources */,
-				DCD8DF7717330C4700767321 /* MMPTutorial2-Input-ip5.mmp in Resources */,
-				DCD8DF7817330C4700767321 /* MMPTutorial2-Input-Pad.mmp in Resources */,
-				90BE0D631880A9EF009446AD /* MMPTutorial6-2DGraphics-ip5.mmp in Resources */,
-				DCD8DF7917330C4700767321 /* MMPTutorial2-Input.mmp in Resources */,
-				DCD8DF7A17330C4700767321 /* MMPTutorial2-Input.pd in Resources */,
-				DCD8DF7B17330C4700767321 /* MMPTutorial3-Hardware-ip5.mmp in Resources */,
-				DCD8DF7C17330C4700767321 /* MMPTutorial3-Hardware-Pad.mmp in Resources */,
 				DCB5B95518889355003E6C2C /* Icon-72@2x.png in Resources */,
-				DCD8DF7D17330C4700767321 /* MMPTutorial3-Hardware.mmp in Resources */,
-				DCD8DF7E17330C4700767321 /* MMPTutorial3-Hardware.pd in Resources */,
-				DCD8DF7F17330C4700767321 /* MMPTutorial4-Networking-ip5.mmp in Resources */,
-				DC89675D18870F7D00750137 /* MMPExamples-LANdini.pd in Resources */,
-				DCD8DF8017330C4700767321 /* MMPTutorial4-Networking-Pad.mmp in Resources */,
-				DCD8DF8117330C4700767321 /* MMPTutorial4-Networking.mmp in Resources */,
-				F9579B4D1926EAD800369D8E /* anderson1.wav in Resources */,
 				DCEF4F2C188ED1CD00D6EE54 /* SettingsViewController~iphone.xib in Resources */,
 				DCB5B95718889355003E6C2C /* Icon@2x.png in Resources */,
 				DCB5B95418889355003E6C2C /* Icon-72.png in Resources */,
-				DCD8DF8217330C4700767321 /* MMPTutorial4-Networking.pd in Resources */,
-				DCD8DF8317330C4700767321 /* MMPTutorial5-Files-ip5.mmp in Resources */,
-				DCD8DF8417330C4700767321 /* MMPTutorial5-Files-Pad.mmp in Resources */,
-				DCD8DF8517330C4700767321 /* MMPTutorial5-Files.mmp in Resources */,
-				DCD8DF8617330C4700767321 /* MMPTutorial5-Files.pd in Resources */,
-				F94958DE18D1223B00C8876F /* MMPExamples-Arp.mmp in Resources */,
-				F9579B4B1926EACC00369D8E /* MMPExamples-TableGlitch.pd in Resources */,
 				DC7DD717188F2A660068BA66 /* SettingsViewController~ipad.xib in Resources */,
 				DC5957311733805000CEBECC /* infoicon_100x100.png in Resources */,
 				DC5957321733805000CEBECC /* title_cross_30x30.png in Resources */,
@@ -1147,7 +1062,6 @@
 				DC59573C1733805000CEBECC /* titlepad_ring_110x185.png in Resources */,
 				DC59573D1733805000CEBECC /* titlepad_ring_185x110.png in Resources */,
 				DC59573E1733805000CEBECC /* titlepad_text_46x142.png in Resources */,
-				F9579B4A1926EACC00369D8E /* MMPExamples-TableGlitch-ip5.mmp in Resources */,
 				DC59573F1733805000CEBECC /* titlepad_text_142x46.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
