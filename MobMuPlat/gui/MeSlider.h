@@ -23,7 +23,7 @@
 }
 
 @property(nonatomic) int range;
-@property(nonatomic) float value;
+@property(nonatomic) float value; //TODO hide?
 
 -(void)setHorizontal;
 

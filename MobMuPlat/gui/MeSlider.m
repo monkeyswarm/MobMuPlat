@@ -89,7 +89,6 @@
     else [self.controlDelegate sendGUIMessageArray:[NSArray arrayWithObjects:self.address, [NSNumber numberWithFloat:_value], nil]];
 }
 
-
 -(void)updateThumb{
     CGRect newFrame;
     

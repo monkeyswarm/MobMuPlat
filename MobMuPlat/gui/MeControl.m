@@ -24,5 +24,6 @@
 
 //empty implementation so that "receiveList" can be called on MeControl, even though it is overridden by all subclasses
 -(void)receiveList:(NSArray*)inArray{}
+//TODO do the cmd:selectornot implemented thing
 
 @end

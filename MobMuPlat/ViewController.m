@@ -96,7 +96,7 @@ extern void sigmund_tilde_setup(void);
     
     openPDFile=nil;
     
-    allGUIControl = [[NSMutableArray alloc]init];
+    allGUIControl = [[NSMutableArray alloc]init];//TODO make hash table
 
     //for using the flash
     avCaptureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
@@ -1093,6 +1093,7 @@ extern void sigmund_tilde_setup(void);
     }
     
     else if([source isEqualToString:@"toSystem"]){
+      // TODO array size checking!
         //for some reason, there is a conflict with the audio session, and sending a command to vibrate doesn't work...
         if([[list objectAtIndex:0] isEqualToString:@"/vibrate"]){
             //printf("\nvib?");
