@@ -98,6 +98,8 @@ extern void sigmund_tilde_setup(void);
     
     allGUIControl = [[NSMutableArray alloc]init];//TODO make hash table
 
+    _outputIpAddress = @"224.0.0.1";
+
     //for using the flash
     avCaptureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     
@@ -514,9 +516,9 @@ extern void sigmund_tilde_setup(void);
 }
 
 -(void)connectPorts{//could probably use some error checking...
-    if(currPortNumber>0){
-        outPort = [manager createNewOutputToAddress:@"224.0.0.1" atPort:currPortNumber];
-        inPort = [manager createNewInputForPort:currPortNumber];
+    if(_portNumber>0){
+        outPort = [manager createNewOutputToAddress:_outputIpAddress atPort:_portNumber];
+        inPort = [manager createNewInputForPort:_portNumber];
     }
     outPortToLANdini = [manager createNewOutputToAddress:@"127.0.0.1" atPort:50506];
     inPortFromLANdini = [manager createNewInputForPort:50505];
@@ -527,6 +529,20 @@ extern void sigmund_tilde_setup(void);
     /*if(outPort!=nil)*/[manager deleteAllOutputs];
 }
 
+-(void)setOutputIpAddress:(NSString *)outputIpAddress { //validated in settingsVC
+  if ([_outputIpAddress isEqualToString:outputIpAddress]) return;
+  _outputIpAddress = outputIpAddress;
+  [manager removeOutput:outPort];
+  outPort = [manager createNewOutputToAddress:_outputIpAddress atPort:_portNumber];
+}
+
+- (void)setPortNumber:(int)portNumber { //validated in settingsVC
+  if(_portNumber == portNumber) return;
+  _portNumber = portNumber;
+  [manager removeOutput:outPort];
+  outPort = [manager createNewOutputToAddress:_outputIpAddress atPort:_portNumber];
+}
+
 //====settingsVC delegate methods
 
 - (void)settingsViewControllerDidFinish:(SettingsViewController *)controller{
@@ -534,11 +550,6 @@ extern void sigmund_tilde_setup(void);
 }
 
 -(void)flipInterface{
- // if(self.view.transform.)
-  //CGPoint center = self.view.center;
-  //self.view.transform = CGAffineTransformMakeRotation(M_PI);
-  //self.view.transform = CGAffineTransformMakeRotation(M_PI);
-  //scrollView.center = center;
   isFlipped = !isFlipped;
   if(isFlipped) {
     scrollView.transform = CGAffineTransformMakeRotation(M_PI+isLandscape*M_PI_2);
@@ -560,7 +571,8 @@ extern void sigmund_tilde_setup(void);
     [locationManager stopUpdatingLocation];
     [locationManager stopUpdatingHeading];
     
-    currPortNumber = DEFAULT_PORT_NUMBER;
+    _portNumber = DEFAULT_PORT_NUMBER;
+    _patchPortNumber = DEFAULT_PORT_NUMBER;
     [self connectPorts];
     
     if(openPDFile!=nil)[PdBase closeFile:openPDFile];
@@ -756,11 +768,14 @@ extern void sigmund_tilde_setup(void);
     //OSC port number
     if ([sceneDict objectForKey:@"port"]){
         int port = [[sceneDict objectForKey:@"port"] intValue];
-        currPortNumber=port;
-        
+        _portNumber=port;
+        _patchPortNumber = port;
     }
-    else currPortNumber=DEFAULT_PORT_NUMBER;
-    
+    else{
+      _patchPortNumber = DEFAULT_PORT_NUMBER;
+      _portNumber=DEFAULT_PORT_NUMBER;
+    }
+
     [self connectPorts];//conencts to value of currPortNumber 
     
     //start page
@@ -963,7 +978,6 @@ extern void sigmund_tilde_setup(void);
     }
     else{//if no JSON entry found for file, say so
         openPDFile=nil;
-        //printf("\n did not find patch!");
         NSLog(@"did not find a patch name!" );
         UIAlertView *alert = [[UIAlertView alloc]
                               initWithTitle: @"Pd file not specified"
@@ -988,8 +1002,7 @@ extern void sigmund_tilde_setup(void);
     
 }
 
-
-//scrollview delegate
+#pragma mark scrollview delegate
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
     return scrollInnerView;
 }
@@ -999,7 +1012,6 @@ extern void sigmund_tilde_setup(void);
     int page = inScrollView.contentOffset.x / inScrollView.frame.size.width;
     [PdBase sendList:[NSArray arrayWithObjects:@"/page", [NSNumber numberWithInt:page], nil] toReceiver:@"fromSystem"];
   }
-  
 }
 
 #pragma mark ControlDelegate
@@ -1055,9 +1067,7 @@ extern void sigmund_tilde_setup(void);
         return;//protect against bad elements that got dropped from array...
     }
     if([source isEqualToString:@"toNetwork"]){
-        //NSLog(@"%@", list);
-        /**/
-        
+
         //look for LANdini - this clause looks for /send, /send/GD, /send/OGD
         if([[list objectAtIndex:0] rangeOfString:@"/send"].location == 0) {
             if (llm.enabled) {

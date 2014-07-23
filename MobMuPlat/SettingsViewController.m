@@ -90,12 +90,12 @@ static NSString *landiniTableCellIdentifier = @"landiniTableCell";
                                              selector:@selector(reachabilityChanged:)
                                                  name:kReachabilityChangedNotification
                                                object:nil];
-  [[NSNotificationCenter defaultCenter] addObserver:self
-                                           selector:@selector(connectionsChanged:)
-                                               name:ABConnectionsChangedNotification
-                                             object:nil];
-  //doesn't catch it on creation, so check it now
-  [self connectionsChanged:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(connectionsChanged:)
+                                                 name:ABConnectionsChangedNotification
+                                               object:nil];
+    //doesn't catch it on creation, so check it now
+    [self connectionsChanged:nil];
   
   
     //match default pdaudiocontroller settings
@@ -148,10 +148,10 @@ static NSString *landiniTableCellIdentifier = @"landiniTableCell";
     _audioMidiViewButton.layer.borderWidth = 1;
     _audioMidiViewButton.layer.borderColor = [UIColor whiteColor].CGColor;
     
-    [_LANdiniViewButton addTarget:self action:@selector(showLANdini:) forControlEvents:UIControlEventTouchUpInside];
-    _LANdiniViewButton.layer.cornerRadius = buttonRadius;
-    _LANdiniViewButton.layer.borderWidth = 1;
-    _LANdiniViewButton.layer.borderColor = [UIColor whiteColor].CGColor;
+    [_networkViewButton addTarget:self action:@selector(showNetwork:) forControlEvents:UIControlEventTouchUpInside];
+    _networkViewButton.layer.cornerRadius = buttonRadius;
+    _networkViewButton.layer.borderWidth = 1;
+    _networkViewButton.layer.borderColor = [UIColor whiteColor].CGColor;
     
     //documents
     _documentsTableView.delegate = self;
@@ -160,7 +160,7 @@ static NSString *landiniTableCellIdentifier = @"landiniTableCell";
     _showFilesButton.layer.cornerRadius = buttonRadius;
     _showFilesButton.layer.borderWidth = 1;
     _showFilesButton.layer.borderColor = [UIColor whiteColor].CGColor;
-  _showFilesButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    _showFilesButton.titleLabel.adjustsFontSizeToFitWidth = YES;
   
     [_flipInterfaceButton addTarget:self action:@selector(flipInterfaceButtonHit:) forControlEvents:UIControlEventTouchUpInside];
     _flipInterfaceButton.layer.cornerRadius = buttonRadius;
@@ -197,7 +197,7 @@ static NSString *landiniTableCellIdentifier = @"landiniTableCell";
     _audioEnableButton.layer.cornerRadius = 5;
     _audioEnableButton.layer.borderWidth = 1;
     _audioEnableButton.layer.borderColor = [UIColor whiteColor].CGColor;
-	[_audioInputSwitch addTarget:self action:@selector(audioInputSwitchHit) forControlEvents:UIControlEventValueChanged];
+    [_audioInputSwitch addTarget:self action:@selector(audioInputSwitchHit) forControlEvents:UIControlEventValueChanged];
     
     audioRouteView =  [[MPVolumeView alloc] initWithFrame:_audioRouteContainerView.frame];
     audioRouteView.showsRouteButton = YES;
@@ -205,19 +205,50 @@ static NSString *landiniTableCellIdentifier = @"landiniTableCell";
     [_audioMidiContentView addSubview:audioRouteView];
     [audioRouteView sizeToFit];
     
+    //Network
+
+    [_networkTypeSeg addTarget:self action:@selector(networkSegChanged:) forControlEvents:UIControlEventValueChanged];
+
+
+    [_networkingSubView addSubview:_LANdiniSubView];
+    [_networkingSubView addSubview:_multiDirectConnectionSubView];
+
+  //direct
+    _ipAddressTextField.delegate = self;
+    _ipAddressTextField.returnKeyType = UIReturnKeyDone;
+    _ipAddressTextField.text = self.delegate.outputIpAddress;
+
+    [_ipAddressResetButton addTarget:self action:@selector(ipAddressResetButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+
+    _portNumberTextField.delegate = self;
+    _portNumberTextField.returnKeyType = UIReturnKeyDone;
+    _portNumberTextField.keyboardType = UIKeyboardTypeNumberPad;
+    _portNumberTextField.text = [NSString stringWithFormat:@"%d", self.delegate.portNumber];
+
+    // non-ipads need this, ipad number pad has done+punc
+    if ( !(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ) {
+      UIToolbar* keyboardDoneButtonView = [[UIToolbar alloc] init];
+      [keyboardDoneButtonView sizeToFit];
+      UIBarButtonItem* portDoneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done"
+                                                                         style:UIBarButtonItemStyleBordered target:self
+                                                                        action:@selector(portDoneClicked:)];
+      [keyboardDoneButtonView setItems:[NSArray arrayWithObjects:portDoneButton, nil]];
+      _portNumberTextField.inputAccessoryView = keyboardDoneButtonView;
+    }
+
+    [_portResetButton addTarget:self action:@selector(portResetButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+
     //LANdini
     [_LANdiniEnableSwitch addTarget:self action:@selector(LANdiniSwitchHit:) forControlEvents:UIControlEventValueChanged];
     _LANdiniUserTableView.delegate = self;
     _LANdiniUserTableView.dataSource = self;
     
-    
-    
-   
+
     //
     _documentView.layer.cornerRadius = cornerRadius;
     _consoleView.layer.cornerRadius = cornerRadius;
     _audioMidiScrollView.layer.cornerRadius = cornerRadius;
-    _LANdiniView.layer.cornerRadius = cornerRadius;
+    _networkView.layer.cornerRadius = cornerRadius;
     
     _documentsTableView.layer.cornerRadius = cornerRadius;
     _consoleTextView.layer.cornerRadius = cornerRadius;
@@ -285,13 +316,80 @@ static NSString *landiniTableCellIdentifier = @"landiniTableCell";
     }
 }
 
+- (void)ipAddressResetButtonPressed {
+  NSString *multicastAddress = @"224.0.0.1";
+  _ipAddressTextField.text = multicastAddress;
+  [self.delegate setOutputIpAddress:multicastAddress];
+}
+
+- (void)portResetButtonPressed {
+  int patchPortNumber = self.delegate.patchPortNumber;
+  _portNumberTextField.text = [NSString stringWithFormat:@"%d", patchPortNumber];
+  [self.delegate setPortNumber:patchPortNumber];
+}
+
+- (void)portDoneClicked:(id)sender {
+  NSLog(@"Done Clicked.");
+  [self.view endEditing:YES];
+}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+  textField.text = @"";
+}
+
+- (BOOL)ipIsValid:(NSString *)inString {
+    const char *utf8 = [inString UTF8String];
+    int success;
+
+    struct in_addr dst;
+    success = inet_pton(AF_INET, utf8, &dst);
+    if (success != 1) {
+      struct in6_addr dst6;
+      success = inet_pton(AF_INET6, utf8, &dst6);
+    }
+    return (success == 1);
+}
+
+- (BOOL)portNumberIsValid:(int)inInt {
+  if (inInt >= 1000 && inInt <=65535) {
+    return YES;
+  }
+  return NO;
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+  //NSLog(@"text:%@", [textField text]);
+  if(textField == _ipAddressTextField ) {
+    if ([self ipIsValid:textField.text]) {
+      [self.delegate setOutputIpAddress:[textField text]];
+    } else {
+      //alert?
+      [self ipAddressResetButtonPressed];
+    }
+  } else if (textField == _portNumberTextField) {
+    if ([self portNumberIsValid:[textField.text intValue]]) {
+      [self.delegate setPortNumber:[textField.text intValue]];
+    } else {
+      //alert?
+      [self portResetButtonPressed];
+    }
+  }
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)theTextField {
+  [theTextField resignFirstResponder];
+  return YES;
+}
+
 -(void)viewDidAppear:(BOOL)animated{
-    [super viewDidAppear:animated];
-    [self checkReach];
-    
+  [super viewDidAppear:animated];
+  [self checkReach];
+  _portNumberTextField.text = [NSString stringWithFormat:@"%d",self.delegate.portNumber];
+  _ipAddressTextField.text = self.delegate.outputIpAddress;
+
 }
 -(void)checkReach{
-    [self updateNetworkLabel:[self.LANdiniDelegate getReachability] ];
+    [self updateNetworkLabel:[self.LANdiniDelegate getReachability]];
 }
 
 
@@ -396,7 +494,7 @@ BOOL LANdiniSwitchBool;
 }
 
 -(void)networkTime:(NSTimer*)timer{
-    _LANdiniTimeLabel.text = [NSString stringWithFormat:@"Network time via %@:\n%.2f", _LANdiniSyncServerName, [self.LANdiniDelegate getLANdiniTime] ];
+    _LANdiniTimeLabel.text = [NSString stringWithFormat:@"Network time via %@:%.2f", _LANdiniSyncServerName, [self.LANdiniDelegate getLANdiniTime] ];
 }
 
 
@@ -446,7 +544,7 @@ BOOL LANdiniSwitchBool;
     _documentViewButton.enabled=NO;
     _audioMidiViewButton.enabled=YES;
     _consoleViewButton.enabled=YES;
-    _LANdiniViewButton.enabled = YES;
+    _networkViewButton.enabled = YES;
     [self.view bringSubviewToFront:_documentView];
     self.navigationItem.title = @"Select Document";
     
@@ -455,7 +553,7 @@ BOOL LANdiniSwitchBool;
     _documentViewButton.enabled=YES;
     _audioMidiViewButton.enabled=YES;
     _consoleViewButton.enabled=NO;
-    _LANdiniViewButton.enabled = YES;
+    _networkViewButton.enabled = YES;
     [self.view bringSubviewToFront:_consoleView];
     self.navigationItem.title = @"Pd Console";
 
@@ -465,19 +563,19 @@ BOOL LANdiniSwitchBool;
     _documentViewButton.enabled=YES;
     _audioMidiViewButton.enabled=NO;
     _consoleViewButton.enabled=YES;
-    _LANdiniViewButton.enabled = YES;
+    _networkViewButton.enabled = YES;
     [self.view bringSubviewToFront:_audioMidiScrollView];
     self.navigationItem.title = @"Audio MIDI Settings";
     
 }
 
-- (void)showLANdini:(id)sender {
+- (void)showNetwork:(id)sender {
     _documentViewButton.enabled=YES;
     _audioMidiViewButton.enabled=YES;
     _consoleViewButton.enabled=YES;
-    _LANdiniViewButton.enabled = NO;
-    [self.view bringSubviewToFront:_LANdiniView];
-    self.navigationItem.title = @"LANdini";
+    _networkViewButton.enabled = NO;
+    [self.view bringSubviewToFront:_networkView];
+    self.navigationItem.title = @"Network";
     
 }
 
@@ -515,6 +613,14 @@ BOOL LANdiniSwitchBool;
             
     }
   
+}
+
+- (void)networkSegChanged:(UISegmentedControl*)sender{
+  int index = [sender selectedSegmentIndex];
+  switch (index) {
+    case 0: [_networkingSubView bringSubviewToFront: _multiDirectConnectionSubView]; break;
+    case 1: [_networkingSubView bringSubviewToFront: _LANdiniSubView]; break;
+  }
 }
 
 -(void)tickSegChanged:(UISegmentedControl*)sender{
