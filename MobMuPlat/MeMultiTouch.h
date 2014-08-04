@@ -23,7 +23,7 @@
 
 @interface MyTouch : NSObject
 @property (nonatomic) CGPoint point;
-@property (nonatomic) int state;//0,1,2
+//@property (nonatomic) int state;//0,1,2
 @property (nonatomic) int polyVox;
 @property (weak, nonatomic) UITouch* origTouch;
 @end

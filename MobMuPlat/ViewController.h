@@ -31,7 +31,7 @@
     UILabel* patchOnlyLabel;
     UIView* scrollInnerView;
     
-    NSMutableArray* allGUIControl;
+    NSMutableDictionary* allGUIControl;
     UIScrollView* scrollView;
     
     OSCManager *manager;

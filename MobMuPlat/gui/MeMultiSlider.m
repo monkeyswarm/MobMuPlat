@@ -170,6 +170,7 @@
     if ([inArray count]>1 && [[inArray objectAtIndex:0] isKindOfClass:[NSString class]] && [[inArray objectAtIndex:0] isEqualToString:@"allVal"] ){
       
       float val = [[inArray objectAtIndex:1] floatValue];
+      val = MAX(MIN(val, 1), 0);//clip
       for(int i=0;i<[_valueArray count];i++){
         [_valueArray setObject:[NSNumber numberWithFloat:val] atIndexedSubscript:i];
       }
@@ -184,6 +185,7 @@
         
         if([newValArray count] != _range) [self setRange:[newValArray count]];
         [self setValueArray:newValArray];
+        // TODO clip before set?
         for(int i=0;i<[_valueArray count];i++){
             NSNumber* val = [_valueArray objectAtIndex:i];
             if([val floatValue]<0 || [val floatValue]>1 ){

@@ -21,13 +21,13 @@
         self.address=@"/unnamedToggle";
         theButton = [UIButton buttonWithType:UIButtonTypeCustom ];
         theButton.frame=CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
-        theButton.backgroundColor=[UIColor blueColor];
+        theButton.backgroundColor=[UIColor clearColor];
         [theButton addTarget:self action:@selector(buttonHitDown) forControlEvents:UIControlEventTouchDown];
         //[theButton addTarget:self action:@selector(buttonHitUp) forControlEvents:UIControlEventTouchUpInside];//nothing happens on toggle touch up
         theButton.layer.cornerRadius=EDGE_RADIUS;
         
         [self setBorderThickness:4];//default
-        theButton.layer.borderColor=[[UIColor whiteColor]CGColor];//default
+        theButton.layer.borderColor=[[UIColor blueColor]CGColor];//default
 
         [self addSubview: theButton];
     }

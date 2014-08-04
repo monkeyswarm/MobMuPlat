@@ -96,7 +96,7 @@ extern void sigmund_tilde_setup(void);
     
     openPDFile=nil;
     
-    allGUIControl = [[NSMutableArray alloc]init];//TODO make hash table
+    allGUIControl = [[NSMutableDictionary alloc]init];
 
     //for using the flash
     avCaptureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
@@ -906,14 +906,20 @@ extern void sigmund_tilde_setup(void);
             if([currObject respondsToSelector:@selector(setHighlightColor:)]){
                 [currObject setHighlightColor:highlightColor];
             }
-        
-            [allGUIControl addObject:currObject];
-        
+
             //set OSC address for widget
             NSString* address = @"dummy";
             if([currDict objectForKey:@"address"])address = [currDict objectForKey:@"address"];
             [currObject setAddress:address];
-        
+
+            // New data structure
+            NSMutableArray *addressArray = [allGUIControl objectForKey:currObject.address];
+            if (!addressArray) {
+              addressArray = [[NSMutableArray alloc] init];
+              [allGUIControl setObject:addressArray forKey:currObject.address];
+            }
+            [addressArray addObject:currObject];
+
             [scrollInnerView addSubview:currObject];
         }
         
@@ -950,12 +956,13 @@ extern void sigmund_tilde_setup(void);
         } else {//success
           //refresh tables
           //TODO optimize! make an array of tables only
-          for(MeControl *control in allGUIControl){
-            if ([control isKindOfClass:[MeTable class]]) {
+          for (NSArray *addressArray in [allGUIControl allValues]) {
+            for(MeControl *control in addressArray){
+              if ([control isKindOfClass:[MeTable class]]) {
               // use set to quash multiple loads of same table/address - not needed in app, but needed in editor.
-                [(MeTable*)control loadTable];
+                  [(MeTable*)control loadTable];
                 
-
+              }
             }
           }
         
@@ -1085,10 +1092,14 @@ extern void sigmund_tilde_setup(void);
     }
     
     else if([source isEqualToString:@"toGUI"]){
-        for(MeControl* control in allGUIControl){
+        /*for(MeControl* control in allGUIControl){
             if([[control address] isEqualToString:[list objectAtIndex:0]]){
                 [control receiveList:[list subarrayWithRange:NSMakeRange(1, [list count]-1)]];
             }
+        }*/
+        NSMutableArray *addressArray = [allGUIControl objectForKey:[list objectAtIndex:0]];
+        for (MeControl *control in addressArray) {
+          [control receiveList:[list subarrayWithRange:NSMakeRange(1, [list count]-1)]];
         }
     }
     

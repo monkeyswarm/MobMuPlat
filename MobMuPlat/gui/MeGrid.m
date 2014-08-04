@@ -57,7 +57,7 @@
            
             [newButton addTarget:self action:@selector(buttonCancel:) forControlEvents:UIControlEventTouchCancel/*|UIControlEventTouchDragExit*/];
             newButton.layer.cornerRadius=2;
-            newButton.layer.borderWidth=1;
+            newButton.layer.borderWidth=_borderThickness;
             newButton.layer.borderColor=[[UIColor whiteColor]CGColor];
             [gridButtons addObject:newButton];
             [self addSubview:newButton];
@@ -150,7 +150,7 @@
             if(val==0)currButton.backgroundColor=[UIColor clearColor];
             else currButton.backgroundColor=self.highlightColor;
             
-            if(sendVal){
+            if(sendVal){ //use sendValueForButton?
                 NSMutableArray *msgArray = [NSMutableArray arrayWithObjects:self.address, nil];
                 [msgArray addObject:[NSNumber numberWithInt:indexX]];
                 [msgArray addObject:[NSNumber numberWithInt:indexY]];
