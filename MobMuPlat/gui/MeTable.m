@@ -17,7 +17,6 @@
   float *tableData;
   
   CGPoint touchDownPoint;
-  CGPoint lastPoint;//not normalized
   int lastTableIndex;
   //int touchDownTableIndex;
   BOOL _tableSeemsBad;
@@ -176,22 +175,30 @@
 
 //
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
-  lastPoint = [[touches anyObject] locationInView:self];
-  touchDownPoint = lastPoint;
+  touchDownPoint = [[touches anyObject] locationInView:self];
+
   if(_mode==0){
     //float normalizedX = touchDownPoint.x/self.frame.size.width;
     //touchDownTableIndex = (int)(normalizedX*tableSize);
     //NSLog(@"touchDownTableIndex %d", touchDownTableIndex);
+
+    float normalizedX = touchDownPoint.x/self.frame.size.width;
+    normalizedX = MAX(MIN(normalizedX,1),0);
+    int touchTableIndex = (int)(normalizedX*tableSize);
+    if(touchTableIndex>tableSize-1)touchTableIndex=tableSize-1;//clip
+
+    [self sendRangeMessageFromIndex:touchTableIndex toIndex:touchTableIndex];
+
     //clear prev selection
     CGContextClearRect(_cacheContextSelection, self.bounds);
     [self setNeedsDisplay];
-    [self drawHighlightBetween:lastPoint and:lastPoint];//sliver
+    [self drawHighlightBetween:touchDownPoint and:touchDownPoint];//sliver
    
   } else if (_mode==1){//draw mode
-    float normalizedX = lastPoint.x/self.frame.size.width;
+    float normalizedX = touchDownPoint.x/self.frame.size.width;
     int touchDownTableIndex = (int)(normalizedX*tableSize);
     lastTableIndex = touchDownTableIndex;
-    float normalizedY = lastPoint.y/self.frame.size.height;//change to -1 to 1
+    float normalizedY = touchDownPoint.y/self.frame.size.height;//change to -1 to 1
     float flippedY = (1-normalizedY)*2-1;
     //NSLog(@"touchDownTableIndex %d", touchDownTableIndex);
     
@@ -205,7 +212,6 @@
     free(touchValArray);
     
   }
-	
 }
 
 -(void)sendRangeMessageFromIndex:(int)indexA toIndex:(int)indexB {
@@ -224,19 +230,19 @@
     float normalizedXB = dragPoint.x/self.frame.size.width;
     normalizedXB = MAX(MIN(normalizedXB,1),0);
     int dragTableIndexB = (int)(normalizedXB*tableSize);
+    if(dragTableIndexB>tableSize-1)dragTableIndexB=tableSize-1;//clip
     
     [self sendRangeMessageFromIndex:MIN(dragTableIndexA,dragTableIndexB) toIndex:MAX(dragTableIndexA,dragTableIndexB)];
     
     [self drawHighlightBetween:touchDownPoint and:dragPoint];
     //touchDownTableIndex = (int)(normalizedX*tableSize);
     //NSLog(@"touchDownTableIndex %d", touchDownTableIndex);
-    
-    
 
   } else if(_mode==1){ //draw mode
     float normalizedX = dragPoint.x/self.frame.size.width;
     normalizedX = MAX(MIN(normalizedX,1),0);
     int dragTableIndex = (int)(normalizedX*tableSize);
+    if(dragTableIndex >= tableSize) dragTableIndex = tableSize - 1;
     float normalizedY = dragPoint.y/self.frame.size.height;//change to -1 to 1
     normalizedY = MAX(MIN(normalizedY,1),0);
     float flippedY = (1-normalizedY)*2-1;
@@ -279,15 +285,13 @@
     lastTableIndex = dragTableIndex;
   }
 
-  lastPoint = dragPoint;
-  
-	}
+}
 
 
 
 -(void)receiveList:(NSArray *)inArray{
   if ([inArray count]==1 && [[inArray objectAtIndex:0] isKindOfClass:[NSString class]] && [[inArray objectAtIndex:0] isEqualToString:@"refresh"]) {
-      [self copyFromPDAndDraw];//add range arguments?
+      [self copyFromPDAndDraw];//add range arguments? nah.
   }
   else if ([inArray count]==1 && [[inArray objectAtIndex:0] isKindOfClass:[NSString class]] && [[inArray objectAtIndex:0] isEqualToString:@"clearSelection"]) {
     if (_mode==0) {

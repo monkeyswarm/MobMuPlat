@@ -1098,7 +1098,7 @@ extern void sigmund_tilde_setup(void);
             }
         }*/
         NSMutableArray *addressArray = [allGUIControl objectForKey:[list objectAtIndex:0]];
-        for (MeControl *control in addressArray) {
+        for (MeControl *control in addressArray) { //addressArray can be nil, and will just skip over this...
           [control receiveList:[list subarrayWithRange:NSMakeRange(1, [list count]-1)]];
         }
     }
@@ -1202,8 +1202,24 @@ extern void sigmund_tilde_setup(void);
           // WHY DOES THIS BOUNCE US SOMEWHERE ELSE??? could have just been touch
           //[scrollView setContentOffset:CGPointMake(page * scrollView.frame.size.width, 0) animated:YES];
           [scrollView zoomToRect:CGRectMake(page * scrollView.frame.size.width, 0, scrollView.frame.size.width, scrollView.frame.size.height) animated:YES];
-        }
+        } else if ([[list objectAtIndex:0] isEqualToString:@"/getTime"] ){
+          NSDate *now = [NSDate date];
+          NSDateFormatter *humanDateFormat = [[NSDateFormatter alloc] init];
+          [humanDateFormat setDateFormat:@"hh:mm:ss z, d MMMM yyy"];
+          NSString *humanDateString = [humanDateFormat stringFromDate:now];
 
+          NSDateComponents *components =
+          [[NSCalendar currentCalendar] components:
+           NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit |
+           NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit
+                                          fromDate:now];
+          int ms = (int)(fmod([now timeIntervalSince1970], 1) * 1000);
+          NSArray *msgArray = [NSArray arrayWithObjects:@"/timeList", [NSNumber numberWithInteger:[components year]], [NSNumber numberWithInteger:[components month]], [NSNumber numberWithInteger:[components day]], [NSNumber numberWithInteger:[components hour]], [NSNumber numberWithInteger:[components minute]], [NSNumber numberWithInteger:[components second]], [NSNumber numberWithInt:ms], nil];
+          [PdBase sendList:msgArray toReceiver:@"fromSystem"];
+
+          NSArray *msgArray2 = [NSArray arrayWithObjects:@"/timeString", humanDateString, nil];
+          [PdBase sendList:msgArray2 toReceiver:@"fromSystem"];
+        }
     }
 }
 

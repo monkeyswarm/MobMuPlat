@@ -22,7 +22,7 @@
     NSTimeInterval _checkUserInterval;
     NSTimeInterval _broadcastInterval;
     NSTimeInterval _pingInterval;
-    NSTimeInterval _requestWaitInterval;
+    NSTimeInterval _requestWaitInterval; //not used
     NSTimeInterval _syncRequestInterval;
     NSMutableArray* _userList;
     
@@ -42,8 +42,8 @@
     
     NSString* _syncServerName;
     BOOL _inSync;
-    int _smallestRtt;
-    float _adjustmentToGetNetworkTime;
+    int _smallestRtt; //Why not timeinterval???
+    float _adjustmentToGetNetworkTime; //interval?
     
     //for network time
     NSDate* _startDate;
@@ -87,7 +87,7 @@
         _checkUserInterval = .3;
         _broadcastInterval = 1.0;
         _pingInterval = 0.33;
-        _requestWaitInterval = .001;
+        _requestWaitInterval = .001; //not used
         _syncRequestInterval = .33;
         
         _userList = [[NSMutableArray alloc]init];
@@ -214,7 +214,7 @@
     NSString* myName = [[UIDevice currentDevice] name];
     
     //rare cases of double adding on to/from background
-    LANdiniUser* findMe = [self userInUserListWithName:myName];
+    LANdiniUser* findMe = [self userInUserListWithName:myName]; //TODO name collisions??
     if(findMe){
         [_userList removeObject:findMe];
         //NSLog(@"LANdini initLAN: redundant me");
@@ -557,8 +557,8 @@
     //input message format:
     //landini address
     //list of triplets of user data (name, IP, port, name, IP, port,...)
-    
-    if(([addrs count]-1)/3 != [_userList count]){//if doesn't match our current user list size
+//    UPDATE THIS!!! for now removed, or I can check to see if recieipient doesn' thave sender, and assimilate then.
+    /*if(([addrs count]-1)/3 != [_userList count]){//if doesn't match our current user list size
         
         for(int i=1;i<[addrs count];i+=3){
             NSString* newName = (NSString*)[addrs objectAtIndex:i];
@@ -567,7 +567,7 @@
             
             [self assimilateMemberInfoName:newName IP:newIP port:newPort];
         }
-    }
+    }*/
 }
 
 // ping and msg ID stuff - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -635,8 +635,8 @@
     usr = [self userInUserListWithName:name ];
     if(usr==nil){//not found
         //end DEI edit
-    
-        LANdiniUser* usr = [[LANdiniUser alloc] initWithName:name IP:ip port:port network:self];
+//      WAS I RETUNRING NIL HERE???? altered to use same reference
+        usr = [[LANdiniUser alloc] initWithName:name IP:ip port:port network:self];
         [_userList addObject:usr];
         NSLog(@"added user %@", usr.name);
         
@@ -714,7 +714,7 @@
         
         [namesArray sortUsingSelector:@selector(compare:)];//sort by string
         NSLog(@"here's allNames: %@", namesArray);
-        if([namesArray count]>0 && [namesArray objectAtIndex:0]==_me.name){
+        if([namesArray count]>0 && [[namesArray objectAtIndex:0] isEqualToString:_me.name] ){
             if(![_syncServerName isEqualToString:_me.name]){
                 [self becomeSyncServer];
             }
@@ -766,14 +766,14 @@
     LANdiniUser* usr = [self userInUserListWithName:theirName];
     if(usr!=nil){
         if(![usr.name isEqualToString:_me.name]){
-            NSArray* msgArray = [NSArray arrayWithObjects:
+            NSArray* msgArray2 = [NSArray arrayWithObjects:
                              @"/landini/sync/reply",
                              _me.name,
                              theirTimeNumber,
                              [NSNumber numberWithDouble:[self elapsedTime]],
                              nil];
         
-        OSCMessage* msg = [LANdiniLANManager OSCMessageFromArray:msgArray];
+        OSCMessage* msg = [LANdiniLANManager OSCMessageFromArray:msgArray2];
         [[usr addr] sendThisPacket:[OSCPacket createWithContent:msg]];
         }
         else{
@@ -873,7 +873,7 @@
 
 //====GD methods
 
--(void)sendGD:(LANdiniUser*)user msg:(NSArray*)msg{
+-(void)sendGD:(LANdiniUser*)user msg:(NSArray*)msg{ //TODO should match others, i.e. sendGDUser
     if(user!=nil){
         [user sendGD:msg];
     }

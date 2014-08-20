@@ -48,11 +48,11 @@
     }
     return self;
 }
-
+//not used
 -(void)stopOSC{
     _addr = nil;
 }
-
+//not used
 -(void)restartOSC{
     _addr = [[OSCOutPort alloc]initWithAddress:self.ip andPort:self.port];
 }
@@ -131,7 +131,7 @@
 }
 
 //====sync stuff
-
+//not used?
 -(void)startAnnouncingNewSyncServer{
     if(_newSyncServerAnnouncementTimer==nil){
         _newSyncServerAnnouncementTimer = [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(syncServerTimerMethod:) userInfo:nil repeats:YES];
@@ -153,6 +153,7 @@
     }
 }
 
+// not used?
 -(void)startAnnouncingStopSync{
     if(_stopSyncAnnouncementTimer==nil){
         _stopSyncAnnouncementTimer = [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(stopServerTimerMethod:) userInfo:nil repeats:YES];
@@ -287,7 +288,7 @@
             
             if( ID - _lastIncomingOGDID > 1 ){
                 //create array of missing IDs
-                NSMutableArray* missing;
+                NSMutableArray* missing = [[NSMutableArray alloc] init];//WHOA THIS IS NEW!
                 for(int i=_lastIncomingOGDID+1;i<=ID;i++){
                     [missing addObject:[NSNumber numberWithInt:i]];
                 }
