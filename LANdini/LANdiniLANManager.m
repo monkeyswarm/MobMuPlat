@@ -191,7 +191,7 @@
 }
 
 -(void)connectionTimerMethod:(NSTimer*)timer{
-    NSString* address = [self getIPAddress];
+    NSString* address = [LANdiniLANManager getIPAddress];
     if(address!=nil){
         NSLog(@"timer %p", _connectionTimer);
         [_connectionTimer invalidate];
@@ -953,7 +953,7 @@
 
 //-----
 
-- (NSString *)getIPAddress {
++ (NSString *)getIPAddress {
     NSString *address=nil;//return nil on not found
     struct ifaddrs *interfaces = NULL;
     struct ifaddrs *temp_addr = NULL;

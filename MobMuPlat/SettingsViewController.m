@@ -389,7 +389,8 @@ static NSString *landiniTableCellIdentifier = @"landiniTableCell";
 
 }
 -(void)checkReach{
-    [self updateNetworkLabel:[self.LANdiniDelegate getReachability]];
+    Reachability *reach = [self.LANdiniDelegate getReachability];
+    [self updateNetworkLabel:reach];
 }
 
 
@@ -968,7 +969,11 @@ BOOL LANdiniSwitchBool;
 
 -(void)updateNetworkLabel:(Reachability*)reach{
     NSString* network = [ViewController fetchSSIDInfo];
-    [_LANdiniNetworkLabel setText:[NSString stringWithFormat:@"wifi network %@: %@", [reach isReachable] ? @"enabled" : @"disabled", network ? network : @""]];
+  if ([reach isReachable]) {
+      [_LANdiniNetworkLabel setText:[NSString stringWithFormat:@"Wifi network enabled: %@ \nMy IP address: %@", network ? network : @"", [LANdiniLANManager getIPAddress]]];
+  } else {
+    _LANdiniNetworkLabel.text = @"Wifi network disabled";
+  }
 }
 
 # pragma mark AudioBus

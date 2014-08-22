@@ -35,7 +35,7 @@
 @property (weak, nonatomic) id<LANdiniUserStateDelegate> userDelegate;
 @property (readonly) BOOL enabled;
 
-
++ (NSString *)getIPAddress;
 + (OSCMessage*) OSCMessageFromArray:(NSArray*)vals; //array of address, object vals -> OSCMessage
 - (NSTimeInterval) elapsedTime;
 -(void)sendMsgToApp:(NSArray*)msgArray;

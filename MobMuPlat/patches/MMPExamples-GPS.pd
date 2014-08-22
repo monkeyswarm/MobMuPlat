@@ -1,4 +1,4 @@
-#N canvas 218 95 1209 704 10;
+#N canvas 105 47 1209 704 10;
 #X obj 551 -65 receive fromGUI;
 #X obj 562 54 send toSystem;
 #X msg 559 22 list /enableLocation \$1;
@@ -47,12 +47,12 @@ coordinate value of 123.457 would be turned into rough=123456 fine=789.
 #X obj 114 48 inlet;
 #X obj 184 47 inlet;
 #X obj 244 48 inlet;
-#X floatatom 77 152 5 0 0 0 - - -;
-#X floatatom 82 212 5 0 0 0 - - -;
+#X floatatom 77 152 5 0 0 0 - - -, f 5;
+#X floatatom 82 212 5 0 0 0 - - -, f 5;
 #X obj 80 180 expr ($f1+90)/180*72+24;
 #X obj 100 235 mtof;
-#X floatatom 227 148 5 0 0 0 - - -;
-#X floatatom 232 212 5 0 0 0 - - -;
+#X floatatom 227 148 5 0 0 0 - - -, f 5;
+#X floatatom 232 212 5 0 0 0 - - -, f 5;
 #X obj 230 180 expr ($f1+180)/360*72+24;
 #X obj 208 237 mtof;
 #X obj 103 269 phasor~;
@@ -62,11 +62,11 @@ coordinate value of 123.457 would be turned into rough=123456 fine=789.
 #X obj 766 323 t f f;
 #X obj 768 435 line~;
 #X obj 767 407 pack 0 50;
-#X floatatom 389 152 5 0 0 0 - - -;
-#X floatatom 394 212 5 0 0 0 - - -;
+#X floatatom 389 152 5 0 0 0 - - -, f 5;
+#X floatatom 394 212 5 0 0 0 - - -, f 5;
 #X obj 412 235 mtof;
-#X floatatom 539 148 5 0 0 0 - - -;
-#X floatatom 544 212 5 0 0 0 - - -;
+#X floatatom 539 148 5 0 0 0 - - -, f 5;
+#X floatatom 544 212 5 0 0 0 - - -, f 5;
 #X obj 520 237 mtof;
 #X obj 415 269 phasor~;
 #X obj 487 267 phasor~;
@@ -128,8 +128,8 @@ coordinate value of 123.457 would be turned into rough=123456 fine=789.
 which specifies how many meters to move before triggering the callback
 (and sending messages into PD). Default is 1 Value of <=0 sets it to
 "none" and all GPS updates trigger callback.;
-#X floatatom 792 -12 5 0 0 0 - - -;
-#X floatatom 1022 59 5 0 0 0 - - -;
+#X floatatom 792 -12 5 0 0 0 - - -, f 5;
+#X floatatom 1022 59 5 0 0 0 - - -, f 5;
 #X text 550 -312 NOTE: nothing works when this patch is open on your
 desktop/laptop...GPS data is only received when running on the device.
 ;
@@ -140,6 +140,22 @@ GPS update messages. Updating is turned off when a new patch is loaded.
 #X msg 65 29 list /displayLabel5 compass heading: \$1 deg.;
 #X obj 1 -31 list trim;
 #X obj 558 -38 list trim;
+#X obj 764 356 receive fromSystem;
+#X obj 764 383 list trim;
+#X text 765 176 System time is requested via a message "/getTime" \,
+and is returned in two forms: "/timeString" \, a human-readable string
+\, and "/timeList" \, a set of 7 numbers specifying year \, month \,
+date \, hour \, minute \, second \, and millisecond.;
+#X obj 767 285 metro 1000;
+#X obj 768 263 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X obj 767 238 loadbang;
+#X msg 767 309 list /getTime;
+#X obj 767 330 send toSystem;
+#X obj 764 411 route /timeString /timeList;
+#X obj 765 437 list prepend /displayLabel6;
+#X obj 838 472 list prepend /displayLabel7 time as list:;
+#X obj 766 498 send toGUI;
 #X connect 0 0 39 0;
 #X connect 2 0 1 0;
 #X connect 3 0 38 0;
@@ -185,3 +201,13 @@ GPS update messages. Updating is turned off when a new patch is loaded.
 #X connect 37 0 4 0;
 #X connect 38 0 36 0;
 #X connect 39 0 10 0;
+#X connect 40 0 41 0;
+#X connect 41 0 48 0;
+#X connect 43 0 46 0;
+#X connect 44 0 43 0;
+#X connect 45 0 44 0;
+#X connect 46 0 47 0;
+#X connect 48 0 49 0;
+#X connect 48 1 50 0;
+#X connect 49 0 51 0;
+#X connect 50 0 51 0;

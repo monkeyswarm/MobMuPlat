@@ -137,7 +137,11 @@ extern void sigmund_tilde_setup(void);
     [audioController configureTicksPerBuffer:ticksPerBuffer];
     //[audioController print];
     
-    [self setupAudioBus];
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
+        // do stuff for iOS 7 and newer
+        [self setupAudioBus];
+    }
+    
     
     //access to PD externals not normally part of libPD
     expr_setup();

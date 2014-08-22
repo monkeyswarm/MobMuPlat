@@ -1565,8 +1565,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/daniglesia/Downloads/Audiobus-SDK-1",
-					/Users/diglesia/Source/MobMuPlat,
 					"$(PROJECT_DIR)",
 				);
 				ONLY_ACTIVE_ARCH = NO;
@@ -1577,7 +1575,7 @@
 					"-DPD",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "996CD52E-7925-4976-8723-140FD11F3470";
+				PROVISIONING_PROFILE = "a9e62af0-4edf-4521-88d2-8c7c4a64a09b";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = "armv7 armv7s";
@@ -1604,8 +1602,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/daniglesia/Downloads/Audiobus-SDK-1",
-					/Users/diglesia/Source/MobMuPlat,
 					"$(PROJECT_DIR)",
 				);
 				ONLY_ACTIVE_ARCH = NO;
@@ -1617,7 +1613,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "996CD52E-7925-4976-8723-140FD11F3470";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "f4af9a05-4185-49fb-8667-d730d778b5fb";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = "armv7 armv7s";
