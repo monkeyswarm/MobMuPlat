@@ -3,7 +3,7 @@
 //  Audiobus
 //
 //  Created by Michael Tyson on 04/05/2012.
-//  Copyright (c) 2012 Audiobus. All rights reserved.
+//  Copyright (c) 2011-2014 Audiobus. All rights reserved.
 //
 
 #ifdef __cplusplus
@@ -16,37 +16,79 @@ extern "C" {
 #import "ABCommon.h"
 
 /*!
+ * Filter port connections changed
+ *
+ *  Sent when the port's connections have changed, caused by connections
+ *  or disconnections from within the Audiobus app.
+ */
+extern NSString * const ABFilterPortConnectionsChangedNotification;
+
+/*!
+ * Audio processing block
+ *
+ *  This block is called when there is audio to be processed.
+ *  Your app should modify the audio in the `audio' parameter.
+ *
+ * @param audio Audio to be filtered, in the client format you specified
+ * @param frames Number of frames of audio
+ * @param timestamp The timestamp of the audio
+ */
+typedef void (^ABAudioFilterBlock)(AudioBufferList *audio, UInt32 frames, AudioTimeStamp *timestamp);
+    
+/*!
  * Filter port
  *
- *  This class is used to filter audio.  Create an instance using the
- *  @link ABAudiobusController::addFilterPortNamed:title:processBlock: addFilterPortNamed:title:processBlock: @endlink
- *  method of @link ABAudiobusController @endlink, passing in a filter implementation via the processBlock
- *  parameter.
+ *  This class is used to filter audio.
  *
- *  When your filter port is connected as part of an Audiobus connection, the block will be
- *  called as audio enters the system, to process the audio.
+ *  See the integration guide's section on using the [Filter Port](@ref Create-Filter-Port)
+ *  for discussion.
  */
 @interface ABFilterPort : ABPort
 
 /*!
- * Get output audio, for playback
+ * Initialize
  *
- *  Use this C function to receive audio frames at the output of this filter port.
- *  You must feed this audio to your audio engine's output so that users of your
- *  filter will be able to hear the filtered audio.
+ *  Initializes a new filter port, with a block to use for filtering
  *
- *  Suitable for use from within a realtime Core Audio context.
- *
- * @param filterPort        The filter port.
- * @param bufferList        The audio buffer list to receive audio into, in the format specified by @link clientFormat @endlink. If NULL, then audio will simply be discarded.
- *                          If 'mData' pointers are NULL, then an internal buffer will be provided (not thread-safe).
- * @param lengthInFrames    The number of frames requested.
- * @param outTimestamp      On output, if not NULL, the timestamp of the returned audio.
+ * @param name The name of the filter port, for internal use
+ * @param title Title of port, show to the user
+ * @param description The AudioComponentDescription that identifiers this port. 
+ *          This must match the entry in the AudioComponents dictionary of your Info.plist, and must be
+ *          of type kAudioUnitType_RemoteEffect or kAudioUnitType_RemoteMusicEffect.
+ * @param processBlock A block to use to process audio as it arrives at the filter port
+ * @param processBlockSize Specify the number of frames you want to process each time
+ *          the filter block is called. Audiobus will automatically queue up frames until this
+ *          number is reached, then call the audio block for this number of frames. Set to
+ *          0 if this value is unimportant, and Audiobus will use whatever number of frames results
+ *          in the least latency.
  */
-void ABFilterPortGetOutput(ABFilterPort *filterPort, AudioBufferList *bufferList, UInt32 lengthInFrames, AudioTimeStamp *outTimestamp);
+- (id)initWithName:(NSString *)name title:(NSString*)title audioComponentDescription:(AudioComponentDescription)description processBlock:(ABAudioFilterBlock)processBlock processBlockSize:(UInt32)processBlockSize;
+
+/*!
+ * Initialize
+ *
+ *  Initializes a new filter port, with an audio unit for filtering
+ *
+ *  Note: The audio unit you pass here must be an output unit (kAudioUnitSubType_RemoteIO). If you wish
+ *  to use a different kind of audio unit, you'll need to use the
+ *  @link initWithName:title:audioComponentDescription:processBlock:processBlockSize: process block initialiser @endlink 
+ *  and call AudioUnitRender on the audio unit yourself from within the process block, while feeding its input via a
+ *  callback that passes in the audio given to you in the process block.
+ *
+ * @param name The name of the filter port, for internal use
+ * @param title Title of port, show to the user
+ * @param description The AudioComponentDescription that identifiers this port.
+ *          This must match the entry in the AudioComponents dictionary of your Info.plist, and must be
+ *          of type kAudioUnitType_RemoteEffect or kAudioUnitType_RemoteMusicEffect.
+ * @param audioUnit The output audio unit to use for processing. The audio unit's input will be replaced with the audio to process.
+ */
+- (id)initWithName:(NSString *)name title:(NSString*)title audioComponentDescription:(AudioComponentDescription)description audioUnit:(AudioUnit)audioUnit;
 
 /*!
  * Determine if the filter port is currently connected
+ *
+ *  If you are using the @link initWithName:title:audioComponentDescription:processBlock:processBlockSize: processBlock @endlink
+ *  initializer, then you must mute your app's main audio output when this function returns YES.
  *
  *  This function is suitable for use from within a realtime Core Audio context.
  *
@@ -56,73 +98,56 @@ void ABFilterPortGetOutput(ABFilterPort *filterPort, AudioBufferList *bufferList
 BOOL ABFilterPortIsConnected(ABFilterPort *filterPort);
 
 /*!
+ * Audio unit
+ *
+ *  The audio unit to use for processing. If you uninitialize the audio unit passed
+ *  to this class's initializer, be sure to set this property to NULL immediately beforehand.
+ *
+ *  If you did not provide an audio unit when initializing the port, this property
+ *  will allow you to gain access to the internal audio unit used for audio transport, for
+ *  the purposes of custom Inter-App Audio interactions such as transport control or MIDI exchange.
+ */
+@property (nonatomic, assign) AudioUnit audioUnit;
+
+/*!
  * Client format
  *
- *  Use this to specify what audio format your app uses. Audio will be automatically
- *  converted to and from the Audiobus line format.
+ *  If you're using a process block for processing, use this to specify what audio 
+ *  format to use. Audio will be automatically converted to and from the Audiobus line format.
  *
- *  The default value is @link ABAudioStreamBasicDescription @endlink.
+ *  The default value is non-interleaved stereo floating-point PCM.
  */
 @property (nonatomic, assign) AudioStreamBasicDescription clientFormat;
 
-/*!
- * Audio output client format
- *
- *  Use this to specify the audio format to use for your app's audio output.
- *  Audio returned by @link ABFilterPortGetOutput @endlink will be returned in this format.
- *
- *  If not set directly, this will be the same value as clientFormat.
- */
-@property (nonatomic, assign) AudioStreamBasicDescription audioOutputClientFormat;
-
-/*!
- * Audio buffer size for processing
- *
- *  Use this property to specify the number of frames you want to process each time
- *  the filter block is called. Audiobus will automatically queue up frames until this
- *  number is reached, then call the audio block for this number of frames.
- *
- *  For example, if you have a piece of DSP code that requires audio to be processed
- *  512 frames at a time, set this value to 512.
- *
- *  Lower values means lower latency.
- *
- *  The default value is 256.
- */
-@property (nonatomic, assign) UInt32 audioBufferSize;
- 
 /*!
  * Currently-connected sources
  *
  *  This is an array of @link ABPort ABPorts @endlink.
  */
-@property (nonatomic, retain, readonly) NSArray *sources;
+@property (nonatomic, strong, readonly) NSArray *sources;
 
 /*!
  * Currently-connected destinations
  *
  *  This is an array of @link ABPort ABPorts @endlink.
  */
-@property (nonatomic, retain, readonly) NSArray *destinations;
+@property (nonatomic, strong, readonly) NSArray *destinations;
 
 /*!
- * The attributes of all downstream ports connected to this port
- *
- *  Currently unused.
+ * Whether the port is connected
  */
-@property (nonatomic, readonly) ABInputPortAttributes connectedDownstreamPortAttributes;
+@property (nonatomic, readonly) BOOL connected;
 
 /*!
- * The attributes of all upstream ports connected to this port
- *
- *  Currently unused.
+ * The AudioComponentDescription, of type kAudioUnitType_RemoteEffect or kAudioUnitType_RemoteMusicEffect,
+ * which identifies this port's published audio unit
  */
-@property (nonatomic, readonly) ABOutputPortAttributes connectedUpstreamPortAttributes;
+@property (nonatomic, readonly) AudioComponentDescription audioComponentDescription;
 
 /*!
  * The title of the port, for display to the user
  */
-@property (nonatomic, retain, readwrite) NSString *title;
+@property (nonatomic, strong, readwrite) NSString *title;
 
 /*!
  * The port icon (a 32x32 image)
@@ -131,7 +156,33 @@ BOOL ABFilterPortIsConnected(ABFilterPort *filterPort);
  *  defines multiple filter ports, it is highly recommended that you provide icons
  *  for each, for easy identification by the user.
  */
-@property (nonatomic, retain, readwrite) UIImage *icon;
+@property (nonatomic, strong, readwrite) UIImage *icon;
+
+/*!
+ * The constant latency of this filter, in frames
+ *
+ *  If your filter code adds a constant amount of latency to the audio stream
+ *  (such as an FFT or lookahead operation), you should specify that here in order
+ *  to have Audiobus automatically account for it.
+ *
+ *  This is important when users have the same input signal going through different
+ *  paths, so that Audiobus can synchronize these properly at the output. If you don't
+ *  specify the correct latency, the user will hear phasing due to incorrectly aligned
+ *  signals at the output.
+ *
+ *  Default: 0
+ */
+@property (nonatomic, assign) UInt32 latency;
+
+/*!
+ * Whether the port is bypassed
+ *
+ *  This property value is automatically managed by an in-built trigger that appears
+ *  to users from within the Connection Panel. If your filter app also provides its own
+ *  bypass controls, you can use this property to keep the state of the built-in bypass
+ *  feature and your app's own bypass feature synchronized.
+ */
+@property (nonatomic, assign) BOOL bypassed;
 
 @end
 

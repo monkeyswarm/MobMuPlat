@@ -40,9 +40,7 @@
 //dei edit
 - (AudioStreamBasicDescription)ASBDForSampleRate:(Float64)sampleRate numberChannels:(UInt32)numChannels;
 //dei edit
-@property (nonatomic, assign)ABOutputPort *outputPort;
-@property (nonatomic, assign)ABInputPort *inputPort;
-@property (nonatomic, assign)ABFilterPort *filterPort;
+@property (nonatomic, assign)ABReceiverPort *inputPort;
 
 
 @end

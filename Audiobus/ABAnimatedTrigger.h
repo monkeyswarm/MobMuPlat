@@ -3,11 +3,11 @@
 //  Audiobus
 //
 //  Created by Michael Tyson on 05/03/2013.
-//  Copyright (c) 2013 A Tasty Pixel. All rights reserved.
+//  Copyright (c) 2011-2014 Audiobus. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
-#import "ABTrigger.h"
+#import "ABButtonTrigger.h"
 
 /*!
  *  Animated trigger
@@ -15,7 +15,7 @@
  *  This class implements a kind of [trigger](@ref ABTrigger) that appears as a button
  *  with an animated icon.
  */
-@interface ABAnimatedTrigger : ABTrigger
+@interface ABAnimatedTrigger : ABButtonTrigger
 
 /*!
  * Create an animated trigger
@@ -70,6 +70,6 @@
  *
  *  By default, icons are drawn in 50% grey.
  */
-@property (nonatomic, retain) UIColor *color;
+@property (nonatomic, strong) UIColor *color;
 
 @end

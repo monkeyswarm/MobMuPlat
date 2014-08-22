@@ -242,7 +242,6 @@
 		DCD8DF9317330D8B00767321 /* PGMidi.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCD8DF9217330D8A00767321 /* PGMidi.mm */; };
 		DCEF4F2C188ED1CD00D6EE54 /* SettingsViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */; };
 		DCFF717716B59F3100CDCEAE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DCFF717616B59F3100CDCEAE /* libz.dylib */; };
-		F91BAD3218EB15FC007E0DC6 /* libAudiobus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F91BAD3118EB15FC007E0DC6 /* libAudiobus.a */; };
 		F94958DC18D1223B00C8876F /* MMPExamples-Arp-ip5.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F94958D818D1223B00C8876F /* MMPExamples-Arp-ip5.mmp */; };
 		F94958DD18D1223B00C8876F /* MMPExamples-Arp-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F94958D918D1223B00C8876F /* MMPExamples-Arp-Pad.mmp */; };
 		F94958DE18D1223B00C8876F /* MMPExamples-Arp.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F94958DA18D1223B00C8876F /* MMPExamples-Arp.mmp */; };
@@ -254,6 +253,7 @@
 		F9579B4B1926EACC00369D8E /* MMPExamples-TableGlitch.pd in Resources */ = {isa = PBXBuildFile; fileRef = F9579B471926EACC00369D8E /* MMPExamples-TableGlitch.pd */; };
 		F9579B4D1926EAD800369D8E /* anderson1.wav in Resources */ = {isa = PBXBuildFile; fileRef = F9579B4C1926EAD800369D8E /* anderson1.wav */; };
 		F95C52021909B1230074E0A6 /* MeTable.m in Sources */ = {isa = PBXBuildFile; fileRef = F95C52011909B1230074E0A6 /* MeTable.m */; };
+		F97D45A819A541E000874EAA /* libAudiobus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F97D45A719A541E000874EAA /* libAudiobus.a */; };
 		F9967C3718F8C54D008E3828 /* MenuNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9967C3618F8C54D008E3828 /* MenuNavigationController.m */; };
 		F9DE7DC018F49D62007B9E45 /* MeMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = F9DE7DBF18F49D62007B9E45 /* MeMenu.m */; };
 /* End PBXBuildFile section */
@@ -573,7 +573,6 @@
 		DCD8DF9217330D8A00767321 /* PGMidi.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PGMidi.mm; path = PGMidi/PGMidi.mm; sourceTree = "<group>"; };
 		DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "SettingsViewController~iphone.xib"; path = "settings/SettingsViewController~iphone.xib"; sourceTree = "<group>"; };
 		DCFF717616B59F3100CDCEAE /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		F91BAD3118EB15FC007E0DC6 /* libAudiobus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libAudiobus.a; sourceTree = "<group>"; };
 		F94958D818D1223B00C8876F /* MMPExamples-Arp-ip5.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Arp-ip5.mmp"; path = "patches/MMPExamples-Arp-ip5.mmp"; sourceTree = "<group>"; };
 		F94958D918D1223B00C8876F /* MMPExamples-Arp-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Arp-Pad.mmp"; path = "patches/MMPExamples-Arp-Pad.mmp"; sourceTree = "<group>"; };
 		F94958DA18D1223B00C8876F /* MMPExamples-Arp.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "MMPExamples-Arp.mmp"; path = "patches/MMPExamples-Arp.mmp"; sourceTree = "<group>"; };
@@ -587,6 +586,8 @@
 		F9579B4C1926EAD800369D8E /* anderson1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = anderson1.wav; path = patches/anderson1.wav; sourceTree = "<group>"; };
 		F95C52001909B1230074E0A6 /* MeTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeTable.h; path = gui/MeTable.h; sourceTree = "<group>"; };
 		F95C52011909B1230074E0A6 /* MeTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeTable.m; path = gui/MeTable.m; sourceTree = "<group>"; };
+		F97D45A719A541E000874EAA /* libAudiobus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libAudiobus.a; sourceTree = "<group>"; };
+		F97D45B619A54D0300874EAA /* MobMuPlat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = MobMuPlat.entitlements; sourceTree = "<group>"; };
 		F9967C3518F8C54D008E3828 /* MenuNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuNavigationController.h; path = gui/MenuNavigationController.h; sourceTree = "<group>"; };
 		F9967C3618F8C54D008E3828 /* MenuNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MenuNavigationController.m; path = gui/MenuNavigationController.m; sourceTree = "<group>"; };
 		F9DE7DBE18F49D62007B9E45 /* MeMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeMenu.h; path = gui/MeMenu.h; sourceTree = "<group>"; };
@@ -607,11 +608,11 @@
 				DCFF717716B59F3100CDCEAE /* libz.dylib in Frameworks */,
 				DC8EBBB91660F3B4003C3162 /* QuartzCore.framework in Frameworks */,
 				DC29446916584B0100BF4A50 /* AudioToolbox.framework in Frameworks */,
+				F97D45A819A541E000874EAA /* libAudiobus.a in Frameworks */,
 				DC29445F16584ABE00BF4A50 /* AVFoundation.framework in Frameworks */,
 				DC8EFEC71656F782004A88E3 /* CoreMIDI.framework in Frameworks */,
 				DC233DAD1655EDF500AC01C5 /* UIKit.framework in Frameworks */,
 				DC233DAF1655EDF500AC01C5 /* Foundation.framework in Frameworks */,
-				F91BAD3218EB15FC007E0DC6 /* libAudiobus.a in Frameworks */,
 				DC233DB11655EDF500AC01C5 /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -824,6 +825,7 @@
 		DC233D9D1655EDF500AC01C5 = {
 			isa = PBXGroup;
 			children = (
+				F97D45A919A5453C00874EAA /* Audiobus */,
 				DC13B951188E04EB00647115 /* Reachability */,
 				90DFFB22187DC41700DD2149 /* LANdini */,
 				DC0FC7E3172D837F00E895C3 /* libpd */,
@@ -848,7 +850,7 @@
 		DC233DAB1655EDF500AC01C5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F91BAD3118EB15FC007E0DC6 /* libAudiobus.a */,
+				F97D45A719A541E000874EAA /* libAudiobus.a */,
 				DCA9BD9618E31AA600FAD233 /* Security.framework */,
 				DCA9BD9418E31A9400FAD233 /* Accelerate.framework */,
 				DC13B958188E125600647115 /* SystemConfiguration.framework */,
@@ -870,6 +872,7 @@
 		DC233DB21655EDF500AC01C5 /* MobMuPlat */ = {
 			isa = PBXGroup;
 			children = (
+				F97D45B619A54D0300874EAA /* MobMuPlat.entitlements */,
 				DCEF4F21188ECC7A00D6EE54 /* settings */,
 				DC1065AA16B4255000AD4091 /* graphics */,
 				DC27F12A165EB8900094A069 /* gui */,
@@ -1162,6 +1165,13 @@
 				DCA9B9431733103B000E59DD /* zip.h */,
 			);
 			name = minizip;
+			sourceTree = "<group>";
+		};
+		F97D45A919A5453C00874EAA /* Audiobus */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Audiobus;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1542,6 +1552,7 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = MobMuPlat/MobMuPlat.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: daniel Iglesia (6Y3ENEJPL8)";
 				GCC_INPUT_FILETYPE = automatic;
@@ -1551,11 +1562,12 @@
 				INFOPLIST_FILE = "MobMuPlat/MobMuPlat-Info.plist";
 				INSTALL_GROUP = "";
 				INSTALL_OWNER = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"/Users/daniglesia/Downloads/Audiobus-SDK-1",
 					/Users/diglesia/Source/MobMuPlat,
+					"$(PROJECT_DIR)",
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
@@ -1579,6 +1591,7 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = MobMuPlat/MobMuPlat.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: daniel Iglesia (RJC7S963JF)";
 				GCC_INPUT_FILETYPE = automatic;
@@ -1588,11 +1601,12 @@
 				INFOPLIST_FILE = "MobMuPlat/MobMuPlat-Info.plist";
 				INSTALL_GROUP = "";
 				INSTALL_OWNER = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"/Users/daniglesia/Downloads/Audiobus-SDK-1",
 					/Users/diglesia/Source/MobMuPlat,
+					"$(PROJECT_DIR)",
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (

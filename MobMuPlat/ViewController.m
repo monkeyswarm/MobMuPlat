@@ -366,47 +366,72 @@ extern void sigmund_tilde_setup(void);
     }
     
     
-    self.audiobusController = [[ABAudiobusController alloc]
-                               initWithAppLaunchURL:[NSURL URLWithString:@"MobMuPlat.audiobus://"]
-                               apiKey:@"MCoqKk1vYk11UGxhdCoqKk1vYk11UGxhdC5hdWRpb2J1czovLw==:RLMszjGmD4cXoV8lgbbq7nBvgrGwAXvnbP2eDCNFfrF+6xX+qi0mtsvyzH6Jrl1K9KD1DFKduTCJM7qrKum25eIoVjlA74s6VM3ywHJwVKvvAKu6F1e6cjtlaCaK8Q2H"];
-  
-	self.audiobusController.connectionPanelPosition = ABAudiobusConnectionPanelPositionLeft;
-    _outputPort = [self.audiobusController addOutputPortNamed:@"Audio Output"
-                                                                 title:NSLocalizedString(@"Main App Output", @"")];
-    _outputPort.clientFormat = [self.audioController.audioUnit
-                            ASBDForSampleRate:samplingRate
-                            numberChannels:channelCount];
-    
-    self.audioController.audioUnit.outputPort = _outputPort;
-    _inputPort = [self.audiobusController addInputPortNamed:@"Audio Input"
-                                                              title:NSLocalizedString(@"Main App Input", @"")];
-    _inputPort.attributes = ABInputPortAttributePlaysLiveAudio;
-    _inputPort.clientFormat = [self.audioController.audioUnit
-                          ASBDForSampleRate:samplingRate
-                          numberChannels:channelCount];
-    _inputPort.icon = [UIImage imageNamed:@"Port-Icon.png"];
-    self.audioController.audioUnit.inputPort = _inputPort;
-  
-  //filter callback
-    self.filterPort =  [self.audiobusController
-                        addFilterPortNamed:AUDIOBUS_FILTERPORT_NAME
-                        title:AUDIOBUS_FILTER_TITLE
-                        processBlock:^(AudioBufferList *audio, UInt32 frames, AudioTimeStamp *timestamp) {
-                                Float32 *auBuffer = (Float32 *)audio->mBuffers[0].mData;
-                                int ticks = frames >>  log2int([PdBase getBlockSize]);
-                                [PdBase processFloatWithInputBuffer:auBuffer outputBuffer:auBuffer ticks:ticks];
-                        }];
-    
-    //configure port
-    //int numberFrames = [PdBase getBlockSize] * self.ticks;
-    //self.filterPort.audioBufferSize = numberFrames;
-    self.filterPort.clientFormat = [self.audioController.audioUnit
-                                    ASBDForSampleRate:samplingRate
-                                    numberChannels:channelCount];
-    self.audioController.audioUnit.filterPort = _filterPort;
-    
-    //[self printAudioSessionUnitInfo];
+    self.audiobusController = [[ABAudiobusController alloc] initWithApiKey:@"MCoqKk1vYk11UGxhdCoqKk1vYk11UGxhdC12Mi5hdWRpb2J1czovLw==:HJ1QCorzfgJBpb5B5TRb6zhp6o7wHg6UWI7RIkuJJmSMz9e5I+2F7R+cYSQjv9t0WoxYoxIBbYy/XDPGA2VslqaVcBUJ78WQkQ4KDrbKY/N5NndAHPhiAA+2DORdN733"];
 
+
+  // Watch the audiobusAppRunning and connected properties
+  [_audiobusController addObserver:self
+                        forKeyPath:@"connected"
+                           options:0
+                           context:kAudiobusRunningOrConnectedChanged];
+  [_audiobusController addObserver:self
+                        forKeyPath:@"audiobusAppRunning"
+                           options:0
+                           context:kAudiobusRunningOrConnectedChanged];
+  
+	self.audiobusController.connectionPanelPosition = ABConnectionPanelPositionLeft;
+
+  AudioComponentDescription acd;
+  acd.componentType = kAudioUnitType_RemoteGenerator;
+  acd.componentSubType = 'aout';
+  acd.componentManufacturer = 'igle';
+
+  ABSenderPort *sender = [[ABSenderPort alloc] initWithName:@"MobMuPlat Sender"
+                                                      title:NSLocalizedString(@"MobMuPlat Sender", @"")
+                                  audioComponentDescription:acd
+                                                  audioUnit:self.audioController.audioUnit.audioUnit];
+  [_audiobusController addSenderPort:sender];
+
+  ABFilterPort *filterPort = [[ABFilterPort alloc] initWithName:@"MobMuPlat Filter"
+                                             title:@"MobMuPlat Filter"
+                         audioComponentDescription:(AudioComponentDescription) {
+                           .componentType = kAudioUnitType_RemoteEffect,
+                           .componentSubType = 'afil',
+                           .componentManufacturer = 'igle' }
+                                         audioUnit:self.audioController.audioUnit.audioUnit];
+  [_audiobusController addFilterPort:filterPort];
+
+  ABReceiverPort *receiverPort = [[ABReceiverPort alloc] initWithName:@"MobMuPlat Receiver"
+                                                     title:NSLocalizedString(@"MobMuPlat Receiver", @"")];
+  [_audiobusController addReceiverPort:receiverPort];
+
+  receiverPort.clientFormat = [self.audioController.audioUnit
+                                  ASBDForSampleRate:samplingRate
+                                     numberChannels:channelCount];
+  self.audioController.audioUnit.inputPort = receiverPort; //tell PD callback to look at it
+
+
+}
+
+// observe audiobus from background, stop audio if we disconnect from audiobus
+static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedChanged;
+
+-(void)observeValueForKeyPath:(NSString *)keyPath
+                     ofObject:(id)object
+                       change:(NSDictionary *)change
+                      context:(void *)context {
+  if ( context == kAudiobusRunningOrConnectedChanged ) {
+    if ( [UIApplication sharedApplication].applicationState == UIApplicationStateBackground
+        && !_audiobusController.connected
+        && !_audiobusController.audiobusAppRunning
+        && self.audioController.isActive ) {
+      // Audiobus has quit. Time to sleep.
+      //[_audioEngine stop];
+      [self.audioController setActive:NO];
+    }
+  } else {
+    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+  }
 }
 
 - (void)printAudioSessionUnitInfo {
@@ -417,7 +442,6 @@ extern void sigmund_tilde_setup(void);
     [self.audioController.audioUnit print];
     
 }
-
 
 -(BOOL)isAudioBusConnected {
   //return ABFilterPortIsConnected(self.filterPort) || ABInputPortIsConnected(self.inputPort) || ABOutputPortIsConnected(self.outputPort);

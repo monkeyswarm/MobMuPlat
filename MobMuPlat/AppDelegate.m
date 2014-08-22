@@ -43,8 +43,11 @@
 
 //MobMuPlat is associated with .pd, .mmp, and .zip files. This handles importing those files into the Documents folder
 -(BOOL)getFileFromURL:(NSURL*)url{
-    if([url.absoluteString isEqualToString:@"MobMuPlat.audiobus://"])return YES;//it sends this on connection to audiobus
-    
+    if([url.absoluteString isEqualToString:@"MobMuPlat.audiobus://"] ||
+       [url.absoluteString isEqualToString:@"MobMuPlat-v2.audiobus://"]) {
+      return YES;//it sends this on connection to audiobus
+    }
+
     NSString* filename = [[url path] lastPathComponent];
     NSString *suffix = [[filename componentsSeparatedByString:@"."] lastObject];
     
@@ -125,9 +128,9 @@
 {
     [self.viewController disconnectPorts];//disconnect OSC ports on resign, to avoid conflicts
     
-    if(![self.viewController backgroundAudioEnabled] && ![self.viewController isAudioBusConnected])//if not keeping audio in background
-        [[self.viewController audioController] setActive:NO];//shut down audio processing
-
+  if(![self.viewController backgroundAudioEnabled] && !self.viewController.audiobusController.connected && !self.viewController.audiobusController.audiobusAppRunning) {
+    [[self.viewController audioController] setActive:NO];//shut down audio processing
+  }
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application

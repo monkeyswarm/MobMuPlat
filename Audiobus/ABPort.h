@@ -3,7 +3,7 @@
 //  Audiobus
 //
 //  Created by Michael Tyson on 02/04/2012.
-//  Copyright (c) 2012 Audiobus. All rights reserved.
+//  Copyright (c) 2011-2014 Audiobus. All rights reserved.
 //
 
 
@@ -18,9 +18,9 @@ extern "C" {
  * Port types
  */
 typedef enum {
-    ABPortTypeInput,
+    ABPortTypeReceiver,
     ABPortTypeFilter,
-    ABPortTypeOutput
+    ABPortTypeSender
 } ABPortType;
 
 @class ABPeer;
@@ -41,22 +41,22 @@ typedef enum {
 /*!
  * The peer this port is on
  */
-@property (nonatomic, assign, readonly) ABPeer *peer;
+@property (nonatomic, weak, readonly) ABPeer *peer;
 
 /*!
  * The internal port name
  */
-@property (nonatomic, retain, readonly) NSString *name;
+@property (nonatomic, strong, readonly) NSString *name;
 
 /*!
  * The title of the port, for display to the user
  */
-@property (nonatomic, retain, readonly) NSString *title;
+@property (nonatomic, strong, readonly) NSString *title;
 
 /*!
  * The port icon (a 64x64 image)
  */
-@property (nonatomic, readonly) UIImage *icon;
+@property (nonatomic, strong, readonly) UIImage *icon;
 
 /*!
  * The type of the port
@@ -66,7 +66,7 @@ typedef enum {
 /*!
  * The attributes of this port
  */
-@property (nonatomic, readonly) uint32_t attributes;
+@property (nonatomic, readonly) uint8_t attributes;
 
 @end
 

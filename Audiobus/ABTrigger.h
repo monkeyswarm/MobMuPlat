@@ -3,7 +3,7 @@
 //  Audiobus
 //
 //  Created by Michael Tyson on 16/05/2012.
-//  Copyright (c) 2012 Audiobus. All rights reserved.
+//  Copyright (c) 2011-2014 Audiobus. All rights reserved.
 //
 
 #ifdef __cplusplus
@@ -12,6 +12,8 @@ extern "C" {
 
 #import <Foundation/Foundation.h>
 #import "ABCommon.h"
+
+extern NSString * const ABTriggerAttributeChangedNotification;
 
 @class ABTrigger;
 
@@ -42,11 +44,17 @@ typedef void (^ABTriggerPerformBlock)(ABTrigger *trigger, NSSet *ports);
  *
  *  Rewind button. Appears as a triangle pointing to the left, with a vertical bar
  *  at the apex.
+ *
+ * @var ABTriggerTypeSkip
+ *
+ *  Skip button. Appears as a triangle pointing to the right, with a vertical bar
+ *  at the apex.
  */
 typedef enum {
     ABTriggerTypeRecordToggle = 1,
     ABTriggerTypePlayToggle,
     ABTriggerTypeRewind,
+    ABTriggerTypeSkip,
     
     kABTotalTriggerTypes
 } ABTriggerSystemType;
@@ -92,42 +100,14 @@ typedef enum {
 /*!
  * Create a custom trigger
  *
+ *  Deprecated in Version 2.0 - Use @link ABButtonTrigger::buttonTriggerWithTitle:icon:block: +[ABButtonTrigger buttonTriggerWithTitle:icon:block:] @endlink instead.
+ *
  * @param title A user-readable title (used for accessibility)
  * @param icon A icon of maximum dimensions 80x80, to use to draw the trigger button. This icon will be used
  *             as a mask to render the inset button effect. Icon size should be divisible by 2.
  * @param block Block to be called when trigger is activated
  */
-+ (ABTrigger*)triggerWithTitle:(NSString*)title icon:(UIImage*)icon block:(ABTriggerPerformBlock)block;
-
-/*!
- * Set the title for a given state
- *
- * @param title User-readable title (used for accessibility)
- * @param state State to apply title to
- */
-- (void)setTitle:(NSString*)title forState:(ABTriggerState)state;
-
-/*!
- * Set the icon for a given state
- *
- * @param icon A icon of maximum dimensions 80x80, to use to draw the trigger button. This icon will be used
- *             as a mask to render the inset button effect. Icon size should be divisible by 2.
- * @param state State to apply icon to
- */
-- (void)setIcon:(UIImage*)icon forState:(ABTriggerState)state;
-
-/*!
- * Set the color for a given state
- *
- *  By default, normal state icons are drawn in 50% grey, selected icons are drawn in 20% grey
- *  unless a custom selected state icon is provided, in which case it is also drawn in 50% grey.
- *  Alternate state icons are drawn in green. Triggers with system state ABTriggerTypeRecordToggle
- *  are drawn in red.
- *
- * @param color The color to use to render the icon for the given state
- * @param state State to apply color to
- */
-- (void)setColor:(UIColor*)color forState:(ABTriggerState)state;
++ (ABTrigger*)triggerWithTitle:(NSString*)title icon:(UIImage*)icon block:(ABTriggerPerformBlock)block __attribute__((deprecated));
 
 /*!
  * Trigger state
@@ -135,6 +115,20 @@ typedef enum {
  *  Updates to this property will affect the corresponding UI in connected applications.
  */
 @property (nonatomic, assign) ABTriggerState state;
+
+/*!
+ * Block to be performed on trigger activation/update
+ */
+@property (nonatomic, copy) ABTriggerPerformBlock block;
+
+/*!
+ * A numeric (or fourcc) identifier for the trigger, such as 'trig'
+ *
+ *  This must be a unique value. If unset, a unique value will
+ *  be chosen automatically, but this value is not guaranteed to
+ *  remain the same across multiple sessions.
+ */
+@property (nonatomic, assign) uint32_t numericIdentifier;
 
 @end
 

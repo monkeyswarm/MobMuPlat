@@ -89,10 +89,6 @@
 
 //audio bus - make private
 @property (strong, nonatomic) ABAudiobusController *audiobusController;
-@property (strong, nonatomic) ABAudiobusAudioUnitWrapper *audiobusAudioUnitWrapper;
-@property (nonatomic, retain)ABInputPort *inputPort;
-@property (nonatomic, retain)ABOutputPort *outputPort;
-@property (strong, nonatomic)ABFilterPort *filterPort;
 @property (assign,nonatomic)NSInteger ticks;
 
 

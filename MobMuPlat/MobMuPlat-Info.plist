@@ -2,6 +2,33 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AudioComponents</key>
+	<array>
+		<dict>
+			<key>manufacturer</key>
+			<string>igle</string>
+			<key>name</key>
+			<string>MobMuPlat</string>
+			<key>subtype</key>
+			<string>afil</string>
+			<key>type</key>
+			<string>aurx</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>manufacturer</key>
+			<string>igle</string>
+			<key>name</key>
+			<string>MobMuPlat</string>
+			<key>subtype</key>
+			<string>aout</string>
+			<key>type</key>
+			<string>aurg</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -74,7 +101,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.55</string>
+	<string>1.60</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -86,12 +113,12 @@
 			<string>com.iglesiaintermedia.MobMuPlat</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>MobMuPlat.audiobus</string>
+				<string>MobMuPlat-v2.audiobus</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1.55</string>
+	<string>1.60</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIBackgroundModes</key>
