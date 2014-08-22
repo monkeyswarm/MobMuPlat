@@ -1565,8 +1565,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/daniglesia/Downloads/Audiobus-SDK-1",
-					/Users/diglesia/Source/MobMuPlat,
 					"$(PROJECT_DIR)",
 				);
 				ONLY_ACTIVE_ARCH = NO;
@@ -1604,8 +1602,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/daniglesia/Downloads/Audiobus-SDK-1",
-					/Users/diglesia/Source/MobMuPlat,
 					"$(PROJECT_DIR)",
 				);
 				ONLY_ACTIVE_ARCH = NO;
