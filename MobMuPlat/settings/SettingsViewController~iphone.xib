@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="4514" systemVersion="13C1021" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5056" systemVersion="13D65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
     <dependencies>
         <deployment defaultVersion="1296" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SettingsViewController">
             <connections>
                 <outlet property="LANdiniEnableSwitch" destination="1Sk-5m-7Kw" id="TK6-Cm-OlJ"/>
-                <outlet property="LANdiniNetworkLabel" destination="XpW-UO-8bf" id="TnL-qd-qU2"/>
+                <outlet property="LANdiniNetworkLabel" destination="fw1-oI-RB4" id="7n0-wB-XdF"/>
+                <outlet property="LANdiniSubView" destination="OHo-WM-0TI" id="jb6-hj-Bul"/>
                 <outlet property="LANdiniTimeLabel" destination="mb1-I8-Nw6" id="2Xe-PI-uOv"/>
                 <outlet property="LANdiniUserTableView" destination="s2z-u2-63O" id="LV5-BD-Bba"/>
-                <outlet property="LANdiniView" destination="OHo-WM-0TI" id="JDs-qE-RTA"/>
-                <outlet property="LANdiniViewButton" destination="ybc-0c-0Vc" id="BBB-Qo-VzF"/>
                 <outlet property="audioEnableButton" destination="FpM-Dy-zYX" id="k68-7L-G9W"/>
                 <outlet property="audioInputSwitch" destination="lcE-wK-Ga2" id="er6-NB-TZc"/>
                 <outlet property="audioMidiContentView" destination="TrW-s5-vQA" id="0Fu-7M-iha"/>
@@ -28,8 +27,17 @@
                 <outlet property="documentViewButton" destination="ZAP-q4-kko" id="stg-pu-3XA"/>
                 <outlet property="documentsTableView" destination="7if-bL-GZD" id="7o0-vm-MRq"/>
                 <outlet property="flipInterfaceButton" destination="fEK-gL-YRS" id="oLk-xf-tzR"/>
+                <outlet property="ipAddressResetButton" destination="Cby-V4-Jmm" id="uXc-It-Bms"/>
+                <outlet property="ipAddressTextField" destination="nfW-EI-Twp" id="XgM-Ty-66O"/>
                 <outlet property="midiDestinationTableView" destination="ag9-Xi-eUi" id="ztw-0j-j35"/>
                 <outlet property="midiSourceTableView" destination="c6h-Vz-iyZ" id="Es9-wy-4xS"/>
+                <outlet property="multiDirectConnectionSubView" destination="EpL-mu-96r" id="h1H-hG-DvG"/>
+                <outlet property="networkTypeSeg" destination="vDI-Qy-l43" id="PIY-KG-FiV"/>
+                <outlet property="networkView" destination="Jzo-Qb-N4Y" id="iLe-AP-n7O"/>
+                <outlet property="networkViewButton" destination="ybc-0c-0Vc" id="7Jn-1C-A57"/>
+                <outlet property="networkingSubView" destination="CUe-QD-ydR" id="vpM-Gl-C2W"/>
+                <outlet property="portNumberTextField" destination="yhU-J8-F1v" id="yPA-3e-JaB"/>
+                <outlet property="portResetButton" destination="G7l-0O-gVA" id="Cuc-gz-dsh"/>
                 <outlet property="rateSeg" destination="nel-wk-XYx" id="32h-mU-RS5"/>
                 <outlet property="showFilesButton" destination="RKH-wj-XyU" id="A5U-A7-f6O"/>
                 <outlet property="tickSeg" destination="7ZM-S8-9hq" id="ygi-QD-JFv"/>
@@ -42,11 +50,38 @@
             <rect key="frame" x="0.0" y="44" width="320" height="524"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
+                <view contentMode="scaleToFill" id="Jzo-Qb-N4Y">
+                    <rect key="frame" x="10" y="8" width="300" height="425"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES"/>
+                    <subviews>
+                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="wifi network:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fw1-oI-RB4">
+                            <rect key="frame" x="20" y="8" width="260" height="21"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="vDI-Qy-l43">
+                            <rect key="frame" x="13" y="37" width="274" height="29"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <segments>
+                                <segment title="Multicast &amp; Direct"/>
+                                <segment title="LANdini"/>
+                            </segments>
+                            <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        </segmentedControl>
+                        <view contentMode="scaleToFill" id="CUe-QD-ydR">
+                            <rect key="frame" x="13" y="72" width="275" height="345"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" red="0.45620438460000001" green="0.80656933779999995" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                </view>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ybc-0c-0Vc">
                     <rect key="frame" x="215" y="444" width="95" height="30"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                    <state key="normal" title="LANdini">
+                    <state key="normal" title="Network">
                         <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
@@ -102,64 +137,6 @@
                         <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                 </button>
-                <view contentMode="scaleToFill" id="OHo-WM-0TI">
-                    <rect key="frame" x="10" y="8" width="300" height="425"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES"/>
-                    <subviews>
-                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="enable LANdini (v.22):" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="CCC-jq-OoT">
-                            <rect key="frame" x="20" y="39" width="147" height="21"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <nil key="highlightedColor"/>
-                        </label>
-                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="mb1-I8-Nw6">
-                            <rect key="frame" x="20" y="110" width="260" height="37"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <string key="text">network time:
-</string>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <nil key="highlightedColor"/>
-                        </label>
-                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="LAN User List:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="AQH-2o-BsZ">
-                            <rect key="frame" x="20" y="156" width="260" height="21"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <nil key="highlightedColor"/>
-                        </label>
-                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="See LANdini example for more info" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="uUt-KY-jfR">
-                            <rect key="frame" x="20" y="392" width="260" height="21"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <nil key="highlightedColor"/>
-                        </label>
-                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="wifi network:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="XpW-UO-8bf">
-                            <rect key="frame" x="20" y="8" width="260" height="21"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <nil key="highlightedColor"/>
-                        </label>
-                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="1Sk-5m-7Kw">
-                            <rect key="frame" x="175" y="34" width="51" height="31"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        </switch>
-                        <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="s2z-u2-63O">
-                            <rect key="frame" x="20" y="179" width="260" height="200"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        </tableView>
-                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="8on-GK-DIE">
-                            <rect key="frame" x="-25" y="62" width="350" height="54"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <string key="text">Note that LANdini sends out multicast messages. 
-Some school/company networks may not like this. 
-Use a local router only for best results. </string>
-                            <fontDescription key="fontDescription" type="system" pointSize="10"/>
-                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                            <nil key="highlightedColor"/>
-                        </label>
-                    </subviews>
-                    <color key="backgroundColor" red="0.45620438460000001" green="0.80656933779999995" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                </view>
                 <view contentMode="scaleToFill" id="bbb-eu-PYZ">
                     <rect key="frame" x="10" y="8" width="300" height="425"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES"/>
@@ -354,6 +331,123 @@ and audio output routing)</string>
             <color key="backgroundColor" white="0.39560231854838712" alpha="1" colorSpace="calibratedWhite"/>
             <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+        </view>
+        <view contentMode="scaleToFill" id="OHo-WM-0TI">
+            <rect key="frame" x="0.0" y="0.0" width="275" height="345"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="enable LANdini (v.22):" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="CCC-jq-OoT">
+                    <rect key="frame" x="20" y="53" width="147" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="mb1-I8-Nw6">
+                    <rect key="frame" x="0.0" y="108" width="275" height="37"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <string key="text">network time:
+</string>
+                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="LAN User List:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="AQH-2o-BsZ">
+                    <rect key="frame" x="0.0" y="143" width="260" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="kAS-V2-Eud">
+                    <rect key="frame" x="0.0" y="0.0" width="275" height="49"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <string key="text">LANdini is an ad-hoc networking protocol
+for groups, with guaranteed delivery. All other clients must be LANdini-enabled.</string>
+                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="See LANdini example for more info" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="uUt-KY-jfR">
+                    <rect key="frame" x="10" y="324" width="260" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="1Sk-5m-7Kw">
+                    <rect key="frame" x="175" y="47" width="51" height="31"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                </switch>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="s2z-u2-63O">
+                    <rect key="frame" x="0.0" y="161" width="275" height="164"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </tableView>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="8on-GK-DIE">
+                    <rect key="frame" x="-35" y="72" width="350" height="45"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <string key="text">Note that LANdini sends out multicast messages. 
+Some school/company networks may not like this. 
+Use a local router only for best results. </string>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" red="0.45620438460000001" green="0.80656933779999995" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+        </view>
+        <view contentMode="scaleToFill" id="EpL-mu-96r">
+            <rect key="frame" x="0.0" y="0.0" width="275" height="345"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES"/>
+            <subviews>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" id="nfW-EI-Twp">
+                    <rect key="frame" x="0.0" y="37" width="275" height="30"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                    <textInputTraits key="textInputTraits"/>
+                </textField>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" id="yhU-J8-F1v">
+                    <rect key="frame" x="0.0" y="140" width="275" height="30"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                    <textInputTraits key="textInputTraits"/>
+                </textField>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Network communication is multicast by default. You may instead specify a unicast IP address." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ZnY-BJ-as4">
+                    <rect key="frame" x="0.0" y="-1" width="275" height="40"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Port number is specified within the MobMuPlat patch editor. You may override that here." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ZJ8-cO-Yw8">
+                    <rect key="frame" x="0.0" y="100" width="275" height="43"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Cby-V4-Jmm">
+                    <rect key="frame" x="46" y="67" width="183" height="30"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <state key="normal" title="Reset to multicast address">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="G7l-0O-gVA">
+                    <rect key="frame" x="14" y="170" width="247" height="30"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <state key="normal" title="Reset to patch-defined port number">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                </button>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="IP Address:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Uei-eI-luO">
+                    <rect key="frame" x="14" y="41" width="89" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Port:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="KOq-2C-cD1">
+                    <rect key="frame" x="14" y="144" width="37" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" red="0.45620438460000001" green="0.80656933779999995" blue="1" alpha="1" colorSpace="calibratedRGB"/>
         </view>
     </objects>
 </document>

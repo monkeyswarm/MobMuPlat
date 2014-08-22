@@ -25,7 +25,7 @@ typedef enum{
     canvasTypeIPad = 2,
 } canvasType;
 
-@interface SettingsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, LANdiniUserStateDelegate>{
+@interface SettingsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, LANdiniUserStateDelegate, UITextFieldDelegate>{
     canvasType hardwareCanvasType;
     
     NSMutableArray *MMPFiles, *allFiles;
@@ -48,11 +48,11 @@ typedef enum{
 @property (nonatomic, strong) IBOutlet UIButton* consoleViewButton;
 @property (nonatomic, strong) IBOutlet UIButton* documentViewButton;
 @property (nonatomic, strong) IBOutlet UIButton* audioMidiViewButton;
-@property (nonatomic, strong) IBOutlet UIButton* LANdiniViewButton;
+@property (nonatomic, strong) IBOutlet UIButton* networkViewButton;
 
 @property (nonatomic, strong) IBOutlet UIView* consoleView;
 @property (nonatomic, strong) IBOutlet UIView* documentView;
-@property (nonatomic, strong) IBOutlet UIView* LANdiniView;
+@property (nonatomic, strong) IBOutlet UIView* networkView;
 @property (nonatomic, strong) IBOutlet UIScrollView* audioMidiScrollView;
 
 @property (nonatomic, strong) IBOutlet UITableView* documentsTableView;
@@ -74,7 +74,18 @@ typedef enum{
 @property (nonatomic, strong) IBOutlet UIView* audioRouteContainerView;
 @property (nonatomic, strong) IBOutlet UILabel* audioRouteLabel;
 
-//LANdini
+//network view
+@property (nonatomic, strong) IBOutlet UISegmentedControl* networkTypeSeg;
+@property (nonatomic, strong) IBOutlet UIView *networkingSubView;
+
+@property (nonatomic, strong) IBOutlet UIView *LANdiniSubView;
+@property (nonatomic, strong) IBOutlet UIView *multiDirectConnectionSubView;
+
+@property (nonatomic, strong) IBOutlet UITextField *ipAddressTextField;
+@property (nonatomic, strong) IBOutlet UITextField *portNumberTextField;
+@property (nonatomic, strong) IBOutlet UIButton *ipAddressResetButton;
+@property (nonatomic, strong) IBOutlet UIButton *portResetButton;
+
 @property (nonatomic, strong) IBOutlet UILabel* LANdiniNetworkLabel;
 @property (nonatomic, strong) IBOutlet UISwitch* LANdiniEnableSwitch;
 @property (nonatomic, strong) IBOutlet UILabel* LANdiniTimeLabel;
@@ -97,6 +108,9 @@ typedef enum{
 - (BOOL)loadScene:(NSDictionary*)sceneDict;
 - (BOOL)loadScenePatchOnly:(NSString*)filename;
 - (void)flipInterface;
+@property(copy, nonatomic) NSString *outputIpAddress;
+@property(nonatomic)int portNumber;
+@property(nonatomic)int patchPortNumber;
 
 @end
 

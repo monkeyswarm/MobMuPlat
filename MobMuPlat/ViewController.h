@@ -35,10 +35,9 @@
     UIScrollView* scrollView;
     
     OSCManager *manager;
-	OSCInPort *inPort;
-	OSCOutPort *outPort;
-    //for disconnect/reconnect
-    int currPortNumber;
+    OSCInPort *inPort;
+    OSCOutPort *outPort;
+    
     //LANdini
     OSCInPort* inPortFromLANdini;
     OSCOutPort* outPortToLANdini;
@@ -86,6 +85,9 @@
 @property BOOL backgroundAudioEnabled;
 @property (retain) PdAudioController* audioController;
 @property (retain) SettingsViewController* settingsVC;
+@property (copy, nonatomic) NSString *outputIpAddress;
+@property (nonatomic) int portNumber;
+@property (nonatomic) int patchPortNumber;
 
 //audio bus - make private
 @property (strong, nonatomic) ABAudiobusController *audiobusController;
