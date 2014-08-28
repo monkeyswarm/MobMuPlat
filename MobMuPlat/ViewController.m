@@ -44,15 +44,6 @@
 
 #import "AudioHelpers.h"
 
-static NSString *const AUDIOBUS_URL_SCHEME = @"MobMuPlat.audiobus://";
-
-static NSString *const AUDIOBUS_INPUTPORT = @"Main-Input";
-static NSString *const AUDIOBUS_OUTPUTPORT = @"Main-Output";
-static NSString *const AUDIOBUS_INPUT_DESCRIPTION = @"Main App Input";
-static NSString *const AUDIOBUS_OUTPUT_DESCRIPTION = @"Main App Output";
-static NSString *const AUDIOBUS_FILTER_TITLE = @"MobMuPlat-Filter";
-static NSString *const AUDIOBUS_FILTERPORT_NAME = @"Main Filter";
-
 extern void expr_setup(void);
 extern void bonk_tilde_setup(void);
 extern void choice_setup(void);
