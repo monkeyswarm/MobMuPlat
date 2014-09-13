@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MobMuPlat</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_documents">Documents</string>
+    <string name="action_audiomidi">Audio + MIDI</string>
+    <string name="action_network">Network</string>
+    <string name="action_console">Console</string>
+    <string name="title_activity_documents">Select MobMuPlat Document</string>
+    <string name="title_activity_audio_midi">AudioMidiActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_network">NetworkActivity</string>
+    <string name="title_activity_console">ConsoleActivity</string>
+    <string name="action_HID">HID</string>
+    <string name="title_activity_HID">HIDActivity</string>
+    <string name="game_controller_input_heading_device">Input Device</string>
+    <string name="game_controller_input_heading_axes">Axes</string>
+    <string name="game_controller_input_heading_keys">Keys and Buttons</string>
+    <string name="game_controller_input_label_device_name">Name</string>
+    <string name="game_controller_input_key_pressed">Pressed</string>
+    <string name="game_controller_input_key_released">Released</string>
+    <string name="title_activity_menu">MenuActivity</string>
+
+</resources>

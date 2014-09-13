@@ -1,0 +1,32 @@
+#N canvas 678 55 630 521 10;
+#X obj 46 33 receive fromGUI;
+#X msg 329 148 list /receiveSlider \$1;
+#X msg 48 183 list /valueToNetwork \$1;
+#X obj 47 238 send toNetwork;
+#X obj 329 66 route list;
+#X obj 328 35 receive fromNetwork;
+#X floatatom 328 120 5 0 0 0 - - -;
+#X obj 329 179 send toGUI;
+#X floatatom 47 161 5 0 0 0 - - -;
+#X obj 46 92 route /touchSlider /touchSlider2;
+#X text 56 206 send message straight to multicast on user-specified
+port;
+#X text 145 310 OR! use LANdini for far more robust messaging;
+#X obj 142 406 send toNetwork;
+#X text 151 365 first two arguements are used by local LANdini process
+to send to other LANdini processes on the network;
+#X msg 142 340 list /send/GD all /valueToNetwork \$1;
+#X obj 328 94 route /valueToNetwork;
+#X obj 47 64 list trim;
+#X connect 0 0 16 0;
+#X connect 1 0 7 0;
+#X connect 2 0 3 0;
+#X connect 4 0 15 0;
+#X connect 5 0 4 0;
+#X connect 6 0 1 0;
+#X connect 8 0 2 0;
+#X connect 9 0 8 0;
+#X connect 9 1 14 0;
+#X connect 14 0 12 0;
+#X connect 15 0 6 0;
+#X connect 16 0 9 0;

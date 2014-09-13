@@ -1,0 +1,213 @@
+#N canvas 105 47 1209 704 10;
+#X obj 551 -65 receive fromGUI;
+#X obj 562 54 send toSystem;
+#X msg 559 22 list /enableLocation \$1;
+#X obj 1 -58 receive fromSystem;
+#X obj 23 514 send toGUI;
+#X obj 138 456 int;
+#X obj 170 440 + 1;
+#X obj 173 469 % 2;
+#X obj 138 435 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 560 203 dac~;
+#X obj 558 -10 route /gpsToggle /volSlider;
+#X msg 138 494 list /myPanel highlight \$1;
+#X msg 82 354 list /displayLabel3 position accuracy: \$1 meters;
+#X msg 82 375 list /displayLabel4 altitude accuracy: \$1 meters;
+#X msg 81 332 list /displayLabel2 altitude: \$1 meters;
+#X obj 88 199 pack 0 0;
+#X obj 154 200 pack 0 0;
+#X obj -4 132 unpack 0 0 0 0 0 0 0 0 0;
+#X obj 85 168 / 1000;
+#X obj 140 168 / 1000;
+#X msg 81 311 list /displayLabel1 longitude: \$1 + \$2*10^-6 degrees
+;
+#X msg 79 291 list /displayLabel0 latitude: \$1 + \$2*10^-6 degrees
+;
+#X text 152 -344 when location data is enabled \, it is sent via a
+message "/location" with 9 numbers. Location coordinate data in iOS
+is a 64-bit floating point number (double) \; PureData is only 32-bit
+float \, so sending that number into a patch loses resolution. However
+\, a tweaky workaround (via 64-bit math in the iOS layer) is provided
+by the last 4 numbers in the message. arg 0: latitude coordinate (as
+32-bit float) arg 1: longitude coordinate (as 32-bit float) arg 2:
+altitude (meters) arg 3: horizontal accuracy (meters radius) arg 4:
+vertical (altitude) accuracy (meters radius) arg 5: latitude "rough"
+= 64-bit value multiplied by 1000 and truncated to an integer before
+being sent into Pd arg 6: longitude "rough" (as above) arg 7: latitude
+"fine" = 64-bit value modded by 0.001 \, multiplied by 1e+06 \, and
+truncated to an integer \, before being sent into Pd So the "rough"
+contains the significant digits up to the thousandths place \, and
+the "fine" contains the next three significant digits. An original
+coordinate value of 123.457 would be turned into rough=123456 fine=789.
+;
+#X text 218 444 any new message toggle panel color;
+#N canvas 0 22 1097 645 coordinatestosound 0;
+#X obj 54 47 inlet;
+#X obj 114 48 inlet;
+#X obj 184 47 inlet;
+#X obj 244 48 inlet;
+#X floatatom 77 152 5 0 0 0 - - -, f 5;
+#X floatatom 82 212 5 0 0 0 - - -, f 5;
+#X obj 80 180 expr ($f1+90)/180*72+24;
+#X obj 100 235 mtof;
+#X floatatom 227 148 5 0 0 0 - - -, f 5;
+#X floatatom 232 212 5 0 0 0 - - -, f 5;
+#X obj 230 180 expr ($f1+180)/360*72+24;
+#X obj 208 237 mtof;
+#X obj 103 269 phasor~;
+#X obj 175 267 phasor~;
+#X obj 190 402 *~;
+#X obj 769 346 *;
+#X obj 766 323 t f f;
+#X obj 768 435 line~;
+#X obj 767 407 pack 0 50;
+#X floatatom 389 152 5 0 0 0 - - -, f 5;
+#X floatatom 394 212 5 0 0 0 - - -, f 5;
+#X obj 412 235 mtof;
+#X floatatom 539 148 5 0 0 0 - - -, f 5;
+#X floatatom 544 212 5 0 0 0 - - -, f 5;
+#X obj 520 237 mtof;
+#X obj 415 269 phasor~;
+#X obj 487 267 phasor~;
+#X obj 392 180 expr ($f1/1000)*72+24;
+#X obj 542 180 expr ($f1/1000)*72+24;
+#X obj 772 377 * 0.25;
+#X obj 92 299 expr~ ($v1>0.5)-.5;
+#X obj 209 299 expr~ ($v1>0.5)-.5;
+#X obj 404 299 expr~ ($v1>0.5)-.5;
+#X obj 522 298 expr~ ($v1>0.5)-.5;
+#X obj 188 363 lop~ 800;
+#X obj 766 59 inlet;
+#X obj 143 491 outlet~;
+#X connect 0 0 4 0;
+#X connect 1 0 8 0;
+#X connect 2 0 19 0;
+#X connect 3 0 22 0;
+#X connect 4 0 6 0;
+#X connect 5 0 7 0;
+#X connect 6 0 5 0;
+#X connect 7 0 12 0;
+#X connect 8 0 10 0;
+#X connect 9 0 11 0;
+#X connect 10 0 9 0;
+#X connect 11 0 13 0;
+#X connect 12 0 30 0;
+#X connect 13 0 31 0;
+#X connect 14 0 36 0;
+#X connect 15 0 29 0;
+#X connect 16 0 15 0;
+#X connect 16 1 15 1;
+#X connect 17 0 14 1;
+#X connect 18 0 17 0;
+#X connect 19 0 27 0;
+#X connect 20 0 21 0;
+#X connect 21 0 25 0;
+#X connect 22 0 28 0;
+#X connect 23 0 24 0;
+#X connect 24 0 26 0;
+#X connect 25 0 32 0;
+#X connect 26 0 33 0;
+#X connect 27 0 20 0;
+#X connect 28 0 23 0;
+#X connect 29 0 18 0;
+#X connect 30 0 34 0;
+#X connect 31 0 34 0;
+#X connect 32 0 34 0;
+#X connect 33 0 34 0;
+#X connect 34 0 14 0;
+#X connect 35 0 16 0;
+#X restore 562 173 pd coordinatestosound;
+#X msg 793 14 list /setDistanceFilter \$1;
+#X msg 841 48 list /getDistanceFilter;
+#X obj 797 82 send toSystem;
+#X obj 1017 -19 receive fromSystem;
+#X obj 1019 5 route list;
+#X obj 1020 30 route /distanceFilter;
+#X text 787 -93 you can get and set the "distance filter" value \,
+which specifies how many meters to move before triggering the callback
+(and sending messages into PD). Default is 1 Value of <=0 sets it to
+"none" and all GPS updates trigger callback.;
+#X floatatom 792 -12 5 0 0 0 - - -, f 5;
+#X floatatom 1022 59 5 0 0 0 - - -, f 5;
+#X text 550 -312 NOTE: nothing works when this patch is open on your
+desktop/laptop...GPS data is only received when running on the device.
+;
+#X text 547 -198 you must send "/enableLocation 1" to start getting
+GPS update messages. Updating is turned off when a new patch is loaded.
+;
+#X obj -3 -3 route /location /compass;
+#X msg 65 29 list /displayLabel5 compass heading: \$1 deg.;
+#X obj 1 -31 list trim;
+#X obj 558 -38 list trim;
+#X obj 764 356 receive fromSystem;
+#X obj 764 383 list trim;
+#X text 765 176 System time is requested via a message "/getTime" \,
+and is returned in two forms: "/timeString" \, a human-readable string
+\, and "/timeList" \, a set of 7 numbers specifying year \, month \,
+date \, hour \, minute \, second \, and millisecond.;
+#X obj 767 285 metro 1000;
+#X obj 768 263 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X obj 767 238 loadbang;
+#X msg 767 309 list /getTime;
+#X obj 767 330 send toSystem;
+#X obj 764 411 route /timeString /timeList;
+#X obj 765 437 list prepend /displayLabel6;
+#X obj 838 472 list prepend /displayLabel7 time as list:;
+#X obj 766 498 send toGUI;
+#X connect 0 0 39 0;
+#X connect 2 0 1 0;
+#X connect 3 0 38 0;
+#X connect 5 0 6 0;
+#X connect 5 0 11 0;
+#X connect 6 0 7 0;
+#X connect 7 0 5 1;
+#X connect 8 0 5 0;
+#X connect 10 0 2 0;
+#X connect 10 1 24 4;
+#X connect 11 0 4 0;
+#X connect 12 0 4 0;
+#X connect 13 0 4 0;
+#X connect 14 0 4 0;
+#X connect 15 0 21 0;
+#X connect 16 0 20 0;
+#X connect 17 2 14 0;
+#X connect 17 3 12 0;
+#X connect 17 4 13 0;
+#X connect 17 5 18 0;
+#X connect 17 6 19 0;
+#X connect 17 6 24 2;
+#X connect 17 7 15 1;
+#X connect 17 8 16 1;
+#X connect 17 8 24 3;
+#X connect 18 0 15 0;
+#X connect 18 0 24 0;
+#X connect 19 0 16 0;
+#X connect 19 0 24 1;
+#X connect 20 0 4 0;
+#X connect 21 0 4 0;
+#X connect 24 0 9 0;
+#X connect 24 0 9 1;
+#X connect 25 0 27 0;
+#X connect 26 0 27 0;
+#X connect 28 0 29 0;
+#X connect 29 0 30 0;
+#X connect 30 0 33 0;
+#X connect 32 0 25 0;
+#X connect 36 0 8 0;
+#X connect 36 0 17 0;
+#X connect 36 1 37 0;
+#X connect 37 0 4 0;
+#X connect 38 0 36 0;
+#X connect 39 0 10 0;
+#X connect 40 0 41 0;
+#X connect 41 0 48 0;
+#X connect 43 0 46 0;
+#X connect 44 0 43 0;
+#X connect 45 0 44 0;
+#X connect 46 0 47 0;
+#X connect 48 0 49 0;
+#X connect 48 1 50 0;
+#X connect 49 0 51 0;
+#X connect 50 0 51 0;

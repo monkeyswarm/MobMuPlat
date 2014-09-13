@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    <com.iglesiaintermedia.mobmuplat.PagingHorizontalScrollView 
+    	android:id="@+id/horizontalScrollView"
+    	android:layout_gravity = "center"
+    	android:layout_width="match_parent"
+    	android:layout_height="match_parent" >
+    	 <RelativeLayout
+        	android:id="@+id/relativeLayout"
+        	android:layout_width="match_parent"
+        	android:layout_height="match_parent" >
+
+    	     <ImageButton
+    	         android:id="@+id/button1"
+    	         android:layout_width="54dp"
+    	         android:layout_height="54dp"
+    	         android:layout_margin="8dp"
+    	         android:padding="0dp"
+    	         android:scaleType="fitStart"
+    	         android:background="?android:selectableItemBackground"
+    	         android:src="@drawable/infoicon_100x100" 
+    	         android:visibility="gone"/>
+    	     <!-- to avoid loading jank, is shown after patch load -->
+
+    	</RelativeLayout>
+
+	</com.iglesiaintermedia.mobmuplat.PagingHorizontalScrollView>
+
+</FrameLayout>

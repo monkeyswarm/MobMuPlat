@@ -1,0 +1,32 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.iglesiaintermedia.mobmuplat.MainActivity" >
+
+    <item
+        android:id="@+id/action_documents"
+        android:orderInCategory="100"
+        android:title="@string/action_documents"
+        android:showAsAction="never"/>
+    <item
+        android:id="@+id/action_audiomidi"
+        android:orderInCategory="100"
+        android:title="@string/action_audiomidi"
+        android:showAsAction="never"/>
+    <item
+        android:id="@+id/action_network"
+        android:orderInCategory="100"
+        android:title="@string/action_network"
+        android:showAsAction="never"/>
+    <item
+        android:id="@+id/action_console"
+        android:orderInCategory="100"
+        android:title="@string/action_console"
+        android:showAsAction="never"/>
+    <item
+        android:id="@+id/action_HID"
+        android:orderInCategory="100"
+        android:title="@string/action_HID"
+        android:showAsAction="never"/>
+
+</menu>

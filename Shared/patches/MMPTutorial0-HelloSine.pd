@@ -1,0 +1,18 @@
+#N canvas 770 37 450 300 10;
+#X obj 49 25 receive fromGUI;
+#X obj 49 90 route /mySlider;
+#X obj 49 148 + 60;
+#X obj 49 178 mtof;
+#X obj 49 206 osc~;
+#X obj 47 249 dac~;
+#X floatatom 50 122 5 0 0 0 - - -;
+#X text 88 122 slider value 0-11;
+#X obj 49 57 list trim;
+#X connect 0 0 8 0;
+#X connect 1 0 6 0;
+#X connect 2 0 3 0;
+#X connect 3 0 4 0;
+#X connect 4 0 5 0;
+#X connect 4 0 5 1;
+#X connect 6 0 2 0;
+#X connect 8 0 1 0;
