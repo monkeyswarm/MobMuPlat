@@ -7,10 +7,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import android.os.AsyncTask;
@@ -46,10 +44,10 @@ public class LANdiniUser {
 	
 	private LANdiniTimer _newSyncServerAnnouncementTimer;
 	
-	public LANdiniUser(String name, String ip, int port, LANdiniLANManager manager) {
+	public LANdiniUser(String name, String inip, int inport, LANdiniLANManager manager) {
 		this.name = name;
-		this.ip = ip;
-		this.port = port;
+		this.ip = inip;
+		this.port = inport;
 		this.manager = manager;
 		
 		//GD bookkeeping
@@ -67,14 +65,16 @@ public class LANdiniUser {
         msgQueueForOGD = new SparseArray<List<Object>>();
         sentOGDMsgs = new SparseArray<List<Object>>();
         
-        try{
-			InetAddress outputIPAddress = InetAddress.getByName(ip);
+        if(LANdiniLANManager.VERBOSE)Log.i("LAN", "new landiniuser "+ip+" "+port+" "+name);
+        new SetupOSCTask().execute();
+        /*try{
+			InetAddress outputIPAddress = InetAddress.getByName(ip); //MOVE TO OTHER THREAD get networkonmainhread on older version
 			oscPortOut = new OSCPortOut(outputIPAddress, port);	
 		}catch(UnknownHostException e){
-			Log.e("NETWORK","unknown host exception");
+			if(LANdiniLANManager.VERBOSE)Log.e("NETWORK","unknown host exception");
 		}catch(SocketException e){
-			Log.e("NETWORK","sender socket exception");	
-		}		
+			if(LANdiniLANManager.VERBOSE)Log.e("NETWORK","sender socket exception");	
+		}*/		
 
         lastPing = manager.getElapsedTime();
        
@@ -397,14 +397,33 @@ public class LANdiniUser {
 		@Override
         protected Void doInBackground(OSCMessage... msgInput) {
             
-			if (msgInput.length == 0) return null;
+			if (msgInput.length == 0 || oscPortOut==null) return null;
 			OSCMessage msg = msgInput[0];
 			try{
 				oscPortOut.send(msg);
 			} catch (IOException e) {
-				 Log.e("NETWORK", "Couldn't send,  "+e.getMessage());
+				 if(LANdiniLANManager.VERBOSE)Log.e("NETWORK", "Couldn't send,  "+e.getMessage());
+			} catch (IllegalArgumentException e){
+				if(LANdiniLANManager.VERBOSE)Log.e("NETWORK", "illegal arg exception");
 			}
 			
+            return null;
+        }
+	}
+	
+	private class SetupOSCTask extends AsyncTask<Void, Void, Void> {
+		@Override
+        protected Void doInBackground(Void... values) {
+			try{
+				InetAddress outputIPAddress = InetAddress.getByName(ip);
+				oscPortOut = new OSCPortOut(outputIPAddress, port);	
+			}catch(UnknownHostException e){
+				if(LANdiniLANManager.VERBOSE)Log.e("NETWORK","unknown host exception");
+			}catch(SocketException e){
+				if(LANdiniLANManager.VERBOSE)Log.e("NETWORK","sender socket exception");	
+			}catch(Exception e) {
+				if(LANdiniLANManager.VERBOSE)Log.e("NETWORK","generic exception:"+e.getMessage());	
+			}
             return null;
         }
 	}

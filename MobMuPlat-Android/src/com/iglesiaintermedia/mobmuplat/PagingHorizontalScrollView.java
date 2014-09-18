@@ -1,15 +1,11 @@
 package com.iglesiaintermedia.mobmuplat;
 
 import android.content.Context;
-import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
+//import android.util.Log;
 import android.support.v4.view.GestureDetectorCompat;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.MeasureSpec;
-import android.view.View.OnTouchListener;
 import android.widget.HorizontalScrollView;
 
 public class PagingHorizontalScrollView extends HorizontalScrollView  {
@@ -23,33 +19,6 @@ public class PagingHorizontalScrollView extends HorizontalScrollView  {
 		super(context, attributeSet);
 		// TODO Auto-generated constructor stub
 		_gestureDetector = new GestureDetectorCompat(context, new MyGestureListener());
-		
-		/*this.setOnTouchListener(new OnTouchListener() {
-            
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction())
-                {
-                case MotionEvent.ACTION_DOWN:
-                    //v.setBackgroundColor(R.color.black);
-                    return false;
-                case MotionEvent.ACTION_CANCEL:
-                case MotionEvent.ACTION_OUTSIDE:
-                case MotionEvent.ACTION_UP:
-                    Log.i("MobMuPlat", "touch up scoll! at ");//+this.getSource().getScrollX());
-                    final int pageIndex = (int)Math.round(this.getScrollX()/(320*screenRatio));
-                    _scrollContainer.post(new Runnable() { 
-                        public void run() { 
-                        	_scrollContainer.smoothScrollTo((int)(pageIndex*320*screenRatio), 0);
-                        } 
-                    });
-                    
-                    return false;
-                }
-                return false;
-            }
-
-        });*/
 	}
 
 	

@@ -31,9 +31,11 @@ import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.app.FragmentTransaction;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -41,6 +43,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -52,13 +55,17 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Vibrator;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Display;
@@ -112,6 +119,7 @@ import com.example.inputmanagercompat.InputManagerCompat.InputDeviceListener;
 
 public class MainActivity extends FragmentActivity implements LocationListener, SensorEventListener, AudioDelegate, InputDeviceListener, OnBackStackChangedListener {
 	private static final String TAG = "MobMuPlat MainActivity";
+	public static final boolean VERBOSE = false;
 	//
 	private FrameLayout _topLayout;
 	public CanvasType hardwareScreenType;
@@ -127,7 +135,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	private SparseArray<InputDeviceState> _inputDeviceStates;
 	
 	//
-	public final static float VERSION = 1.6f; //necc?
+	//public final static float VERSION = 1.6f; //necc?
 
 	// important public!
 	public UsbMidiController usbMidiController;
@@ -158,24 +166,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	Object[] _rotationMsgArray;
 	Object[] _compassMsgArray; 
 	private boolean _shouldSwapAxes = false;
-
-	
-	public void onBackStackChanged() { //TODO move
-		int count = getSupportFragmentManager().getBackStackEntryCount();//testing
-		String title = "MobMuPlat";
-		if (count > 0) {
-			title = getSupportFragmentManager().getBackStackEntryAt(count - 1).getName();
-		}
-		getActionBar().setTitle(title);
-		if (count == 0 && getActionBar().isShowing()) getActionBar().hide();
-		else if (count > 0 && !getActionBar().isShowing())getActionBar().show();
-	}
-			       
+		       
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//getWindow().setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
-          //      WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 		getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
 		//getActionBar().setDisplayShowTitleEnabled(true);
 		getActionBar().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
@@ -216,7 +210,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			
 		}
 		
-		//vrsion
+		//version
 		boolean shouldCopyDocs = false;
 		int versionCode = 0;
 		PackageInfo packageInfo;
@@ -233,7 +227,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		}
 		
 		//temp
-		shouldCopyDocs = true;
+		//shouldCopyDocs = true;
 		//copy
 		if(shouldCopyDocs) {//!alreadyStartedOnVersion || [alreadyStartedOnVersion boolValue] == NO) {
 	        List<String> defaultPatchesList;
@@ -276,9 +270,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		usbMidiController = new UsbMidiController(this); //matched close in onDestroy...move closer in?
 			
 		//allow multicast
-		WifiManager wifi = (WifiManager)getSystemService( Context.WIFI_SERVICE );
+		WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
 		if(wifi != null){
-			WifiManager.MulticastLock lock = wifi.createMulticastLock("Log_Tag");
+			WifiManager.MulticastLock lock = wifi.createMulticastLock("MulticastLockTag");
 			lock.acquire();
 		}  //Automatically released on app exit/crash.
 		
@@ -286,6 +280,22 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		networkController.delegate = this;
 
 		bindService(new Intent(this, PdService.class), pdConnection, BIND_AUTO_CREATE);
+		
+		//wifi
+		BroadcastReceiver bc = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) { //having trouble with this, reports "0x", doesn't repond to supplicant stuff
+				  	networkController.newSSIDData();
+			}	
+		};
+		IntentFilter intentFilter = new IntentFilter();
+		//intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
+		intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+		intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION) ;
+
+		registerReceiver(bc, intentFilter);
+				
+
 		
 		//fragments
 		_patchFragment = new PatchFragment(this); //reference to this for launching menu fragment on master stacj
@@ -322,6 +332,17 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			launchSplash();
 		}
 	}
+	@Override
+	public void onBackStackChanged() {
+		int count = getSupportFragmentManager().getBackStackEntryCount();//testing
+		String title = "MobMuPlat";
+		if (count > 0) {
+			title = getSupportFragmentManager().getBackStackEntryAt(count - 1).getName();
+		}
+		getActionBar().setTitle(title);
+		if (count == 0 && getActionBar().isShowing()) getActionBar().hide();
+		else if (count > 0 && !getActionBar().isShowing())getActionBar().show();
+	}
 	
 	@Override
 	protected void onNewIntent(Intent intent) { //called by open with file
@@ -333,6 +354,29 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	private void processIntent() {
 		Intent i = getIntent();
 		if(i!=null) {
+			String action = i.getAction();
+
+		    /*if (action.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
+		        WifiManager manager = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+		        NetworkInfo networkInfo = i.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+		        NetworkInfo.State state = networkInfo.getState();
+
+		        if(state == NetworkInfo.State.CONNECTED)
+		        {
+		            String connectingToSsid = manager.getConnectionInfo().getSSID();//.replace("\"", "");
+		           // WifiStateHistory.recordConnectedSsid(connectingToSsid);
+		//connected
+		        }
+
+		        if(state == NetworkInfo.State.DISCONNECTED)
+		        {
+		            if(manager.isWifiEnabled())
+		            {
+		                //String disconnectedFromSsid = WifiStateHistory.getLastConnectedSsid();
+		//disconnected
+		            }
+		        }
+		    }*/
 			/*if(i.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
 		        UsbDevice device  = (UsbDevice)i.getParcelableExtra(UsbManager.EXTRA_DEVICE);
 		        //TODO double check that on app-start processIntent is called after setting up usbmidicontroller
@@ -340,29 +384,59 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		        //here: set intent filter not to open mmp, but still get intents if open???
 		        //getActionBar().setBackgroundDrawable(new ColorDrawable(Color.RED));
 				
-			}
-			else {*///file
-				
-			//TODO check the action of this intent!!!!
-			Uri dataUri = i.getData();
-			if(dataUri!=null){
-				Log.i(TAG, "receive intent data " + dataUri.toString());
-				
-				String filename = dataUri.getLastPathSegment();
-				String fullPath = dataUri.getPath();
-				int lastSlashPos = fullPath.lastIndexOf('/');
+			}*/
+			//file
+			if (action.equals(Intent.ACTION_VIEW)){
+		    	Uri dataUri = i.getData();
+				if(dataUri!=null){
+					if(VERBOSE)Log.i(TAG, "receive intent data " + dataUri.toString());
 
-			    //if (lastSlashPos >= 0)
-			    
-			    String parentPath = fullPath.substring(0, lastSlashPos+1);
-				String suffix = filename.substring(filename.lastIndexOf('.'));
-				if (suffix.equals(".zip")) {
-					unpackZip(parentPath, filename);
-				}
-				else {
-					copyUri(dataUri);
-				}
-			}
+					if (i.getScheme().equals("content")) { //received via email attachment
+						try {
+							InputStream attachment = getContentResolver().openInputStream(getIntent().getData());
+							if (attachment == null) {
+								if(VERBOSE)Log.e("onCreate", "cannot access mail attachment");
+								showAlert("Cannot access mail attachment.");
+							} else {
+								String attachmentFileName = null;
+								//try to get file name
+								Cursor c = getContentResolver().query(i.getData(), null, null, null, null);
+								c.moveToFirst();
+								final int fileNameColumnId = c.getColumnIndex(
+										MediaStore.MediaColumns.DISPLAY_NAME);
+								if (fileNameColumnId >= 0) {
+									attachmentFileName = c.getString(fileNameColumnId);
+									String type = i.getType(); //mime type
+									if (type.equals("application/zip")) {
+										unpackZipInputStream(attachment, attachmentFileName); 
+									} else {
+										copyInputStream(attachment, attachmentFileName, true);
+									}
+								} else {
+									showAlert("Cannot get filename for attachment.");
+								}
+							}
+						}catch(Exception e) {
+							showAlert("Cannot access mail attachment.");
+						}
+
+					} else {//"file"
+
+		    			String filename = dataUri.getLastPathSegment();
+		    			String fullPath = dataUri.getPath();
+		    			int lastSlashPos = fullPath.lastIndexOf('/');
+
+		    			String parentPath = fullPath.substring(0, lastSlashPos+1);
+		    			String suffix = filename.substring(filename.lastIndexOf('.'));
+		    			if (suffix.equals(".zip")) { 
+		    				unpackZip(parentPath, filename);
+		    			}
+		    			else {
+		    				copyUri(dataUri);
+		    			}
+		    		}
+		    	}
+		    }
 		}
 	}
 
@@ -530,7 +604,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		if (locationManagerB!=null)locationManagerB.removeUpdates(this);
 	}
 	
-	private void initSensors() {
+	private void initSensors() { //TODO allow sensors on default thread for low-power devices (or just shutoff)
 
 		//_camera = Camera.open();
 		_rawAccelArray = new float[3];
@@ -547,9 +621,25 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		_compassMsgArray = new Object[2];
 		_compassMsgArray[0] = "/compass";
 		
-		
 		SensorManager sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-		Sensor accel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		//
+		// onSensorChanged is now called on a background thread.
+		HandlerThread handlerThread = new HandlerThread("sensorThread", android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        handlerThread.start();
+        Handler handler = new Handler(handlerThread.getLooper());
+        
+        Sensor accel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensorManager.registerListener(this, accel,SensorManager.SENSOR_DELAY_GAME, handler);
+        Sensor gyro = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+		sensorManager.registerListener(this,  gyro, SensorManager.SENSOR_DELAY_GAME, handler);//TODO rate
+		Sensor rotation = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+		sensorManager.registerListener(this,  rotation, SensorManager.SENSOR_DELAY_GAME, handler);//TODO rate
+		Sensor compass = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+		sensorManager.registerListener(this,  compass, SensorManager.SENSOR_DELAY_GAME, handler);
+		
+		//
+		
+		/*Sensor accel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		sensorManager.registerListener(this,  accel, SensorManager.SENSOR_DELAY_GAME);//TODO rate
 		Sensor gyro = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 		sensorManager.registerListener(this,  gyro, SensorManager.SENSOR_DELAY_GAME);//TODO rate
@@ -557,6 +647,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		sensorManager.registerListener(this,  rotation, SensorManager.SENSOR_DELAY_GAME);//TODO rate
 		Sensor compass = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
 		sensorManager.registerListener(this,  compass, SensorManager.SENSOR_DELAY_GAME);//TODO rate
+		*/
 	}
 
 	//insane: 10" tablets can have a "natural" (Surface.ROTATION_0) at landscape, not portrait. Determine
@@ -593,7 +684,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		if (naturalOrientation == Configuration.ORIENTATION_PORTRAIT) { //phones, 7" tablets
 			if ((mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && screenOrientation!=Surface.ROTATION_0) ||
 					(mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && screenOrientation!=Surface.ROTATION_90)) {
-				Log.i(TAG, "requesting orientation...surface = "+screenOrientation);
+				if(VERBOSE)Log.i(TAG, "requesting orientation...surface = "+screenOrientation);
 				this.setRequestedOrientation(mmpOrientation);
 				return true;
 			}
@@ -602,7 +693,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		else if (naturalOrientation == Configuration.ORIENTATION_LANDSCAPE) {
 			if ((mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && screenOrientation!=Surface.ROTATION_270) || //weird that it thinks that rotation 270 is portrait
 					(mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && screenOrientation!=Surface.ROTATION_0)) {
-				Log.i(TAG, "requesting orientation...surface = "+screenOrientation);
+				if(VERBOSE)Log.i(TAG, "requesting orientation...surface = "+screenOrientation);
 				this.setRequestedOrientation(mmpOrientation);
 				return true;
 			}
@@ -610,19 +701,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		return false;
 	}
 
-	/*public File getStorageDir(Context context, String albumName) {
-	    // Get the directory for the app's private pictures directory. 
-	    File file = new File(context.getExternalFilesDir(
-	            Environment.DIRECTORY_PICTURES), albumName);
-	    Log.i(TAG, "try to make "+file.getAbsolutePath());
-	    if (!file.mkdirs()) {
-	        Log.e(TAG, "Directory not created");
-	    }
-	    return file;	
-	}*/
-
-	//TODO add mem checking
-	private void copyAllDocuments() { //here not working with linked files!
+	/*
+	private void copyAllDocuments() { //doesn't work with linked files!
 		//AssetManager am = getAssets();
 		String [] list;
 		try {
@@ -641,17 +721,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		} catch (IOException e) {
 
 		}
-	}
-
-	public void copyUri(Uri uri){
-		String sourcePath = uri.getPath();
-		String sourceFilename = uri.getLastPathSegment();
-
-		File file = new File(MainActivity.getDocumentsFolderPath(), sourceFilename);
-
+	}*/
+	
+	private void copyInputStream(InputStream in, String filename, boolean showAlert) {
+		File file = new File(MainActivity.getDocumentsFolderPath(), filename);
 		try {
-			Log.i(TAG, "uri filename "+sourceFilename);
-			InputStream in = new FileInputStream(sourcePath);
 			OutputStream out = new FileOutputStream(file);
 			byte[] data = new byte[in.available()];
 			in.read(data);
@@ -659,14 +733,36 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			in.close();
 			out.close();
 
-			showAlert("File "+sourceFilename+" copied to MobMuPlat Documents");
+			if(showAlert)showAlert("File "+filename+" copied to MobMuPlat Documents");
 		} catch (FileNotFoundException e) {
-			Log.i("Test", "Setupf::copyResources - "+e.getMessage());
+			Log.i(TAG, "Unable to copy file: "+e.getMessage());
 		} catch (IOException e) {
-			Log.i("Test", "Setupi::copyResources - "+e.getMessage());
+			Log.i(TAG, "Unable to copy file: "+e.getMessage());
 		}
 	}
 
+	public void copyUri(Uri uri){
+		String sourcePath = uri.getPath();
+		String sourceFilename = uri.getLastPathSegment();
+		try {
+			InputStream in = new FileInputStream(sourcePath);
+			copyInputStream(in, sourceFilename, true);
+		} catch (FileNotFoundException e) {
+			Log.i(TAG, "Unable to copy file: "+e.getMessage());
+		}
+	}
+
+	public void copyAsset(String assetFilename){
+		AssetManager assetManager = getAssets();
+		
+		try {
+			InputStream in = assetManager.open(assetFilename);
+			copyInputStream(in, assetFilename, false);
+		} catch (IOException e) {
+			Log.i(TAG, "Unable to copy file: "+e.getMessage());
+		}
+	}
+	
 	//TODO consolidate this with version in fragment
 	private void showAlert(String string) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -676,30 +772,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
-
-	public void copyAsset(String assetFilename){
-		AssetManager assetManager = getAssets();
-		File file = new File(MainActivity.getDocumentsFolderPath(), assetFilename);
-
-		//String type = Environment.DIRECTORY_DOCUMENTS;
-		//File path = Environment.getExternalStoragePublicDirectory(type);
-		try {
-			//Log.i(TAG, "filename "+assetFilename);
-			InputStream in = assetManager.open(assetFilename);
-			OutputStream out = new FileOutputStream(file);
-			byte[] data = new byte[in.available()];
-			in.read(data);
-			out.write(data);
-			in.close();
-			out.close();
-		} catch (FileNotFoundException e) {
-			Log.i("Test", "Setupf::copyResources - "+e.getMessage());
-		} catch (IOException e) {
-			Log.i("Test", "Setupi::copyResources - "+e.getMessage());
-		}
-
-	}
-
 
 	// on orientation changed
 	public void onConfigurationChanged (Configuration newConfig) {
@@ -737,13 +809,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	};
 
 	private void initAndStartAudio() {
-		
 		try {
-			//TODO flag for simulator which doesn't seem to have access to mic?
-			pdService.initAudio(-1, /*-1 real 0 sim:*/-1, -1, -1);   // negative values will be replaced with defaults/preferences
+			//Simulator breaks on audio input, so here's a little flag
+			boolean amOnSimulator = false;
+			pdService.initAudio(-1, amOnSimulator? 0 : -1, -1, -1);   // negative values will be replaced with defaults/preferences
 			pdService.startAudio();
 		} catch (IOException e) {
-			Log.i(TAG, e.toString());
+			Log.e(TAG, "Audio init error: "+e.toString());
 		}
 	}
 
@@ -769,7 +841,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
@@ -786,23 +857,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         handler.postDelayed(new Runnable() {
             public void run() {
                 if(this!=null && !isFinishing()){
-                	fragmentManager.beginTransaction().remove(sf).commit(); //HERE:
-                	/*09-07 22:22:32.893: E/AndroidRuntime(25605): FATAL EXCEPTION: main
-09-07 22:22:32.893: E/AndroidRuntime(25605): Process: com.iglesiaintermedia.mobmuplat, PID: 25605
-09-07 22:22:32.893: E/AndroidRuntime(25605): java.lang.IllegalStateException: Can not perform this action after onSaveInstanceState
-09-07 22:22:32.893: E/AndroidRuntime(25605): 	at android.support.v4.app.FragmentManagerImpl.checkStateLoss(FragmentManager.java:1354)
-09-07 22:22:32.893: E/AndroidRuntime(25605): 	at android.support.v4.app.FragmentManagerImpl.enqueueAction(FragmentManager.java:1372)
-09-07 22:22:32.893: E/AndroidRuntime(25605): 	at android.support.v4.app.BackStackRecord.commitInternal(BackStackRecord.java:595)
-09-07 22:22:32.893: E/AndroidRuntime(25605): 	at android.support.v4.app.BackStackRecord.commit(BackStackRecord.java:574)
-09-07 22:22:32.893: E/AndroidRuntime(25605): 	at com.iglesiaintermedia.mobmuplat.MainActivity$3.run(MainActivity.java:737)
-09-07 22:22:32.893: E/AndroidRuntime(25605): 	at android.os.Handler.handleCallback(Handler.java:733)
-09-07 22:22:32.893: E/AndroidRuntime(25605): 	at android.os.Handler.dispatchMessage(Handler.java:95)
-09-07 22:22:32.893: E/AndroidRuntime(25605): 	at android.os.Looper.loop(Looper.java:137)
-09-07 22:22:32.893: E/AndroidRuntime(25605): 	at android.app.ActivityThread.main(ActivityThread.java:4998)
-09-07 22:22:32.893: E/AndroidRuntime(25605): 	at java.lang.reflect.Method.invokeNative(Native Method)
-*/
-                	//getActionBar().show();
-                	getSupportFragmentManager().beginTransaction().add(R.id.container, _patchFragment).commit();	
+                	fragmentManager.beginTransaction().remove(sf).commitAllowingStateLoss(); //When just commit(), would get java.lang.IllegalStateException: Can not perform this action after onSaveInstanceState
+                	getSupportFragmentManager().beginTransaction().add(R.id.container, _patchFragment).commitAllowingStateLoss();	
                 }
             }
         }, 4000);
@@ -810,16 +866,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 	public void launchFragment(Fragment frag, String title) {
 		FragmentManager fragmentManager = getSupportFragmentManager();
-		//Log.i(TAG, "launch with stacj size "+fragmentManager.getBackStackEntryCount());
 		
-		
-		//int count = fragmentManager.getBackStackEntryCount();
-		//Fragment temp = fragmentManager.getBackStackEntryAt(count=1);
 		// if already what we are looking at, return (otherwise it pops but isn't re-added)
 		if (fragmentManager.getBackStackEntryCount()==1 && fragmentManager.getBackStackEntryAt(0).getName() == title) {
 			return;
 		}
-		// if something else is on the stack above patch, pop it, but remove listener to not remove/readd action bar
+		// if something else is on the stack above patch, pop it, but remove listener to not remove/readd action bar.
 		if (fragmentManager.getBackStackEntryCount() > 0) {
 			fragmentManager.removeOnBackStackChangedListener(this);
 			fragmentManager.popBackStackImmediate();
@@ -830,13 +882,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		fragmentTransaction.add(R.id.container, frag);
 		fragmentTransaction.addToBackStack(title);
 		fragmentTransaction.commit(); 
-		fragmentManager.executePendingTransactions();//do it immediately, not async
+		fragmentManager.executePendingTransactions(); //Do it immediately, not async.
 	}
 	
-	public void launchSettings() {
-		//_topLayout.setFitsSystemWindows(true);
-		//_topLayout.setSystemUiVisibility(0);
-		//getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+	public void launchSettings() { //launch the last settings frag we were looking at.
 		getActionBar().show();
 		launchFragment(_lastFrag, _lastFragTitle);
 	}
@@ -900,15 +949,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	    outputAccel[1] = cookedY;
 	}
 	
-	
-	
 	@Override
-	
-	
 	public void onSensorChanged(SensorEvent event) {
 		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-			//Log.i(TAG, "ac "+event.values[0]+" "+event.values[1]+" "+event.values[2]);
-			//float rawAccel[] = {event.values[0], event.values[1], event.values[2]};
 			for (int i=0 ; i < 3; i++) {
 				_rawAccelArray[i] = event.values[i];
 			}
@@ -951,17 +994,15 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 		// TODO Auto-generated method stub
-
 	}
 
 	public static String getDocumentsFolderPath() {
-		File fileDir = new File(Environment.getExternalStorageDirectory(), "MobMuPlat");//device/sdcard
+		File fileDir = new File(Environment.getExternalStorageDirectory(), "MobMuPlat");//device/sdcard aka simulated storage
 		fileDir.mkdir(); // make mobmuplat dir if not there
 		return fileDir.getAbsolutePath();
 	}
 
-	//
-
+	// OSC
 	public void receiveOSCMessage(OSCMessage message) {
 		// message should have proper object types, but need to put address back in front of array
 		Object[] messageArgs = message.getArguments();
@@ -970,14 +1011,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		for (int i=0;i<messageArgs.length;i++) {
 			newArgs[i+1] = messageArgs[i];
 		}
-
 		PdBase.sendList("fromNetwork", newArgs);
-
 	}
 
 	@Override
 	public void onLocationChanged(Location location) {
-		Log.i(TAG, "loc "+location.getLatitude()+" "+location.getLongitude()+" "+location.getAltitude());
+		//Log.i(TAG, "loc "+location.getLatitude()+" "+location.getLongitude()+" "+location.getAltitude());
 		
 		int latRough = (int)( location.getLatitude()*1000);
 	    int longRough = (int)(location.getLongitude()*1000);
@@ -1001,19 +1040,16 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void onProviderDisabled(String provider) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -1027,13 +1063,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		_stopAudioWhilePaused = !backgroundAudioEnabled;
 	}
 
-	private boolean unpackZip(String path, String zipname) {    
-		Log.i("ZIP", "unzipping "+path+" "+zipname);
-	     InputStream is;
-	     ZipInputStream zis;
+	private boolean unpackZipInputStream(InputStream is, String zipname) {
+		ZipInputStream zis;
 	     try {
 	         String filename;
-	         is = new FileInputStream(path + zipname);
+	         
 	         zis = new ZipInputStream(new BufferedInputStream(is));          
 	         ZipEntry ze;
 	         byte[] buffer = new byte[1024];
@@ -1041,12 +1075,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 	         while ((ze = zis.getNextEntry()) != null) {
 	        	
-	             // zapis do souboru
 	             filename = ze.getName();
 	             Log.i("ZIP", "opening "+filename);
 
-	             // Need to create directories if not exists, or
-	             // it will generate an Exception...
+	             // Need to create directories if doesn't exist.
 	             if (ze.isDirectory()) {
 	                File fmd = new File(MainActivity.getDocumentsFolderPath(),  filename);
 	                fmd.mkdirs();
@@ -1054,22 +1086,20 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	             }
 
 	             File outFile = new File(MainActivity.getDocumentsFolderPath(), filename);
-	             Log.i("ZIP", "to: "+outFile.getAbsolutePath());
+	             if(VERBOSE)Log.i(TAG, "zip writes to: "+outFile.getAbsolutePath());
 	             FileOutputStream fout = new FileOutputStream(outFile);
 
-	             // cteni zipu a zapis
-	             while ((count = zis.read(buffer)) != -1) 
-	             {
+	             while ((count = zis.read(buffer)) != -1) {
 	                 fout.write(buffer, 0, count);             
 	             }
 
 	             fout.close();               
 	             zis.closeEntry();
-	             Log.i("ZIP", "wrote "+filename);
+	             if(VERBOSE)Log.i(TAG, "zip wrote "+filename);
 	         }
 
 	         zis.close();
-	         Log.i("ZIP", "complete");
+	         //Log.i("ZIP", "complete");
 	         showAlert("Unzipped contents of "+zipname+" into Documents folder.");
 	     } 
 	     catch(Exception e) {
@@ -1081,8 +1111,19 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	    return true;
 	}
 	
+	private boolean unpackZip(String path, String zipname) {    
+		//Log.i("ZIP", "unzipping "+path+" "+zipname);
+		try {
+			InputStream is = new FileInputStream(path + zipname);
+			return unpackZipInputStream(is, zipname);
+		} catch(Exception e) {
+	         e.printStackTrace();
+	         showAlert("Error unzipping contents of "+zipname);
+	         return false;
+	     } 
+	}
+	
 	// HID
-
 	@Override
 	public void onInputDeviceAdded(int deviceId) {
 		// TODO Auto-generated method stub
@@ -1093,13 +1134,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	@Override
 	public void onInputDeviceChanged(int deviceId) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void onInputDeviceRemoved(int deviceId) {
 		// TODO Auto-generated method stub
-		
 	}
 	
 	public void refreshMenuFragment(MMPMenu menu) {
@@ -1122,7 +1161,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             state = new InputDeviceState(device);
             _inputDeviceStates.put(deviceId, state);
 
-            Log.i(TAG, device.toString());
+            if(VERBOSE)Log.i(TAG, device.toString());
         }
         return state;
     }
@@ -1154,12 +1193,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
         _inputManager.onGenericMotionEvent(event);
-        //
-        //int eventSourceDebug = event.getSource();
-        //Toast.makeText(this, "event source "+eventSourceDebug, Toast.LENGTH_SHORT).show();
-        
-        
-        
+       
         // Check that the event came from a joystick or gamepad since a generic
         // motion event could be almost anything. API level 18 adds the useful
         // event.isFromSource() helper function.
@@ -1178,11 +1212,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         }
         return super.onGenericMotionEvent(event);
     }
-
-	///========================
 }
+
+///========================
+
 class PatchFragment extends Fragment implements ControlDelegate, PagingScrollViewDelegate{
-	private boolean verbose = false;
 	private String TAG = "PatchFragment";
 
 	public PagingHorizontalScrollView scrollContainer;
@@ -1202,8 +1236,7 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 	float _version;
 	
 	private MainActivity _mainActivity;
-	//private View _rootView;
-
+	
 	Map<String, ArrayList<MMPControl>> _allGUIControlMap; //control address, array of objects with that address. Allows multiple items with same address.
 
 	int _bgColor;
@@ -1270,15 +1303,9 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 		return rootView;
 	}
 	
-	/*public void onConfigurationChanged(Configuration newConfig) {
-	    super.onConfigurationChanged(newConfig);
-	    Log.i(TAG, "frag config!");
-	}*/
 	@Override
 	public void onResume() {
 		super.onResume();
-		// redraw MMPLCDs
-		//for ()
 	}
 
 	//keep this for opening old versions of mobmuplat files that use three elements
@@ -1310,7 +1337,7 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 		//
 		int screenWidth = _container.getWidth();//_rootView.getWidth();
 		int screenHeight = _container.getHeight();//_rootView.getHeight();
-		/*if(verbose)*/Log.i(TAG, "load scene _container dim "+screenWidth+" "+screenHeight);
+		if(MainActivity.VERBOSE)Log.i(TAG, "load scene _container dim "+screenWidth+" "+screenHeight);
 		if(screenWidth==0 || screenHeight == 0) return;//error
 
 
@@ -1378,7 +1405,7 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 		double xRatio = (double)screenWidth/referenceWidth;
 		double yRatio = (double)screenHeight/referenceHeight;
 		screenRatio = (float)Math.min(xRatio, yRatio);
-		Log.i(TAG, "ref "+referenceWidth+" "+referenceHeight+" pgc "+_pageCount);
+		if(MainActivity.VERBOSE)Log.i(TAG, "ref size "+referenceWidth+" "+referenceHeight+" pgc "+_pageCount);
 
 		FrameLayout.LayoutParams flp = new FrameLayout.LayoutParams((int)(referenceWidth*screenRatio),(int)(referenceHeight*screenRatio));
 		flp.gravity = Gravity.CENTER;
@@ -1392,7 +1419,7 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 
 		int layoutWidth = (int)(referenceWidth*screenRatio*_pageCount);
 		int layoutHeight = (int)(referenceHeight*screenRatio);
-		Log.i(TAG, "set scrollrelativelayout dim "+layoutWidth+" "+layoutHeight);
+		if(MainActivity.VERBOSE)Log.i(TAG, "set scrollrelativelayout dim "+layoutWidth+" "+layoutHeight);
 		scrollRelativeLayout.setLayoutParams(new FrameLayout.LayoutParams(layoutWidth,layoutHeight));
 
 		//
@@ -1600,17 +1627,17 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 		scrollRelativeLayout.addView(_settingsButton);
 		_settingsButton.setVisibility(View.VISIBLE);
 		
-		Log.i(TAG, "end of layout loop...");
+		if(MainActivity.VERBOSE)Log.i(TAG, "end of layout loop...");
+		
 		//end of big loop through widgets
-		// TODO scroll to start page
-
+		
 		// listen for completion of layout before loading patch
 		//LinearLayout layout = (LinearLayout)findViewById(R.id.YOUR_VIEW_ID);
 		ViewTreeObserver vto = scrollRelativeLayout.getViewTreeObserver(); 
 		vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() { 
 			@Override 
 			public void onGlobalLayout() { 
-				Log.i(TAG, "layout complete...");
+				if(MainActivity.VERBOSE)Log.i(TAG, "layout complete...");
 				scrollRelativeLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
 				// scroll to start
 				//_scrollContainer.setScrollX(0);
@@ -1633,40 +1660,38 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 	// ControlDelegate interface
 	@Override
 	public void sendGUIMessageArray(List<Object> message) {
-		if(verbose) {
+		if(MainActivity.VERBOSE) {
 			String listString = "";
 			for (Object obj : message) listString += obj.toString()+" ";
-			if(verbose)Log.i(TAG, "send list to pd fromGUI: " + listString);
+			Log.i(TAG, "send list to pd fromGUI: " + listString);
 		}
 		PdBase.sendList("fromGUI", message.toArray());
 	}
 
-
 	// Receive from pd
 	private PdReceiver receiver = new PdReceiver() {
 		private void pdPost(String msg) {
-			Log.i(TAG, "Pure Data says, \"" + msg + "\"");
+			if(MainActivity.VERBOSE)Log.i(TAG, "Pure Data says, \"" + msg + "\"");
 		}
 
 		@Override
 		public void print(String s) {
-			//Log.i(TAG,s); 
 			ConsoleLogController.getInstance().append(s);
 		}
 
 		@Override
 		public void receiveBang(String source) {
-			Log.i(TAG, "bang");
+			//Log.i(TAG, "bang");
 		}
 
 		@Override
 		public void receiveFloat(String source, float x) {
-			Log.i(TAG, "float: " + x);
+			//Log.i(TAG, "float: " + x);
 		}
 
 		@Override
 		public void receiveList(String source, Object... args) {
-			if(verbose)Log.i(TAG, "receive list from pd "+source+": " + Arrays.toString(args));
+			if(MainActivity.VERBOSE)Log.i(TAG, "receive list from pd "+source+": " + Arrays.toString(args));
 			if (source.equals("toNetwork")) {
 				_mainActivity.networkController.handlePDMessage(args);
 			} else if (source.equals("toGUI")) {
@@ -1680,14 +1705,6 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 					}
 				}
 			} else if (source.equals("toSystem")) {
-				/*for (Object o : args) {
-						if (o instanceof String)
-							Log.i(TAG, "obj is string");
-						if (o instanceof Float)
-							Log.i(TAG, "obj is float");
-						if (o instanceof Integer)
-							Log.i(TAG, "obj is int");
-					}*/
 				if (args.length==0) return;
 				
 				if (args.length>=1 && args[0].equals("/vibrate") ){
@@ -1723,8 +1740,8 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 					}
 				} else if (args.length==2 && args[0].equals("/setPage") &&  args[1] instanceof Float) {
 					int pageIndex = (int)((Float)args[1]).floatValue();
-					if(pageIndex<=0){
-						scrollContainer.smoothScrollTo(0, 0);  //setScrollX(0);
+					if(pageIndex<=0){ //scroll to start page
+						scrollContainer.smoothScrollTo(0, 0);  
 					} else if (pageIndex>=_pageCount) {
 						scrollContainer.smoothScrollTo((int)(scrollContainer.getWidth()*(_pageCount-1)),0);//last page
 					} else scrollContainer.smoothScrollTo((int)(scrollContainer.getWidth()*pageIndex),0);
@@ -1753,12 +1770,12 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 
 		@Override
 		public void receiveMessage(String source, String symbol, Object... args) {
-			Log.i(TAG, "message: " + Arrays.toString(args));
+			//Log.i(TAG, "message: " + Arrays.toString(args));
 		}
 
 		@Override
 		public void receiveSymbol(String source, String symbol) {
-			pdPost("symbol: " + symbol);
+			//pdPost("symbol: " + symbol);
 		}
 	};
 

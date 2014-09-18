@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.iglesiaintermedia.mobmuplat"
-    android:versionCode="1"
+    android:versionCode="2"
     android:versionName="0.1" >
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -49,30 +49,45 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
+            <intent-filter> <!--by file name -->
    				 <action android:name="android.intent.action.VIEW" />
     			<category android:name="android.intent.category.DEFAULT" />
+    			<category android:name="android.intent.category.BROWSABLE" />
     			<data android:scheme="file" />
     			<data android:host="*" />
     			<data android:mimeType="*/*" /><!-- todo check! def necessary, but more specific "text/plain" not working!-->
     			<data android:pathPattern=".*\\.mmp" />
-  			</intent-filter>
-  			<intent-filter>
-   				 <action android:name="android.intent.action.VIEW" />
-    			<category android:name="android.intent.category.DEFAULT" />
-    			<data android:scheme="file" />
-    			<data android:host="*" />
-    			<data android:mimeType="*/*" /><!-- todo check! def necessary, but more specific "text/plain" not working!-->
     			<data android:pathPattern=".*\\.pd" />
+    			<data android:pathPattern=".*\\.zip" />
   			</intent-filter>
-  			<intent-filter>
+  			<intent-filter> <!-- by mimetype -->
    				 <action android:name="android.intent.action.VIEW" />
     			<category android:name="android.intent.category.DEFAULT" />
+    			<category android:name="android.intent.category.BROWSABLE" />
     			<data android:scheme="file" />
     			<data android:host="*" />
+    			<data android:mimeType="application/puredata" />
+    			<data android:mimeType="application/mobmuplat" />
     			<data android:mimeType="application/zip" />
   			</intent-filter>
-  			<!--  
+  			
+  			<intent-filter> <!-- Intent filter for open files from email -->
+            	<data android:scheme="content" />
+            	<action android:name="android.intent.action.VIEW" />
+            	<category android:name="android.intent.category.DEFAULT" />
+            	<category android:name="android.intent.category.BROWSABLE" />
+            	<data android:mimeType="application/puredata" />
+            	<data android:mimeType="application/mobmuplat" />
+            	<data android:mimeType="application/zip" />
+        	</intent-filter>
+  			
+  			
+  			<!-- 
+  			<intent-filter>
+       			 <action android:name="android.net.wifi.STATE_CHANGE" />
+       			 <action android:name="android.net.wifi.supplicant.CONNECTION_CHANGE" />
+    		</intent-filter>
+  			 
   			<intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>

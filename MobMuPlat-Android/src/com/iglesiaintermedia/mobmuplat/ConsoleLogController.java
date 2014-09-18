@@ -33,8 +33,8 @@ public class ConsoleLogController extends Observable{
 	
 	public void clear(){
 		_consoleStringBuffer.delete(0, _consoleStringBuffer.length());
-		//setChanged();
-	    //notifyObservers();
+		setChanged();
+	    notifyObservers();
 	} 
 	
 	public String toString() {

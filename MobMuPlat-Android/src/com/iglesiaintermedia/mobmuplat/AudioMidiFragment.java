@@ -13,9 +13,12 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class AudioMidiFragment extends Fragment implements Observer {
 	
@@ -72,6 +75,14 @@ public class AudioMidiFragment extends Fragment implements Observer {
 				//Toast.makeText(AudioMidiActivity.this, "Button Clicked", Toast.LENGTH_SHORT).show();
 				_usbMidiController.refreshDevices();
 			}
+		});
+		
+		Switch _backgroundAudioSwitch = (Switch)rootView.findViewById(R.id.switch1);
+		_backgroundAudioSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			   @Override
+			   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				   ((MainActivity)getActivity()).setBackgroundAudioEnabled(isChecked);
+			   }
 		});
 		
 		//refreshList();

@@ -14,13 +14,15 @@
 
     	     <ImageButton
     	         android:id="@+id/button1"
-    	         android:layout_width="45dp"
-    	         android:layout_height="45dp"
-    	         android:layout_margin="8dp"
-    	         android:padding="0dp"
+    	         android:layout_width="75dp"
+    	         android:layout_height="75dp"
+    	         android:paddingBottom="22dp"
+    	         android:paddingLeft="8dp"
+    	         android:paddingRight="22dp"
+    	         android:paddingTop="8dp"
     	         android:scaleType="fitStart"
     	         android:background="?android:selectableItemBackground"
-    	         android:src="@drawable/infoicon_100x100" 
+    	         android:src="@drawable/infoicon_100x100"
     	         android:visibility="gone"/>
     	     <!-- to avoid loading jank, is shown after patch load -->
 

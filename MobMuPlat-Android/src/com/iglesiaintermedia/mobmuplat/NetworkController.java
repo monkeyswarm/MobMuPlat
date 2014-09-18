@@ -9,11 +9,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Observable;
 
 import org.apache.http.conn.util.InetAddressUtils;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -27,7 +31,7 @@ import com.illposed.osc.OSCMessage;
 import com.illposed.osc.OSCPortIn;
 import com.illposed.osc.OSCPortOut;
 
-public class NetworkController {
+public class NetworkController extends Observable{
 
 	//	private static NetworkController mInstance = null;
 	public MainActivity delegate; //TODO make interface?
@@ -45,6 +49,8 @@ public class NetworkController {
 	static public int DEFAULT_PORT_NUMBER = 54321;
 
 	public LANdiniLANManager landiniManager;
+	
+	private String _ssid;
 
 	//private OSCListener oscListener;
 
@@ -76,7 +82,7 @@ public class NetworkController {
 			/*for(MMPController controller:controllerArrayList){
         		controller.receiveMessage(message);
         	}*/
-			Log.i("NETWORK", "receive osc!");
+			//Log.i("NETWORK", "receive osc!");
 			if (delegate != null){
 				//delegate.receiveOSCMessage(message);
 				Message msg = Message.obtain();
@@ -89,9 +95,7 @@ public class NetworkController {
 	public NetworkController() {
 		super();
 		setupOSC();
-
 		landiniManager = new LANdiniLANManager(this);
-//		landiniManager.setEnabled(true);
 	}
 
 	private void setupOSC() {
@@ -124,7 +128,6 @@ public class NetworkController {
 	}*/
 
 	public void setOutputIPAddress(String newIP) {
-		
 		outputIPAddressString = newIP;
 		resetOutput();
 	}
@@ -154,18 +157,18 @@ public class NetworkController {
 			receiver.startListening();
 
 		}catch(SocketException e){//not called with multicastsocket
-			Log.e("NETWORK","receiver socket exception");	
+			if(MainActivity.VERBOSE)Log.e("NETWORK","receiver socket exception");	
 			if(asyncExceptionListener != null) {
 				asyncExceptionListener.receiveException(e, "Unable to listen on port "+portNumber+". Perhaps another application is using this port (or you are not connected to a wifi network).", "port");
 			}
 		} catch (IOException e) {
-			Log.e("NETWORK","receiver IO exception from multi");
+			if(MainActivity.VERBOSE)Log.e("NETWORK","receiver IO exception from multi");
 			if(asyncExceptionListener != null) {
 				asyncExceptionListener.receiveException(e, "Multicast receiver IO error. Perhaps your hardware does not support multicast.", "ip");
 			}
 		} catch (IllegalArgumentException e){
 			if(asyncExceptionListener != null) {
-				asyncExceptionListener.receiveException(e, "Bad port number, try something 1000-65535", "port");
+				asyncExceptionListener.receiveException(e, "Bad port number, try a value between 1000 to 65535", "port");
 			}
 		}
 	}
@@ -196,7 +199,7 @@ public class NetworkController {
 				}
 			}
 		} catch (Exception ex) {
-			Log.e("NETWORK", "failed to get my ip");
+			if(MainActivity.VERBOSE)Log.e("NETWORK", "failed to get my ip");
 		} // for now eat exceptions
 		return null;
 	}
@@ -249,6 +252,16 @@ public class NetworkController {
 		}
 	}
 
+	public void newSSIDData(){
+		setChanged();
+		notifyObservers();
+	}
+	
+	public String getSSID() {
+		WifiManager wifiManager = (WifiManager) delegate.getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        return wifiInfo.getSSID();
+	}
 
 	private class SetupOSCTask extends AsyncTask<Void, Void, Void> {
 		UnknownHostException uhe = null;
@@ -260,10 +273,10 @@ public class NetworkController {
 				InetAddress outputIPAddress = InetAddress.getByName(outputIPAddressString);
 				sender = new OSCPortOut(outputIPAddress, portNumber);	
 			}catch(UnknownHostException e){
-				Log.e("NETWORK","unknown host exception");
+				if(MainActivity.VERBOSE)Log.e("NETWORK","unknown host exception");
 				uhe = e;
 			}catch(SocketException e){
-				Log.e("NETWORK","sender socket exception");	
+				if(MainActivity.VERBOSE)Log.e("NETWORK","sender socket exception");	
 				se = e;
 				//JOptionPane.showMessageDialog(null, "Unable to create OSC sender on port 54300. \nI won't be able to receive messages from PD. \nPerhaps another application, or instance of this editor, is on this port.");			
 			}
@@ -292,34 +305,24 @@ public class NetworkController {
 		@Override
 		protected Void doInBackground(Object... args) {
 
-			//		Log.i("NETWORK", "send osc!");
-			//TODO more checking
-			if (args.length == 0 || !(args[0] instanceof String)) return null;
+			if (args.length == 0 || !(args[0] instanceof String) || sender == null) return null;
 			try{
 				String address = (String)args[0];
 				Object args2[] = Arrays.copyOfRange(args, 1, args.length); //last arg is exclusive
 				OSCMessage msg = new OSCMessage(address, args2);
-
 				sender.send(msg);
 			}
 			catch (IOException e) {
-				Log.e("NETWORK", "Couldn't send,  "+e.getMessage());
+				Log.e("NETWORK", "Couldn't send OSC message,  "+e.getMessage());
 			}
 
 			return null;
-			//return "Executed";
 		}
 
+		/*
 		@Override
 		protected void onPostExecute(Void value) {
-			//   	Log.i("NETWORK", "sendosc complete");
-			//TextView txt = (TextView) findViewById(R.id.output);
-			//txt.setText("Executed"); // txt.setText(result);
-			// might want to change "executed" for the returned string passed
-			// into onPostExecute() but that is upto you
-		}
+			
+		}*/
 	}
-
 }
-
-

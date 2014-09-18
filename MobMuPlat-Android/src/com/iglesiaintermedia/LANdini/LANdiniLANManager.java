@@ -26,12 +26,12 @@ import com.illposed.osc.OSCPortIn;
 import com.illposed.osc.OSCPortOut;
 
 public class LANdiniLANManager {
-
+	public static final boolean VERBOSE = false;
 	public static final int SC_DEFAULT_PORT = 57120;
 	private static boolean _initLANDispatchOnce;
 	
 	public LANdiniUser me;
-	private boolean verbose = false;
+	
 	private boolean _enabled;
 	
 	//private boolean _connected;
@@ -67,7 +67,7 @@ public class LANdiniLANManager {
 		        initLAN(address);
 		    }
 		    else{
-		        if(verbose)Log.i("LANDINI manager", "Still looking for a LAN...");
+		        if(VERBOSE)Log.i("LANDINI manager", "Still looking for a LAN...");
 		    }
 		}
 	});
@@ -75,8 +75,10 @@ public class LANdiniLANManager {
     private LANdiniTimer _broadcastTimer = new LANdiniTimer((int)(_broadcastInterval * 1000), new LANdiniTimerListener() {
 		@Override
 		public void onTimerFire() {
-			List<Object> msgList = Arrays.asList((Object)"/landini/member/broadcast", me.name, me.ip, Integer.valueOf(me.port), Float.valueOf(_version));
-	        broadcastMsg(msgList);
+			if(me.ip!=null) {
+				List<Object> msgList = Arrays.asList((Object)"/landini/member/broadcast", me.name, me.ip, Integer.valueOf(me.port), Float.valueOf(_version));
+				broadcastMsg(msgList);
+			}
 	    }
 	});
     
@@ -98,7 +100,7 @@ public class LANdiniLANManager {
 		    //for(LANdiniUser user : usersToDropList) { //iterator bad memory???
 		    for (int i=0 ; i<usersToDropList.size() ; i++) {
 		    	LANdiniUser user = usersToDropList.get(i);
-		    	Log.i("LANdini", "dropped user "+user.name);//"- my time %.2f userlastping time %.2f", user.name, [self elapsedTime], user.lastPing);
+		    	if(VERBOSE)Log.i("LANdini", "dropped user "+user.name);//"- my time %.2f userlastping time %.2f", user.name, [self elapsedTime], user.lastPing);
 		        if (user.name.equals(_syncServerName)) { //LANCHANGE _syncServerIP
 		            _syncTimer.stopRepeatingTask();
 		            resetSyncVars();
@@ -189,7 +191,7 @@ public class LANdiniLANManager {
 		//@Override
         public void acceptMessage(java.util.Date time, OSCMessage message) { //secondar thread from internal, called on main thread(?) from NetworkController (no localhost)
     		
-        	if(verbose) {
+        	if(VERBOSE) {
         		StringBuffer buff = new StringBuffer();
         		buff.append(message.getAddress()+" ");
         		for (Object obj : message.getArguments()) {
@@ -259,10 +261,10 @@ public class LANdiniLANManager {
 			_localPortIn.startListening();
 	  
 		}catch(SocketException e){//not called with multicastsocket
-			Log.e("NETWORK","receiver socket exception");	
-			Log.e("NETWORK", "Unable to create OSC receiver on port 54321");//. \nI won't be able to receive messages from PD. \nPerhaps another application, or instance of this editor, is on this port.");
+			if(VERBOSE)Log.e("NETWORK","receiver socket exception");	
+			if(VERBOSE)Log.e("NETWORK", "Unable to create OSC receiver on port 54321");//. \nI won't be able to receive messages from PD. \nPerhaps another application, or instance of this editor, is on this port.");
 		} catch (IOException e) {
-			Log.e("NETWORK","receiver IO exception from multi");
+			if(VERBOSE)Log.e("NETWORK","receiver IO exception from multi");
 		}
     		
         _connectionTimer.startRepeatingTask(); //was [self checkForLAN];
@@ -272,8 +274,10 @@ public class LANdiniLANManager {
         //NSLog(@"disconnectOSC llm %p", self);
         
     	for(LANdiniUser user : _userList) { //necc? prob not is cleaned up immediately...
-    		user.oscPortOut.close();
-    		user.oscPortOut = null;
+    		if(user.oscPortOut!=null) {
+    			user.oscPortOut.close();
+    			user.oscPortOut = null;
+    		}
     	}
     	_userList.clear();
         
@@ -284,21 +288,28 @@ public class LANdiniLANManager {
         	userStateDelegate.userStateChanged(_userList);
         }
         
-        _networkPortIn.stopListening();
-        _networkPortIn.close();
-        _networkPortIn = null;
+        if(_networkPortIn!=null) {
+        	_networkPortIn.stopListening();
+        	_networkPortIn.close();
+        	_networkPortIn = null;
+        }
         
-        _localPortIn.stopListening();
-        _localPortIn.close();
-        _localPortIn = null;
+        if(_localPortIn!=null) {
+        	_localPortIn.stopListening();
+        	_localPortIn.close();
+        	_localPortIn = null;
+        }
         
-        _targetAppPortOut.close();
-        _targetAppPortOut = null;
+        if (_targetAppPortOut!=null) {
+        	_targetAppPortOut.close();
+        	_targetAppPortOut = null;
+        }
         
-        _broadcastAppPortOut.close();
-        _broadcastAppPortOut = null;
+        if(_broadcastAppPortOut!=null) {
+        	_broadcastAppPortOut.close();
+        	_broadcastAppPortOut = null;
         //need to set above to nil? yes, will prevent sending messages on closed ports.
-       
+        }
         _syncServerName = "noSyncServer";
         
         //CHECK IF THIS STILL HAPPENS
@@ -349,11 +360,11 @@ public class LANdiniLANManager {
         if (_initLANDispatchOnce == false ) { //TODO can any of these be done in init, without ip address?
 
 
-        	Log.i("LANdini", "got to the api and network responders");
+        	if(VERBOSE)Log.i("LANdini", "got to the api and network responders");
         	setupAPIResponders();
-        	Log.i("LANdini", "got to broadcast task");
+        	if(VERBOSE)Log.i("LANdini", "got to broadcast task");
         	_broadcastTimer.startRepeatingTask(); //startBroadcastTimer();
-        	Log.i("LANdini", "got to ping task");
+        	if(VERBOSE)Log.i("LANdini", "got to ping task");
         	_pingAndMsgIDsTimer.startRepeatingTask(); //startPingAndMsgIDsTimer();
         	//NSLog(@"got to show gui");
         	//this.show_gui; //GUI/Stage map currently unimplemented
@@ -361,7 +372,7 @@ public class LANdiniLANManager {
  //       	handler.postDelayed(new Runnable(){
  //       		@Override
  //       		public void run(){
-        			Log.i("LANdini", "starting drop user task");
+        			if(VERBOSE)Log.i("LANdini", "starting drop user task");
         			_dropUserTimer.startRepeatingTask();//startDropUserTimer();
  //       		}
  //       	}, 3000);      
@@ -620,6 +631,7 @@ public class LANdiniLANManager {
  // broadcast stuff - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
    private void broadcastMsg(List<Object> msgList) {
+	   //Log.i("broadcastMsg", ""+msgList.get(2)+" "+msgList.get(3));
        OSCMessage msg = LANdiniLANManager.OSCMessageFromList(msgList);
        new SendBroadcastOSCTask().execute(msg);
 	   
@@ -650,6 +662,9 @@ public class LANdiniLANManager {
 	    int theirPort = ((Integer)msgList.get(3)).intValue();
 	    float theirVersion = ((Float)msgList.get(4)).floatValue();
 	    
+	    if(VERBOSE)Log.i("LAN", "receive member b: "+theirIP+" "+theirPort+" "+theirName);
+	       
+	    
 	    if((theirVersion > _version+.001) && (_iHaveBeenWarned == false)){
 	        _iHaveBeenWarned = true;
 	        /*UIAlertView *alert = [[UIAlertView alloc]
@@ -677,7 +692,7 @@ public class LANdiniLANManager {
 	            fromUser = assimilateMemberInfoName(theirName, theirIP, theirPort);
 	        }
 	       if (fromUser == null){
-	    	   Log.e("LAN", "mysteriosuly couldn't add "+theirName);
+	    	   if(VERBOSE)Log.e("LAN", "mysteriosuly couldn't add "+theirName);
 	       }
 	      //sending just my info STILL NEEDED???
 	       /* [replyMsg addObject:_me.name];
@@ -749,9 +764,9 @@ public class LANdiniLANManager {
 	    user = getUserInUserListWithName(name); //getUserInUserListWithIP(ip); //LANCHANGE
 	    if(user == null){//not found
 	        //end DEI edit
-	        user = new LANdiniUser(name, ip, port, this);
+	    	user = new LANdiniUser(name, ip, port, this);
 	        _userList.add(user);
-	        Log.i("LANdini", "added user "+user.name);
+	        if(VERBOSE)Log.i("LANdini", "added user "+user.name);
 	        
 	        //DEI edit not in original supercollider source:send new message to user app with names
 	        receiveGetNamesRequest();
@@ -767,7 +782,7 @@ public class LANdiniLANManager {
 	// sync stuff - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 	private void becomeSyncServer() {
-	    Log.i("LANdini", "becoming sync server!");
+	    if(VERBOSE)Log.i("LANdini", "becoming sync server!");
 	    _syncTimer.stopRepeatingTask();
 	    //_syncServerIP = me.ip;
 	    _syncServerName = me.name;
@@ -798,7 +813,7 @@ public class LANdiniLANManager {
 	                becomeSyncServer();
 	            }
 	            else{
-	                Log.i("LANdini", "i am already the sync server");
+	                if(VERBOSE)Log.i("LANdini", "i am already the sync server");
 	            }
 	        }
 	    } else {
@@ -858,11 +873,11 @@ public class LANdiniLANManager {
 	            OSCMessage msg = LANdiniLANManager.OSCMessageFromList(msgList2);
 				user.send(msg);
 	        } else{
-	            Log.i("LANdini", "i should not be sending myself sync requests");
+	            if(VERBOSE)Log.i("LANdini", "i should not be sending myself sync requests");
 	            _syncTimer.stopRepeatingTask();
 	        }
 	    } else{
-	    	Log.i("LANdini", "time server is not in the userlist");
+	    	if(VERBOSE)Log.i("LANdini", "time server is not in the userlist");
 	       _syncTimer.stopRepeatingTask();
 	        resetSyncVars();
 	    }
@@ -886,7 +901,7 @@ public class LANdiniLANManager {
 	        _adjustmentToGetNetworkTime = serverTime - now;
 	    }
 	    else{
-	        Log.i("LANdini", "stopping sync task because of sync server name discrepancy");
+	        if(VERBOSE)Log.i("LANdini", "stopping sync task because of sync server name discrepancy");
 	        _syncTimer.stopRepeatingTask();
 	        resetSyncVars();
 	    }
@@ -1015,9 +1030,9 @@ public class LANdiniLANManager {
 				InetAddress outputIPAddress2 = InetAddress.getByName("224.0.0.1");
 				_broadcastAppPortOut = new OSCPortOut(outputIPAddress2, SC_DEFAULT_PORT);
 			}catch(UnknownHostException e){
-				Log.e("NETWORK","unknown host exception");
+				if(VERBOSE)Log.e("NETWORK","unknown host exception");
 			}catch(SocketException e){
-				Log.e("NETWORK","sender socket exception");	
+				if(VERBOSE)Log.e("NETWORK","sender socket exception");	
 				//JOptionPane.showMessageDialog(null, "Unable to create OSC sender on port 54300. \nI won't be able to receive messages from PD. \nPerhaps another application, or instance of this editor, is on this port.");			
 			}
 			
@@ -1027,7 +1042,7 @@ public class LANdiniLANManager {
 
         @Override
         protected void onPostExecute(Void value) {
-        	Log.i("NETWORK", "completed connection task");
+        	if(VERBOSE)Log.i("NETWORK", "completed connection task");
         }
 	}
     
@@ -1037,10 +1052,11 @@ public class LANdiniLANManager {
         protected Void doInBackground(OSCMessage... msgInput) {
 			if (msgInput.length == 0 || _broadcastAppPortOut == null) return null;
 			OSCMessage msg = msgInput[0];
+			if(VERBOSE)Log.i("LANdini", "send broadcast: "+msg.toString());
 			try{
 				_broadcastAppPortOut.send(msg);
 			} catch (IOException e) {
-				 Log.e("NETWORK", "Couldn't send,  "+e.getMessage());
+				 if(VERBOSE)Log.e("NETWORK", "Couldn't send,  "+e.getMessage());
 			}
             return null;
         }
@@ -1054,7 +1070,7 @@ public class LANdiniLANManager {
 			try{
 				_targetAppPortOut.send(msg);
 			} catch (IOException e) {
-				 Log.e("NETWORK", "Couldn't send,  "+e.getMessage());
+				 if(VERBOSE)Log.e("NETWORK", "Couldn't send,  "+e.getMessage());
 			}
             return null;
         }

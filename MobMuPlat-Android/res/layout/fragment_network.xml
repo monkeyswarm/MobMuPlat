@@ -6,7 +6,13 @@
     android:background="#74CEFF"
     android:paddingTop="@dimen/activity_vertical_margin">
  
-
+	<TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="TextView" />
+	
     <com.iglesiaintermedia.mobmuplat.SegmentedControlView
         android:id="@+id/segView1"
         android:layout_width="wrap_content"

@@ -14,10 +14,12 @@
 
     	     <ImageButton
     	         android:id="@+id/button1"
-    	         android:layout_width="54dp"
-    	         android:layout_height="54dp"
-    	         android:layout_margin="8dp"
-    	         android:padding="0dp"
+    	         android:layout_width="80dp"
+    	         android:layout_height="80dp"
+    	         android:paddingBottom="26dp"
+    	         android:paddingLeft="8dp"
+    	         android:paddingRight="26dp"
+    	         android:paddingTop="8dp"
     	         android:scaleType="fitStart"
     	         android:background="?android:selectableItemBackground"
     	         android:src="@drawable/infoicon_100x100" 

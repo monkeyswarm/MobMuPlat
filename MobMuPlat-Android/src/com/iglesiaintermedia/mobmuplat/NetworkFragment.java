@@ -6,6 +6,8 @@ import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.apache.http.conn.util.InetAddressUtils;
 
@@ -20,11 +22,15 @@ import com.iglesiaintermedia.LANdini.UserStateDelegate;
 
 
 
+
+
+
 //import android.app.Fragment;
 import android.support.v4.app.Fragment;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -41,12 +47,13 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-public class NetworkFragment extends Fragment implements SegmentedControlListener{
+public class NetworkFragment extends Fragment implements SegmentedControlListener, Observer{
 
 	private MultiDirectFragment _multidirectFragment;
 	private LandiniFragment _landiniFragment;
 	private SegmentedControlView _seg;
 	private NetworkController _networkController;
+	private TextView _ssidTextView;
 	
 	// Problem with nested fragments
 	// http://stackoverflow.com/questions/14929907/causing-a-java-illegalstateexception-error-no-activity-only-when-navigating-to
@@ -70,6 +77,7 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 				false);
 		
 		_networkController = ((MainActivity)getActivity()).networkController;
+		_networkController.addObserver(this);
 		
 		_multidirectFragment = new MultiDirectFragment();
 		_multidirectFragment.setNetworkController(_networkController);
@@ -77,6 +85,9 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 		_landiniFragment.setNetworkController(_networkController);
 		_networkController.landiniManager.userStateDelegate = (UserStateDelegate)_landiniFragment; //why cast?
 		_networkController.asyncExceptionListener = _multidirectFragment; 
+		
+		_ssidTextView = (TextView)rootView.findViewById(R.id.textView1);
+		update(null, null);//set text
 		
 		_seg = (SegmentedControlView)rootView.findViewById(R.id.segView1);
 		_seg.setItems(new String[]{"Multicast & Direct", "LANdini"});
@@ -107,6 +118,11 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 	}
 	
 	
+	@Override
+	public void update(Observable observable, Object data) {
+		String ssidString = _networkController.getSSID();
+		_ssidTextView.setText("Wifi network: "+ssidString); //(ssidString!=null ? ": "+ssidString : " disconnected"));
+	}
 	
 	@Override
     public void onDetach() {
@@ -119,6 +135,7 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
                 Log.e("NETWORK", "Error setting mChildFragmentManager field", e);
             }
         }
+        //remove self as observer?
     }
 	
 
@@ -300,34 +317,53 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 					container, false);
 			//rootView.setBackgroundColor(Color.MAGENTA);
 			
+			
 			_networkTimeTextView = (TextView)rootView.findViewById(R.id.textView2);
 			_listView = (ListView)rootView.findViewById(R.id.listView1);
 			_adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, _userNamesList) ;
 			_listView.setAdapter(_adapter);
 			_enableLANdiniSwitch = (Switch)rootView.findViewById(R.id.switch1);
+			
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+				//_enableLANdiniSwitch.setEnabled(false);
+			}
+			
 			_enableLANdiniSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-				 
 				   @Override
 				   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					   _networkController.landiniManager.setEnabled(isChecked);
-				    /*if(isChecked){
-				     switchStatus.setText("Switch is currently ON");
-				    }else{
-				     switchStatus.setText("Switch is currently OFF");
-				    }*/
+					      
 					if(isChecked) {
+						if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+							   showAlert("LANdini is only available on Jelly Bean (4.1) and above");
+							   return;
+						   }
+						_networkController.landiniManager.setEnabled(true);
 						_networkTimeDisplayTimer.startRepeatingTask();
 					} else {
+						_networkController.landiniManager.setEnabled(false);
 						_networkTimeDisplayTimer.stopRepeatingTask();
 						_networkTimeTextView.setText("Network Time:");
 					}
 				 
 				 }
 			});
+			//set checked state in case we arriving and landini is running.
+			if(_networkController.landiniManager.isEnabled()) {
+				_enableLANdiniSwitch.setChecked(true);
+			}
 			
 			return rootView;
 		}
 
+		private void showAlert(String s) {
+			new AlertDialog.Builder(getActivity())
+		    .setTitle("Nope")
+		    .setMessage(s)
+		    .setPositiveButton(android.R.string.yes, null)
+		    .setIcon(R.drawable.ic_launcher)
+		     .show();
+		}
+		
 		private LANdiniTimer _networkTimeDisplayTimer = new LANdiniTimer(250, new LANdiniTimerListener() {
 			@Override
 			public void onTimerFire() {
@@ -356,5 +392,4 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 		}
 	}
 
-	
 }
