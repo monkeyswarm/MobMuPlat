@@ -5,7 +5,10 @@ MobMuPlat is an iOS and Android app for audio software made with PureData, with 
 
 more info at http://www.mobmuplat.com
 
-This project uses two submodules. Clone the project to your computer, then cd into /MobMuPlat. Then run:
+This project uses two submodules. Clone the project to your computer, then cd into the MobMuPlat folder. Then run:
+
 git submodule init
+
 git submodule update
+
 to populate the libpd and pd-for-android folders.
