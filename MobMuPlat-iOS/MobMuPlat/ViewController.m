@@ -77,7 +77,7 @@ extern void sigmund_tilde_setup(void);
 }
 
 
--(id) init{
+-(id)init{
     self=[super init];
 
     mixingEnabled = YES;

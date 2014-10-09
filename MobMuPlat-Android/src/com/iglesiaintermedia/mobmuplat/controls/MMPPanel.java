@@ -24,6 +24,7 @@ public class MMPPanel extends MMPControl {
 	private boolean _highlighted;
 	private RectF _myRect;
 	private Bitmap _imageBitmap;
+	private int opaqueColor = 0xFFFFFFFF;
 	public MMPPanel(Context context, float screenRatio) {
 		super(context, screenRatio);
 		_myRect = new RectF();
@@ -57,6 +58,8 @@ public class MMPPanel extends MMPControl {
         else this.paint.setColor(this.color);
         canvas.drawRect(_myRect, this.paint);
         
+        //set paint to opaque
+        this.paint.setColor(opaqueColor);
         if(_imageBitmap!=null){
         	canvas.drawBitmap(_imageBitmap, null, _myRect, this.paint);
         }

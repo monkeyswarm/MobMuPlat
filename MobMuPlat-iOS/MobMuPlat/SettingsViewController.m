@@ -65,6 +65,15 @@ static NSString *landiniTableCellIdentifier = @"landiniTableCell";
     return retval;
 }
 
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+  self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+  if (self) {
+    consoleTextString = @"";
+    consoleStringQueue = [[NSMutableArray alloc]init];
+  }
+  return self;
+}
+
 - (void)viewDidLoad{
     [super viewDidLoad];
     
@@ -110,9 +119,10 @@ static NSString *landiniTableCellIdentifier = @"landiniTableCell";
     rateValueArray[5]=48000;
     requestedBlockCount = 16;
     
-    consoleTextString = @"";
-    consoleStringQueue = [[NSMutableArray alloc]init];
+    //consoleTextString = @"";
+    //consoleStringQueue = [[NSMutableArray alloc]init];
     //causes a timer to constantly see if new strings are waiting to be written to the console
+    //TODO start on didappear, pause on view disappear
     [NSTimer scheduledTimerWithTimeInterval:.25 target:self selector:@selector(consolePrintFunction) userInfo:nil repeats:YES];
     
     

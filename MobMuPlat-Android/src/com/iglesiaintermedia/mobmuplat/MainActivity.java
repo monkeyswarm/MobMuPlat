@@ -110,6 +110,7 @@ import org.puredata.core.PdReceiver;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.iglesiaintermedia.mobmuplat.PatchFragment.CanvasType;
 import com.iglesiaintermedia.mobmuplat.controls.*;
@@ -129,11 +130,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	//Pd
 	private PdService pdService = null;
 	private int openPDFileHandle;
-	
+
 	//HID
 	private InputManagerCompat _inputManager;
 	private SparseArray<InputDeviceState> _inputDeviceStates;
-	
+
 	//
 	//public final static float VERSION = 1.6f; //necc?
 
@@ -150,13 +151,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	private HIDFragment _hidFragment;
 	private Fragment _lastFrag;
 	private String _lastFragTitle;
-	
+
 	public FlashlightController flashlightController;
-	
+	private BroadcastReceiver _bc;
 	boolean _stopAudioWhilePaused = true; 
 
 	private LocationManager locationManagerA, locationManagerB;
-	
+
 	//sensor
 	float[] _rawAccelArray;
 	float[] _cookedAccelArray; 
@@ -166,7 +167,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	Object[] _rotationMsgArray;
 	Object[] _compassMsgArray; 
 	private boolean _shouldSwapAxes = false;
-		       
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -174,42 +175,42 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		//getActionBar().setDisplayShowTitleEnabled(true);
 		getActionBar().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
 		getActionBar().hide(); //necc on L, not necc on kitkat
-		
+
 		//layout view 
 		setContentView(R.layout.activity_main);
-		
-		processIntent();
-		
-		_inputManager = InputManagerCompat.Factory.getInputManager(this);
-        _inputManager.registerInputDeviceListener(this, null);
-        _inputDeviceStates = new SparseArray<InputDeviceState>();
 
-        //device type (just for syncing docs)
-        
-        hardwareScreenType = CanvasType.canvasTypeIPhone3p5Inch; //default
-        CharSequence deviceFromValues = getResources().getText(R.string.screen_type);
+		processIntent();
+
+		_inputManager = InputManagerCompat.Factory.getInputManager(this);
+		_inputManager.registerInputDeviceListener(this, null);
+		_inputDeviceStates = new SparseArray<InputDeviceState>();
+
+		//device type (just for syncing docs)
+
+		hardwareScreenType = CanvasType.canvasTypeIPhone3p5Inch; //default
+		CharSequence deviceFromValues = getResources().getText(R.string.screen_type);
 		if (deviceFromValues.equals("phone")) {
 			//derive closer phone type
 			Display display = getWindowManager().getDefaultDisplay();
-	        Point size = new Point();
-	        display.getSize(size);
-	        int width = size.x;
-	        int height = size.y;
-	        float aspect = (float)height/width;
-	        
-	        if (aspect > 1.6375) {
-	        	hardwareScreenType = CanvasType.canvasTypeIPhone4Inch; 
-	        } else {
-	        	hardwareScreenType = CanvasType.canvasTypeIPhone3p5Inch; 
-	        }
+			Point size = new Point();
+			display.getSize(size);
+			int width = size.x;
+			int height = size.y;
+			float aspect = (float)height/width;
+
+			if (aspect > 1.6375) {
+				hardwareScreenType = CanvasType.canvasTypeIPhone4Inch; 
+			} else {
+				hardwareScreenType = CanvasType.canvasTypeIPhone3p5Inch; 
+			}
 		} else if (deviceFromValues.equals("7inch")) {
 			hardwareScreenType = CanvasType.canvasTypeAndroid7Inch;
 		} else if(deviceFromValues.equals("10inch")) {
 			hardwareScreenType = CanvasType.canvasTypeIPad;
 		} else {
-			
+
 		}
-		
+
 		//version
 		boolean shouldCopyDocs = false;
 		int versionCode = 0;
@@ -225,67 +226,67 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
 		}
-		
+
 		//temp
 		//shouldCopyDocs = true;
 		//copy
 		if(shouldCopyDocs) {//!alreadyStartedOnVersion || [alreadyStartedOnVersion boolValue] == NO) {
-	        List<String> defaultPatchesList;
-	        if(hardwareScreenType == CanvasType.canvasTypeIPhone3p5Inch || hardwareScreenType == CanvasType.canvasTypeAndroid7Inch){
-	        	defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine.mmp", "MMPTutorial1-GUI.mmp", "MMPTutorial2-Input.mmp", "MMPTutorial3-Hardware.mmp", "MMPTutorial4-Networking.mmp","MMPTutorial5-Files.mmp","MMPExamples-Vocoder.mmp", "MMPExamples-Motion.mmp", "MMPExamples-Sequencer.mmp", "MMPExamples-GPS.mmp", "MMPTutorial6-2DGraphics.mmp", "MMPExamples-LANdini.mmp", "MMPExamples-Arp.mmp", "MMPExamples-TableGlitch.mmp", "MMPExamples-HID.mmp");
-	        }
-	        else if (hardwareScreenType==CanvasType.canvasTypeIPhone4Inch){
-	        	defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine-ip5.mmp", "MMPTutorial1-GUI-ip5.mmp", "MMPTutorial2-Input-ip5.mmp", "MMPTutorial3-Hardware-ip5.mmp", "MMPTutorial4-Networking-ip5.mmp","MMPTutorial5-Files-ip5.mmp", "MMPExamples-Vocoder-ip5.mmp", "MMPExamples-Motion-ip5.mmp", "MMPExamples-Sequencer-ip5.mmp","MMPExamples-GPS-ip5.mmp", "MMPTutorial6-2DGraphics-ip5.mmp", "MMPExamples-LANdini-ip5.mmp", "MMPExamples-Arp-ip5.mmp",  "MMPExamples-TableGlitch-ip5.mmp", "MMPExamples-HID-ip5.mmp");
-	        }
-	        else{//pad
-	        	defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine-Pad.mmp", "MMPTutorial1-GUI-Pad.mmp", "MMPTutorial2-Input-Pad.mmp", "MMPTutorial3-Hardware-Pad.mmp", "MMPTutorial4-Networking-Pad.mmp","MMPTutorial5-Files-Pad.mmp", "MMPExamples-Vocoder-Pad.mmp", "MMPExamples-Motion-Pad.mmp", "MMPExamples-Sequencer-Pad.mmp","MMPExamples-GPS-Pad.mmp", "MMPTutorial6-2DGraphics-Pad.mmp", "MMPExamples-LANdini-Pad.mmp", "MMPExamples-Arp-Pad.mmp",  "MMPExamples-TableGlitch-Pad.mmp", "MMPExamples-HID-Pad.mmp");
-	        }
-	        
-	        List<String> commonFilesList = Arrays.asList("MMPTutorial0-HelloSine.pd","MMPTutorial1-GUI.pd", "MMPTutorial2-Input.pd", "MMPTutorial3-Hardware.pd", "MMPTutorial4-Networking.pd","MMPTutorial5-Files.pd","cats1.jpg", "cats2.jpg","cats3.jpg","clap.wav","Welcome.pd",  "MMPExamples-Vocoder.pd", "vocod_channel.pd", "MMPExamples-Motion.pd", "MMPExamples-Sequencer.pd", "MMPExamples-GPS.pd", "MMPTutorial6-2DGraphics.pd", "MMPExamples-LANdini.pd", "MMPExamples-Arp.pd", "MMPExamples-TableGlitch.pd", "anderson1.wav", "MMPExamples-HID.pd");
-	        
-	        //defaultPatches = [defaultPatches arrayByAddingObjectsFromArray:commonFiles];
-	        
-	        for (String filename : defaultPatchesList) {
-	        	copyAsset(filename);
-	        }
-	        for (String filename : commonFilesList) {
-	        	copyAsset(filename);
-	        }
-	        
-	        //assuming success, write to user preference
-	        if (versionCode > 0) {
-	        	SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
-	        	SharedPreferences.Editor editor = settings.edit();
-	        	editor.putInt("lastOpenedVersionCode", versionCode);
-	        	editor.commit();
-	        }
-	        
-	    }
-		
+			List<String> defaultPatchesList;
+			if(hardwareScreenType == CanvasType.canvasTypeIPhone3p5Inch || hardwareScreenType == CanvasType.canvasTypeAndroid7Inch){
+				defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine.mmp", "MMPTutorial1-GUI.mmp", "MMPTutorial2-Input.mmp", "MMPTutorial3-Hardware.mmp", "MMPTutorial4-Networking.mmp","MMPTutorial5-Files.mmp","MMPExamples-Vocoder.mmp", "MMPExamples-Motion.mmp", "MMPExamples-Sequencer.mmp", "MMPExamples-GPS.mmp", "MMPTutorial6-2DGraphics.mmp", "MMPExamples-LANdini.mmp", "MMPExamples-Arp.mmp", "MMPExamples-TableGlitch.mmp", "MMPExamples-HID.mmp");
+			}
+			else if (hardwareScreenType==CanvasType.canvasTypeIPhone4Inch){
+				defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine-ip5.mmp", "MMPTutorial1-GUI-ip5.mmp", "MMPTutorial2-Input-ip5.mmp", "MMPTutorial3-Hardware-ip5.mmp", "MMPTutorial4-Networking-ip5.mmp","MMPTutorial5-Files-ip5.mmp", "MMPExamples-Vocoder-ip5.mmp", "MMPExamples-Motion-ip5.mmp", "MMPExamples-Sequencer-ip5.mmp","MMPExamples-GPS-ip5.mmp", "MMPTutorial6-2DGraphics-ip5.mmp", "MMPExamples-LANdini-ip5.mmp", "MMPExamples-Arp-ip5.mmp",  "MMPExamples-TableGlitch-ip5.mmp", "MMPExamples-HID-ip5.mmp");
+			}
+			else{//pad
+				defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine-Pad.mmp", "MMPTutorial1-GUI-Pad.mmp", "MMPTutorial2-Input-Pad.mmp", "MMPTutorial3-Hardware-Pad.mmp", "MMPTutorial4-Networking-Pad.mmp","MMPTutorial5-Files-Pad.mmp", "MMPExamples-Vocoder-Pad.mmp", "MMPExamples-Motion-Pad.mmp", "MMPExamples-Sequencer-Pad.mmp","MMPExamples-GPS-Pad.mmp", "MMPTutorial6-2DGraphics-Pad.mmp", "MMPExamples-LANdini-Pad.mmp", "MMPExamples-Arp-Pad.mmp",  "MMPExamples-TableGlitch-Pad.mmp", "MMPExamples-HID-Pad.mmp");
+			}
+
+			List<String> commonFilesList = Arrays.asList("MMPTutorial0-HelloSine.pd","MMPTutorial1-GUI.pd", "MMPTutorial2-Input.pd", "MMPTutorial3-Hardware.pd", "MMPTutorial4-Networking.pd","MMPTutorial5-Files.pd","cats1.jpg", "cats2.jpg","cats3.jpg","clap.wav","Welcome.pd",  "MMPExamples-Vocoder.pd", "vocod_channel.pd", "MMPExamples-Motion.pd", "MMPExamples-Sequencer.pd", "MMPExamples-GPS.pd", "MMPTutorial6-2DGraphics.pd", "MMPExamples-LANdini.pd", "MMPExamples-Arp.pd", "MMPExamples-TableGlitch.pd", "anderson1.wav", "MMPExamples-HID.pd");
+
+			//defaultPatches = [defaultPatches arrayByAddingObjectsFromArray:commonFiles];
+
+			for (String filename : defaultPatchesList) {
+				copyAsset(filename);
+			}
+			for (String filename : commonFilesList) {
+				copyAsset(filename);
+			}
+
+			//assuming success, write to user preference
+			if (versionCode > 0) {
+				SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
+				SharedPreferences.Editor editor = settings.edit();
+				editor.putInt("lastOpenedVersionCode", versionCode);
+				editor.commit();
+			}
+
+		}
+
 		//
 		AudioParameters.init(this);
 		PdPreferences.initPreferences(getApplicationContext());
 		initSensors();
 		initLocation();
 		usbMidiController = new UsbMidiController(this); //matched close in onDestroy...move closer in?
-			
+
 		//allow multicast
 		WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
 		if(wifi != null){
 			WifiManager.MulticastLock lock = wifi.createMulticastLock("MulticastLockTag");
 			lock.acquire();
 		}  //Automatically released on app exit/crash.
-		
+
 		networkController = new NetworkController();
 		networkController.delegate = this;
 
 		bindService(new Intent(this, PdService.class), pdConnection, BIND_AUTO_CREATE);
-		
+
 		//wifi
-		BroadcastReceiver bc = new BroadcastReceiver() {
+		_bc = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) { //having trouble with this, reports "0x", doesn't repond to supplicant stuff
-				  	networkController.newSSIDData();
+				networkController.newSSIDData();
 			}	
 		};
 		IntentFilter intentFilter = new IntentFilter();
@@ -293,10 +294,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
 		intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION) ;
 
-		registerReceiver(bc, intentFilter);
-				
+		registerReceiver(_bc, intentFilter);
 
-		
+
+
 		//fragments
 		_patchFragment = new PatchFragment(this); //reference to this for launching menu fragment on master stacj
 		_documentsFragment = new DocumentsFragment();
@@ -308,13 +309,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		// bookmark for launch from info button
 		_lastFrag = _documentsFragment;
 		_lastFragTitle = "Documents";
-		
-		
+
+
 		_topLayout = (FrameLayout)findViewById(R.id.container);
 		// Go full screen and lay out to top of screen.
 		// Only on SDK >= 16. This means that patch will not go truly fullscreen on ICS. Separate layouts for 14+ vs 16+ for the fragment margins.
 		_topLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-		
+
 		//Flashlight TODO make black
 		SurfaceView surfaceView = (SurfaceView)findViewById(R.id.surfaceView);
 		flashlightController = new FlashlightController(surfaceView);
@@ -322,12 +323,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 		// axes for table
 		if (getDeviceNaturalOrientation() == Configuration.ORIENTATION_LANDSCAPE) _shouldSwapAxes = true;
-		
+
 		// set action bar title on fragment stack changes
 		getSupportFragmentManager().addOnBackStackChangedListener(this);
-				
+
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-				
+
 		if (savedInstanceState == null) {
 			launchSplash();
 		}
@@ -343,20 +344,20 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		if (count == 0 && getActionBar().isShowing()) getActionBar().hide();
 		else if (count > 0 && !getActionBar().isShowing())getActionBar().show();
 	}
-	
+
 	@Override
 	protected void onNewIntent(Intent intent) { //called by open with file
-	    super.onNewIntent(intent);
-	    setIntent(intent);
-	    processIntent();
+		super.onNewIntent(intent);
+		setIntent(intent);
+		processIntent();
 	}
-	
+
 	private void processIntent() {
 		Intent i = getIntent();
 		if(i!=null) {
 			String action = i.getAction();
 
-		    /*if (action.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
+			/*if (action.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
 		        WifiManager manager = (WifiManager)getSystemService(Context.WIFI_SERVICE);
 		        NetworkInfo networkInfo = i.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 		        NetworkInfo.State state = networkInfo.getState();
@@ -383,11 +384,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		        //usbMidiController.onDeviceAttached(device);
 		        //here: set intent filter not to open mmp, but still get intents if open???
 		        //getActionBar().setBackgroundDrawable(new ColorDrawable(Color.RED));
-				
+
 			}*/
 			//file
 			if (action.equals(Intent.ACTION_VIEW)){
-		    	Uri dataUri = i.getData();
+				Uri dataUri = i.getData();
 				if(dataUri!=null){
 					if(VERBOSE)Log.i(TAG, "receive intent data " + dataUri.toString());
 
@@ -422,21 +423,21 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 					} else {//"file"
 
-		    			String filename = dataUri.getLastPathSegment();
-		    			String fullPath = dataUri.getPath();
-		    			int lastSlashPos = fullPath.lastIndexOf('/');
+						String filename = dataUri.getLastPathSegment();
+						String fullPath = dataUri.getPath();
+						int lastSlashPos = fullPath.lastIndexOf('/');
 
-		    			String parentPath = fullPath.substring(0, lastSlashPos+1);
-		    			String suffix = filename.substring(filename.lastIndexOf('.'));
-		    			if (suffix.equals(".zip")) { 
-		    				unpackZip(parentPath, filename);
-		    			}
-		    			else {
-		    				copyUri(dataUri);
-		    			}
-		    		}
-		    	}
-		    }
+						String parentPath = fullPath.substring(0, lastSlashPos+1);
+						String suffix = filename.substring(filename.lastIndexOf('.'));
+						if (suffix.equals(".zip")) { 
+							unpackZip(parentPath, filename);
+						}
+						else {
+							copyUri(dataUri);
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -445,7 +446,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		super.onPause();
 		flashlightController.stopCamera();
 	}
-	
+
 	@Override
 	protected void onStop() {
 		super.onStop();
@@ -462,7 +463,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			pdService.startAudio();
 		}
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -471,25 +472,25 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 	public void loadScene(String filenameToLoad) {
 		getActionBar().hide();
-		
+
 		_fileToLoad = filenameToLoad;
 		String fileJSON = readMMPToString(filenameToLoad);
 		boolean requestedChange = setOrientationOfMMP(fileJSON);
-        
+
 		if(!requestedChange){
 			_patchFragment.loadSceneFromJSON(fileJSON);
 			_fileToLoad = null;
 		}
-        //otherwise is being loaded in onConfigChange
+		//otherwise is being loaded in onConfigChange
 	}
-	
+
 	public void loadScenePatchOnly(String filenameToLoad) {
 		//don't bother with rotation for now...
 		stopLocationUpdates();
 		_patchFragment.scrollRelativeLayout.removeAllViews();
-		
+
 		getActionBar().hide();
-		
+
 		//reset scroll to one page
 		_patchFragment.scrollContainer.setLayoutParams(new FrameLayout.LayoutParams(_topLayout.getWidth(),_topLayout.getHeight()));
 		_patchFragment.scrollRelativeLayout.setLayoutParams(new FrameLayout.LayoutParams(_topLayout.getWidth(),_topLayout.getHeight()));
@@ -498,20 +499,20 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		tv.setText("running "+filenameToLoad+"\nwith no interface\n\n(any network data will be\n on default port "+NetworkController.DEFAULT_PORT_NUMBER+")");
 		tv.setTextColor(Color.WHITE);
 		tv.setGravity(Gravity.CENTER);
-		
+
 		RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		rlp.addRule(RelativeLayout.CENTER_VERTICAL); 
 		rlp.addRule(RelativeLayout.CENTER_HORIZONTAL); 
 		tv.setLayoutParams(rlp);
 		_patchFragment.scrollRelativeLayout.addView(tv);
 		//TODO RESET ports!
-		
+
 		loadPdFile(filenameToLoad);
 		//TODO move to patch so we can add 
 		_patchFragment.scrollRelativeLayout.addView(_patchFragment._settingsButton);
 		_patchFragment._settingsButton.setVisibility(View.VISIBLE);//not really necc, since initial welcome load should set it visible...
 	}
-	
+
 	public void loadPdFile(String pdFilename) {
 		// load pd patch
 		if(openPDFileHandle != 0)PdBase.closePatch(openPDFileHandle); 
@@ -528,7 +529,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			}
 		}
 	}
-	
+
 	static public String readMMPToString(String filename) {
 		if (filename == null) return null;
 		File file = new File(MainActivity.getDocumentsFolderPath(),filename);
@@ -558,11 +559,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 		return jsonString;
 	}
-	
+
 	static public String readMMPAssetToString(InputStream is) {
 		if (is == null) return null;
 		//File file = new File(MainActivity.getDocumentsFolderPath(),filename);
-		
+
 		Writer writer = new StringWriter();
 		char[] buffer = new char[1024];
 		try {
@@ -593,17 +594,17 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		locationManagerB = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 		//locationManagerB.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 5, this);
 	}
-	
+
 	public void startLocationUpdates() {
 		if (locationManagerA!=null)locationManagerA.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 5, this);
 		if (locationManagerB!=null)locationManagerB.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 5, this);
 	}
-	
+
 	public void stopLocationUpdates() {
 		if (locationManagerA!=null)locationManagerA.removeUpdates(this);
 		if (locationManagerB!=null)locationManagerB.removeUpdates(this);
 	}
-	
+
 	private void initSensors() { //TODO allow sensors on default thread for low-power devices (or just shutoff)
 
 		//_camera = Camera.open();
@@ -613,32 +614,32 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		_tiltsMsgArray[0] = "/tilts";
 		_accelMsgArray = new Object[4];
 		_accelMsgArray[0] = "/accel";
-		
+
 		_gyroMsgArray = new Object[4];
 		_gyroMsgArray[0] = "/gyro";
 		_rotationMsgArray = new Object[4];
 		_rotationMsgArray[0] = "/motion";
 		_compassMsgArray = new Object[2];
 		_compassMsgArray[0] = "/compass";
-		
+
 		SensorManager sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 		//
 		// onSensorChanged is now called on a background thread.
 		HandlerThread handlerThread = new HandlerThread("sensorThread", android.os.Process.THREAD_PRIORITY_BACKGROUND);
-        handlerThread.start();
-        Handler handler = new Handler(handlerThread.getLooper());
-        
-        Sensor accel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this, accel,SensorManager.SENSOR_DELAY_GAME, handler);
-        Sensor gyro = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+		handlerThread.start();
+		Handler handler = new Handler(handlerThread.getLooper());
+
+		Sensor accel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		sensorManager.registerListener(this, accel,SensorManager.SENSOR_DELAY_GAME, handler);
+		Sensor gyro = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 		sensorManager.registerListener(this,  gyro, SensorManager.SENSOR_DELAY_GAME, handler);//TODO rate
 		Sensor rotation = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 		sensorManager.registerListener(this,  rotation, SensorManager.SENSOR_DELAY_GAME, handler);//TODO rate
 		Sensor compass = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
 		sensorManager.registerListener(this,  compass, SensorManager.SENSOR_DELAY_GAME, handler);
-		
+
 		//
-		
+
 		/*Sensor accel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		sensorManager.registerListener(this,  accel, SensorManager.SENSOR_DELAY_GAME);//TODO rate
 		Sensor gyro = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
@@ -647,7 +648,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		sensorManager.registerListener(this,  rotation, SensorManager.SENSOR_DELAY_GAME);//TODO rate
 		Sensor compass = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
 		sensorManager.registerListener(this,  compass, SensorManager.SENSOR_DELAY_GAME);//TODO rate
-		*/
+		 */
 	}
 
 	//insane: 10" tablets can have a "natural" (Surface.ROTATION_0) at landscape, not portrait. Determine
@@ -672,32 +673,37 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 	private boolean setOrientationOfMMP(String jsonString){ //returns whether there was a change
 		JsonParser parser = new JsonParser();
-		JsonObject topDict = parser.parse(jsonString).getAsJsonObject();//top dict
-		int screenOrientation = this.getWindow().getWindowManager().getDefaultDisplay().getRotation();// on tablet rotation_0 = "natural"= landscape
-		int mmpOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-		if(topDict.get("isOrientationLandscape")!=null) {
-			boolean isOrientationLandscape = topDict.get("isOrientationLandscape").getAsBoolean();
-			if (isOrientationLandscape)mmpOrientation=ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-		}
+		try {
+			JsonObject topDict = parser.parse(jsonString).getAsJsonObject();//top dict
+			int screenOrientation = this.getWindow().getWindowManager().getDefaultDisplay().getRotation();// on tablet rotation_0 = "natural"= landscape
+			int mmpOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+			if(topDict.get("isOrientationLandscape")!=null) {
+				boolean isOrientationLandscape = topDict.get("isOrientationLandscape").getAsBoolean();
+				if (isOrientationLandscape)mmpOrientation=ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+			}
 
-		int naturalOrientation = getDeviceNaturalOrientation();
-		if (naturalOrientation == Configuration.ORIENTATION_PORTRAIT) { //phones, 7" tablets
-			if ((mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && screenOrientation!=Surface.ROTATION_0) ||
-					(mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && screenOrientation!=Surface.ROTATION_90)) {
-				if(VERBOSE)Log.i(TAG, "requesting orientation...surface = "+screenOrientation);
-				this.setRequestedOrientation(mmpOrientation);
-				return true;
+			int naturalOrientation = getDeviceNaturalOrientation();
+			if (naturalOrientation == Configuration.ORIENTATION_PORTRAIT) { //phones, 7" tablets
+				if ((mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && screenOrientation!=Surface.ROTATION_0) ||
+						(mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && screenOrientation!=Surface.ROTATION_90)) {
+					if(VERBOSE)Log.i(TAG, "requesting orientation...surface = "+screenOrientation);
+					this.setRequestedOrientation(mmpOrientation);
+					return true;
+				}
 			}
-		}
-		//"natural" = landscape = big tablet
-		else if (naturalOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-			if ((mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && screenOrientation!=Surface.ROTATION_270) || //weird that it thinks that rotation 270 is portrait
-					(mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && screenOrientation!=Surface.ROTATION_0)) {
-				if(VERBOSE)Log.i(TAG, "requesting orientation...surface = "+screenOrientation);
-				this.setRequestedOrientation(mmpOrientation);
-				return true;
+			//"natural" = landscape = big tablet
+			else if (naturalOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+				if ((mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && screenOrientation!=Surface.ROTATION_270) || //weird that it thinks that rotation 270 is portrait
+						(mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && screenOrientation!=Surface.ROTATION_0)) {
+					if(VERBOSE)Log.i(TAG, "requesting orientation...surface = "+screenOrientation);
+					this.setRequestedOrientation(mmpOrientation);
+					return true;
+				}
 			}
-		}
+			return false;
+		} catch(JsonParseException e) {
+			showAlert("Unable to parse interface file.");
+		}	
 		return false;
 	}
 
@@ -722,7 +728,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 		}
 	}*/
-	
+
 	private void copyInputStream(InputStream in, String filename, boolean showAlert) {
 		File file = new File(MainActivity.getDocumentsFolderPath(), filename);
 		try {
@@ -754,7 +760,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 	public void copyAsset(String assetFilename){
 		AssetManager assetManager = getAssets();
-		
+
 		try {
 			InputStream in = assetManager.open(assetFilename);
 			copyInputStream(in, assetFilename, false);
@@ -762,7 +768,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			Log.i(TAG, "Unable to copy file: "+e.getMessage());
 		}
 	}
-	
+
 	//TODO consolidate this with version in fragment
 	private void showAlert(String string) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -780,17 +786,17 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		//if(_fileToLoad!=null)initGui(_fileToLoad);
 		//initGui();
 		ViewTreeObserver observer = _topLayout.getViewTreeObserver();
-	    observer.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+		observer.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
 
-	        @Override
-	        public void onGlobalLayout() {
-	        	_topLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-	        	if(_fileToLoad!=null) {	
-	        		_patchFragment.loadSceneFromJSON(readMMPToString(_fileToLoad));
-	        		_fileToLoad = null;
-	        	}
-	        }
-	    });
+			@Override
+			public void onGlobalLayout() {
+				_topLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+				if(_fileToLoad!=null) {	
+					_patchFragment.loadSceneFromJSON(readMMPToString(_fileToLoad));
+					_fileToLoad = null;
+				}
+			}
+		});
 	}
 
 	private final ServiceConnection pdConnection = new ServiceConnection() {
@@ -835,6 +841,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 	protected void onDestroy() {
 		usbMidiController.close(); //solves "Intent Receiver Leaked: ... are you missing a call to unregisterReceiver()?"
+		unregisterReceiver(_bc);
 		super.onDestroy();
 		cleanup();
 	}
@@ -845,28 +852,28 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
+
 	public void launchSplash(){
 		final SplashFragment sf = new SplashFragment();
 		final FragmentManager fragmentManager = getSupportFragmentManager();
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 		fragmentTransaction.add(R.id.container, sf);
 		fragmentTransaction.commit(); 
-		
+
 		Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                if(this!=null && !isFinishing()){
-                	fragmentManager.beginTransaction().remove(sf).commitAllowingStateLoss(); //When just commit(), would get java.lang.IllegalStateException: Can not perform this action after onSaveInstanceState
-                	getSupportFragmentManager().beginTransaction().add(R.id.container, _patchFragment).commitAllowingStateLoss();	
-                }
-            }
-        }, 4000);
+		handler.postDelayed(new Runnable() {
+			public void run() {
+				if(this!=null && !isFinishing()){
+					fragmentManager.beginTransaction().remove(sf).commitAllowingStateLoss(); //When just commit(), would get java.lang.IllegalStateException: Can not perform this action after onSaveInstanceState
+					getSupportFragmentManager().beginTransaction().add(R.id.container, _patchFragment).commitAllowingStateLoss();	
+				}
+			}
+		}, 4000);
 	}
 
 	public void launchFragment(Fragment frag, String title) {
 		FragmentManager fragmentManager = getSupportFragmentManager();
-		
+
 		// if already what we are looking at, return (otherwise it pops but isn't re-added)
 		if (fragmentManager.getBackStackEntryCount()==1 && fragmentManager.getBackStackEntryAt(0).getName() == title) {
 			return;
@@ -877,26 +884,26 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			fragmentManager.popBackStackImmediate();
 			fragmentManager.addOnBackStackChangedListener(this);
 		}
-		
+
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 		fragmentTransaction.add(R.id.container, frag);
 		fragmentTransaction.addToBackStack(title);
 		fragmentTransaction.commit(); 
 		fragmentManager.executePendingTransactions(); //Do it immediately, not async.
 	}
-	
+
 	public void launchSettings() { //launch the last settings frag we were looking at.
 		getActionBar().show();
 		launchFragment(_lastFrag, _lastFragTitle);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		
+
 		if (id == R.id.action_documents) {
 			launchFragment(_documentsFragment, "Documents");
 			_lastFrag = _documentsFragment;
@@ -932,23 +939,23 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		float cookedY = rawAccel[1];
 		float accelZ = rawAccel[2];
 		// cook it via Z accel to see when we have tipped it beyond 90 degrees
-		
+
 		if(cookedX>0 && accelZ>0) cookedX=(2-cookedX); //tip towards long side
 		else if(cookedX<0 && accelZ>0) cookedX=(-2-cookedX); //tip away long side
-		
+
 		if(cookedY>0 && accelZ>0) cookedY=(2-cookedY); //tip right
 		else if(cookedY<0 && accelZ>0) cookedY=(-2-cookedY); //tip left
-		
-	    //clip 
-	    if(cookedX<-1)cookedX=-1;
-	    else if(cookedX>1)cookedX=1;
-	    if(cookedY<-1)cookedY=-1;
-	    else if(cookedY>1)cookedY=1;
+
+		//clip 
+		if(cookedX<-1)cookedX=-1;
+		else if(cookedX>1)cookedX=1;
+		if(cookedY<-1)cookedY=-1;
+		else if(cookedY>1)cookedY=1;
 		//return new float[]{cookedX, cookedY};
-	    outputAccel[0] = cookedX;
-	    outputAccel[1] = cookedY;
+		outputAccel[0] = cookedX;
+		outputAccel[1] = cookedY;
 	}
-	
+
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -1017,13 +1024,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	@Override
 	public void onLocationChanged(Location location) {
 		//Log.i(TAG, "loc "+location.getLatitude()+" "+location.getLongitude()+" "+location.getAltitude());
-		
-		int latRough = (int)( location.getLatitude()*1000);
-	    int longRough = (int)(location.getLongitude()*1000);
-	    int latFine = (int)Math.abs((location.getLatitude() % .001)*1000000);
-	    int longFine = (int)Math.abs(( location.getLongitude() % .001)*1000000);
 
-	    Object[] msgArray = {"/location", 
+		int latRough = (int)( location.getLatitude()*1000);
+		int longRough = (int)(location.getLongitude()*1000);
+		int latFine = (int)Math.abs((location.getLatitude() % .001)*1000000);
+		int longFine = (int)Math.abs(( location.getLongitude() % .001)*1000000);
+
+		Object[] msgArray = {"/location", 
 				Float.valueOf((float)location.getLatitude()), 
 				Float.valueOf((float)location.getLongitude()),
 				Float.valueOf((float)location.getAltitude()), 
@@ -1065,70 +1072,70 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 	private boolean unpackZipInputStream(InputStream is, String zipname) {
 		ZipInputStream zis;
-	     try {
-	         String filename;
-	         
-	         zis = new ZipInputStream(new BufferedInputStream(is));          
-	         ZipEntry ze;
-	         byte[] buffer = new byte[1024];
-	         int count;
+		try {
+			String filename;
 
-	         while ((ze = zis.getNextEntry()) != null) {
-	        	
-	             filename = ze.getName();
-	             Log.i("ZIP", "opening "+filename);
+			zis = new ZipInputStream(new BufferedInputStream(is));          
+			ZipEntry ze;
+			byte[] buffer = new byte[1024];
+			int count;
 
-	             // Need to create directories if doesn't exist.
-	             if (ze.isDirectory()) {
-	                File fmd = new File(MainActivity.getDocumentsFolderPath(),  filename);
-	                fmd.mkdirs();
-	                continue;
-	             }
+			while ((ze = zis.getNextEntry()) != null) {
 
-	             File outFile = new File(MainActivity.getDocumentsFolderPath(), filename);
-	             if(VERBOSE)Log.i(TAG, "zip writes to: "+outFile.getAbsolutePath());
-	             FileOutputStream fout = new FileOutputStream(outFile);
+				filename = ze.getName();
+				Log.i("ZIP", "opening "+filename);
 
-	             while ((count = zis.read(buffer)) != -1) {
-	                 fout.write(buffer, 0, count);             
-	             }
+				// Need to create directories if doesn't exist.
+				if (ze.isDirectory()) {
+					File fmd = new File(MainActivity.getDocumentsFolderPath(),  filename);
+					fmd.mkdirs();
+					continue;
+				}
 
-	             fout.close();               
-	             zis.closeEntry();
-	             if(VERBOSE)Log.i(TAG, "zip wrote "+filename);
-	         }
+				File outFile = new File(MainActivity.getDocumentsFolderPath(), filename);
+				if(VERBOSE)Log.i(TAG, "zip writes to: "+outFile.getAbsolutePath());
+				FileOutputStream fout = new FileOutputStream(outFile);
 
-	         zis.close();
-	         //Log.i("ZIP", "complete");
-	         showAlert("Unzipped contents of "+zipname+" into Documents folder.");
-	     } 
-	     catch(Exception e) {
-	         e.printStackTrace();
-	         showAlert("Error unzipping contents of "+zipname);
-	         return false;
-	     } 
+				while ((count = zis.read(buffer)) != -1) {
+					fout.write(buffer, 0, count);             
+				}
 
-	    return true;
+				fout.close();               
+				zis.closeEntry();
+				if(VERBOSE)Log.i(TAG, "zip wrote "+filename);
+			}
+
+			zis.close();
+			//Log.i("ZIP", "complete");
+			showAlert("Unzipped contents of "+zipname+" into Documents folder.");
+		} 
+		catch(Exception e) {
+			e.printStackTrace();
+			showAlert("Error unzipping contents of "+zipname);
+			return false;
+		} 
+
+		return true;
 	}
-	
+
 	private boolean unpackZip(String path, String zipname) {    
 		//Log.i("ZIP", "unzipping "+path+" "+zipname);
 		try {
 			InputStream is = new FileInputStream(path + zipname);
 			return unpackZipInputStream(is, zipname);
 		} catch(Exception e) {
-	         e.printStackTrace();
-	         showAlert("Error unzipping contents of "+zipname);
-	         return false;
-	     } 
+			e.printStackTrace();
+			showAlert("Error unzipping contents of "+zipname);
+			return false;
+		} 
 	}
-	
+
 	// HID
 	@Override
 	public void onInputDeviceAdded(int deviceId) {
 		// TODO Auto-generated method stub
 		Toast.makeText(this, "input device added!", Toast.LENGTH_SHORT).show();;
-		
+
 	}
 
 	@Override
@@ -1140,7 +1147,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	public void onInputDeviceRemoved(int deviceId) {
 		// TODO Auto-generated method stub
 	}
-	
+
 	public void refreshMenuFragment(MMPMenu menu) {
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		if(fragmentManager.getBackStackEntryCount()==1 && 
@@ -1149,69 +1156,69 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			((MenuFragment)fragmentManager.getBackStackEntryAt(0)).refresh();
 		}
 	}
-	
+
 	private InputDeviceState getInputDeviceState(InputEvent event) {
-        final int deviceId = event.getDeviceId();
-        InputDeviceState state = _inputDeviceStates.get(deviceId);
-        if (state == null) {
-            final InputDevice device = event.getDevice();
-            if (device == null) {
-                return null;
-            }
-            state = new InputDeviceState(device);
-            _inputDeviceStates.put(deviceId, state);
+		final int deviceId = event.getDeviceId();
+		InputDeviceState state = _inputDeviceStates.get(deviceId);
+		if (state == null) {
+			final InputDevice device = event.getDevice();
+			if (device == null) {
+				return null;
+			}
+			state = new InputDeviceState(device);
+			_inputDeviceStates.put(deviceId, state);
 
-            if(VERBOSE)Log.i(TAG, device.toString());
-        }
-        return state;
-    }
-	
+			if(VERBOSE)Log.i(TAG, device.toString());
+		}
+		return state;
+	}
+
 	@Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		InputDeviceState state = getInputDeviceState(event);
-        if (state != null && state.onKeyDown(event)) { //pd message sent in state.onKeyUp/Down
-       		if (_hidFragment.isVisible()) {
-       			_hidFragment.show(state);
-        	}
-        	return true;   
-        }
-        return super.onKeyDown(keyCode, event);
-    }
+		if (state != null && state.onKeyDown(event)) { //pd message sent in state.onKeyUp/Down
+			if (_hidFragment.isVisible()) {
+				_hidFragment.show(state);
+			}
+			return true;   
+		}
+		return super.onKeyDown(keyCode, event);
+	}
 
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-    	InputDeviceState state = getInputDeviceState(event);
-        if (state != null && state.onKeyUp(event)) { //pd message sent in state.onKeyUp/Down
-       		if (_hidFragment.isVisible()) {
-       			_hidFragment.show(state);
-       		}
-       		return true;
-        }    
-        return super.onKeyUp(keyCode, event);
-    }
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		InputDeviceState state = getInputDeviceState(event);
+		if (state != null && state.onKeyUp(event)) { //pd message sent in state.onKeyUp/Down
+			if (_hidFragment.isVisible()) {
+				_hidFragment.show(state);
+			}
+			return true;
+		}    
+		return super.onKeyUp(keyCode, event);
+	}
 
-    @Override
-    public boolean onGenericMotionEvent(MotionEvent event) {
-        _inputManager.onGenericMotionEvent(event);
-       
-        // Check that the event came from a joystick or gamepad since a generic
-        // motion event could be almost anything. API level 18 adds the useful
-        // event.isFromSource() helper function.
-        int eventSource = event.getSource();
-        if ((((eventSource & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) ||
-                ((eventSource & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK))
-                && event.getAction() == MotionEvent.ACTION_MOVE) {
-            //int id = event.getDeviceId();
-            InputDeviceState state = getInputDeviceState(event);
-            if (state != null && state.onJoystickMotion(event)) { //pd message sent in state.onJoystickMotion
-            	if (_hidFragment.isVisible()) {
-        			_hidFragment.show(state);
-        		}
-            	return true;
-            }
-        }
-        return super.onGenericMotionEvent(event);
-    }
+	@Override
+	public boolean onGenericMotionEvent(MotionEvent event) {
+		_inputManager.onGenericMotionEvent(event);
+
+		// Check that the event came from a joystick or gamepad since a generic
+		// motion event could be almost anything. API level 18 adds the useful
+		// event.isFromSource() helper function.
+		int eventSource = event.getSource();
+		if ((((eventSource & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) ||
+				((eventSource & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK))
+				&& event.getAction() == MotionEvent.ACTION_MOVE) {
+			//int id = event.getDeviceId();
+			InputDeviceState state = getInputDeviceState(event);
+			if (state != null && state.onJoystickMotion(event)) { //pd message sent in state.onJoystickMotion
+				if (_hidFragment.isVisible()) {
+					_hidFragment.show(state);
+				}
+				return true;
+			}
+		}
+		return super.onGenericMotionEvent(event);
+	}
 }
 
 ///========================
@@ -1229,18 +1236,18 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 	CanvasType _canvasType;
 	boolean _isOrientationLandscape;
 	boolean _isPageScrollShortEnd;
-	
+
 	int _pageCount;
 	int _startPageIndex;
 	int _port;
 	float _version;
-	
+
 	private MainActivity _mainActivity;
-	
+
 	Map<String, ArrayList<MMPControl>> _allGUIControlMap; //control address, array of objects with that address. Allows multiple items with same address.
 
 	int _bgColor;
-	
+
 	public ImageButton _settingsButton; //TODO make private again...is set in mainactivity loadScenePatchOnly
 	private View _container;
 
@@ -1260,7 +1267,7 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 			Bundle savedInstanceState) {
 		_container = container;
 		final View rootView = inflater.inflate(R.layout.fragment_patch, container,false);
-		
+
 		scrollContainer = (PagingHorizontalScrollView) rootView.findViewById(R.id.horizontalScrollView);
 		scrollContainer.pagingDelegate = this;
 		scrollContainer.setBackgroundColor(Color.BLACK);
@@ -1274,35 +1281,35 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 				_mainActivity.launchSettings();
 			}			
 		});
-		
+
 		rootView.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-		    @Override
-		    public void onGlobalLayout() {
-		    	rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-		    	//String fileJSON = MainActivity.readMMPToString("Welcome-ip5.mmp");
-		    	String fileJSON = "";
-		    	try {
-		    	if (_mainActivity.hardwareScreenType == CanvasType.canvasTypeIPhone3p5Inch) {
-					fileJSON = MainActivity.readMMPAssetToString(getActivity().getAssets().open("Welcome.mmp"));
-				} else if (_mainActivity.hardwareScreenType == CanvasType.canvasTypeIPhone4Inch) {
-					fileJSON = MainActivity.readMMPAssetToString(getActivity().getAssets().open("Welcome-ip5.mmp"));
-				} else if (_mainActivity.hardwareScreenType == CanvasType.canvasTypeIPad) {
-					fileJSON = MainActivity.readMMPAssetToString(getActivity().getAssets().open("Welcome-Pad.mmp"));
-				} else if (_mainActivity.hardwareScreenType == CanvasType.canvasTypeAndroid7Inch) {
-					fileJSON = MainActivity.readMMPAssetToString(getActivity().getAssets().open("Welcome-and7.mmp"));
-				} 
-		    	} catch (IOException e) {
-		    		
-		    	}
-		    	
-		    	loadSceneFromJSON(fileJSON);
-		    }
+			@Override
+			public void onGlobalLayout() {
+				rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+				//String fileJSON = MainActivity.readMMPToString("Welcome-ip5.mmp");
+				String fileJSON = "";
+				try {
+					if (_mainActivity.hardwareScreenType == CanvasType.canvasTypeIPhone3p5Inch) {
+						fileJSON = MainActivity.readMMPAssetToString(getActivity().getAssets().open("Welcome.mmp"));
+					} else if (_mainActivity.hardwareScreenType == CanvasType.canvasTypeIPhone4Inch) {
+						fileJSON = MainActivity.readMMPAssetToString(getActivity().getAssets().open("Welcome-ip5.mmp"));
+					} else if (_mainActivity.hardwareScreenType == CanvasType.canvasTypeIPad) {
+						fileJSON = MainActivity.readMMPAssetToString(getActivity().getAssets().open("Welcome-Pad.mmp"));
+					} else if (_mainActivity.hardwareScreenType == CanvasType.canvasTypeAndroid7Inch) {
+						fileJSON = MainActivity.readMMPAssetToString(getActivity().getAssets().open("Welcome-and7.mmp"));
+					} 
+				} catch (IOException e) {
+
+				}
+
+				loadSceneFromJSON(fileJSON);
+			}
 		});
-		
+
 		//_rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
 		return rootView;
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -1330,330 +1337,337 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 	}
 
 	public void loadSceneFromJSON(String inString){
-		_mainActivity.stopLocationUpdates();
-		scrollRelativeLayout.removeAllViews();
-		//unlike ios, can just set orientation without physical rotation
-		//
-		//
-		int screenWidth = _container.getWidth();//_rootView.getWidth();
-		int screenHeight = _container.getHeight();//_rootView.getHeight();
-		if(MainActivity.VERBOSE)Log.i(TAG, "load scene _container dim "+screenWidth+" "+screenHeight);
-		if(screenWidth==0 || screenHeight == 0) return;//error
+
+		try {
+			JsonParser parser = new JsonParser();
+			JsonObject topDict = parser.parse(inString).getAsJsonObject();//top dict - exception on bad JSON
+
+			_mainActivity.stopLocationUpdates();
+			scrollRelativeLayout.removeAllViews();
+			//unlike ios, can just set orientation without physical rotation
+			//
+			//
+			int screenWidth = _container.getWidth();//_rootView.getWidth();
+			int screenHeight = _container.getHeight();//_rootView.getHeight();
+			if(MainActivity.VERBOSE)Log.i(TAG, "load scene _container dim "+screenWidth+" "+screenHeight);
+			if(screenWidth==0 || screenHeight == 0) return;//error
 
 
-		JsonParser parser = new JsonParser();
-		JsonObject topDict = parser.parse(inString).getAsJsonObject();//top dict
-
-		// get view-layout-needed parameters
-		if(topDict.get("canvasType")!=null){
-			if((topDict.get("canvasType").getAsString()).equals("iPhone3p5Inch")) _canvasType=CanvasType.canvasTypeIPhone3p5Inch;// objectForKey:@"canvasType"] isEqualToString:@"iPhone3p5Inch"])[model setCanvasType:canvasTypeIPhone3p5Inch];
-			if((topDict.get("canvasType").getAsString()).equals("iPhone4Inch")) _canvasType=CanvasType.canvasTypeIPhone4Inch;
-			if((topDict.get("canvasType").getAsString()).equals("iPad")) _canvasType=CanvasType.canvasTypeIPad;
-			if((topDict.get("canvasType").getAsString()).equals("android7Inch")) _canvasType=CanvasType.canvasTypeAndroid7Inch;
-
-		}
-		//TEMP
-		//_canvasType=CanvasType.canvasTypeAndroid7Inch;
-		
-		if(topDict.get("isOrientationLandscape")!=null)
-			_isOrientationLandscape= topDict.get("isOrientationLandscape").getAsBoolean();
-		if(topDict.get("isPageScrollShortEnd")!=null)
-			_isPageScrollShortEnd=topDict.get("isPageScrollShortEnd").getAsBoolean();
-		if(topDict.get("pageCount")!=null)
-			_pageCount=topDict.get("pageCount").getAsInt();//TODO error check and try to deduce?
-		if(topDict.get("startPageIndex")!=null)
-			_startPageIndex=topDict.get("startPageIndex").getAsInt();
-
-		int referenceWidth=320, referenceHeight=480;
-		if(!_isOrientationLandscape) {
-			switch (_canvasType) {
-			case canvasTypeIPhone3p5Inch:
-				referenceWidth = 320;
-				referenceHeight = 480;
-				break;
-			case canvasTypeIPhone4Inch:
-				referenceWidth = 320;
-				referenceHeight = 568;
-				break;
-			case canvasTypeIPad:
-				referenceWidth = 768;
-				referenceHeight = 1024;
-				break;
-			case canvasTypeAndroid7Inch://half of 1200 1824 aspect 1.52 
-				referenceWidth = 600;
-				referenceHeight = 912;
-			}
-		} else { //landscape
-			switch (_canvasType) {
-			case canvasTypeIPhone3p5Inch:
-				referenceWidth = 480;
-				referenceHeight = 320;
-				break;
-			case canvasTypeIPhone4Inch:
-				referenceWidth = 568;
-				referenceHeight = 320;
-				break;
-			case canvasTypeIPad:
-				referenceWidth = 1024;
-				referenceHeight = 768;
-				break;
-			case canvasTypeAndroid7Inch://half of 1920 1104
-				referenceWidth = 960;
-				referenceHeight = 552;
-			}	
-		}
-		double xRatio = (double)screenWidth/referenceWidth;
-		double yRatio = (double)screenHeight/referenceHeight;
-		screenRatio = (float)Math.min(xRatio, yRatio);
-		if(MainActivity.VERBOSE)Log.i(TAG, "ref size "+referenceWidth+" "+referenceHeight+" pgc "+_pageCount);
-
-		FrameLayout.LayoutParams flp = new FrameLayout.LayoutParams((int)(referenceWidth*screenRatio),(int)(referenceHeight*screenRatio));
-		flp.gravity = Gravity.CENTER;
-		scrollContainer.setLayoutParams(flp);
-		//???_scrollContainer.pageScroll(2);// = _pageCount;
-		scrollContainer.pageCount = _pageCount;
-
-		if (_startPageIndex<_pageCount) {
-			scrollContainer.setScrollX((int)(referenceWidth*screenRatio*_startPageIndex));
-		} else scrollContainer.setScrollX((int)(referenceWidth*screenRatio*(_pageCount-1)));//last page
-
-		int layoutWidth = (int)(referenceWidth*screenRatio*_pageCount);
-		int layoutHeight = (int)(referenceHeight*screenRatio);
-		if(MainActivity.VERBOSE)Log.i(TAG, "set scrollrelativelayout dim "+layoutWidth+" "+layoutHeight);
-		scrollRelativeLayout.setLayoutParams(new FrameLayout.LayoutParams(layoutWidth,layoutHeight));
-
-		//
-		if(topDict.getAsJsonArray("backgroundColor")!=null){
-			JsonArray colorArray = topDict.getAsJsonArray("backgroundColor");
-			if(colorArray.size()==4)
-				_bgColor = colorFromRGBAArray(colorArray);
-			else if (colorArray.size()==3)
-				_bgColor = colorFromRGBArray(colorArray);
-			scrollRelativeLayout.setBackgroundColor(_bgColor);
-		}
-		
-		final String pdFilename;
-		if(topDict.get("pdFile")!=null) {
-			pdFilename = topDict.get("pdFile").getAsString();// objectForKey:@"pdFile"]];
-		}
-		else {
-			pdFilename = null;
-			showAlert("This interface has not been linked to a PureData file. Add it in the editor!");
-			
-		}
-		
-		if(topDict.get("port")!=null)
-			_port=topDict.get("port").getAsInt();
-		//TODO SET PORT IN NETWORK CONTROLLER
-		if(topDict.get("version")!=null)
-			_version=topDict.get("version").getAsFloat();
-
-		JsonArray controlDictArray;//array of dictionaries, one for each gui element
-
-		
-		//
-		if(topDict.get("gui")!=null){
-			controlDictArray = topDict.get("gui").getAsJsonArray();//[topDict objectForKey:@"gui"];//array of dictionaries, one for each gui control
-			//for(JsonObject guiDict : controlDictArray){//for each one
-			for(int i=0;i<controlDictArray.size();i++){    
-				JsonObject guiDict = controlDictArray.get(i).getAsJsonObject();//???
-				MMPControl control;
-				if(guiDict.get("class")==null)continue;// if doesn't have a class, skip out of loop
-
-				String classString = guiDict.get("class").getAsString();// objectForKey:@"class"];
-				//frame
-				//default
-				Rect newFrame = new Rect(0, 0, (int)(100*xRatio), (int)(100*yRatio));
-				if(guiDict.get("frame")!=null){
-					JsonArray frameRectArray = guiDict.getAsJsonArray("frame");
-					//convert Left Top width height to Left Top right bottom
-					int left = (int)(frameRectArray.get(0).getAsFloat() * screenRatio);
-					int top = (int)(frameRectArray.get(1).getAsFloat() * screenRatio);
-					int width = (int)(frameRectArray.get(2).getAsFloat() * screenRatio);
-					int height = (int)(frameRectArray.get(3).getAsFloat() * screenRatio);
-					newFrame = new Rect(left, top, left+width, top+height);
-					//Log.i(TAG, "newFrame "+left+" "+top+" "+width+" "+height+" ");
-				}
-				//color
-				int color = Color.BLUE;
-				if(guiDict.getAsJsonArray("color")!=null){
-					JsonArray colorArray = guiDict.getAsJsonArray("color");
-					if(colorArray.size()==4)
-						color = colorFromRGBAArray(colorArray);
-					else if (colorArray.size()==3)
-						color = colorFromRGBArray(colorArray);
-					//Log.i(TAG, "color "+color);
-				}
-
-				//highlight color
-				int highlightColor = Color.RED;
-				if(guiDict.getAsJsonArray("highlightColor")!=null){
-					JsonArray highlightColorArray = guiDict.getAsJsonArray("highlightColor");
-					if(highlightColorArray.size()==4)
-						highlightColor= colorFromRGBAArray(highlightColorArray);
-					else if (highlightColorArray.size()==3)
-						highlightColor= colorFromRGBArray(highlightColorArray);
-				}
-
-				String address = "/unknownAddress";
-				if(guiDict.get("address")!=null){
-					address= guiDict.get("address").getAsString();
-				}
 
 
-				//check by MMPControl subclass, and alloc/init object
-				if(classString.equals("MMPSlider")){
-					control = new MMPSlider(getActivity(), screenRatio);
-					// TODO: can theis be general at the end of this.
-
-					if(guiDict.get("isHorizontal")!=null) 
-						((MMPSlider)control).setIsHorizontal( guiDict.get("isHorizontal").getAsBoolean() );
-					if(guiDict.get("range")!=null)
-						((MMPSlider)control).setRange( guiDict.get("range").getAsInt()  );
-				}
-				else if(classString.equals("MMPKnob")){
-					control = new MMPKnob(getActivity(), screenRatio);
-					int indicatorColor = Color.WHITE;
-					if(guiDict.get("indicatorColor")!=null){
-						indicatorColor = colorFromRGBAArray(guiDict.get("indicatorColor").getAsJsonArray());
-					}
-					((MMPKnob)control).indicatorColor = indicatorColor;
-					
-					if(guiDict.get("range")!=null)
-						((MMPKnob)control).setRange( guiDict.get("range").getAsInt()  );
-				}
-				else if(classString.equals("MMPButton")){
-					control = new MMPButton(getActivity(), screenRatio);
-				}
-				else if(classString.equals("MMPToggle")){
-					control = new MMPToggle(getActivity(), screenRatio);
-					 if(guiDict.get("borderThickness")!=null)
-					   ((MMPToggle)control).borderThickness =  guiDict.get("borderThickness").getAsInt() ;
-				}
-				else if(classString.equals("MMPLabel")){
-					control = new MMPLabel(getActivity(), screenRatio);
-
-					if(guiDict.get("text")!=null) 
-						((MMPLabel)control).setStringValue( guiDict.get("text").getAsString() );
-					if(guiDict.get("textSize")!=null)
-						((MMPLabel)control).setTextSize( guiDict.get("textSize").getAsInt()  );
-					if(guiDict.get("androidFont")!=null /*&& guiDict.get("androidFontFamily")!=null*/) {//family = always roboto for now
-			            // family can be null for now
-						String familyName = guiDict.get("androidFontFamily") == null ? null : guiDict.get("androidFontFamily").getAsString();
-						((MMPLabel)control).setFontFamilyAndName( familyName, guiDict.get("androidFont").getAsString() );
-					}
-				}
-				else if(classString.equals("MMPXYSlider")){
-					control = new MMPXYSlider(getActivity(), screenRatio);
-				}
-				else if(classString.equals("MMPGrid")){
-					control = new MMPGrid(getActivity(), screenRatio);
-					if(guiDict.get("dim")!=null){
-						JsonArray dim = guiDict.get("dim").getAsJsonArray();
-						((MMPGrid)control).setDimXY(dim.get(0).getAsInt(), dim.get(1).getAsInt());
-					}
-					if(guiDict.get("mode")!=null)
-						((MMPGrid)control).mode =  guiDict.get("mode").getAsInt()  ;
-					if(guiDict.get("borderThickness")!=null)
-						((MMPGrid)control).borderThickness =  guiDict.get("borderThickness").getAsInt()  ;
-					if(guiDict.get("cellPadding")!=null)
-						((MMPGrid)control).cellPadding =  guiDict.get("cellPadding").getAsInt() ;
-				}
-				else if(classString.equals("MMPPanel")){
-					control = new MMPPanel(getActivity(), screenRatio);
-					if(guiDict.get("imagePath")!=null) {
-						//convert relative image path to full external storage path TODO merge with panel recevelist code. static method?
-						String path = guiDict.get("imagePath").getAsString();
-						File extFile = new File(MainActivity.getDocumentsFolderPath(), path);
-						((MMPPanel)control).setImagePath(extFile.getAbsolutePath());
-					}
-					if(guiDict.get("passTouches")!=null)
-						((MMPPanel)control).setShouldPassTouches( guiDict.get("passTouches").getAsBoolean() );
-
-				}
-
-				else if(classString.equals("MMPMultiSlider")){
-					control = new MMPMultiSlider(getActivity(), screenRatio);
-					if(guiDict.get("range")!=null)
-						((MMPMultiSlider)control).setRange( guiDict.get("range").getAsInt()  );
-				}
-				else if(classString.equals("MMPLCD")){
-					control = new MMPLCD(getActivity(), screenRatio);
-				}
-				else if (classString.equals("MMPMultiTouch")) {
-					control = new MMPMultiTouch(getActivity(), screenRatio);
-				}
-				else if (classString.equals("MMPMenu")) {
-					control = new MMPMenu(getActivity(), screenRatio);
-					if(guiDict.get("title")!=null)
-					    ((MMPMenu)control).titleString = guiDict.get("title").getAsString();
-				}
-				else if (classString.equals("MMPTable")) {
-					control = new MMPTable(getActivity(), screenRatio);
-					if(guiDict.get("mode")!=null)
-			            		((MMPTable)control).mode = guiDict.get("mode").getAsInt();
-			        if(guiDict.get("selectionColor")!=null) {
-			        	int selectionColor = colorFromRGBAArray(guiDict.get("selectionColor").getAsJsonArray());
-			            ((MMPTable)control).selectionColor = selectionColor;
-			        }
-				}
-				//no class
-				else { 
-					control = new MMPUnknown(getActivity(), screenRatio);
-			        ((MMPUnknown)control).badNameString = classString;
-				}
-
-				//common
-				control.setLayoutParams(new RelativeLayout.LayoutParams(newFrame.width(), newFrame.height()));
-				control.setX(newFrame.left);
-				control.setY(newFrame.top);
-				control.controlDelegate = this;
-				control.setColor(color);
-				control.setHighlightColor(highlightColor);
-				control.address = address;
-				scrollRelativeLayout.addView(control);
-
-				ArrayList<MMPControl> addressArray = _allGUIControlMap.get(control.address);
-				if (addressArray == null) {
-					addressArray = new ArrayList<MMPControl>();
-					_allGUIControlMap.put(control.address, addressArray);
-				}
-				addressArray.add(control);
+			// get view-layout-needed parameters
+			if(topDict.get("canvasType")!=null){
+				if((topDict.get("canvasType").getAsString()).equals("iPhone3p5Inch")) _canvasType=CanvasType.canvasTypeIPhone3p5Inch;// objectForKey:@"canvasType"] isEqualToString:@"iPhone3p5Inch"])[model setCanvasType:canvasTypeIPhone3p5Inch];
+				if((topDict.get("canvasType").getAsString()).equals("iPhone4Inch")) _canvasType=CanvasType.canvasTypeIPhone4Inch;
+				if((topDict.get("canvasType").getAsString()).equals("iPad")) _canvasType=CanvasType.canvasTypeIPad;
+				if((topDict.get("canvasType").getAsString()).equals("android7Inch")) _canvasType=CanvasType.canvasTypeAndroid7Inch;
 
 			}
-		}
-		
-		//settings button
-		scrollRelativeLayout.addView(_settingsButton);
-		_settingsButton.setVisibility(View.VISIBLE);
-		
-		if(MainActivity.VERBOSE)Log.i(TAG, "end of layout loop...");
-		
-		//end of big loop through widgets
-		
-		// listen for completion of layout before loading patch
-		//LinearLayout layout = (LinearLayout)findViewById(R.id.YOUR_VIEW_ID);
-		ViewTreeObserver vto = scrollRelativeLayout.getViewTreeObserver(); 
-		vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() { 
-			@Override 
-			public void onGlobalLayout() { 
-				if(MainActivity.VERBOSE)Log.i(TAG, "layout complete...");
-				scrollRelativeLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
-				// scroll to start
-				//_scrollContainer.setScrollX(0);
-				
-				_mainActivity.loadPdFile(pdFilename); 
-				
-				//load tables! TODO optimize!
-				for (ArrayList<MMPControl> addressArray : _allGUIControlMap.values()) {
-					for (MMPControl control : addressArray)  {
-						if (control instanceof MMPTable) {
-							((MMPTable)control).loadTable();
+			//TEMP
+			//_canvasType=CanvasType.canvasTypeAndroid7Inch;
+
+			if(topDict.get("isOrientationLandscape")!=null)
+				_isOrientationLandscape= topDict.get("isOrientationLandscape").getAsBoolean();
+			if(topDict.get("isPageScrollShortEnd")!=null)
+				_isPageScrollShortEnd=topDict.get("isPageScrollShortEnd").getAsBoolean();
+			if(topDict.get("pageCount")!=null)
+				_pageCount=topDict.get("pageCount").getAsInt();//TODO error check and try to deduce?
+			if(topDict.get("startPageIndex")!=null)
+				_startPageIndex=topDict.get("startPageIndex").getAsInt();
+
+			int referenceWidth=320, referenceHeight=480;
+			if(!_isOrientationLandscape) {
+				switch (_canvasType) {
+				case canvasTypeIPhone3p5Inch:
+					referenceWidth = 320;
+					referenceHeight = 480;
+					break;
+				case canvasTypeIPhone4Inch:
+					referenceWidth = 320;
+					referenceHeight = 568;
+					break;
+				case canvasTypeIPad:
+					referenceWidth = 768;
+					referenceHeight = 1024;
+					break;
+				case canvasTypeAndroid7Inch://half of 1200 1824 aspect 1.52 
+					referenceWidth = 600;
+					referenceHeight = 912;
+				}
+			} else { //landscape
+				switch (_canvasType) {
+				case canvasTypeIPhone3p5Inch:
+					referenceWidth = 480;
+					referenceHeight = 320;
+					break;
+				case canvasTypeIPhone4Inch:
+					referenceWidth = 568;
+					referenceHeight = 320;
+					break;
+				case canvasTypeIPad:
+					referenceWidth = 1024;
+					referenceHeight = 768;
+					break;
+				case canvasTypeAndroid7Inch://half of 1920 1104
+					referenceWidth = 960;
+					referenceHeight = 552;
+				}	
+			}
+			double xRatio = (double)screenWidth/referenceWidth;
+			double yRatio = (double)screenHeight/referenceHeight;
+			screenRatio = (float)Math.min(xRatio, yRatio);
+			if(MainActivity.VERBOSE)Log.i(TAG, "ref size "+referenceWidth+" "+referenceHeight+" pgc "+_pageCount);
+
+			FrameLayout.LayoutParams flp = new FrameLayout.LayoutParams((int)(referenceWidth*screenRatio),(int)(referenceHeight*screenRatio));
+			flp.gravity = Gravity.CENTER;
+			scrollContainer.setLayoutParams(flp);
+			//???_scrollContainer.pageScroll(2);// = _pageCount;
+			scrollContainer.pageCount = _pageCount;
+
+			if (_startPageIndex<_pageCount) {
+				scrollContainer.setScrollX((int)(referenceWidth*screenRatio*_startPageIndex));
+			} else scrollContainer.setScrollX((int)(referenceWidth*screenRatio*(_pageCount-1)));//last page
+
+			int layoutWidth = (int)(referenceWidth*screenRatio*_pageCount);
+			int layoutHeight = (int)(referenceHeight*screenRatio);
+			if(MainActivity.VERBOSE)Log.i(TAG, "set scrollrelativelayout dim "+layoutWidth+" "+layoutHeight);
+			scrollRelativeLayout.setLayoutParams(new FrameLayout.LayoutParams(layoutWidth,layoutHeight));
+
+			//
+			if(topDict.getAsJsonArray("backgroundColor")!=null){
+				JsonArray colorArray = topDict.getAsJsonArray("backgroundColor");
+				if(colorArray.size()==4)
+					_bgColor = colorFromRGBAArray(colorArray);
+				else if (colorArray.size()==3)
+					_bgColor = colorFromRGBArray(colorArray);
+				scrollRelativeLayout.setBackgroundColor(_bgColor);
+			}
+
+			final String pdFilename;
+			if(topDict.get("pdFile")!=null) {
+				pdFilename = topDict.get("pdFile").getAsString();// objectForKey:@"pdFile"]];
+			}
+			else {
+				pdFilename = null;
+				showAlert("This interface has not been linked to a PureData file. Add it in the editor!");
+
+			}
+
+			if(topDict.get("port")!=null)
+				_port=topDict.get("port").getAsInt();
+			//TODO SET PORT IN NETWORK CONTROLLER
+			if(topDict.get("version")!=null)
+				_version=topDict.get("version").getAsFloat();
+
+			JsonArray controlDictArray;//array of dictionaries, one for each gui element
+
+
+			//
+			if(topDict.get("gui")!=null){
+				controlDictArray = topDict.get("gui").getAsJsonArray();//[topDict objectForKey:@"gui"];//array of dictionaries, one for each gui control
+				//for(JsonObject guiDict : controlDictArray){//for each one
+				for(int i=0;i<controlDictArray.size();i++){    
+					JsonObject guiDict = controlDictArray.get(i).getAsJsonObject();//???
+					MMPControl control;
+					if(guiDict.get("class")==null)continue;// if doesn't have a class, skip out of loop
+
+					String classString = guiDict.get("class").getAsString();// objectForKey:@"class"];
+					//frame
+					//default
+					Rect newFrame = new Rect(0, 0, (int)(100*xRatio), (int)(100*yRatio));
+					if(guiDict.get("frame")!=null){
+						JsonArray frameRectArray = guiDict.getAsJsonArray("frame");
+						//convert Left Top width height to Left Top right bottom
+						int left = (int)(frameRectArray.get(0).getAsFloat() * screenRatio);
+						int top = (int)(frameRectArray.get(1).getAsFloat() * screenRatio);
+						int width = (int)(frameRectArray.get(2).getAsFloat() * screenRatio);
+						int height = (int)(frameRectArray.get(3).getAsFloat() * screenRatio);
+						newFrame = new Rect(left, top, left+width, top+height);
+						//Log.i(TAG, "newFrame "+left+" "+top+" "+width+" "+height+" ");
+					}
+					//color
+					int color = Color.BLUE;
+					if(guiDict.getAsJsonArray("color")!=null){
+						JsonArray colorArray = guiDict.getAsJsonArray("color");
+						if(colorArray.size()==4)
+							color = colorFromRGBAArray(colorArray);
+						else if (colorArray.size()==3)
+							color = colorFromRGBArray(colorArray);
+						//Log.i(TAG, "color "+color);
+					}
+
+					//highlight color
+					int highlightColor = Color.RED;
+					if(guiDict.getAsJsonArray("highlightColor")!=null){
+						JsonArray highlightColorArray = guiDict.getAsJsonArray("highlightColor");
+						if(highlightColorArray.size()==4)
+							highlightColor= colorFromRGBAArray(highlightColorArray);
+						else if (highlightColorArray.size()==3)
+							highlightColor= colorFromRGBArray(highlightColorArray);
+					}
+
+					String address = "/unknownAddress";
+					if(guiDict.get("address")!=null){
+						address= guiDict.get("address").getAsString();
+					}
+
+
+					//check by MMPControl subclass, and alloc/init object
+					if(classString.equals("MMPSlider")){
+						control = new MMPSlider(getActivity(), screenRatio);
+						// TODO: can theis be general at the end of this.
+
+						if(guiDict.get("isHorizontal")!=null) 
+							((MMPSlider)control).setIsHorizontal( guiDict.get("isHorizontal").getAsBoolean() );
+						if(guiDict.get("range")!=null)
+							((MMPSlider)control).setRange( guiDict.get("range").getAsInt()  );
+					}
+					else if(classString.equals("MMPKnob")){
+						control = new MMPKnob(getActivity(), screenRatio);
+						int indicatorColor = Color.WHITE;
+						if(guiDict.get("indicatorColor")!=null){
+							indicatorColor = colorFromRGBAArray(guiDict.get("indicatorColor").getAsJsonArray());
+						}
+						((MMPKnob)control).indicatorColor = indicatorColor;
+
+						if(guiDict.get("range")!=null)
+							((MMPKnob)control).setRange( guiDict.get("range").getAsInt()  );
+					}
+					else if(classString.equals("MMPButton")){
+						control = new MMPButton(getActivity(), screenRatio);
+					}
+					else if(classString.equals("MMPToggle")){
+						control = new MMPToggle(getActivity(), screenRatio);
+						if(guiDict.get("borderThickness")!=null)
+							((MMPToggle)control).borderThickness =  guiDict.get("borderThickness").getAsInt() ;
+					}
+					else if(classString.equals("MMPLabel")){
+						control = new MMPLabel(getActivity(), screenRatio);
+
+						if(guiDict.get("text")!=null) 
+							((MMPLabel)control).setStringValue( guiDict.get("text").getAsString() );
+						if(guiDict.get("textSize")!=null)
+							((MMPLabel)control).setTextSize( guiDict.get("textSize").getAsInt()  );
+						if(guiDict.get("androidFont")!=null /*&& guiDict.get("androidFontFamily")!=null*/) {//family = always roboto for now
+							// family can be null for now
+							String familyName = guiDict.get("androidFontFamily") == null ? null : guiDict.get("androidFontFamily").getAsString();
+							((MMPLabel)control).setFontFamilyAndName( familyName, guiDict.get("androidFont").getAsString() );
 						}
 					}
+					else if(classString.equals("MMPXYSlider")){
+						control = new MMPXYSlider(getActivity(), screenRatio);
+					}
+					else if(classString.equals("MMPGrid")){
+						control = new MMPGrid(getActivity(), screenRatio);
+						if(guiDict.get("dim")!=null){
+							JsonArray dim = guiDict.get("dim").getAsJsonArray();
+							((MMPGrid)control).setDimXY(dim.get(0).getAsInt(), dim.get(1).getAsInt());
+						}
+						if(guiDict.get("mode")!=null)
+							((MMPGrid)control).mode =  guiDict.get("mode").getAsInt()  ;
+						if(guiDict.get("borderThickness")!=null)
+							((MMPGrid)control).borderThickness =  guiDict.get("borderThickness").getAsInt()  ;
+						if(guiDict.get("cellPadding")!=null)
+							((MMPGrid)control).cellPadding =  guiDict.get("cellPadding").getAsInt() ;
+					}
+					else if(classString.equals("MMPPanel")){
+						control = new MMPPanel(getActivity(), screenRatio);
+						if(guiDict.get("imagePath")!=null) {
+							//convert relative image path to full external storage path TODO merge with panel recevelist code. static method?
+							String path = guiDict.get("imagePath").getAsString();
+							File extFile = new File(MainActivity.getDocumentsFolderPath(), path);
+							((MMPPanel)control).setImagePath(extFile.getAbsolutePath());
+						}
+						if(guiDict.get("passTouches")!=null)
+							((MMPPanel)control).setShouldPassTouches( guiDict.get("passTouches").getAsBoolean() );
+
+					}
+
+					else if(classString.equals("MMPMultiSlider")){
+						control = new MMPMultiSlider(getActivity(), screenRatio);
+						if(guiDict.get("range")!=null)
+							((MMPMultiSlider)control).setRange( guiDict.get("range").getAsInt()  );
+					}
+					else if(classString.equals("MMPLCD")){
+						control = new MMPLCD(getActivity(), screenRatio);
+					}
+					else if (classString.equals("MMPMultiTouch")) {
+						control = new MMPMultiTouch(getActivity(), screenRatio);
+					}
+					else if (classString.equals("MMPMenu")) {
+						control = new MMPMenu(getActivity(), screenRatio);
+						if(guiDict.get("title")!=null)
+							((MMPMenu)control).titleString = guiDict.get("title").getAsString();
+					}
+					else if (classString.equals("MMPTable")) {
+						control = new MMPTable(getActivity(), screenRatio);
+						if(guiDict.get("mode")!=null)
+							((MMPTable)control).mode = guiDict.get("mode").getAsInt();
+						if(guiDict.get("selectionColor")!=null) {
+							int selectionColor = colorFromRGBAArray(guiDict.get("selectionColor").getAsJsonArray());
+							((MMPTable)control).selectionColor = selectionColor;
+						}
+					}
+					//no class
+					else { 
+						control = new MMPUnknown(getActivity(), screenRatio);
+						((MMPUnknown)control).badNameString = classString;
+					}
+
+					//common
+					control.setLayoutParams(new RelativeLayout.LayoutParams(newFrame.width(), newFrame.height()));
+					control.setX(newFrame.left);
+					control.setY(newFrame.top);
+					control.controlDelegate = this;
+					control.setColor(color);
+					control.setHighlightColor(highlightColor);
+					control.address = address;
+					scrollRelativeLayout.addView(control);
+
+					ArrayList<MMPControl> addressArray = _allGUIControlMap.get(control.address);
+					if (addressArray == null) {
+						addressArray = new ArrayList<MMPControl>();
+						_allGUIControlMap.put(control.address, addressArray);
+					}
+					addressArray.add(control);
+
 				}
-			} 
-		});
+			}
+
+			//settings button
+			scrollRelativeLayout.addView(_settingsButton);
+			_settingsButton.setVisibility(View.VISIBLE);
+
+			if(MainActivity.VERBOSE)Log.i(TAG, "end of layout loop...");
+
+			//end of big loop through widgets
+
+			// listen for completion of layout before loading patch
+			//LinearLayout layout = (LinearLayout)findViewById(R.id.YOUR_VIEW_ID);
+			ViewTreeObserver vto = scrollRelativeLayout.getViewTreeObserver(); 
+			vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() { 
+				@Override 
+				public void onGlobalLayout() { 
+					if(MainActivity.VERBOSE)Log.i(TAG, "layout complete...");
+					scrollRelativeLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
+					// scroll to start
+					//_scrollContainer.setScrollX(0);
+
+					_mainActivity.loadPdFile(pdFilename); 
+
+					//load tables! TODO optimize!
+					for (ArrayList<MMPControl> addressArray : _allGUIControlMap.values()) {
+						for (MMPControl control : addressArray)  {
+							if (control instanceof MMPTable) {
+								((MMPTable)control).loadTable();
+							}
+						}
+					}
+				} 
+			});
+		}catch(JsonParseException e) {
+			showAlert("Unable to parse interface file.");
+		}
 
 	}
 
@@ -1706,7 +1720,7 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 				}
 			} else if (source.equals("toSystem")) {
 				if (args.length==0) return;
-				
+
 				if (args.length>=1 && args[0].equals("/vibrate") ){
 					//orig spec could send just "vibrate" or with arg 0 or 1
 					int duration = 0; 
@@ -1723,7 +1737,7 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 					float val =  ((Float)args[1]).floatValue();
 					if (val > 0) _mainActivity.flashlightController.turnLightOn();
 					else _mainActivity.flashlightController.turnLightOff();
-					
+
 				} /*else if (args.length==2 && args[0].equals("/setSensorFrequency") && args[1] instanceof Float) {
 					float val = ((Float)args[1]).floatValue();
 					if(val<0.01)val=0.01f;//clip
@@ -1757,7 +1771,7 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 							Integer.valueOf(Calendar.getInstance().get(Calendar.MILLISECOND))
 					};
 					PdBase.sendList("fromSystem", msgArray);
-					
+
 					Date now = new Date();
 					SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss z, d MMMM yyy");
 					String formattedTime = sdf.format(now);
@@ -1766,7 +1780,7 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 				}
 			}
 		}
-		
+
 
 		@Override
 		public void receiveMessage(String source, String symbol, Object... args) {
@@ -1800,12 +1814,12 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 		MenuFragment menuFrag = new MenuFragment(menu, _bgColor);
 		_mainActivity.launchFragment(menuFrag, menu.titleString);
 	}
-	
+
 	@Override
 	public void refreshMenuFragment(MMPMenu menu) {
 		_mainActivity.refreshMenuFragment(menu);
 	}
-	
+
 	@Override
 	public void onPage(int pageIndex) {
 		Object[] args = new Object[]{"/page", Integer.valueOf(pageIndex)};
@@ -1814,22 +1828,22 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 }
 
 class MenuFragment extends Fragment{
-	
+
 	private MMPMenu _menu;
 	private int _bgColor;
 	private ListView _listView;
 	private ArrayAdapter<String> _adapter;
-	
+
 	public MenuFragment(MMPMenu menu, int bgColor) {
 		super();
 		_menu = menu;
 		_bgColor = bgColor;
 	}
-	
+
 	public MMPMenu getMenu() {
 		return _menu;
 	}
-	
+
 	public void refresh() {
 		_adapter.notifyDataSetChanged();
 	}
@@ -1839,29 +1853,29 @@ class MenuFragment extends Fragment{
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_menu, container,
 				false);
-	
+
 		final int color = _menu.color;
 		//highlightColor = intent.getIntExtra("highlightColor", Color.RED);
 		List<String> stringList = _menu.stringList;
-		
+
 		_listView = (ListView)rootView.findViewById(R.id.listView1);
 		FrameLayout frameLayout = (FrameLayout)rootView.findViewById(R.id.container);
 		frameLayout.setBackgroundColor(_bgColor);
-		
-	    _adapter = new ArrayAdapter<String>(getActivity(), R.layout.centered_text, stringList) {
-	        @Override
-	        public View getView(int position, View convertView,
-	                ViewGroup parent) {
-	            View view =super.getView(position, convertView, parent);
-	            TextView textView=(TextView) view.findViewById(android.R.id.text1);
-	            textView.setTextColor(color);
-	            //textView.setHighlightColor(MenuActivity.this.highlightColor);//doesn't work...
-	            return view;
-	        }
-	    };
-	    _listView.setAdapter(_adapter);
-	    
-	    _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+		_adapter = new ArrayAdapter<String>(getActivity(), R.layout.centered_text, stringList) {
+			@Override
+			public View getView(int position, View convertView,
+					ViewGroup parent) {
+				View view =super.getView(position, convertView, parent);
+				TextView textView=(TextView) view.findViewById(android.R.id.text1);
+				textView.setTextColor(color);
+				//textView.setHighlightColor(MenuActivity.this.highlightColor);//doesn't work...
+				return view;
+			}
+		};
+		_listView.setAdapter(_adapter);
+
+		_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parentAdapter, View view, int position,long id) {
 				//TextView clickedView = (TextView) view;
 				//Toast.makeText(MenuActivity.this, "Item with id ["+id+"] - Position ["+position+"] - ["+clickedView.getText()+"]", Toast.LENGTH_SHORT).show();
@@ -1869,16 +1883,16 @@ class MenuFragment extends Fragment{
 				getActivity().getSupportFragmentManager().popBackStack();
 			}	
 		});
-	    
+
 		return rootView;
 	}
 }
 
 class SplashFragment extends Fragment{
-	
+
 	View rootView;
 	ImageView ringView, titleView, crossView, resistorView;
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -1888,19 +1902,19 @@ class SplashFragment extends Fragment{
 		titleView = (ImageView)rootView.findViewById(R.id.imageViewTitle);
 		crossView = (ImageView)rootView.findViewById(R.id.imageViewCross);
 		resistorView = (ImageView)rootView.findViewById(R.id.imageViewResistor);
-		
+
 		rootView.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-		    @Override
-		    public void onGlobalLayout() {
-		    	rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-		        animate();
-		    }
+			@Override
+			public void onGlobalLayout() {
+				rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+				animate();
+			}
 		});
-		
+
 		return rootView;
 	}
-	
-	
+
+
 	public void animate() {
 		// fromX, toX, fromY, toY
 		TranslateAnimation translateAnimationRing =
@@ -1911,7 +1925,7 @@ class SplashFragment extends Fragment{
 		translateAnimationRing.setDuration(2000);
 		translateAnimationRing.setFillAfter(true);
 		translateAnimationRing.setFillEnabled(true);
-		
+
 		TranslateAnimation translateAnimationTitle =
 				new TranslateAnimation(Animation.ABSOLUTE, rootView.getWidth() / 2 - titleView.getWidth() / 2, 
 						Animation.ABSOLUTE, rootView.getWidth() / 2 - titleView.getWidth() / 2, 
@@ -1920,7 +1934,7 @@ class SplashFragment extends Fragment{
 		translateAnimationTitle.setDuration(2000);
 		translateAnimationTitle.setFillAfter(true);
 		translateAnimationTitle.setFillEnabled(true);
-		
+
 		TranslateAnimation translateAnimationCross =
 				new TranslateAnimation(Animation.ABSOLUTE,  -crossView.getWidth(), 
 						Animation.ABSOLUTE, rootView.getWidth() / 2 - ringView.getWidth() / 6 - crossView.getWidth() / 2 , 
@@ -1929,7 +1943,7 @@ class SplashFragment extends Fragment{
 		translateAnimationCross.setDuration(2000);
 		translateAnimationCross.setFillAfter(true);
 		translateAnimationCross.setFillEnabled(true);
-		
+
 		TranslateAnimation translateAnimationResistor =
 				new TranslateAnimation(Animation.ABSOLUTE, rootView.getWidth() + resistorView.getWidth(), 
 						Animation.ABSOLUTE, rootView.getWidth() / 2 + ringView.getWidth() / 6 - resistorView.getWidth() / 2, 
@@ -1938,7 +1952,7 @@ class SplashFragment extends Fragment{
 		translateAnimationResistor.setDuration(2000);
 		translateAnimationResistor.setFillAfter(true);
 		translateAnimationResistor.setFillEnabled(true);
-		
+
 		ringView.startAnimation(translateAnimationRing);
 		titleView.startAnimation(translateAnimationTitle);
 		crossView.startAnimation(translateAnimationCross);
