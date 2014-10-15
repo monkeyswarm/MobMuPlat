@@ -596,8 +596,22 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	}
 
 	public void startLocationUpdates() {
-		if (locationManagerA!=null)locationManagerA.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 5, this);
-		if (locationManagerB!=null)locationManagerB.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 5, this);
+		Location lastKnownLocation = null;
+		if (locationManagerA!=null){
+			locationManagerA.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 5, this);
+			// send initial val from this
+			lastKnownLocation = locationManagerA.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+			if (lastKnownLocation != null)onLocationChanged(lastKnownLocation);
+		}
+		if (locationManagerB!=null){
+			locationManagerB.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 5, this);
+			//if initial didn't work, try here
+			if (lastKnownLocation==null) {
+				lastKnownLocation = locationManagerB.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+				if (lastKnownLocation != null)onLocationChanged(lastKnownLocation);
+			}
+		}
+		
 	}
 
 	public void stopLocationUpdates() {
