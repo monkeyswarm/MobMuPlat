@@ -12,15 +12,20 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -29,6 +34,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -64,6 +70,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -108,7 +115,14 @@ import org.puredata.android.service.PdService;
 import org.puredata.core.PdBase;
 import org.puredata.core.PdReceiver;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.MessageApi.MessageListener;
+import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
@@ -167,6 +181,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	Object[] _rotationMsgArray;
 	Object[] _compassMsgArray; 
 	private boolean _shouldSwapAxes = false;
+	
+	// wear
+    WorkerThread wt;
+    private GoogleApiClient mGoogleApiClient;
+	private static final long CONNECTION_TIME_OUT_MS = 100;
+	private String nodeId;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -233,7 +254,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		if(shouldCopyDocs) {//!alreadyStartedOnVersion || [alreadyStartedOnVersion boolValue] == NO) {
 			List<String> defaultPatchesList;
 			if(hardwareScreenType == CanvasType.canvasTypeIPhone3p5Inch || hardwareScreenType == CanvasType.canvasTypeAndroid7Inch){
-				defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine.mmp", "MMPTutorial1-GUI.mmp", "MMPTutorial2-Input.mmp", "MMPTutorial3-Hardware.mmp", "MMPTutorial4-Networking.mmp","MMPTutorial5-Files.mmp","MMPExamples-Vocoder.mmp", "MMPExamples-Motion.mmp", "MMPExamples-Sequencer.mmp", "MMPExamples-GPS.mmp", "MMPTutorial6-2DGraphics.mmp", "MMPExamples-LANdini.mmp", "MMPExamples-Arp.mmp", "MMPExamples-TableGlitch.mmp", "MMPExamples-HID.mmp");
+				defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine.mmp", "MMPTutorial1-GUI.mmp", "MMPTutorial2-Input.mmp", "MMPTutorial3-Hardware.mmp", "MMPTutorial4-Networking.mmp","MMPTutorial5-Files.mmp","MMPExamples-Vocoder.mmp", "MMPExamples-Motion.mmp", "MMPExamples-Sequencer.mmp", "MMPExamples-GPS.mmp", "MMPTutorial6-2DGraphics.mmp", "MMPExamples-LANdini.mmp", "MMPExamples-Arp.mmp", "MMPExamples-TableGlitch.mmp", "MMPExamples-HID.mmp", "MMPExamples-Watch.mmp");
 			}
 			else if (hardwareScreenType==CanvasType.canvasTypeIPhone4Inch){
 				defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine-ip5.mmp", "MMPTutorial1-GUI-ip5.mmp", "MMPTutorial2-Input-ip5.mmp", "MMPTutorial3-Hardware-ip5.mmp", "MMPTutorial4-Networking-ip5.mmp","MMPTutorial5-Files-ip5.mmp", "MMPExamples-Vocoder-ip5.mmp", "MMPExamples-Motion-ip5.mmp", "MMPExamples-Sequencer-ip5.mmp","MMPExamples-GPS-ip5.mmp", "MMPTutorial6-2DGraphics-ip5.mmp", "MMPExamples-LANdini-ip5.mmp", "MMPExamples-Arp-ip5.mmp",  "MMPExamples-TableGlitch-ip5.mmp", "MMPExamples-HID-ip5.mmp");
@@ -242,7 +263,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 				defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine-Pad.mmp", "MMPTutorial1-GUI-Pad.mmp", "MMPTutorial2-Input-Pad.mmp", "MMPTutorial3-Hardware-Pad.mmp", "MMPTutorial4-Networking-Pad.mmp","MMPTutorial5-Files-Pad.mmp", "MMPExamples-Vocoder-Pad.mmp", "MMPExamples-Motion-Pad.mmp", "MMPExamples-Sequencer-Pad.mmp","MMPExamples-GPS-Pad.mmp", "MMPTutorial6-2DGraphics-Pad.mmp", "MMPExamples-LANdini-Pad.mmp", "MMPExamples-Arp-Pad.mmp",  "MMPExamples-TableGlitch-Pad.mmp", "MMPExamples-HID-Pad.mmp");
 			}
 
-			List<String> commonFilesList = Arrays.asList("MMPTutorial0-HelloSine.pd","MMPTutorial1-GUI.pd", "MMPTutorial2-Input.pd", "MMPTutorial3-Hardware.pd", "MMPTutorial4-Networking.pd","MMPTutorial5-Files.pd","cats1.jpg", "cats2.jpg","cats3.jpg","clap.wav","Welcome.pd",  "MMPExamples-Vocoder.pd", "vocod_channel.pd", "MMPExamples-Motion.pd", "MMPExamples-Sequencer.pd", "MMPExamples-GPS.pd", "MMPTutorial6-2DGraphics.pd", "MMPExamples-LANdini.pd", "MMPExamples-Arp.pd", "MMPExamples-TableGlitch.pd", "anderson1.wav", "MMPExamples-HID.pd");
+			List<String> commonFilesList = Arrays.asList("MMPTutorial0-HelloSine.pd","MMPTutorial1-GUI.pd", "MMPTutorial2-Input.pd", "MMPTutorial3-Hardware.pd", "MMPTutorial4-Networking.pd","MMPTutorial5-Files.pd","cats1.jpg", "cats2.jpg","cats3.jpg","clap.wav","Welcome.pd",  "MMPExamples-Vocoder.pd", "vocod_channel.pd", "MMPExamples-Motion.pd", "MMPExamples-Sequencer.pd", "MMPExamples-GPS.pd", "MMPTutorial6-2DGraphics.pd", "MMPExamples-LANdini.pd", "MMPExamples-Arp.pd", "MMPExamples-TableGlitch.pd", "anderson1.wav", "MMPExamples-HID.pd", "MMPExamples-Watch.pd");
 
 			//defaultPatches = [defaultPatches arrayByAddingObjectsFromArray:commonFiles];
 
@@ -281,7 +302,59 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		networkController.delegate = this;
 
 		bindService(new Intent(this, PdService.class), pdConnection, BIND_AUTO_CREATE);
-
+		
+		//bindService(new Intent(this, ListenerService.class), wearConnection, BIND_AUTO_CREATE);
+	    mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                //.addConnectionCallbacks(this)
+                .build();
+		mGoogleApiClient.connect();
+		retrieveDeviceNode(); //TODO on connection?
+		// message send thread
+        wt = new WorkerThread();
+        wt.start();
+        
+		Wearable.MessageApi.addListener(mGoogleApiClient, new MessageListener() {
+			@Override
+			public void onMessageReceived(MessageEvent messageEvent) {
+				//ConsoleLogController.getInstance().append("\n"+messageEvent.getPath());
+				// parse into osc
+				/*String messageString = messageEvent.getPath();
+				String[] messageStringArray = messageString.split(" ");
+				List<Object> objList = new ArrayList<Object>();
+				
+				for (String token : messageStringArray) {
+					try {
+						Float f = Float.valueOf(token);
+						objList.add(f);
+					} catch (NumberFormatException e) {
+						objList.add(token);
+					}
+				}
+				PdBase.sendList("fromGUI", objList.toArray());*/
+				
+				String path = messageEvent.getPath();
+				try {
+					String dataString = new String(messageEvent.getData(), "UTF-8");
+					String[] messageStringArray = dataString.split(" ");
+					List<Object> objList = new ArrayList<Object>();
+					objList.add(path); //add address first, then rest of list
+					for (String token : messageStringArray) {
+						try {
+							Float f = Float.valueOf(token);
+							objList.add(f);
+						} catch (NumberFormatException e) {
+							// not a number, add as string.
+							objList.add(token);
+						}
+					}
+					PdBase.sendList("fromGUI", objList.toArray());
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
 		//wifi
 		_bc = new BroadcastReceiver() {
 			@Override
@@ -333,6 +406,68 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			launchSplash();
 		}
 	}
+	
+	 /**
+     * Connects to the GoogleApiClient and retrieves the connected device's Node ID. If there are
+     * multiple connected devices, the first Node ID is returned.
+     */
+    private void retrieveDeviceNode() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+            	mGoogleApiClient.blockingConnect(CONNECTION_TIME_OUT_MS, TimeUnit.MILLISECONDS);
+                NodeApi.GetConnectedNodesResult result =
+                        Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
+                List<Node> nodes = result.getNodes();
+                if (nodes.size() > 0) {
+                    nodeId = nodes.get(0).getId();
+                    //Log.i("WEAR", "gotNODE");
+                }
+                mGoogleApiClient.disconnect();
+            }
+        }).start();
+    }
+    
+    class WorkerThread extends Thread {
+        public Handler mHandler;
+        public void run() {	 
+            Looper.prepare();
+           mHandler = new Handler();/* {
+                public void handleMessage(Message msg) {
+                    // process incoming messages here
+                	String message = (String) msg.obj;
+                	Wearable.MessageApi.sendMessage(client, nodeId, message, null);
+                	Log.i("WEAR", "client = "+client.isConnected());
+                }
+            };*/
+            Looper.loop();
+        }
+    }
+    
+    public void sendWearMessage(String inPath, byte[] inData) {
+        if (nodeId != null) {
+        	final String path = inPath;
+        	final byte[] data = inData;
+        	wt.mHandler.post(new Runnable() {
+  			  @Override
+  			  public void run() {  
+  				  //String message = (String) msg.obj;
+  				if (mGoogleApiClient.isConnected()==false)mGoogleApiClient.blockingConnect(CONNECTION_TIME_OUT_MS, TimeUnit.MILLISECONDS);
+                	Wearable.MessageApi.sendMessage(mGoogleApiClient, nodeId, path, data);
+                	//Log.i("WEAR", "client = "+client.isConnected());
+  			  }
+  		});
+            /*new Thread(new Runnable() {
+                @Override
+                public void run() {
+                	mGoogleApiClient.blockingConnect(CONNECTION_TIME_OUT_MS, TimeUnit.MILLISECONDS);
+                    Wearable.MessageApi.sendMessage(mGoogleApiClient, nodeId, path, data);
+                    mGoogleApiClient.disconnect();
+                }
+            }).start();*/
+        }
+    }
+    
 	@Override
 	public void onBackStackChanged() {
 		int count = getSupportFragmentManager().getBackStackEntryCount();//testing
@@ -468,6 +603,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	protected void onResume() {
 		super.onResume();
 		flashlightController.startCamera();
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		// start wear activity
+		sendWearMessage("/startActivity", null);
 	}
 
 	public void loadScene(String filenameToLoad) {
@@ -778,6 +920,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		try {
 			InputStream in = assetManager.open(assetFilename);
 			copyInputStream(in, assetFilename, false);
+			//Log.i(TAG, "Copied file: "+assetFilename);
 		} catch (IOException e) {
 			Log.i(TAG, "Unable to copy file: "+e.getMessage());
 		}
@@ -1259,7 +1402,8 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 	private MainActivity _mainActivity;
 
 	Map<String, ArrayList<MMPControl>> _allGUIControlMap; //control address, array of objects with that address. Allows multiple items with same address.
-
+	Set<String> _wearAddressSet; 
+	
 	int _bgColor;
 
 	public ImageButton _settingsButton; //TODO make private again...is set in mainactivity loadScenePatchOnly
@@ -1269,6 +1413,7 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 		super();
 		_mainActivity = parent;
 		_allGUIControlMap = new HashMap<String,ArrayList<MMPControl>>();
+		_wearAddressSet = new HashSet<String>();
 		//init pd
 		PdBase.setReceiver(receiver);
 		PdBase.subscribe("toGUI");//from pd
@@ -1351,7 +1496,10 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 	}
 
 	public void loadSceneFromJSON(String inString){
-
+		_allGUIControlMap.clear();
+		_wearAddressSet.clear();
+		
+				
 		try {
 			JsonParser parser = new JsonParser();
 			JsonObject topDict = parser.parse(inString).getAsJsonObject();//top dict - exception on bad JSON
@@ -1366,20 +1514,13 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 			if(MainActivity.VERBOSE)Log.i(TAG, "load scene _container dim "+screenWidth+" "+screenHeight);
 			if(screenWidth==0 || screenHeight == 0) return;//error
 
-
-
-
 			// get view-layout-needed parameters
 			if(topDict.get("canvasType")!=null){
 				if((topDict.get("canvasType").getAsString()).equals("iPhone3p5Inch")) _canvasType=CanvasType.canvasTypeIPhone3p5Inch;// objectForKey:@"canvasType"] isEqualToString:@"iPhone3p5Inch"])[model setCanvasType:canvasTypeIPhone3p5Inch];
 				if((topDict.get("canvasType").getAsString()).equals("iPhone4Inch")) _canvasType=CanvasType.canvasTypeIPhone4Inch;
 				if((topDict.get("canvasType").getAsString()).equals("iPad")) _canvasType=CanvasType.canvasTypeIPad;
 				if((topDict.get("canvasType").getAsString()).equals("android7Inch")) _canvasType=CanvasType.canvasTypeAndroid7Inch;
-
 			}
-			//TEMP
-			//_canvasType=CanvasType.canvasTypeAndroid7Inch;
-
 			if(topDict.get("isOrientationLandscape")!=null)
 				_isOrientationLandscape= topDict.get("isOrientationLandscape").getAsBoolean();
 			if(topDict.get("isPageScrollShortEnd")!=null)
@@ -1475,8 +1616,31 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 
 			JsonArray controlDictArray;//array of dictionaries, one for each gui element
 
-
-			//
+			// WEAR GUI
+			if (topDict.get("wearGui")!=null) {
+				JsonArray pageGuiArray = topDict.get("wearGui").getAsJsonArray();
+				// construct new dict with background color, and wear gui array
+				JsonObject wearDict = new JsonObject();
+				if(topDict.getAsJsonArray("backgroundColor")!=null){
+					JsonArray colorArray = topDict.getAsJsonArray("backgroundColor");
+					wearDict.add("backgroundColor", colorArray);
+				}
+				wearDict.add("wearGui", pageGuiArray);
+				String jsonString = wearDict.toString();
+				_mainActivity.sendWearMessage("/loadGUI", jsonString.getBytes(Charset.forName("UTF-8")));
+				
+				// iterate through wear pages and get addresses
+				for(int i=0;i<pageGuiArray.size();i++){ 
+					JsonObject pageDict = pageGuiArray.get(i).getAsJsonObject();//page-level dict
+					if (pageDict.get("pageGui")==null)continue;
+					JsonObject pageGuiDict = pageDict.get("pageGui").getAsJsonObject();
+					if(pageGuiDict.get("address")==null)continue;// if doesn't have an address, skip out of loop
+					String address = pageGuiDict.get("address").getAsString();
+					_wearAddressSet.add(address);
+				}
+			}
+			
+			// MAIN GUI
 			if(topDict.get("gui")!=null){
 				controlDictArray = topDict.get("gui").getAsJsonArray();//[topDict objectForKey:@"gui"];//array of dictionaries, one for each gui control
 				//for(JsonObject guiDict : controlDictArray){//for each one
@@ -1724,13 +1888,20 @@ class PatchFragment extends Fragment implements ControlDelegate, PagingScrollVie
 				_mainActivity.networkController.handlePDMessage(args);
 			} else if (source.equals("toGUI")) {
 				if (args.length==0) return;
-
-				ArrayList<MMPControl> addressArray = _allGUIControlMap.get(args[0]);
+				Object addressObj = args[0];
+				ArrayList<MMPControl> addressArray = _allGUIControlMap.get(addressObj);
 				if(addressArray!=null) {//null if there is no objects by that address!
 					for (MMPControl control : addressArray) {
 						List<Object> newList = Arrays.asList(Arrays.copyOfRange(args, 1,args.length));
 						control.receiveList(newList); 
 					}
+				}
+				// If wear has the address, send it out.
+				if (_wearAddressSet.contains(addressObj)) {
+					Object argsNoAddress[] = Arrays.copyOfRange(args, 1, args.length);
+					String message = TextUtils.join(" ",argsNoAddress); //rest is turned into list, delimited by space.
+					byte[] data = message.getBytes(Charset.forName("UTF-8"));
+					_mainActivity.sendWearMessage((String)addressObj, data);
 				}
 			} else if (source.equals("toSystem")) {
 				if (args.length==0) return;

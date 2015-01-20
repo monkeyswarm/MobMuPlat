@@ -53,9 +53,46 @@ extern void lrshift_tilde_setup(void);
 extern void sigmund_tilde_setup(void);
 
 
-@implementation ViewController
+@implementation ViewController {
+  NSMutableArray *_keyCommandsArray;
+}
 @synthesize audioController, settingsVC;
 
+
+- (NSArray *)keyCommands {
+  if (!_keyCommandsArray) {
+    _keyCommandsArray = [NSMutableArray arrayWithObjects:
+      [UIKeyCommand keyCommandWithInput: UIKeyInputUpArrow modifierFlags: 0 action: @selector(handleKey:)],
+      [UIKeyCommand keyCommandWithInput: UIKeyInputDownArrow modifierFlags: 0 action: @selector(handleKey:)],
+      [UIKeyCommand keyCommandWithInput: UIKeyInputLeftArrow modifierFlags: 0 action: @selector(handleKey:)],
+      [UIKeyCommand keyCommandWithInput: UIKeyInputRightArrow modifierFlags: 0 action: @selector(handleKey:)],
+      [UIKeyCommand keyCommandWithInput: UIKeyInputEscape modifierFlags: 0 action: @selector(handleKey:)],
+      nil];
+    // add all ascii range
+    for (int charVal = 0; charVal < 128; charVal++) {
+      NSString* string = [NSString stringWithFormat:@"%c" , charVal];
+      [_keyCommandsArray addObject:[UIKeyCommand keyCommandWithInput: string modifierFlags: 0 action: @selector(handleKey:)]];
+    }
+  }
+  return _keyCommandsArray;
+}
+
+- (void) handleKey: (UIKeyCommand *) keyCommand {
+  int val;
+  if (keyCommand.input == UIKeyInputUpArrow) val = 30;
+  else if (keyCommand.input == UIKeyInputDownArrow) val = 31;
+  else if (keyCommand.input == UIKeyInputLeftArrow) val = 28;
+  else if (keyCommand.input == UIKeyInputRightArrow) val = 29;
+  else if (keyCommand.input == UIKeyInputEscape) val = 27;
+  else {
+    if (keyCommand.input.length != 1) return;
+    val = [keyCommand.input characterAtIndex: 0];
+    if (val >= 128) return;
+  }
+
+  NSArray* msgArray=[NSArray arrayWithObjects:@"/key", [NSNumber numberWithInt:val], nil];
+  [PdBase sendList:msgArray toReceiver:@"fromSystem"];
+}
 
 //what kind of device am I one? iphone 3.5", iphone 4", or ipad
 +(canvasType)getCanvasType{
@@ -905,7 +942,10 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
         }
        else if([newObjectClass isEqualToString:@"MMPMultiSlider"]){
             currObject = [[MeMultiSlider alloc] initWithFrame:frame];
-            if([currDict objectForKey:@"range"])  [(MeMultiSlider*)currObject setRange:[[currDict objectForKey:@"range"] intValue]];
+            if([currDict objectForKey:@"range"])
+              [(MeMultiSlider*)currObject setRange:[[currDict objectForKey:@"range"] intValue]];
+            if([currDict objectForKey:@"touchMode"])
+              ((MeMultiSlider*)currObject).touchMode = [[currDict objectForKey:@"touchMode"] integerValue];
         }
         else if([newObjectClass isEqualToString:@"MMPLCD"]){
             currObject = [[MeLCD alloc] initWithFrame:frame];
@@ -924,6 +964,14 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
             [(MeTable*)currObject setMode:[[currDict objectForKey:@"mode"] intValue]];
           if([currDict objectForKey:@"selectionColor"])
             [(MeTable*)currObject setSelectionColor:[MeControl colorFromRGBAArray:[currDict objectForKey:@"selectionColor"]]];
+          /*if([currDict objectForKey:@"displayRange"])
+            [(MeTable*)currObject setDisplayRange:[[currDict objectForKey:@"displayRange"] integerValue]];*/
+          if([currDict objectForKey:@"displayRangeLo"])
+            [(MeTable*)currObject setDisplayRangeLo:[[currDict objectForKey:@"displayRangeLo"] floatValue]];
+          if([currDict objectForKey:@"displayRangeHi"])
+            [(MeTable*)currObject setDisplayRangeHi:[[currDict objectForKey:@"displayRangeHi"] floatValue]];
+          if([currDict objectForKey:@"displayMode"])
+            [(MeTable*)currObject setDisplayMode:[[currDict objectForKey:@"displayMode"] integerValue]];
         }
         else{//unkown
             currObject = [[MeUnknown alloc] initWithFrame:frame];
@@ -1079,7 +1127,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
         [msg addFloat:[item floatValue]];
       }
       else {
-        [msg addInt:[item intValue]];
+        [msg addInt:[item intValue]]; //never used, right?
       }
     }
   }
@@ -1095,6 +1143,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     if([source isEqualToString:@"toNetwork"]){
 
         //look for LANdini - this clause looks for /send, /send/GD, /send/OGD
+        // TODO protect against cases like /sendsomethingelse while in landini!!!!
         if([[list objectAtIndex:0] rangeOfString:@"/send"].location == 0) {
             if (llm.enabled) {
                 [outPortToLANdini sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:list]]];
@@ -1110,7 +1159,8 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
         //other landini messages, keep passing to landini
         else if ( [[list objectAtIndex:0] rangeOfString:@"/networkTime"].location == 0 ||
            [[list objectAtIndex:0] rangeOfString:@"/numUsers"].location == 0 ||
-           [[list objectAtIndex:0] rangeOfString:@"/userNames"].location == 0 ){
+           [[list objectAtIndex:0] rangeOfString:@"/userNames"].location == 0 ||
+           [[list objectAtIndex:0] rangeOfString:@"/myName"].location == 0){
             
             [outPortToLANdini sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:list]]];
         }

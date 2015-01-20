@@ -239,7 +239,8 @@ public class NetworkController extends Observable{
 		//other landini messages, keep passing to landini
 		else if (args[0].equals("/networkTime") ||
 				args[0].equals("/numUsers") ||
-				args[0].equals("/userNames")){
+				args[0].equals("/userNames") ||
+				args[0].equals("/myName") ){
 
         //[outPortToLANdini sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:list]]];
 			OSCMessage msg = LANdiniLANManager.OSCMessageFromList(Arrays.asList(args));

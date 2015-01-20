@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.iglesiaintermedia.mobmuplat"
-    android:versionCode="4"
+    android:versionCode="5"
     android:versionName="0.1" >
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -17,7 +17,7 @@
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 	<uses-permission android:name="android.permission.WAKE_LOCK"/>
     
-	<uses-feature android:name="android.hardware.usb.host" />
+	<uses-feature android:name="android.hardware.usb.host" android:required="false"/>
 	<uses-permission android:name="android.permission.USB_PERMISSION" />
 
     <uses-feature android:name="android.hardware.camera" android:required="false"/>
@@ -71,7 +71,15 @@
     			<data android:mimeType="application/zip" />
   			</intent-filter>
   			
-  			<intent-filter> <!-- Intent filter for open files from email -->
+  			<intent-filter> <!-- Intent filter for open PD files from email -->
+            	<action android:name="android.intent.action.VIEW" />
+            	<category android:name="android.intent.category.DEFAULT" />
+            	<category android:name="android.intent.category.BROWSABLE" />
+            	 <data android:scheme="content" android:mimeType="application/octet-stream" android:host="*" android:pathPattern=".*\\.pd"/>
+                 <data android:scheme="file" android:mimeType="application/octet-stream" android:host="*" android:pathPattern=".*\\.pd"/>
+        	</intent-filter>
+        	
+  			<intent-filter> <!-- Intent filter for open ZIP files from email -->
             	<data android:scheme="content" />
             	<action android:name="android.intent.action.VIEW" />
             	<category android:name="android.intent.category.DEFAULT" />
@@ -96,7 +104,10 @@
         </activity>
 
         <service android:name="org.puredata.android.service.PdService" />
-
+        
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+		
     </application>
 
 </manifest>

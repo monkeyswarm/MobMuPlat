@@ -535,7 +535,7 @@ public class LANdiniLANManager {
         	time = getNetworkTime();
         }
         else time=-1;
-//        sendMsgToApp(Arrays.asList((Object)"/landini/networkTime", Float.valueOf(time)));    
+        sendMsgToApp(Arrays.asList((Object)"/landini/networkTime", Float.valueOf(time)));    
     }
     
     public void processApiMsg(List<Object>msgList) {

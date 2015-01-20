@@ -29,7 +29,10 @@
     self.address = @"/unnamedTable";
     self.userInteractionEnabled = NO;//until table load
     self.selectionColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:.5];
-    
+    //defaults
+    _displayRangeLo = -1;
+    _displayRangeHi = 1;
+
     _cacheContext = CGBitmapContextCreate (nil, (int)frame.size.width, (int)frame.size.height, 8, 0, CGColorSpaceCreateDeviceRGB(),  kCGImageAlphaPremultipliedLast  );
     CGContextSetLineWidth(_cacheContext, 2);
     _cacheContextSelection = CGBitmapContextCreate (nil, (int)frame.size.width, (int)frame.size.height, 8, 0, CGColorSpaceCreateDeviceRGB(),kCGImageAlphaPremultipliedLast  );
@@ -68,7 +71,15 @@
 }
 
 -(void)drawFromIndex:(int)indexA toIndex:(int)indexB {
+  // check for div by zero
+  if (_displayRangeHi == _displayRangeLo)return;
+
+  // line
   CGContextSetRGBStrokeColor(_cacheContext, fR,fG,fB,fA);
+  // fill
+  CGContextSetRGBFillColor(_cacheContext, fR, fG, fB, fA);
+  CGContextBeginPath(_cacheContext);
+
   CGContextMoveToPoint(_cacheContext, 0,0);
 	int padding = 3;
   int indexDrawPointA = (int)((float)MIN(indexA,indexB)/tableSize*self.frame.size.width)-padding;
@@ -78,7 +89,7 @@
   
   CGRect rect = CGRectMake(indexDrawPointA, 0, indexDrawPointB-indexDrawPointA, self.frame.size.height);
   CGContextClearRect(_cacheContext, rect);
-  
+
   
   for(int i=indexDrawPointA; i<=indexDrawPointB; i++){
     float x = (float)i;//(float)i/self.frame.size.width;
@@ -89,19 +100,36 @@
     if(indexA==indexB && indexA<index && indexA>prevIndex) index = indexA;
     
     float y = tableData[index];
-    float unflippedY = (1-((y+1)/2)) *self.frame.size.height;
+    // Scale lo to hi to flipped 0 to frame height.
+    float unflippedY = 1-( (y-_displayRangeLo)/(_displayRangeHi - _displayRangeLo));
+    unflippedY *= self.frame.size.height;
+
+    /*float unflippedY;
+    if (_displayRange == 0) { //polar
+      unflippedY = (1-((y+1)/2)) *self.frame.size.height;
+    } else { //0 to 1
+      unflippedY = (1-y) *self.frame.size.height;
+    }*/
+
     //NSLog(@"i %d x %.2f index %d y %.2f unflip %.2f", i,x,index,y, unflippedY);
     if(i==indexDrawPointA){
       CGContextMoveToPoint(_cacheContext, x,unflippedY);
     }
     else {
       CGContextAddLineToPoint(_cacheContext, x, unflippedY);
-      CGContextMoveToPoint(_cacheContext, x,unflippedY);
+      //CGContextMoveToPoint(_cacheContext, x,unflippedY);
     }
   }
-  
-  CGContextStrokePath(_cacheContext);
-  
+
+  if (_displayMode == 0) { //line
+   CGContextStrokePath(_cacheContext);
+  } else { // fill
+    // add points and close
+    CGContextAddLineToPoint(_cacheContext, indexDrawPointB, self.frame.size.height);
+    CGContextAddLineToPoint(_cacheContext, indexDrawPointA, self.frame.size.height);
+    CGContextClosePath(_cacheContext);
+    CGContextDrawPath(_cacheContext, kCGPathFill);
+  }
   CGRect newRect = CGRectMake(indexDrawPointA, 0, indexDrawPointB,self.frame.size.height);
   [self setNeedsDisplayInRect:newRect];
 }
@@ -199,7 +227,15 @@
     int touchDownTableIndex = (int)(normalizedX*tableSize);
     lastTableIndex = touchDownTableIndex;
     float normalizedY = touchDownPoint.y/self.frame.size.height;//change to -1 to 1
-    float flippedY = (1-normalizedY)*2-1;
+
+    float flippedY = (1 - normalizedY)*(_displayRangeHi - _displayRangeLo) + _displayRangeLo;
+    /*float flippedY;
+    if (_displayRange == 0) { // polar
+      flippedY = (1-normalizedY)*2-1;
+    } else { //0 to 1
+      flippedY = 1-normalizedY;
+    }*/
+    
     //NSLog(@"touchDownTableIndex %d", touchDownTableIndex);
     
     tableData[touchDownTableIndex] = flippedY;//check bounds
@@ -245,7 +281,14 @@
     if(dragTableIndex >= tableSize) dragTableIndex = tableSize - 1;
     float normalizedY = dragPoint.y/self.frame.size.height;//change to -1 to 1
     normalizedY = MAX(MIN(normalizedY,1),0);
-    float flippedY = (1-normalizedY)*2-1;
+
+    float flippedY = (1 - normalizedY)*(_displayRangeHi - _displayRangeLo) + _displayRangeLo;
+    /*float flippedY;
+    if (_displayRange == 0) { // polar
+      flippedY = (1-normalizedY)*2-1;
+    } else { //0 to 1
+      flippedY = 1-normalizedY;
+    }*/
     //NSLog(@"dragTableIndex %d", dragTableIndex);
     
     //compute size, including self but not prev

@@ -40,7 +40,7 @@ public class MMPXYSlider extends MMPControl {
         }
         if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) {
         	float valueX = event.getX() / this.getWidth();
-        	float valueY = 1.0f - (event.getY() / this.getWidth() );
+        	float valueY = 1.0f - (event.getY() / this.getHeight() );
         	if(valueX>1)valueX=1; if(valueX<0)valueX=0;
             if(valueY>1)valueY=1; if(valueY<0)valueY=0;
         	setValues(valueX, valueY);
@@ -91,7 +91,7 @@ public class MMPXYSlider extends MMPControl {
 	    }
 	    //set new value
 	    
-	    if (messageArray.size()>0 && (messageArray.get(0) instanceof Float) && (messageArray.get(0) instanceof Float) ){
+	    if (messageArray.size()>1 && (messageArray.get(0) instanceof Float) && (messageArray.get(1) instanceof Float) ){
 	        setValues( ((Float)(messageArray.get(0))).floatValue() , ((Float)(messageArray.get(1))).floatValue() );
 	        if(sendVal)sendValues();
 	    }

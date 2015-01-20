@@ -11,5 +11,9 @@
 @interface MeTable : MeControl
 @property (nonatomic, strong) UIColor *selectionColor;
 @property (nonatomic) int mode;//0=select, 1=draw
+@property (nonatomic) NSUInteger displayMode;//0=line, 1=fill
+@property (nonatomic) CGFloat displayRangeLo;
+@property (nonatomic) CGFloat displayRangeHi;
+
 -(void)loadTable;
 @end
