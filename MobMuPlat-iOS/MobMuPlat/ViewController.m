@@ -43,6 +43,8 @@
 #import "MeTable.h"
 
 #import "AudioHelpers.h"
+#import "MobMuPlatPdAudioUnit.h"
+#import "MobMuPlatUtil.h"
 
 extern void expr_setup(void);
 extern void bonk_tilde_setup(void);
@@ -51,7 +53,7 @@ extern void fiddle_tilde_setup(void);
 extern void loop_tilde_setup(void);
 extern void lrshift_tilde_setup(void);
 extern void sigmund_tilde_setup(void);
-
+extern void pique_setup(void);
 
 @implementation ViewController
 @synthesize audioController, settingsVC;
@@ -68,14 +70,6 @@ extern void sigmund_tilde_setup(void);
     else hardwareCanvasType=canvasTypeIPad;
     return hardwareCanvasType;
 }
-
-+ (BOOL)numberIsFloat:(NSNumber*)num {
-  if(strcmp([num objCType], @encode(float)) == 0 || strcmp([num objCType], @encode(double)) == 0) {
-    return YES;
-  }
-  else return NO;
-}
-
 
 -(id)init{
     self=[super init];
@@ -123,7 +117,7 @@ extern void sigmund_tilde_setup(void);
     
     //libPD setup
     
-    audioController = [[PdAudioController alloc] init] ;
+    audioController = [[PdAudioController alloc] initWithAudioUnit:[[MobMuPlatPdAudioUnit alloc] init]] ;
 	[audioController configurePlaybackWithSampleRate:samplingRate numberChannels:channelCount inputEnabled:YES mixingEnabled:mixingEnabled];
     [audioController configureTicksPerBuffer:ticksPerBuffer];
     //[audioController print];
@@ -142,8 +136,8 @@ extern void sigmund_tilde_setup(void);
     loop_tilde_setup();
     lrshift_tilde_setup();
     sigmund_tilde_setup();
-    
-    
+    pique_setup();
+
     
     //start device motion detection
     motionManager = [[CMMotionManager alloc] init];
@@ -405,9 +399,10 @@ extern void sigmund_tilde_setup(void);
   receiverPort.clientFormat = [self.audioController.audioUnit
                                   ASBDForSampleRate:samplingRate
                                      numberChannels:channelCount];
-  self.audioController.audioUnit.inputPort = receiverPort; //tell PD callback to look at it
-
-
+  if ([self.audioController.audioUnit isKindOfClass:[MobMuPlatPdAudioUnit class]]) {
+    MobMuPlatPdAudioUnit *mmppdAudioUnit = (MobMuPlatPdAudioUnit *)self.audioController.audioUnit;
+    mmppdAudioUnit.inputPort = receiverPort; //tell PD callback to look at it
+  }
 }
 
 // observe audiobus from background, stop audio if we disconnect from audiobus
@@ -1075,7 +1070,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     if([item isKindOfClass:[NSString class]]) [msg addString:item];
     else if([item isKindOfClass:[NSNumber class]]){
       NSNumber* itemNumber = (NSNumber*)item;
-      if([ViewController numberIsFloat:itemNumber]) {
+      if([MobMuPlatUtil numberIsFloat:itemNumber]) {
         [msg addFloat:[item floatValue]];
       }
       else {

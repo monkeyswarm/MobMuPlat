@@ -75,7 +75,6 @@
    
 }
 
-+(BOOL)numberIsFloat:(NSNumber*)num;
 -(void)connectPorts;
 -(void)disconnectPorts;
 -(BOOL)isAudioBusConnected;

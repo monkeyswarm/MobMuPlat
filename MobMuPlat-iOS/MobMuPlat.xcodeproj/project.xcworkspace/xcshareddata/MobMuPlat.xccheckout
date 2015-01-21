@@ -10,43 +10,55 @@
 	<string>MobMuPlat</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>22336AF4-F064-43D1-9F98-814F4F3C0244</key>
-		<string>https://github.com/monkeyswarm/MobMuPlat.git</string>
-		<key>792C70DC-B71C-4FEC-9BE3-6418DACA19DE</key>
+		<key>1A0B07D1631AC7F0F17FCE76695E42D64F01958F</key>
 		<string>git://github.com/libpd/libpd.git</string>
+		<key>21702B533F2B785EABE84F69CE47832B96F87747</key>
+		<string>https://github.com/monkeyswarm/MobMuPlat.git</string>
+		<key>6F7A20C0CDB7BDCD5180DBA15CA6EBFFD435B7B5</key>
+		<string>https://github.com/pure-data/pure-data.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>MobMuPlat.xcodeproj/project.xcworkspace</string>
+	<string>MobMuPlat-iOS/MobMuPlat.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>22336AF4-F064-43D1-9F98-814F4F3C0244</key>
-		<string>../..</string>
-		<key>792C70DC-B71C-4FEC-9BE3-6418DACA19DE</key>
-		<string>../../../libpd</string>
+		<key>1A0B07D1631AC7F0F17FCE76695E42D64F01958F</key>
+		<string>../../..libpd</string>
+		<key>21702B533F2B785EABE84F69CE47832B96F87747</key>
+		<string>../../..</string>
+		<key>6F7A20C0CDB7BDCD5180DBA15CA6EBFFD435B7B5</key>
+		<string>../../..libpd/pure-data</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/monkeyswarm/MobMuPlat.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>22336AF4-F064-43D1-9F98-814F4F3C0244</string>
+	<string>21702B533F2B785EABE84F69CE47832B96F87747</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>792C70DC-B71C-4FEC-9BE3-6418DACA19DE</string>
+			<string>21702B533F2B785EABE84F69CE47832B96F87747</string>
 			<key>IDESourceControlWCCName</key>
-			<string>libpd</string>
+			<string>MobMuPlat</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>22336AF4-F064-43D1-9F98-814F4F3C0244</string>
+			<string>1A0B07D1631AC7F0F17FCE76695E42D64F01958F</string>
 			<key>IDESourceControlWCCName</key>
-			<string>MobMuPlat</string>
+			<string>MobMuPlatlibpd</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>6F7A20C0CDB7BDCD5180DBA15CA6EBFFD435B7B5</string>
+			<key>IDESourceControlWCCName</key>
+			<string>pure-data</string>
 		</dict>
 	</array>
 </dict>
