@@ -7,7 +7,8 @@
 //
 
 #import "MeLabel.h"
-#import "ViewController.h"
+#import "MobMuPlatUtil.h"
+
 #define DEFAULT_FONT @"HelveticaNeue"
 #define WIDTH_PAD 10 //ugly hack - iOS and OSX textview have slighty different padding, so offset the ios labels to more closely match
 #define INSET_X 4
@@ -85,7 +86,7 @@
             }
             else if ([thing isKindOfClass:[NSNumber class]]){
               NSNumber* thingNumber = (NSNumber*)thing;
-              if ([ViewController numberIsFloat:thingNumber] ){ //todo put in separate class
+              if ([MobMuPlatUtil numberIsFloat:thingNumber] ){ //todo put in separate class
                 //pd sends floats :(
                 if(fmod([thingNumber floatValue],1)==0)[newString appendString:[NSString stringWithFormat:@"%d", (int)[thingNumber floatValue]]];//print whole numbers as ints
                 else [newString appendString:[NSString stringWithFormat:@"%.3f", [thingNumber floatValue]]];

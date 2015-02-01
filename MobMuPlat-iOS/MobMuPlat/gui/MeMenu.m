@@ -12,7 +12,7 @@
 #define DEFAULT_FONT @"HelveticaNeue"
 #define DEFAULT_FONTSIZE 18
 #define TAB_WIDTH 30
-#import "ViewController.h"
+#import "MobMuPlatUtil.h"
 #import "MenuViewController.h"
 #import "MenuNavigationController.h"
 
@@ -169,7 +169,7 @@ static NSString *CellIdentifier = @"MenuCell";
     }
     else if ([thing isKindOfClass:[NSNumber class]]){
       NSNumber* thingNumber = (NSNumber*)thing;
-      if ([ViewController numberIsFloat:thingNumber] ){ //todo put in separate class
+      if ([MobMuPlatUtil numberIsFloat:thingNumber] ){ //todo put in separate class
         //pd sends floats :(
         if(fmod([thingNumber floatValue],1)==0) {
           [dataArray addObject:[NSString stringWithFormat:@"%d", (int)[thingNumber floatValue]]];//print whole numbers as ints
