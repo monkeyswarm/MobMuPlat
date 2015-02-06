@@ -176,5 +176,7 @@
 			</dict>
 		</dict>
 	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Allows GPS info to be sent into the PureData patch.</string>
 </dict>
 </plist>

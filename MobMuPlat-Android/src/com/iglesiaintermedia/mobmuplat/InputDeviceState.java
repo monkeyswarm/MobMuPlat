@@ -122,17 +122,6 @@ public class InputDeviceState {
             pdMsgArray[3] = value;
             PdBase.sendList("fromSystem", pdMsgArray);
             
-            /*message.append("  ").append(MotionEvent.axisToString(axis)).append(": ");
-
-            // Append all historical values in the batch.
-            for (int historyPos = 0; historyPos < historySize; historyPos++) {
-                message.append(event.getHistoricalAxisValue(axis, historyPos));
-                message.append(", ");
-            }
-
-            // Append the current value.
-            message.append(value);
-            message.append("\n");*/
         }
         //Log.i(TAG, message.toString());
         return true;

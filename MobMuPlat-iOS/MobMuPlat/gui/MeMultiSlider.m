@@ -10,7 +10,13 @@
 #import <QuartzCore/QuartzCore.h>
 #define SLIDER_HEIGHT 20
 
-@implementation MeMultiSlider
+@implementation MeMultiSlider {
+  NSMutableArray *_valueArray;
+  UIView* box;
+  NSMutableArray* headViewArray;
+  float headWidth;
+  int currHeadIndex;
+}
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -71,7 +77,7 @@
     float headVal = 1.0-( (clippedPointY-SLIDER_HEIGHT/2) / (self.frame.size.height - SLIDER_HEIGHT) );
     [_valueArray setObject:[NSNumber numberWithFloat:headVal] atIndexedSubscript:headIndex];
     // send out
-    if (_touchMode == 1) {
+    if (_outputMode == 1) {
       [self sendSliderIndex:headIndex value:headVal];
     } else  {
       [self sendValue];
@@ -111,16 +117,15 @@
       float interpVal = (maxTouchedValue - minTouchedValue) * percent  + minTouchedValue ;
       //NSLog(@"%d %.2f %.2f", i, percent, interpVal);
       [_valueArray setObject:[NSNumber numberWithFloat:interpVal] atIndexedSubscript:i];
-      if(_touchMode==1) {
+      if(_outputMode==1) {
         [self sendSliderIndex:i value:interpVal];
       }
     }
-    //[self updateThumbs];//TODO optimize - this does everything
     [self updateThumbsFrom:minTouchIndex+1 to:maxTouchIndex-1];
   }
   
   // send out
-  if (_touchMode == 1) {
+  if (_outputMode == 1) {
     [self sendSliderIndex:headIndex value:headVal];
   } else  {
     [self sendValue];
@@ -200,7 +205,7 @@
         for(NSNumber* val in inArray)[newValArray addObject:val];
         
         if([newValArray count] != _range) [self setRange:[newValArray count]];
-        [self setValueArray:newValArray];
+       _valueArray = newValArray; //done after _valueArray is reset in setRange:
         // TODO clip before set?
         for(int i=0;i<[_valueArray count];i++){
             NSNumber* val = [_valueArray objectAtIndex:i];

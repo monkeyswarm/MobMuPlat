@@ -25,6 +25,7 @@ import com.iglesiaintermedia.LANdini.UserStateDelegate;
 
 
 
+
 //import android.app.Fragment;
 import android.support.v4.app.Fragment;
 import android.app.AlertDialog;
@@ -36,6 +37,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
@@ -80,9 +82,7 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 		_networkController.addObserver(this);
 		
 		_multidirectFragment = new MultiDirectFragment();
-		_multidirectFragment.setNetworkController(_networkController);
 		_landiniFragment = new LandiniFragment();
-		_landiniFragment.setNetworkController(_networkController);
 		_networkController.landiniManager.userStateDelegate = (UserStateDelegate)_landiniFragment; //why cast?
 		_networkController.asyncExceptionListener = _multidirectFragment; 
 		
@@ -147,10 +147,10 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 		private TextView _deviceIPTextView;
 		private EditText _outputIPEditText;
 		//private EditText _multicastGroupEditText;
-		private EditText _portEditText;
+		private EditText _outputPortEditText;
+		private EditText _inputPortEditText;
 		private Button _resetMulticastButton;
 		//private Button _resetMulticastGroupButton;
-		private Button _resetPortButton;
 		private NetworkController _networkController;
 		//public MultiDirectFragment() {
 		//}
@@ -166,12 +166,13 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 			
 			_outputIPEditText = (EditText)rootView.findViewById(R.id.outputIPEditText);
 			//_multicastGroupEditText = (EditText)rootView.findViewById(R.id.multicastGroupEditText);
-			_portEditText = (EditText)rootView.findViewById(R.id.portEditText);
+			_outputPortEditText = (EditText)rootView.findViewById(R.id.outputPortEditText);
+			_inputPortEditText = (EditText)rootView.findViewById(R.id.inputPortEditText);
 			
 			_resetMulticastButton = (Button)rootView.findViewById(R.id.resetMulticastButton);
 			//_resetMulticastGroupButton = (Button)rootView.findViewById(R.id.resetMulticastGroupButton);
-			_resetPortButton = (Button)rootView.findViewById(R.id.resetPortButton);
 			
+			_networkController = ((MainActivity)getActivity()).networkController;
 			String outputAddress = _networkController.outputIPAddressString;
 			_outputIPEditText.setText(outputAddress);
 			_outputIPEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -200,19 +201,24 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 			    }
 			});*/
 			
-			int portNumber = ((MainActivity)getActivity()).networkController.portNumber;
-			_portEditText.setText(""+portNumber);
-			_portEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			int outputPortNumber = ((MainActivity)getActivity()).networkController.outputPortNumber;
+			_outputPortEditText.setText(""+outputPortNumber);
+			_outputPortEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
+
 			    @Override
-			    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-			        if (actionId == EditorInfo.IME_ACTION_DONE) { 
+			    public void onFocusChange(View v, boolean hasFocus) {
+			    /* When focus is lost check that the text field
+			    * has valid values.
+			    */
+			      if (!hasFocus) {
 			        	//String newValue = _portEditText.getText().toString();//TODO sanitize here vs controller?
-			        	int newPort = 54321;
-			        	try{
-			        		newPort = Integer.parseInt(_portEditText.getText().toString());
+			        	try{ //TODO MAKE BETTER RESET TO DEFAULT.
+			        		int newPort = Integer.parseInt(_outputPortEditText.getText().toString());
+			        		((MainActivity)getActivity()).networkController.setOutputPortNumber(newPort);
 			        	} catch(NumberFormatException e) {
 			        		//too big
 			        		receiveException(e, "Bad port number, try something 1000-65535", "port");
+			        		_outputPortEditText.setText(""+((MainActivity)getActivity()).networkController.outputPortNumber);
 			        	}
 			        	//Log.i("NETWORK", "get text "+newPort);
 			        	/*if (newPort < 1000 || newPort > 65535) {
@@ -220,10 +226,41 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 			        		return false;
 			        	}*/
 			        	
-			        	((MainActivity)getActivity()).networkController.setPortNumber(newPort);
+			        	
 			        	
 			        }
-			        return false;//dismiss keyboard
+			        //return false;//dismiss keyboard
+			    }
+			});
+			int inputPortNumber = ((MainActivity)getActivity()).networkController.inputPortNumber;
+			_inputPortEditText.setText(""+inputPortNumber);
+			_inputPortEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
+
+			    @Override
+			    public void onFocusChange(View v, boolean hasFocus) {
+			    /* When focus is lost check that the text field
+			    * has valid values.
+			    */
+			      if (!hasFocus) {
+			        	//String newValue = _portEditText.getText().toString();//TODO sanitize here vs controller
+			        	try{
+			        		int newPort = Integer.parseInt(_inputPortEditText.getText().toString());
+			        		((MainActivity)getActivity()).networkController.setInputPortNumber(newPort);
+			        	} catch(NumberFormatException e) {
+			        		//too big
+			        		receiveException(e, "Bad port number, try something 1000-65535", "port");
+			        		_inputPortEditText.setText(""+((MainActivity)getActivity()).networkController.inputPortNumber);
+			        	}
+			        	//Log.i("NETWORK", "get text "+newPort);
+			        	/*if (newPort < 1000 || newPort > 65535) {
+			        		_portEditText.setText(""+((MainActivity)getActivity()).networkController.getPortNumber());
+			        		return false;
+			        	}*/
+			        	
+			        	
+			        	
+			        }
+			        //return false;//dismiss keyboard
 			    }
 			});
 			
@@ -235,32 +272,17 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 			});
 			
 			
-			
-			_resetPortButton.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					resetPort();
-				}
-			});
+
 			
 			return rootView;
 		}
 		
-		private void resetPort(){
-			int newPort = 54321;
-			_portEditText.setText(""+newPort);
-			_networkController.setPortNumber(newPort);
-		}
 		private void resetIP(){
 			String address = "224.0.0.1";
 			_outputIPEditText.setText(address);
 			((MainActivity)getActivity()).networkController.setOutputIPAddress(address);
 		}
 		
-		public void setNetworkController(NetworkController nc) {
-			_networkController = nc;
-		}
-
 		public void receiveException(Exception e, String message, String elementKey) {
 			// TODO Auto-generated method stub
 			showAlert(message);
@@ -317,7 +339,7 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 					container, false);
 			//rootView.setBackgroundColor(Color.MAGENTA);
 			
-			
+			_networkController = ((MainActivity)getActivity()).networkController;
 			_networkTimeTextView = (TextView)rootView.findViewById(R.id.textView2);
 			_listView = (ListView)rootView.findViewById(R.id.listView1);
 			_adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, _userNamesList) ;
@@ -387,9 +409,6 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 			_syncServerName = newServerName;
 		}
 		
-		public void setNetworkController(NetworkController nc) {
-			_networkController = nc;
-		}
 	}
 
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5056" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
     <dependencies>
-        <deployment defaultVersion="1296" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SettingsViewController">
@@ -27,6 +27,7 @@
                 <outlet property="documentViewButton" destination="ZAP-q4-kko" id="stg-pu-3XA"/>
                 <outlet property="documentsTableView" destination="7if-bL-GZD" id="7o0-vm-MRq"/>
                 <outlet property="flipInterfaceButton" destination="fEK-gL-YRS" id="oLk-xf-tzR"/>
+                <outlet property="inputPortNumberTextField" destination="8ae-zg-AEz" id="jJg-HZ-rkE"/>
                 <outlet property="ipAddressResetButton" destination="Cby-V4-Jmm" id="uXc-It-Bms"/>
                 <outlet property="ipAddressTextField" destination="nfW-EI-Twp" id="XgM-Ty-66O"/>
                 <outlet property="midiDestinationTableView" destination="ag9-Xi-eUi" id="ztw-0j-j35"/>
@@ -36,8 +37,7 @@
                 <outlet property="networkView" destination="Jzo-Qb-N4Y" id="iLe-AP-n7O"/>
                 <outlet property="networkViewButton" destination="ybc-0c-0Vc" id="7Jn-1C-A57"/>
                 <outlet property="networkingSubView" destination="CUe-QD-ydR" id="vpM-Gl-C2W"/>
-                <outlet property="portNumberTextField" destination="yhU-J8-F1v" id="yPA-3e-JaB"/>
-                <outlet property="portResetButton" destination="G7l-0O-gVA" id="Cuc-gz-dsh"/>
+                <outlet property="outputPortNumberTextField" destination="yhU-J8-F1v" id="PhP-yM-C1f"/>
                 <outlet property="rateSeg" destination="nel-wk-XYx" id="32h-mU-RS5"/>
                 <outlet property="showFilesButton" destination="RKH-wj-XyU" id="A5U-A7-f6O"/>
                 <outlet property="tickSeg" destination="7ZM-S8-9hq" id="ygi-QD-JFv"/>
@@ -166,7 +166,6 @@
                         </button>
                     </subviews>
                     <color key="backgroundColor" red="0.5" green="0.0" blue="0.5" alpha="1" colorSpace="calibratedRGB"/>
-                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                 </view>
                 <view contentMode="scaleToFill" id="tm1-Ey-OH2">
                     <rect key="frame" x="10" y="8" width="300" height="425"/>
@@ -325,12 +324,11 @@ and audio output routing)</string>
                         </view>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                 </scrollView>
             </subviews>
             <color key="backgroundColor" white="0.39560231854838712" alpha="1" colorSpace="calibratedWhite"/>
+            <nil key="simulatedStatusBarMetrics"/>
             <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
-            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
         </view>
         <view contentMode="scaleToFill" id="OHo-WM-0TI">
             <rect key="frame" x="0.0" y="0.0" width="275" height="330"/>
@@ -391,6 +389,8 @@ Use a local router only for best results. </string>
                 </label>
             </subviews>
             <color key="backgroundColor" red="0.45620438460000001" green="0.80656933779999995" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
         </view>
         <view contentMode="scaleToFill" id="EpL-mu-96r">
             <rect key="frame" x="0.0" y="0.0" width="275" height="330"/>
@@ -400,22 +400,10 @@ Use a local router only for best results. </string>
                     <rect key="frame" x="0.0" y="37" width="275" height="30"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                    <textInputTraits key="textInputTraits"/>
-                </textField>
-                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" id="yhU-J8-F1v">
-                    <rect key="frame" x="0.0" y="140" width="275" height="30"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                    <textInputTraits key="textInputTraits"/>
+                    <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation" returnKeyType="done"/>
                 </textField>
                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Network communication is multicast by default. You may instead specify a unicast IP address." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ZnY-BJ-as4">
                     <rect key="frame" x="0.0" y="-1" width="275" height="40"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Port number is specified within the MobMuPlat patch editor. You may override that here." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ZJ8-cO-Yw8">
-                    <rect key="frame" x="0.0" y="100" width="275" height="43"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                     <nil key="highlightedColor"/>
@@ -427,27 +415,45 @@ Use a local router only for best results. </string>
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="G7l-0O-gVA">
-                    <rect key="frame" x="14" y="170" width="247" height="30"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <state key="normal" title="Reset to patch-defined port number">
-                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                    </state>
-                </button>
                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="IP Address:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Uei-eI-luO">
                     <rect key="frame" x="14" y="41" width="89" height="21"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Port:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="KOq-2C-cD1">
-                    <rect key="frame" x="14" y="144" width="37" height="21"/>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" id="yhU-J8-F1v">
+                    <rect key="frame" x="0.0" y="99" width="275" height="30"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                    <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation" returnKeyType="done"/>
+                </textField>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Output Port:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="KOq-2C-cD1">
+                    <rect key="frame" x="14" y="103" width="95" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" id="8ae-zg-AEz">
+                    <rect key="frame" x="0.0" y="132" width="275" height="30"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                    <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation" returnKeyType="done"/>
+                </textField>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Input Port:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="aN4-2l-fI9">
+                    <rect key="frame" x="14" y="136" width="81" height="21"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="highlightedColor"/>
                 </label>
             </subviews>
             <color key="backgroundColor" red="0.45620438460000001" green="0.80656933779999995" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
         </view>
     </objects>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination" type="retina4"/>
+    </simulatedMetricsContainer>
 </document>

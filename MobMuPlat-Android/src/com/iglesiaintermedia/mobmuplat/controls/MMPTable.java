@@ -8,18 +8,26 @@ import org.puredata.core.PdBase;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.MotionEvent;
 
 public class MMPTable extends MMPControl {
 
-	public int mode;
+	public int mode; //0=selection, 1=draw;
 	public int selectionColor;
+	public float displayRangeLo;
+	public float displayRangeHi;
+	public int displayMode;
+	
 	private int _tableSize;
 	private float _tableData[];
 	private RectF _myRectF;
 	
-	private float _drawPoints[];
+	private Rect _clipRect;
+	private Path _path;
+	//private float _drawPoints[];
 	
 	// draw bookkeeping
 	private float _touchDownPointX, _dragPointX;
@@ -28,9 +36,13 @@ public class MMPTable extends MMPControl {
 	public MMPTable(Context context, float screenRatio) {
 		super(context, screenRatio);
 		_myRectF = new RectF();
+		_clipRect = new Rect();
+		_path = new Path();
 		this.paint.setFlags(Paint.ANTI_ALIAS_FLAG);
 		this.paint.setStrokeWidth(screenRatio);
-		selectionColor = 0x800000FF;//blue, half transparent
+		selectionColor = 0x800000FF;//blue, half transparent, should get overwritten.
+		this.displayRangeLo = -1;
+		this.displayRangeHi = 1;
 	}
 
 	public void loadTable() {
@@ -62,7 +74,7 @@ public class MMPTable extends MMPControl {
 	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
 		if (changed == true) {
 			_myRectF.set(0,0,right-left, bottom-top);
-			_drawPoints = new float[getWidth() * 4];
+			//_drawPoints = new float[(getWidth() + 3) * 4]; //three extra points used by fill mode
 		}
 	}
 	
@@ -92,7 +104,9 @@ public class MMPTable extends MMPControl {
         	    int touchDownTableIndex = (int)(normalizedX*_tableSize);
         	    _prevTableIndex = touchDownTableIndex;
         	    float normalizedY = touchY/getHeight();//change to -1 to 1
-        	    float flippedY = (1-normalizedY)*2-1;
+        	    //float flippedY = (1-normalizedY)*2-1;
+        	    float flippedY = (1 - normalizedY)*(displayRangeHi - displayRangeLo) + displayRangeLo;
+        	    
         	    //NSLog(@"touchDownTableIndex %d", touchDownTableIndex);
         	    
         	    _tableData[touchDownTableIndex] = flippedY;//check bounds
@@ -126,7 +140,9 @@ public class MMPTable extends MMPControl {
         	    
         	    float normalizedY = touchY/getHeight();//change to -1 to 1
         	    normalizedY = Math.max(Math.min(normalizedY,1),0);
-        	    float flippedY = (1-normalizedY)*2-1;
+        	    //float flippedY = (1-normalizedY)*2-1;
+        	    float flippedY = (1 - normalizedY)*(displayRangeHi - displayRangeLo) + displayRangeLo;
+        	    
         	    //NSLog(@"dragTableIndex %d", dragTableIndex);
         	    
         	    //compute size, including self but not prev
@@ -184,28 +200,61 @@ public class MMPTable extends MMPControl {
 	}
 	
 	protected void onDraw(Canvas canvas) {
+		_path.reset();
+		canvas.getClipBounds(_clipRect);
+		int indexDrawPointA = _clipRect.left;
+		int indexDrawPointB = _clipRect.right;
+		/*int padding = 3;
+		int indexDrawPointA = (int)((float)MIN(indexA,indexB)/tableSize*self.frame.size.width)-padding;
+		indexDrawPointA = MIN(MAX(indexDrawPointA,0),self.frame.size.width-1);
+		int indexDrawPointB = (int)((float)(MAX(indexA,indexB)+1)/(tableSize)*self.frame.size.width)+padding;
+		indexDrawPointB = MIN(MAX(indexDrawPointB,0),self.frame.size.width-1);
+		  */
 		this.paint.setStyle(Paint.Style.FILL);
 		this.paint.setColor(this.color);
 		canvas.drawRect(_myRectF, this.paint);
 		
-	    this.paint.setStyle(Paint.Style.STROKE);
+		
+	   	this.paint.setStyle(Paint.Style.STROKE);
 	    this.paint.setColor(this.highlightColor);
 	    //this.paint.setStrokeWidth(2 * this.screenRatio);
 	    
 	    if(_tableData==null)return;
-	    float prevY=.5f * getHeight(); //DC offset zero...
-	    for (int i=0;i<getWidth();i++) {
+	    
+	    //float prevY=1 - ((0 -displayRangeLo)/(displayRangeHi - displayRangeLo)); //DC offset zero...
+	    //prevY*=getHeight();
+	    //for (int i=0;i<getWidth();i++) {
+	    for (int i = indexDrawPointA; i<indexDrawPointB; i++) {
 	    	int tableIndex = (int)((float)i/getWidth()*_tableSize);
 	    	float y = _tableData[tableIndex];
-	        float unflippedY = (1-((y+1)/2)) *getHeight();
+	        float unflippedY = 1-( (y-displayRangeLo)/(displayRangeHi - displayRangeLo));
+		    unflippedY *= getHeight();
 	    	//canvas.drawLine(i-1, prevY, i, unflippedY, this.paint);
-	        _drawPoints[i*4]=i-1;
+	        /*_drawPoints[i*4]=i-1;
 	        _drawPoints[i*4+1]=prevY;
 	        _drawPoints[i*4+2]=i;
 	        _drawPoints[i*4+3]=unflippedY;
-	    	prevY = unflippedY;
+	    	prevY = unflippedY;*/
+		    if (i==0) {
+		    	_path.moveTo(i, unflippedY);
+		    } else {
+		    	_path.lineTo(i, unflippedY);
+		    }
 	    }
-	    canvas.drawLines(_drawPoints, this.paint);
+	    // draw line
+	    canvas.drawPath(_path, this.paint);
+	    // ALSO draw fill on fill mode...
+	    if (displayMode == 1) {// fill
+	    	this.paint.setStyle(Paint.Style.FILL);
+	    	float yPointOfTableZero = 1 - ((0 -displayRangeLo)/(displayRangeHi - displayRangeLo));
+	        yPointOfTableZero *= getHeight();
+	        int lastIndex = getWidth() - 1;
+	    	_path.lineTo(lastIndex, yPointOfTableZero);
+	    	_path.lineTo(0, yPointOfTableZero);
+	    	_path.close();
+	    	canvas.drawPath(_path, this.paint);
+	    }
+	    
 	    
 	    //selection
 	    if (mode == 0) {

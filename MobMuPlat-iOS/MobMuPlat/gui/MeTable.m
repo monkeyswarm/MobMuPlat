@@ -125,8 +125,10 @@
    CGContextStrokePath(_cacheContext);
   } else { // fill
     // add points and close
-    CGContextAddLineToPoint(_cacheContext, indexDrawPointB, self.frame.size.height);
-    CGContextAddLineToPoint(_cacheContext, indexDrawPointA, self.frame.size.height);
+    CGFloat yPointOfTableZero = 1 - ((0 -_displayRangeLo)/(_displayRangeHi - _displayRangeLo));
+    yPointOfTableZero *= self.frame.size.height;
+    CGContextAddLineToPoint(_cacheContext, indexDrawPointB, yPointOfTableZero);
+    CGContextAddLineToPoint(_cacheContext, indexDrawPointA, yPointOfTableZero);
     CGContextClosePath(_cacheContext);
     CGContextDrawPath(_cacheContext, kCGPathFill);
   }

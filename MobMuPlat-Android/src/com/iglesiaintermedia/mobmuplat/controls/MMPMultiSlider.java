@@ -14,6 +14,8 @@ import android.view.MotionEvent;
 
 public class MMPMultiSlider extends MMPControl {
 
+	public int outputMode;
+	
 	private float[] _valueArray;
 	private RectF _myRect;
 	private RectF _myInnerRect;
@@ -55,7 +57,12 @@ public class MMPMultiSlider extends MMPControl {
         	float headVal = 1.0f-( (clippedPointY-SLIDER_HEIGHT/2f) / (getHeight() - SLIDER_HEIGHT) );
             _valueArray[headIndex]= headVal;
             _currHeadIndex = headIndex;
-            sendValue();
+            if (outputMode == 1) {
+              sendSliderIndexAndValue(headIndex, headVal);
+            } else  {
+              sendValue();
+            }
+            
             //inv rect
             Rect invRect = new Rect((int)(headIndex*_headWidth-2), 0, (int)((headIndex+1) * _headWidth + 2), (int)_myRect.bottom);
 	        invalidate(invRect);
@@ -79,16 +86,22 @@ public class MMPMultiSlider extends MMPControl {
               float maxTouchedValue = _valueArray[maxTouchIndex];
               
               for(int i=minTouchIndex+1;i<maxTouchIndex;i++){
-                float percent = ((float)(i-minTouchIndex))/(maxTouchIndex-minTouchIndex);
+            	float percent = ((float)(i-minTouchIndex))/(maxTouchIndex-minTouchIndex);
                 float interpVal = (maxTouchedValue - minTouchedValue) * percent  + minTouchedValue ;
                 _valueArray[i] = interpVal;
-                //[_valueArray setObject:[NSNumber numberWithFloat:interpVal] atIndexedSubscript:i];
+                if (outputMode == 1) {
+                	sendSliderIndexAndValue(i, interpVal);
+                }
               }
-              //[self updateThumbsFrom:minTouchIndex+1 to:maxTouchIndex-1];
               
             } 
             
-            sendValue();
+            if (outputMode == 1) {
+               sendSliderIndexAndValue(headIndex, headVal);
+             } else  {
+               sendValue();
+             }
+            
             if(headIndex!=_currHeadIndex){
             	//invalidate previous head so it redraws to normal color
             	Rect invRect = new Rect((int)(_currHeadIndex*_headWidth-2), 0, (int)((_currHeadIndex+1) * _headWidth+2), (int)_myRect.bottom);
@@ -116,6 +129,14 @@ public class MMPMultiSlider extends MMPControl {
     		args.add(Float.valueOf(_valueArray[i]));
     	}
     	this.controlDelegate.sendGUIMessageArray(args);
+	}
+	
+	private void sendSliderIndexAndValue(int headIndex, float headVal) {
+		List<Object> args = new ArrayList<Object>();
+		args.add(this.address);
+		args.add(Integer.valueOf(headIndex));
+		args.add(Float.valueOf(headVal));
+		this.controlDelegate.sendGUIMessageArray(args);
 	}
 	
 	protected void onDraw(Canvas canvas) {
