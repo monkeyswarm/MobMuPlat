@@ -68,15 +68,6 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:text="Port number is specified within the MobMuPlat patch editor. You may overwrite that here." />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
@@ -85,10 +76,34 @@
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Port: " />
+            android:text=" Output Port: " />
 
         <EditText
-            android:id="@+id/portEditText"
+            android:id="@+id/outputPortEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.42"
+            android:ems="10"
+            android:gravity="right"
+            android:inputType="number" >
+
+            <requestFocus />
+        </EditText>
+
+    </LinearLayout>
+    
+     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" Input Port: " />
+
+        <EditText
+            android:id="@+id/inputPortEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.42"
@@ -101,12 +116,5 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/resetPortButton"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="34dp"
-        android:layout_gravity="center"
-        android:text="Reset to patch-defined port number" />
 
 </LinearLayout>

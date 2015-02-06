@@ -26,7 +26,7 @@ public class AudioMidiFragment extends Fragment implements Observer {
 	private UsbMidiController _usbMidiController;
 	private ListView _listViewInput, _listViewOutput;
 	//private TextView _bufferSizeTextView, _samplingRateTextView;
-	public AudioDelegate audioDelegate;
+	//public AudioDelegate audioDelegate;
 	private ArrayAdapter<String> adapterInput;
 	private ArrayAdapter<String> adapterOutput;
 	

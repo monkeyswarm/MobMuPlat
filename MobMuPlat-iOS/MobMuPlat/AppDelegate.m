@@ -126,9 +126,12 @@
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-    [self.viewController disconnectPorts];//disconnect OSC ports on resign, to avoid conflicts
+// Now we are leaving these on all the time...
+ //   [self.viewController disconnectPorts];//disconnect OSC ports on resign, to avoid conflicts
     
-  if(![self.viewController backgroundAudioEnabled] && !self.viewController.audiobusController.connected && !self.viewController.audiobusController.audiobusAppRunning) {
+  if(![self.viewController backgroundAudioEnabled] &&
+     !self.viewController.audiobusController.connected &&
+     !self.viewController.audiobusController.audiobusAppRunning) {
     [[self.viewController audioController] setActive:NO];//shut down audio processing
   }
 }
@@ -140,7 +143,8 @@
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
-    [self.viewController connectPorts];//reconnect OSC ports
+ // Leaving them on all the time...
+ //   [self.viewController connectPorts];//reconnect OSC ports
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
@@ -154,7 +158,8 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-
+  [[NSUserDefaults standardUserDefaults] synchronize];
+  [self.viewController disconnectPorts];
 }
 
 @end

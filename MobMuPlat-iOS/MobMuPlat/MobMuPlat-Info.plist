@@ -101,7 +101,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.62</string>
+	<string>1.64</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -118,7 +118,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1.62</string>
+	<string>1.64</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -176,5 +176,7 @@
 			</dict>
 		</dict>
 	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Allows GPS info to be sent into the PureData patch.</string>
 </dict>
 </plist>

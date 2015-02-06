@@ -17,6 +17,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -37,31 +40,22 @@ public class NetworkController extends Observable{
 	public MainActivity delegate; //TODO make interface?
 	private OSCPortIn receiver;
 	private OSCPortOut sender;
-	private OSCPortIn landiniPortIn;
-	private OSCPortOut landiniPortOut;
+	//private OSCPortIn landiniPortIn;
+	//private OSCPortOut landiniPortOut;
 	public AsyncExceptionListener asyncExceptionListener = null;
 	//MOre for landini!
 
 	public String outputIPAddressString;
 	//public String multicastGroupAddressString;
-	public int portNumber;
+	public int outputPortNumber;
+	public int inputPortNumber;
 
 	static public int DEFAULT_PORT_NUMBER = 54321;
 
 	public LANdiniLANManager landiniManager;
+	private Activity _activity;
 	
-	private String _ssid;
-
-	//private OSCListener oscListener;
-
-	//instance!
-	/*public static NetworkController getInstance(){
-        if(mInstance == null)
-        {
-            mInstance = new NetworkController();
-        }
-        return mInstance;
-    }*/
+	//private String _ssid;
 
 	final Handler mHandler = new Handler() { //make un-anonymous
     	@Override
@@ -92,16 +86,26 @@ public class NetworkController extends Observable{
 		}
 	};
 
-	public NetworkController() {
+	public NetworkController(Activity activity) {
 		super();
+		_activity = activity;
 		setupOSC();
 		landiniManager = new LANdiniLANManager(this);
+		
 	}
 
 	private void setupOSC() {
-		portNumber = 54321;
+		/*outputPortNumber = 54321;
+		inputPortNumber = 54322;
 		outputIPAddressString = "224.0.0.1";
-		//multicastGroupAddressString = "224.0.0.1";
+		*/
+		// get user pref numbers
+		SharedPreferences sp = _activity.getPreferences(Activity.MODE_PRIVATE);	
+		outputIPAddressString = sp.getString("outputIPAddress", "224.0.0.1");
+		outputPortNumber = sp.getInt("outputPortNumber", 54321);
+		inputPortNumber = sp.getInt("inputPortNumber", 54322);
+		
+		
 		resetOutput();
 		resetInput();	
 	}
@@ -130,20 +134,42 @@ public class NetworkController extends Observable{
 	public void setOutputIPAddress(String newIP) {
 		outputIPAddressString = newIP;
 		resetOutput();
+		
+		SharedPreferences settings = _activity.getPreferences(Activity.MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString("outputIPAddress", outputIPAddressString);
+		editor.commit();
 	}
 
-	public int getPortNumber() {
-		return portNumber;
-	}
 	
-	public void setPortNumber(int number) {
+	public void setOutputPortNumber(int number) {
 		/*if (number < 1000 || number > 65535) {
 			return;
 		}*/
-		portNumber = number;
+		outputPortNumber = number;
 		resetOutput();
 		resetInput();
+		
+		SharedPreferences settings = _activity.getPreferences(Activity.MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putInt("outputPortNumber", outputPortNumber);
+		editor.commit();
 	}
+	public void setInputPortNumber(int number) {
+		/*if (number < 1000 || number > 65535) {
+			return;
+		}*/
+		inputPortNumber = number;
+		resetOutput();
+		resetInput();
+		
+		SharedPreferences settings = _activity.getPreferences(Activity.MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putInt("inputPortNumber", inputPortNumber);
+		editor.commit();
+		
+	}
+	
 
 	public void resetOutput(){
 		new SetupOSCTask().execute();
@@ -152,14 +178,14 @@ public class NetworkController extends Observable{
 	public void resetInput() {
 		//if (receiver!=null)receiver.close();
 		try{
-			receiver = new OSCPortIn(portNumber); //added to multicast group 224.0.0.1
+			receiver = new OSCPortIn(inputPortNumber); //added to multicast group 224.0.0.1
 			receiver.addListener(".*", oscListener); //pattern no longer matters, hacked class to send everything to all listeners
 			receiver.startListening();
 
 		}catch(SocketException e){//not called with multicastsocket
 			if(MainActivity.VERBOSE)Log.e("NETWORK","receiver socket exception");	
 			if(asyncExceptionListener != null) {
-				asyncExceptionListener.receiveException(e, "Unable to listen on port "+portNumber+". Perhaps another application is using this port (or you are not connected to a wifi network).", "port");
+				asyncExceptionListener.receiveException(e, "Unable to listen on port "+inputPortNumber+". Perhaps another application is using this port (or you are not connected to a wifi network).", "port");
 			}
 		} catch (IOException e) {
 			if(MainActivity.VERBOSE)Log.e("NETWORK","receiver IO exception from multi");
@@ -272,7 +298,7 @@ public class NetworkController extends Observable{
 			if (sender!=null)sender.close();
 			try{
 				InetAddress outputIPAddress = InetAddress.getByName(outputIPAddressString);
-				sender = new OSCPortOut(outputIPAddress, portNumber);	
+				sender = new OSCPortOut(outputIPAddress, outputPortNumber);	
 			}catch(UnknownHostException e){
 				if(MainActivity.VERBOSE)Log.e("NETWORK","unknown host exception");
 				uhe = e;
@@ -296,7 +322,7 @@ public class NetworkController extends Observable{
 			}
 			if (se!=null) {
 				if(asyncExceptionListener != null) {
-					asyncExceptionListener.receiveException(se, "Unable to send on port "+portNumber+".", "port");
+					asyncExceptionListener.receiveException(se, "Unable to send on port "+outputPortNumber+".", "port");
 				}
 			}
 		}

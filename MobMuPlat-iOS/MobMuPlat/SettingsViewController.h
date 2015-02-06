@@ -20,9 +20,10 @@
 @protocol LANdiniDelegate;
 
 typedef enum{
-    canvasTypeIPhone3p5Inch = 0,
-    canvasTypeIPhone4Inch = 1,
-    canvasTypeIPad = 2,
+    canvasTypeWidePhone = 0,
+    canvasTypeTallPhone = 1,
+    canvasTypeWideTablet = 2,
+    canvasTypeTallTablet
 } canvasType;
 
 @interface SettingsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, LANdiniUserStateDelegate, UITextFieldDelegate>{
@@ -82,9 +83,9 @@ typedef enum{
 @property (nonatomic, strong) IBOutlet UIView *multiDirectConnectionSubView;
 
 @property (nonatomic, strong) IBOutlet UITextField *ipAddressTextField;
-@property (nonatomic, strong) IBOutlet UITextField *portNumberTextField;
 @property (nonatomic, strong) IBOutlet UIButton *ipAddressResetButton;
-@property (nonatomic, strong) IBOutlet UIButton *portResetButton;
+@property (nonatomic, strong) IBOutlet UITextField *outputPortNumberTextField;
+@property (nonatomic, strong) IBOutlet UITextField *inputPortNumberTextField;
 
 @property (nonatomic, strong) IBOutlet UILabel* LANdiniNetworkLabel;
 @property (nonatomic, strong) IBOutlet UISwitch* LANdiniEnableSwitch;
@@ -109,8 +110,8 @@ typedef enum{
 - (BOOL)loadScenePatchOnly:(NSString*)filename;
 - (void)flipInterface;
 @property(copy, nonatomic) NSString *outputIpAddress;
-@property(nonatomic)int portNumber;
-@property(nonatomic)int patchPortNumber;
+@property(nonatomic)int inputPortNumber;
+@property(nonatomic)int outputPortNumber;
 
 @end
 

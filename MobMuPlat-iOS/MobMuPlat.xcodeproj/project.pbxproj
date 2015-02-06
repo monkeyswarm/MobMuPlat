@@ -180,6 +180,8 @@
 		F97D45A819A541E000874EAA /* libAudiobus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F97D45A719A541E000874EAA /* libAudiobus.a */; };
 		F9967C3718F8C54D008E3828 /* MenuNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9967C3618F8C54D008E3828 /* MenuNavigationController.m */; };
 		F9DE7DC018F49D62007B9E45 /* MeMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = F9DE7DBF18F49D62007B9E45 /* MeMenu.m */; };
+		F9FC179B1A85735A00152392 /* MMPExamples-InterAppOSC.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F9FC17991A85735A00152392 /* MMPExamples-InterAppOSC.mmp */; };
+		F9FC179C1A85735A00152392 /* MMPExamples-InterAppOSC.pd in Resources */ = {isa = PBXBuildFile; fileRef = F9FC179A1A85735A00152392 /* MMPExamples-InterAppOSC.pd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -190,19 +192,19 @@
 			remoteGlobalIDString = D2AAC07E0554694100DB518D;
 			remoteInfo = "libpd-ios";
 		};
-		F97560931A6E235B005CCE8E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F975608C1A6E235B005CCE8E /* libpd.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 119013AB1486450C00086F19;
-			remoteInfo = "libpd-osx";
-		};
 		F975609B1A6EADAB005CCE8E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F975608C1A6E235B005CCE8E /* libpd.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = D2AAC07D0554694100DB518D;
 			remoteInfo = "libpd-ios";
+		};
+		F9FC179E1A85735A00152392 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F975608C1A6E235B005CCE8E /* libpd.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 119013AB1486450C00086F19;
+			remoteInfo = "libpd-osx";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -459,6 +461,8 @@
 		F9967C3618F8C54D008E3828 /* MenuNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MenuNavigationController.m; path = gui/MenuNavigationController.m; sourceTree = "<group>"; };
 		F9DE7DBE18F49D62007B9E45 /* MeMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeMenu.h; path = gui/MeMenu.h; sourceTree = "<group>"; };
 		F9DE7DBF18F49D62007B9E45 /* MeMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeMenu.m; path = gui/MeMenu.m; sourceTree = "<group>"; };
+		F9FC17991A85735A00152392 /* MMPExamples-InterAppOSC.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "MMPExamples-InterAppOSC.mmp"; sourceTree = "<group>"; };
+		F9FC179A1A85735A00152392 /* MMPExamples-InterAppOSC.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "MMPExamples-InterAppOSC.pd"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -819,6 +823,8 @@
 		F9295DF119BD19C6008691CB /* patches */ = {
 			isa = PBXGroup;
 			children = (
+				F9FC17991A85735A00152392 /* MMPExamples-InterAppOSC.mmp */,
+				F9FC179A1A85735A00152392 /* MMPExamples-InterAppOSC.pd */,
 				F9295DF219BD19C6008691CB /* anderson1.wav */,
 				F9295DF319BD19C6008691CB /* cats1.jpg */,
 				F9295DF419BD19C6008691CB /* cats2.jpg */,
@@ -912,7 +918,7 @@
 			isa = PBXGroup;
 			children = (
 				F97560921A6E235B005CCE8E /* libpd-ios.a */,
-				F97560941A6E235B005CCE8E /* libpd-osx.a */,
+				F9FC179F1A85735A00152392 /* libpd-osx.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1007,11 +1013,11 @@
 			remoteRef = F97560911A6E235B005CCE8E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F97560941A6E235B005CCE8E /* libpd-osx.a */ = {
+		F9FC179F1A85735A00152392 /* libpd-osx.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libpd-osx.a";
-			remoteRef = F97560931A6E235B005CCE8E /* PBXContainerItemProxy */;
+			remoteRef = F9FC179E1A85735A00152392 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1058,6 +1064,7 @@
 				F9295E7319BD19C6008691CB /* Welcome-Pad.mmp in Resources */,
 				F9295E6B19BD19C6008691CB /* MMPTutorial5-Files.mmp in Resources */,
 				DCEF4F2C188ED1CD00D6EE54 /* SettingsViewController~iphone.xib in Resources */,
+				F9FC179B1A85735A00152392 /* MMPExamples-InterAppOSC.mmp in Resources */,
 				F9295E3719BD19C6008691CB /* cats3.jpg in Resources */,
 				F9295E5F19BD19C6008691CB /* MMPTutorial2-Input.mmp in Resources */,
 				F9295E3A19BD19C6008691CB /* MMPExamples-Arp-Pad.mmp in Resources */,
@@ -1065,6 +1072,7 @@
 				DCB5B95418889355003E6C2C /* Icon-72.png in Resources */,
 				DC7DD717188F2A660068BA66 /* SettingsViewController~ipad.xib in Resources */,
 				F9295E6A19BD19C6008691CB /* MMPTutorial5-Files-Pad.mmp in Resources */,
+				F9FC179C1A85735A00152392 /* MMPExamples-InterAppOSC.pd in Resources */,
 				F9295E7119BD19C6008691CB /* vocod_channel.pd in Resources */,
 				F9295E3F19BD19C6008691CB /* MMPExamples-GPS.mmp in Resources */,
 				F9295E4919BD19C6008691CB /* MMPExamples-Sequencer-ip5.mmp in Resources */,
@@ -1275,8 +1283,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = MobMuPlat/MobMuPlat.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: daniel Iglesia";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: daniel Iglesia";
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "MobMuPlat/MobMuPlat-Prefix.pch";
@@ -1297,7 +1305,7 @@
 					"-DPD",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "21a2d16a-9af1-45d5-9b02-d985c75b2e66";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../libpd/**";
 				VALID_ARCHS = "armv7 armv7s arm64";
@@ -1312,8 +1320,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = MobMuPlat/MobMuPlat.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: daniel Iglesia";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: daniel Iglesia";
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "MobMuPlat/MobMuPlat-Prefix.pch";
@@ -1334,7 +1342,7 @@
 					"-DPD",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "21a2d16a-9af1-45d5-9b02-d985c75b2e66";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../libpd/**";
 				VALID_ARCHS = "armv7 armv7s arm64";
