@@ -89,7 +89,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 	public MainActivity _mainActivity;
 
 	Map<String, ArrayList<MMPControl>> _allGUIControlMap; //control address, array of objects with that address. Allows multiple items with same address.
-	Set<String> _wearAddressSet; 
+	/* wear Set<String> _wearAddressSet;*/ 
 	
 	int _bgColor;
 
@@ -101,7 +101,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 		super.onCreate(savedInstanceState);
 		_mainActivity = (MainActivity)getActivity();
 		_allGUIControlMap = new HashMap<String,ArrayList<MMPControl>>();
-		_wearAddressSet = new HashSet<String>();
+		/* wear _wearAddressSet = new HashSet<String>(); */
 		//init pd
 		PdBase.setReceiver(receiver);
 		PdBase.subscribe("toGUI");//from pd
@@ -219,7 +219,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 
 	public void loadSceneFromJSON(String inString){
 		_allGUIControlMap.clear();
-		_wearAddressSet.clear();
+		/* wear _wearAddressSet.clear();*/
 		if (inString.isEmpty()) return;
 				
 		try {
@@ -351,7 +351,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 				_version=topDict.get("version").getAsFloat();
 
 			JsonArray controlDictArray;//array of dictionaries, one for each gui element
-
+			/* wear
 			// WEAR GUI
 			if (topDict.get("wearGui")!=null) {
 				JsonArray pageGuiArray = topDict.get("wearGui").getAsJsonArray();
@@ -374,7 +374,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 					String address = pageGuiDict.get("address").getAsString();
 					_wearAddressSet.add(address);
 				}
-			}
+			}*/
 			
 			// MAIN GUI
 			if(topDict.get("gui")!=null){
@@ -639,12 +639,12 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 					}
 				}
 				// If wear has the address, send it out.
-				if (_wearAddressSet.contains(addressObj)) {
+				/* wear if (_wearAddressSet.contains(addressObj)) {
 					Object argsNoAddress[] = Arrays.copyOfRange(args, 1, args.length);
 					String message = TextUtils.join(" ",argsNoAddress); //rest is turned into list, delimited by space.
 					byte[] data = message.getBytes(Charset.forName("UTF-8"));
 					_mainActivity.sendWearMessage((String)addressObj, data);
-				}
+				}*/
 			} else if (source.equals("toSystem")) {
 				if (args.length==0) return;
 

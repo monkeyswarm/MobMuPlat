@@ -14,17 +14,9 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -34,7 +26,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.app.FragmentTransaction;
-import android.text.TextUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -52,7 +43,6 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -61,9 +51,7 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -71,58 +59,39 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.InputDevice;
 import android.view.InputEvent;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.InputDevice.MotionRange;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.puredata.android.io.AudioParameters;
 import org.puredata.android.service.PdPreferences;
 import org.puredata.android.service.PdService;
 import org.puredata.core.PdBase;
-import org.puredata.core.PdReceiver;
-
+//import org.puredata.core.PdReceiver;
+/* wear
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.MessageApi.MessageListener;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
-import com.google.android.gms.wearable.Wearable;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
+import com.google.android.gms.wearable.Wearable; */
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
@@ -182,11 +151,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	Object[] _compassMsgArray; 
 	private boolean _shouldSwapAxes = false;
 	
-	// wear
+	/* wear
     WorkerThread wt;
     private GoogleApiClient mGoogleApiClient;
 	private static final long CONNECTION_TIME_OUT_MS = 100;
-	private String nodeId;
+	private String nodeId; */
 	
 
 	@Override
@@ -256,7 +225,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		if(shouldCopyDocs) {//!alreadyStartedOnVersion || [alreadyStartedOnVersion boolValue] == NO) {
 			List<String> defaultPatchesList;
 			if(hardwareScreenType == CanvasType.canvasTypeWidePhone || hardwareScreenType == CanvasType.canvasTypeTallTablet){
-				defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine.mmp", "MMPTutorial1-GUI.mmp", "MMPTutorial2-Input.mmp", "MMPTutorial3-Hardware.mmp", "MMPTutorial4-Networking.mmp","MMPTutorial5-Files.mmp","MMPExamples-Vocoder.mmp", "MMPExamples-Motion.mmp", "MMPExamples-Sequencer.mmp", "MMPExamples-GPS.mmp", "MMPTutorial6-2DGraphics.mmp", "MMPExamples-LANdini.mmp", "MMPExamples-Arp.mmp", "MMPExamples-TableGlitch.mmp", "MMPExamples-HID.mmp", "MMPExamples-Watch.mmp");
+				defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine.mmp", "MMPTutorial1-GUI.mmp", "MMPTutorial2-Input.mmp", "MMPTutorial3-Hardware.mmp", "MMPTutorial4-Networking.mmp","MMPTutorial5-Files.mmp","MMPExamples-Vocoder.mmp", "MMPExamples-Motion.mmp", "MMPExamples-Sequencer.mmp", "MMPExamples-GPS.mmp", "MMPTutorial6-2DGraphics.mmp", "MMPExamples-LANdini.mmp", "MMPExamples-Arp.mmp", "MMPExamples-TableGlitch.mmp", "MMPExamples-HID.mmp"/*wear "MMPExamples-Watch.mmp"*/);
 			}
 			else if (hardwareScreenType==CanvasType.canvasTypeTallPhone){
 				defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine-ip5.mmp", "MMPTutorial1-GUI-ip5.mmp", "MMPTutorial2-Input-ip5.mmp", "MMPTutorial3-Hardware-ip5.mmp", "MMPTutorial4-Networking-ip5.mmp","MMPTutorial5-Files-ip5.mmp", "MMPExamples-Vocoder-ip5.mmp", "MMPExamples-Motion-ip5.mmp", "MMPExamples-Sequencer-ip5.mmp","MMPExamples-GPS-ip5.mmp", "MMPTutorial6-2DGraphics-ip5.mmp", "MMPExamples-LANdini-ip5.mmp", "MMPExamples-Arp-ip5.mmp",  "MMPExamples-TableGlitch-ip5.mmp", "MMPExamples-HID-ip5.mmp");
@@ -265,9 +234,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 				defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine-Pad.mmp", "MMPTutorial1-GUI-Pad.mmp", "MMPTutorial2-Input-Pad.mmp", "MMPTutorial3-Hardware-Pad.mmp", "MMPTutorial4-Networking-Pad.mmp","MMPTutorial5-Files-Pad.mmp", "MMPExamples-Vocoder-Pad.mmp", "MMPExamples-Motion-Pad.mmp", "MMPExamples-Sequencer-Pad.mmp","MMPExamples-GPS-Pad.mmp", "MMPTutorial6-2DGraphics-Pad.mmp", "MMPExamples-LANdini-Pad.mmp", "MMPExamples-Arp-Pad.mmp",  "MMPExamples-TableGlitch-Pad.mmp", "MMPExamples-HID-Pad.mmp");
 			}
 
-			List<String> commonFilesList = Arrays.asList("MMPTutorial0-HelloSine.pd","MMPTutorial1-GUI.pd", "MMPTutorial2-Input.pd", "MMPTutorial3-Hardware.pd", "MMPTutorial4-Networking.pd","MMPTutorial5-Files.pd","cats1.jpg", "cats2.jpg","cats3.jpg","clap.wav","Welcome.pd",  "MMPExamples-Vocoder.pd", "vocod_channel.pd", "MMPExamples-Motion.pd", "MMPExamples-Sequencer.pd", "MMPExamples-GPS.pd", "MMPTutorial6-2DGraphics.pd", "MMPExamples-LANdini.pd", "MMPExamples-Arp.pd", "MMPExamples-TableGlitch.pd", "anderson1.wav", "MMPExamples-HID.pd", "MMPExamples-Watch.pd");
-
-			//defaultPatches = [defaultPatches arrayByAddingObjectsFromArray:commonFiles];
+			List<String> commonFilesList = Arrays.asList("MMPTutorial0-HelloSine.pd","MMPTutorial1-GUI.pd", "MMPTutorial2-Input.pd", "MMPTutorial3-Hardware.pd", "MMPTutorial4-Networking.pd","MMPTutorial5-Files.pd","cats1.jpg", "cats2.jpg","cats3.jpg","clap.wav","Welcome.pd",  "MMPExamples-Vocoder.pd", "vocod_channel.pd", "MMPExamples-Motion.pd", "MMPExamples-Sequencer.pd", "MMPExamples-GPS.pd", "MMPTutorial6-2DGraphics.pd", "MMPExamples-LANdini.pd", "MMPExamples-Arp.pd", "MMPExamples-TableGlitch.pd", "anderson1.wav", "MMPExamples-HID.pd", "MMPExamples-InterAppOSC.mmp", "MMPExamples-InterAppOSC.pd" /*wear "MMPExamples-Watch.pd"*/);
 
 			for (String filename : defaultPatchesList) {
 				copyAsset(filename);
@@ -305,8 +272,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 		bindService(new Intent(this, PdService.class), pdConnection, BIND_AUTO_CREATE);
 		
-		//bindService(new Intent(this, ListenerService.class), wearConnection, BIND_AUTO_CREATE);
-	    mGoogleApiClient = new GoogleApiClient.Builder(this)
+		/* wear
+		mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
                 //.addConnectionCallbacks(this)
                 .build();
@@ -340,7 +307,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 					e.printStackTrace();
 				}
 			}
-		});
+		}); */
 		
 		//wifi
 		_bc = new BroadcastReceiver() {
@@ -395,10 +362,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		}
 	}
 
-	 /**
-     * Connects to the GoogleApiClient and retrieves the connected device's Node ID. If there are
-     * multiple connected devices, the first Node ID is returned.
-     */
+	
+	/* wear
     private void retrieveDeviceNode() {
         new Thread(new Runnable() {
             @Override
@@ -414,20 +379,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 mGoogleApiClient.disconnect();
             }
         }).start();
-    }
+    } 
     
     class WorkerThread extends Thread {
         public Handler mHandler;
         public void run() {	 
             Looper.prepare();
-           mHandler = new Handler();/* {
-                public void handleMessage(Message msg) {
-                    // process incoming messages here
-                	String message = (String) msg.obj;
-                	Wearable.MessageApi.sendMessage(client, nodeId, message, null);
-                	Log.i("WEAR", "client = "+client.isConnected());
-                }
-            };*/
+           mHandler = new Handler();
             Looper.loop();
         }
     }
@@ -445,16 +403,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 	//Log.i("WEAR", "client = "+client.isConnected());
   			  }
   		});
-            /*new Thread(new Runnable() {
-                @Override
-                public void run() {
-                	mGoogleApiClient.blockingConnect(CONNECTION_TIME_OUT_MS, TimeUnit.MILLISECONDS);
-                    Wearable.MessageApi.sendMessage(mGoogleApiClient, nodeId, path, data);
-                    mGoogleApiClient.disconnect();
-                }
-            }).start();*/
+           
         }
-    }
+    }*/
     
 	@Override
 	public void onBackStackChanged() {
@@ -480,35 +431,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		if(i!=null) {
 			String action = i.getAction();
 
-			/*if (action.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
-		        WifiManager manager = (WifiManager)getSystemService(Context.WIFI_SERVICE);
-		        NetworkInfo networkInfo = i.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-		        NetworkInfo.State state = networkInfo.getState();
-
-		        if(state == NetworkInfo.State.CONNECTED)
-		        {
-		            String connectingToSsid = manager.getConnectionInfo().getSSID();//.replace("\"", "");
-		           // WifiStateHistory.recordConnectedSsid(connectingToSsid);
-		//connected
-		        }
-
-		        if(state == NetworkInfo.State.DISCONNECTED)
-		        {
-		            if(manager.isWifiEnabled())
-		            {
-		                //String disconnectedFromSsid = WifiStateHistory.getLastConnectedSsid();
-		//disconnected
-		            }
-		        }
-		    }*/
-			/*if(i.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
-		        UsbDevice device  = (UsbDevice)i.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-		        //TODO double check that on app-start processIntent is called after setting up usbmidicontroller
-		        //usbMidiController.onDeviceAttached(device);
-		        //here: set intent filter not to open mmp, but still get intents if open???
-		        //getActionBar().setBackgroundDrawable(new ColorDrawable(Color.RED));
-
-			}*/
 			//file
 			if (action.equals(Intent.ACTION_VIEW)){
 				Uri dataUri = i.getData();
@@ -597,7 +519,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	protected void onStart() {
 		super.onStart();
 		// start wear activity
+		/* wear
 		sendWearMessage("/startActivity", null);
+		*/
 	}
 
 	public void loadScene(String filenameToLoad) {

@@ -1,4 +1,4 @@
-#N canvas 399 116 989 674 10;
+#N canvas 135 37 1246 734 10;
 #X obj 6 40 receive fromGUI;
 #X obj 6 105 route /knob0 /knob1;
 #X obj 144 106 route /slider0 /slider1 /slider2 /slider3;
@@ -70,6 +70,9 @@
 PureData patch;
 #X obj 607 644 table /myTable 500;
 #X msg 749 624 list /myTable refresh;
+#X obj 967 62 receive fromGUI;
+#X obj 967 94 list trim;
+#X text 965 38 New \, sync watch GUI elements!;
 #X connect 0 0 55 0;
 #X connect 1 0 5 0;
 #X connect 1 1 6 0;
@@ -135,3 +138,4 @@ PureData patch;
 #X connect 61 0 60 0;
 #X connect 62 0 53 0;
 #X connect 64 0 60 0;
+#X connect 65 0 66 0;
