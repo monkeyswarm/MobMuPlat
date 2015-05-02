@@ -72,7 +72,6 @@
    
     Reachability* reach;
   int pageCount;
-   
 }
 
 -(void)connectPorts;
@@ -82,6 +81,7 @@
 +(canvasType)getCanvasType;
 
 @property BOOL backgroundAudioEnabled;
+@property BOOL isPortsConnected;
 @property (retain) PdAudioController* audioController;
 @property (retain) SettingsViewController* settingsVC;
 @property (copy, nonatomic) NSString *outputIpAddress;

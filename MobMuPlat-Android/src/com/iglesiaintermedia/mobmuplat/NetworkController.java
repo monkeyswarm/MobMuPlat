@@ -243,6 +243,11 @@ public class NetworkController extends Observable{
 
 	public void handlePDMessage(Object[] args) {
 		if (args.length == 0 )return;
+		if (!(args[0] instanceof String)) {
+			// Network message is not starting with a string.
+			Log.e("NETWORK", "Received message array does not start with a string");
+			return;
+		}
 		//
 		//look for LANdini - this clause looks for /send, /send/GD, /send/OGD
 		//String address = (String)args[0];//check for isntanceof string first
@@ -275,7 +280,6 @@ public class NetworkController extends Observable{
 		//not for landini - send out regular!
 		else{
 			sendMessage(args);
-			//[outPort sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:list]]];
 		}
 	}
 

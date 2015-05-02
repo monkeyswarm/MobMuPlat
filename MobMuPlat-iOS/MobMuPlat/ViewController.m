@@ -389,6 +389,9 @@ extern void pique_setup(void);
     //[self loadScene:[jsonString objectFromJSONString]];
     NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
     [self loadScene:[NSJSONSerialization JSONObjectWithData:data options:nil error:nil]];
+  } else {
+    //still put butotn
+    [self.view addSubview:settingsButton];
   }
 
 }
@@ -592,11 +595,13 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   }
   outPortToLANdini = [manager createNewOutputToAddress:@"127.0.0.1" atPort:50506];
   inPortFromLANdini = [manager createNewInputForPort:50505];
+  _isPortsConnected = YES;
 }
 
 -(void)disconnectPorts{
   [manager deleteAllInputs];
   [manager deleteAllOutputs];
+  _isPortsConnected = NO;
 }
 
 -(void)setOutputIpAddress:(NSString *)outputIpAddress {
@@ -1098,7 +1103,11 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     return;//protect against bad elements that got dropped from array...
   }
   if([source isEqualToString:@"toNetwork"]){
-
+    if ([list count]==0) return;
+    if (![[list objectAtIndex:0] isKindOfClass:[NSString class]]) {
+      NSLog(@"toNetwork first element is not string");
+      return;
+    }
     //look for LANdini - this clause looks for /send, /send/GD, /send/OGD
     // TODO protect against cases like /sendsomethingelse while in landini!!!!
     if([[list objectAtIndex:0] rangeOfString:@"/send"].location == 0) {
@@ -1114,10 +1123,10 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
       }
     }
     //other landini messages, keep passing to landini
-    else if ( [[list objectAtIndex:0] rangeOfString:@"/networkTime"].location == 0 ||
+    else if ([[list objectAtIndex:0] rangeOfString:@"/networkTime"].location == 0 ||
              [[list objectAtIndex:0] rangeOfString:@"/numUsers"].location == 0 ||
              [[list objectAtIndex:0] rangeOfString:@"/userNames"].location == 0 ||
-             [[list objectAtIndex:0] rangeOfString:@"/myName"].location == 0){
+             [[list objectAtIndex:0] rangeOfString:@"/myName"].location == 0) {
 
       [outPortToLANdini sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:list]]];
     }
@@ -1258,6 +1267,13 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
       NSArray *msgArray2 = [NSArray arrayWithObjects:@"/timeString", humanDateString, nil];
       [PdBase sendList:msgArray2 toReceiver:@"fromSystem"];
+    } else if ([[list objectAtIndex:0] isEqualToString:@"/getIpAddress"] ){
+      NSString *ipAddress = [LANdiniLANManager getIPAddress]; //String, nil if not found
+      if (!ipAddress) {
+        ipAddress = @"none";
+      }
+      NSArray *msgArray = [NSArray arrayWithObjects:@"/ipAddress", ipAddress, nil];
+      [PdBase sendList:msgArray toReceiver:@"fromSystem"];
     }
   }
 }

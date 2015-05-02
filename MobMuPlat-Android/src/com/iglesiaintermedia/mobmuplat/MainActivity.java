@@ -673,32 +673,34 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		_compassMsgArray[0] = "/compass";
 
 		SensorManager sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+		int sensorDelay = SensorManager.SENSOR_DELAY_NORMAL;
 		//
-		// onSensorChanged is now called on a background thread.
+		// onSensorChanged is now called on a background thread. NOPE! leads to arcane "NewStringUTF" crash? no.
 		HandlerThread handlerThread = new HandlerThread("sensorThread", android.os.Process.THREAD_PRIORITY_BACKGROUND);
 		handlerThread.start();
 		Handler handler = new Handler(handlerThread.getLooper());
 
+		
 		Sensor accel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		sensorManager.registerListener(this, accel,SensorManager.SENSOR_DELAY_GAME, handler);
+		sensorManager.registerListener(this, accel,sensorDelay, handler);
 		Sensor gyro = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-		sensorManager.registerListener(this,  gyro, SensorManager.SENSOR_DELAY_GAME, handler);//TODO rate
+		sensorManager.registerListener(this,  gyro, sensorDelay, handler);
 		Sensor rotation = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-		sensorManager.registerListener(this,  rotation, SensorManager.SENSOR_DELAY_GAME, handler);//TODO rate
+		sensorManager.registerListener(this,  rotation, sensorDelay, handler);
 		Sensor compass = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
-		sensorManager.registerListener(this,  compass, SensorManager.SENSOR_DELAY_GAME, handler);
+		sensorManager.registerListener(this,  compass, sensorDelay, handler);
 
 		//
 
 		/*Sensor accel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		sensorManager.registerListener(this,  accel, SensorManager.SENSOR_DELAY_GAME);//TODO rate
+		sensorManager.registerListener(this,  accel, sensorDelay);//TODO rate
 		Sensor gyro = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-		sensorManager.registerListener(this,  gyro, SensorManager.SENSOR_DELAY_GAME);//TODO rate
+		sensorManager.registerListener(this,  gyro, sensorDelay);//TODO rate
 		Sensor rotation = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-		sensorManager.registerListener(this,  rotation, SensorManager.SENSOR_DELAY_GAME);//TODO rate
+		sensorManager.registerListener(this,  rotation, sensorDelay);
 		Sensor compass = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
-		sensorManager.registerListener(this,  compass, SensorManager.SENSOR_DELAY_GAME);//TODO rate
-		 */
+		sensorManager.registerListener(this,  compass, sensorDelay);//TODO rate*/
+		 
 	}
 
 	//insane: 10" tablets can have a "natural" (Surface.ROTATION_0) at landscape, not portrait. Determine

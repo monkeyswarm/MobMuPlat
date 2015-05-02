@@ -126,13 +126,14 @@
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-// Now we are leaving these on all the time...
- //   [self.viewController disconnectPorts];//disconnect OSC ports on resign, to avoid conflicts
+
     
   if(![self.viewController backgroundAudioEnabled] &&
      !self.viewController.audiobusController.connected &&
      !self.viewController.audiobusController.audiobusAppRunning) {
+
     [[self.viewController audioController] setActive:NO];//shut down audio processing
+    [self.viewController disconnectPorts];//disconnect OSC ports on resign, to avoid conflicts
   }
 }
 
@@ -153,6 +154,9 @@
     //if(![self.viewController backgroundAudioEnabled])//if we shut off audio on resign, restart it
   if(![[self.viewController audioController] isActive]) {
       [[self.viewController audioController] setActive:YES];
+  }
+  if (![self.viewController isPortsConnected]){
+    [self.viewController connectPorts];
   }
 }
 

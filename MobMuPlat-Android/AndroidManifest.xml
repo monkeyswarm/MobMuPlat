@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.iglesiaintermedia.mobmuplat"
-    android:versionCode="6"
+    android:versionCode="7"
     android:versionName="0.15" >
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -31,7 +31,7 @@
 
     <uses-sdk
         android:minSdkVersion="14"
-        android:targetSdkVersion="19" />
+        android:targetSdkVersion="22" />
 
     <application
         android:allowBackup="true"
@@ -60,35 +60,32 @@
     			<data android:pathPattern=".*\\.pd" />
     			<data android:pathPattern=".*\\.zip" />
   			</intent-filter>
+  			
   			<intent-filter> <!-- by mimetype -->
    				 <action android:name="android.intent.action.VIEW" />
     			<category android:name="android.intent.category.DEFAULT" />
     			<category android:name="android.intent.category.BROWSABLE" />
-    			<data android:scheme="file" />
-    			<data android:host="*" />
-    			<data android:mimeType="application/puredata" />
-    			<data android:mimeType="application/mobmuplat" />
+    			<data android:mimeType="text/plain" />
     			<data android:mimeType="application/zip" />
   			</intent-filter>
   			
-  			<intent-filter> <!-- Intent filter for open PD files from email -->
-            	<action android:name="android.intent.action.VIEW" />
-            	<category android:name="android.intent.category.DEFAULT" />
-            	<category android:name="android.intent.category.BROWSABLE" />
-            	 <data android:scheme="content" android:mimeType="application/octet-stream" android:host="*" android:pathPattern=".*\\.pd"/>
-                 <data android:scheme="file" android:mimeType="application/octet-stream" android:host="*" android:pathPattern=".*\\.pd"/>
-        	</intent-filter>
+  			
         	
   			<intent-filter> <!-- Intent filter for open ZIP files from email -->
             	<data android:scheme="content" />
             	<action android:name="android.intent.action.VIEW" />
             	<category android:name="android.intent.category.DEFAULT" />
             	<category android:name="android.intent.category.BROWSABLE" />
-            	<data android:mimeType="application/puredata" />
-            	<data android:mimeType="application/mobmuplat" />
+            	<data android:mimeType="text/plain" />
             	<data android:mimeType="application/zip" />
         	</intent-filter>
   			
+  			<intent-filter> <!-- Intent filter for open files from drive/email,still fubar -->
+            	<action android:name="android.intent.action.VIEW" />
+            	<category android:name="android.intent.category.DEFAULT" />
+            	 <data android:scheme="content" android:mimeType="*/*" android:host="*" android:pathPattern=".*\\.pd"/>
+                 <data android:scheme="file" android:mimeType="*/*" android:host="*" android:pathPattern=".*\\.pd"/>
+        	</intent-filter>
   			
   			<!-- 
   			<intent-filter>

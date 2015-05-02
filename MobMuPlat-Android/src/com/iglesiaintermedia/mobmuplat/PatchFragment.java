@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.puredata.android.utils.PdUiDispatcher;
 import org.puredata.core.PdBase;
+import org.puredata.core.PdListener;
 import org.puredata.core.PdReceiver;
 
 import android.app.AlertDialog;
@@ -67,7 +69,7 @@ import com.iglesiaintermedia.mobmuplat.controls.MMPToggle;
 import com.iglesiaintermedia.mobmuplat.controls.MMPUnknown;
 import com.iglesiaintermedia.mobmuplat.controls.MMPXYSlider;
 
-public class PatchFragment extends Fragment implements ControlDelegate, PagingScrollViewDelegate{
+public class PatchFragment extends Fragment implements ControlDelegate, PagingScrollViewDelegate, PdListener{
 	private String TAG = "PatchFragment";
 
 	public PagingHorizontalScrollView scrollContainer;
@@ -95,6 +97,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 
 	public ImageButton _settingsButton; //TODO make private again...is set in mainactivity loadScenePatchOnly
 	private View _container;
+	PdUiDispatcher _dispatcher;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -103,10 +106,22 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 		_allGUIControlMap = new HashMap<String,ArrayList<MMPControl>>();
 		/* wear _wearAddressSet = new HashSet<String>(); */
 		//init pd
-		PdBase.setReceiver(receiver);
-		PdBase.subscribe("toGUI");//from pd
+		//PdBase.setReceiver(receiver);
+		/*PdBase.subscribe("toGUI");//from pd
 		PdBase.subscribe("toNetwork");
-		PdBase.subscribe("toSystem");
+		PdBase.subscribe("toSystem");*/
+		
+		_dispatcher = new PdUiDispatcher() {
+			@Override
+			public void print(String s) {
+				ConsoleLogController.getInstance().append(s);
+			}
+		};
+		_dispatcher.addListener("toGUI", this);
+		_dispatcher.addListener("toNetwork", this);
+		_dispatcher.addListener("toSystem", this);
+		PdBase.setReceiver(_dispatcher);
+		
 	}
 
 	@Override
@@ -201,7 +216,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 		scrollRelativeLayout.setLayoutParams(new FrameLayout.LayoutParams(_container.getWidth(),_container.getHeight()));
 		scrollRelativeLayout.setBackgroundColor(Color.GRAY);
 		TextView tv = new TextView(_mainActivity);
-		tv.setText("running "+filenameToLoad+"\nwith no interface\n\n(any network data will be\n on default port "+NetworkController.DEFAULT_PORT_NUMBER+")");
+		tv.setText("running "+filenameToLoad+"\nwith no interface");
 		tv.setTextColor(Color.WHITE);
 		tv.setGravity(Gravity.CENTER);
 
@@ -606,12 +621,12 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 	}
 
 	// Receive from pd
-	private PdReceiver receiver = new PdReceiver() {
+//	private PdReceiver receiver = new PdReceiver() {
 
-		@Override
-		public void print(String s) {
+		//@Override
+		/*public void print(String s) {
 			ConsoleLogController.getInstance().append(s);
-		}
+		}*/
 
 		@Override
 		public void receiveBang(String source) {
@@ -704,6 +719,11 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 					String formattedTime = sdf.format(now);
 					Object[] msgArray2 = new Object[]{"/timeString", formattedTime};
 					PdBase.sendList("fromSystem", msgArray2);
+				} else if (args.length > 0 && args[0].equals("/getIpAddress")) {
+					String ipAddress = NetworkController.getIPAddress(true);
+					if (ipAddress==null)ipAddress = "none";
+					Object[] msgArray = new Object[]{"/ipAddress", ipAddress};
+					PdBase.sendList("fromSystem", msgArray);
 				}
 			}
 		}
@@ -718,7 +738,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 		public void receiveSymbol(String source, String symbol) {
 			//pdPost("symbol: " + symbol);
 		}
-	};
+	
 
 
 	private void showAlert(String string) {
