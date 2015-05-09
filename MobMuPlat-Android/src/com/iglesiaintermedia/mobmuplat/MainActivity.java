@@ -53,6 +53,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -1122,9 +1123,74 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	public void setBackgroundAudioEnabled(boolean backgroundAudioEnabled) {
 		_stopAudioWhilePaused = !backgroundAudioEnabled;
 	}
+	
+	private class UnzipTask extends AsyncTask<Void, Void, Boolean> {
+		InputStream _is;
+		String _zipname;
+		public UnzipTask(InputStream is, String zipname) {
+			_is = is;
+			_zipname = zipname;
+		}
+		@Override
+		protected Boolean doInBackground(Void... args) {
+			ZipInputStream zis;
+			try {
+				String filename;
 
-	private boolean unpackZipInputStream(InputStream is, String zipname) {
-		ZipInputStream zis;
+				zis = new ZipInputStream(new BufferedInputStream(_is));          
+				ZipEntry ze;
+				byte[] buffer = new byte[1024];
+				int count;
+
+				while ((ze = zis.getNextEntry()) != null) {
+
+					filename = ze.getName();
+					Log.i("ZIP", "opening "+filename);
+
+					// Need to create directories if doesn't exist.
+					if (ze.isDirectory()) {
+						File fmd = new File(MainActivity.getDocumentsFolderPath(),  filename);
+						fmd.mkdirs();
+						continue;
+					}
+
+					File outFile = new File(MainActivity.getDocumentsFolderPath(), filename);
+					if(VERBOSE)Log.i(TAG, "zip writes to: "+outFile.getAbsolutePath());
+					FileOutputStream fout = new FileOutputStream(outFile);
+
+					while ((count = zis.read(buffer)) != -1) {
+						fout.write(buffer, 0, count);             
+					}
+
+					fout.close();               
+					zis.closeEntry();
+					if(VERBOSE)Log.i(TAG, "zip wrote "+filename);
+				}
+
+				zis.close();
+				return true;
+				//Log.i("ZIP", "complete");
+				
+			} 
+			catch(Exception e) {
+				e.printStackTrace();
+				return false;
+			} 
+		}
+
+		@Override
+		protected void onPostExecute(Boolean success) {
+			if (success.booleanValue()==true) {
+				showAlert("Unzipped contents of "+_zipname+" into Documents folder.");
+			} else {
+				showAlert("Error unzipping contents of "+_zipname);
+			}
+		}
+	}
+
+	private void unpackZipInputStream(InputStream is, String zipname) {
+		new UnzipTask(is,zipname).execute();
+		/*ZipInputStream zis;
 		try {
 			String filename;
 
@@ -1168,18 +1234,17 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			return false;
 		} 
 
-		return true;
+		return true;*/
 	}
 
-	private boolean unpackZip(String path, String zipname) {    
+	private void unpackZip(String path, String zipname) {    
 		//Log.i("ZIP", "unzipping "+path+" "+zipname);
 		try {
 			InputStream is = new FileInputStream(path + zipname);
-			return unpackZipInputStream(is, zipname);
+			unpackZipInputStream(is, zipname);
 		} catch(Exception e) {
 			e.printStackTrace();
 			showAlert("Error unzipping contents of "+zipname);
-			return false;
 		} 
 	}
 

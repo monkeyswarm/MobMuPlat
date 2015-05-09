@@ -142,7 +142,7 @@
         int indexX = (int)[[inArray objectAtIndex:0] floatValue];
         int indexY = (int)[[inArray objectAtIndex:1] floatValue];
         int val = (int)[[inArray objectAtIndex:2] floatValue];
-        if(indexX<dimX && indexY<dimY){
+        if(indexX<dimX && indexY<dimY && indexX>=0 && indexY>=0){ //test this is signed
             
             UIButton* currButton = [gridButtons objectAtIndex:indexX+indexY*dimX];
             if(val>1)val=1;if(val<0)val=0;

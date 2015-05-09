@@ -56,10 +56,12 @@
     
     //if a zip, unpack to documents, and overwrite all files with same name, then delete the zip
     if([suffix isEqualToString:@"zip"]){
+      dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         ZipArchive* za = [[ZipArchive alloc] init];
         
         if( [za UnzipOpenFile:[url path]] ) {
             if( [za UnzipFileTo:publicDocumentsDir overWrite:YES] != NO ) {
+              dispatch_async(dispatch_get_main_queue(), ^{
                 UIAlertView *alert = [[UIAlertView alloc]
                                       initWithTitle: @"Archive Decompressed"
                                       message: [NSString stringWithFormat:@"Decompressed contents of %@ to MobMuPlat Documents", filename]
@@ -70,9 +72,11 @@
                 NSError* error;
                 [[NSFileManager defaultManager]removeItemAtURL:url error:&error];//delete the orig zip file
                 [[self.viewController settingsVC] reloadFileTable];
+              });
 
             }
             else{
+              dispatch_async(dispatch_get_main_queue(), ^{
                 UIAlertView *alert = [[UIAlertView alloc]
                                       initWithTitle: @"Archive Failure"
                                       message: [NSString stringWithFormat:@"Could not decompress contents of %@", filename]
@@ -80,14 +84,14 @@
                                       cancelButtonTitle:@"OK"
                                       otherButtonTitles:nil];
                 [alert show];
+              });
             }
             
             [za UnzipCloseFile];
         }
-        
+      });
     }
-    
-    
+  
     else{//not zip - manually overwrite file
     
         NSError *error;
