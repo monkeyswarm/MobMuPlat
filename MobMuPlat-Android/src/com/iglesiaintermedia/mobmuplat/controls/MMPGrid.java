@@ -82,6 +82,7 @@ public class MMPGrid extends MMPControl {
     }
 	
 	public void receiveList(List<Object> messageArray){ 
+		super.receiveList(messageArray);
     	boolean sendVal  = true;
 		//if message preceded by "set", then set "sendVal" flag to NO, and strip off set and make new messages array without it
 	    if (messageArray.size()>0 && (messageArray.get(0) instanceof String) && messageArray.get(0).equals("set") ){
@@ -187,6 +188,7 @@ class GridCellView extends View {
         //int index = event.getActionIndex();
         
         if (action == MotionEvent.ACTION_DOWN) {
+        	if (!_parentGrid.isEnabled()) return false; //reject touch down if disabled.
         	_parentGrid.getParent().requestDisallowInterceptTouchEvent(true);// dont' send touches up to scroll view
         	
         	if (_parentGrid.mode == 0 || _parentGrid.mode == 2) { //toggle, or hybrid touch down like toggle

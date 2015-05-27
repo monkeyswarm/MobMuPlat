@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.content.Context;
 import android.text.TextPaint;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -21,16 +22,16 @@ public class MMPControl extends RelativeLayout {
 	public ControlDelegate controlDelegate;
 	protected TextPaint paint;
 	protected float screenRatio;
+	public boolean enabled;
 	
 	public MMPControl(Context context, float screenRatio) {
 		super(context);
-		//test
+		
 		int color = Color.TRANSPARENT;
         Drawable background = this.getBackground();
         if (background instanceof ColorDrawable)
             color = ((ColorDrawable) background).getColor();
-		//Log.i("CONTROL", "bg color "+color);
-		//
+		
 		this.setBackgroundColor(Color.TRANSPARENT);//without this, no widgets are viewable. no idea why!
 		this.screenRatio = screenRatio;
 		color = Color.BLUE;
@@ -47,15 +48,13 @@ public class MMPControl extends RelativeLayout {
 		 this.highlightColor = color;
 	 }
 	
-	public void receiveList(List<Object> array){
-		// overriden by subclasses
+	public void receiveList(List<Object> messageArray){
+		if (messageArray.size()>=2 && 
+				(messageArray.get(0) instanceof String) && 
+				messageArray.get(0).equals("enable") && 
+				(messageArray.get(1) instanceof Float)) {
+			this.setEnabled(((Float)(messageArray.get(1))).floatValue() > 0);
+			this.setAlpha(this.isEnabled() ? 1.0f : .2f );
+		}
 	}
-	
-	/*
-	public static boolean isNumber(Object obj){
-		if (obj instanceof Integer || obj instanceof Float) return true;
-		return false;
-	}
-	
-	public static float getFloat(Object obj){*/
 }

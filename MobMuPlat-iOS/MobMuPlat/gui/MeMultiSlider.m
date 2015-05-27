@@ -179,6 +179,15 @@
 
 //receive messages from PureData (via [send toGUI]), routed from ViewController via the address to this object
 -(void)receiveList:(NSArray *)inArray{
+  [super receiveList:inArray];
+  // ignore enable message
+  if ([inArray count] >= 2 &&
+      [inArray[0] isKindOfClass:[NSString class]] &&
+      [inArray[0] isEqualToString:@"enable"] &&
+      [inArray[1] isKindOfClass:[NSNumber class]]) {
+    return;
+  }
+  
     BOOL sendVal=YES;
     //if message preceded by "set", then set "sendVal" flag to NO, and strip off set and make new messages array without it
     if ([inArray count]>0 && [[inArray objectAtIndex:0] isKindOfClass:[NSString class]] && [[inArray objectAtIndex:0] isEqualToString:@"set"]){
@@ -198,7 +207,7 @@
       [self updateThumbs];
       if(sendVal)[self sendValue];
     }
-  
+    // otherwise assume list of numbers
     else if ([inArray count]>0 && [[inArray objectAtIndex:0] isKindOfClass:[NSNumber class]] ){ //list to set values
         NSMutableArray* newValArray = [[NSMutableArray alloc]init];
         

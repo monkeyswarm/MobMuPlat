@@ -335,6 +335,7 @@
 
 
 -(void)receiveList:(NSArray *)inArray{
+  [super receiveList:inArray];
   if ([inArray count]==1 && [[inArray objectAtIndex:0] isKindOfClass:[NSString class]] && [[inArray objectAtIndex:0] isEqualToString:@"refresh"]) {
       [self copyFromPDAndDraw];//add range arguments? nah.
   }

@@ -1137,11 +1137,6 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   }
 
   else if([source isEqualToString:@"toGUI"]){
-    /*for(MeControl* control in allGUIControl){
-     if([[control address] isEqualToString:[list objectAtIndex:0]]){
-     [control receiveList:[list subarrayWithRange:NSMakeRange(1, [list count]-1)]];
-     }
-     }*/
     NSMutableArray *addressArray = [allGUIControl objectForKey:[list objectAtIndex:0]];
     for (MeControl *control in addressArray) { //addressArray can be nil, and will just skip over this...
       [control receiveList:[list subarrayWithRange:NSMakeRange(1, [list count]-1)]];

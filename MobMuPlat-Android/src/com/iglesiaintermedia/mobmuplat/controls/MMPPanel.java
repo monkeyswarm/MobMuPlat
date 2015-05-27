@@ -53,6 +53,7 @@ public class MMPPanel extends MMPControl {
 	}
 	
 	public boolean onTouchEvent(MotionEvent event) {
+		if (!this.isEnabled()) return false; //reject touch down if disabled.
 		if(!_shouldPassTouches)getParent().requestDisallowInterceptTouchEvent(true);
 		return true;
 	}
@@ -86,6 +87,7 @@ public class MMPPanel extends MMPControl {
 	}
 
 	public void receiveList(List<Object> messageArray){ 
+		super.receiveList(messageArray);
     	//image path
 		if (messageArray.size()==2 && (messageArray.get(0) instanceof String) && ((String)(messageArray.get(0))).equals("image")){
 			String path =  (String)messageArray.get(1);

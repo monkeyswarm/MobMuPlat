@@ -60,6 +60,7 @@ public class MMPSlider extends MMPControl{
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();
         if (action == MotionEvent.ACTION_DOWN) {
+        	if (!this.isEnabled()) return false; //reject touch down if disabled.
         	this.paint.setColor(this.highlightColor);
         	invalidate();
         } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
@@ -156,6 +157,7 @@ public class MMPSlider extends MMPControl{
     
     //
     public void receiveList(List<Object> messageArray){ 
+    	super.receiveList(messageArray);
     	//Log.i("MobMuPlat", "receve list "+messageArray);
     	boolean sendVal  = true;
 		//if message preceded by "set", then set "sendVal" flag to NO, and strip off set and make new messages array without it

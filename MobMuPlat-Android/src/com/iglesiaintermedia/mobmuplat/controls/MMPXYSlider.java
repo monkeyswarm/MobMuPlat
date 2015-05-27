@@ -35,6 +35,7 @@ public class MMPXYSlider extends MMPControl {
 	public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();//TODO seitch to masked
         if (action == MotionEvent.ACTION_DOWN) {
+        	if (!this.isEnabled()) return false; //reject touch down if disabled.
         	getParent().requestDisallowInterceptTouchEvent(true);// dont' send touches up to scroll view
         	this.paint.setColor(this.highlightColor);
         }
@@ -82,6 +83,7 @@ public class MMPXYSlider extends MMPControl {
 	}
 	
 	 public void receiveList(List<Object> messageArray){ 	
+		 super.receiveList(messageArray);
 		//Log.i("MobMuPlat", "receve list "+messageArray);
 	    boolean sendVal  = true;
 		//if message preceded by "set", then set "sendVal" flag to NO, and strip off set and make new messages array without it

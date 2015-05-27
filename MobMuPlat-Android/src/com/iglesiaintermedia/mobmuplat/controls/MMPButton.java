@@ -21,6 +21,7 @@ public class MMPButton extends MMPControl {
 	public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();
         if (action == MotionEvent.ACTION_DOWN) {
+        	if (!this.isEnabled()) return false; //reject touch down if disabled.
         	getParent().requestDisallowInterceptTouchEvent(true);// dont' send touches up to scroll view
         	_value = 1;
         	sendValue();
@@ -60,7 +61,9 @@ public class MMPButton extends MMPControl {
 	    canvas.drawRoundRect(_myRect,5*this.screenRatio, 5*this.screenRatio, this.paint);
 	}
 	
-	 public void receiveList(List<Object> messageArray){ 	
+	 public void receiveList(List<Object> messageArray){ 
+		super.receiveList(messageArray);
+		
 		if (messageArray.size()>0 && (messageArray.get(0) instanceof Float)){
 			_value = 1;
 			sendValue();

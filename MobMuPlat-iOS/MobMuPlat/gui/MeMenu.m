@@ -161,6 +161,15 @@ static NSString *CellIdentifier = @"MenuCell";
 
 //receive messages from PureData (via [send toGUI]), routed from ViewController via the address to this object
 -(void)receiveList:(NSArray *)inArray{
+  [super receiveList:inArray];
+  // ignore enable message
+  if ([inArray count] >= 2 &&
+      [inArray[0] isKindOfClass:[NSString class]] &&
+      [inArray[0] isEqualToString:@"enable"] &&
+      [inArray[1] isKindOfClass:[NSNumber class]]) {
+    return;
+  }
+
   NSMutableArray* dataArray = [[NSMutableArray alloc] init];
   
   for(id thing in inArray){

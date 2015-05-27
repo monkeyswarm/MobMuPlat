@@ -268,6 +268,7 @@ public class MMPLCD extends MMPControl {
 		if(valY>1)valY=1;if(valY<0)valY=0;
 		
 		if (action == MotionEvent.ACTION_DOWN) {
+			if (!this.isEnabled()) return false; //reject touch down if disabled.
 			getParent().requestDisallowInterceptTouchEvent(true);
 		    sendValue(1, valX, valY);
 		} else if (action == MotionEvent.ACTION_MOVE) {
@@ -290,6 +291,7 @@ public class MMPLCD extends MMPControl {
 	}
 	
 	public void receiveList(List<Object> messageArray){ 
+		super.receiveList(messageArray);
 		//preprocess integers into float - java OSC library mixes the two even though PD just sends floats
 		for(int i=1;i < messageArray.size();i++){
 			if (messageArray.get(i) instanceof Integer){

@@ -86,6 +86,7 @@ public class MMPTable extends MMPControl {
         float touchY = event.getY();
         
         if (action == MotionEvent.ACTION_DOWN) {
+        	if (!this.isEnabled()) return false; //reject touch down if disabled.
         	getParent().requestDisallowInterceptTouchEvent(true);// dont' send touches up to scroll view
         	
         	if (mode == 0) {
@@ -269,6 +270,7 @@ public class MMPTable extends MMPControl {
 	}
 	
 	public void receiveList(List<Object> messageArray){
+		super.receiveList(messageArray);
 		if (messageArray.size()==1 && (messageArray.get(0) instanceof String) && messageArray.get(0).equals("refresh") ){
 	        copyFromPDAndDraw();
 	    }

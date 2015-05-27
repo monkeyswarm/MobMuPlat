@@ -22,8 +22,20 @@
     return [UIColor colorWithRed:[[rgbaArray objectAtIndex:0] floatValue] green:[[rgbaArray objectAtIndex:1] floatValue] blue:[[rgbaArray objectAtIndex:2] floatValue] alpha:[[rgbaArray objectAtIndex:3] floatValue]];
 }
 
-//empty implementation so that "receiveList" can be called on MeControl, even though it is overridden by all subclasses
--(void)receiveList:(NSArray*)inArray{}
-//TODO do the cmd:selectornot implemented thing
+//"receiveList" can be called on MeControl, even though it is overridden by all subclasses
+-(void)receiveList:(NSArray*)inArray{
+  if ([inArray count] >= 2 &&
+      [inArray[0] isKindOfClass:[NSString class]] &&
+      [inArray[0] isEqualToString:@"enable"] &&
+      [inArray[1] isKindOfClass:[NSNumber class]]) {
+    self.enabled = ([inArray[1] floatValue] > 0);
+  }
+}
+
+- (void)setEnabled:(BOOL)enabled {
+  [super setEnabled:enabled];
+  self.alpha = enabled ? 1 : .2;
+}
+
 
 @end

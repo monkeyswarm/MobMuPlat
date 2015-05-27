@@ -22,7 +22,6 @@
 +(UIColor*) colorFromRGBArray:(NSArray*)rgbArray;//take three floats and turn into color
 +(UIColor*) colorFromRGBAArray:(NSArray*)rgbaArray;//take 4 floats and turn into color with translucency
 
-//this is here, but blank, so can be optionally overridden by subclass
 -(void)receiveList:(NSArray*)inArray;
 
 
@@ -31,4 +30,5 @@
 @property (nonatomic) NSString* address;
 @property (nonatomic) UIColor* color;
 @property (nonatomic) UIColor* highlightColor;
+
 @end

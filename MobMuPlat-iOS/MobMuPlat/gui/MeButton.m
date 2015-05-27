@@ -57,6 +57,7 @@
 //for button, any message means a instantaneous touch down and touch up
 //it does not respond to "set" anything
 -(void)receiveList:(NSArray *)inArray{
+  [super receiveList:inArray];
     if ([inArray count]>0 && [[inArray objectAtIndex:0] isKindOfClass:[NSNumber class]]){
         [self setValue:1];
         [self setValue:0];

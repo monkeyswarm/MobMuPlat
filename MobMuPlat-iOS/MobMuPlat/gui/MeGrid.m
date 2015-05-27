@@ -126,7 +126,7 @@
 
 //receive messages from PureData (via [send toGUI]), routed from ViewController via the address to this object
 -(void)receiveList:(NSArray *)inArray{
-
+  [super receiveList:inArray];
     BOOL sendVal=YES;
     //if message preceded by "set", then set "sendVal" flag to NO, and strip off set and make new messages array without it
     if ([inArray count]>0 && [[inArray objectAtIndex:0] isKindOfClass:[NSString class]] && [[inArray objectAtIndex:0] isEqualToString:@"set"]){
@@ -142,7 +142,7 @@
         int indexX = (int)[[inArray objectAtIndex:0] floatValue];
         int indexY = (int)[[inArray objectAtIndex:1] floatValue];
         int val = (int)[[inArray objectAtIndex:2] floatValue];
-        if(indexX<dimX && indexY<dimY && indexX>=0 && indexY>=0){ //test this is signed
+        if(indexX<dimX && indexY<dimY && indexX>=0 && indexY>=0){
             
             UIButton* currButton = [gridButtons objectAtIndex:indexX+indexY*dimX];
             if(val>1)val=1;if(val<0)val=0;

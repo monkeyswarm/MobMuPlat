@@ -33,7 +33,8 @@
     thumbView.userInteractionEnabled=NO;
     [self addSubview:thumbView];
     [self setRange:2];
-    
+    //[self setColor:[UIColor whiteColor]];
+
     return self;
 }
 
@@ -139,6 +140,7 @@
 
 //receive messages from PureData (via [send toGUI]), routed from ViewController via the address to this object
 -(void)receiveList:(NSArray *)inArray{
+  [super receiveList:inArray];
     BOOL sendVal=YES;
     //if message preceded by "set", then set "sendVal" flag to NO, and strip off set and make new messages array without it
     if ([inArray count]>0 && [[inArray objectAtIndex:0] isKindOfClass:[NSString class]] && [[inArray objectAtIndex:0] isEqualToString:@"set"]){

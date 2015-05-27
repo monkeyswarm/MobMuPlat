@@ -2,6 +2,7 @@ package com.iglesiaintermedia.mobmuplat.controls;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -39,6 +40,7 @@ public class MMPMenu extends MMPControl {
 	public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();
         if (action == MotionEvent.ACTION_DOWN) {
+        	if (!this.isEnabled()) return false; //reject touch down if disabled.
         	//getParent().requestDisallowInterceptTouchEvent(true);
         	this.controlDelegate.launchMenuFragment(this);
         	
@@ -80,6 +82,15 @@ public class MMPMenu extends MMPControl {
 	}
 	
 	public void receiveList(List<Object> messageArray){
+		super.receiveList(messageArray);
+		//ignore enable message
+		if (messageArray.size()>=2 && 
+				(messageArray.get(0) instanceof String) && 
+				messageArray.get(0).equals("enable") && 
+				(messageArray.get(1) instanceof Float)) {
+			return;
+		}
+		
 		List<String> newDataArray = new ArrayList<String>();
 		
 	 //put all elements in list into a string array

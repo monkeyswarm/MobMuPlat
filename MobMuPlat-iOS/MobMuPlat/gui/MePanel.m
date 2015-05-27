@@ -61,6 +61,7 @@
 
 //receive messages from PureData (via [send toGUI]), routed from ViewController via the address to this object
 -(void)receiveList:(NSArray *)inArray{
+  [super receiveList:inArray];
     //image path
     if([inArray count]==2 &&[[inArray objectAtIndex:0] isEqualToString:@"image"]  ){
     NSString* newPath;

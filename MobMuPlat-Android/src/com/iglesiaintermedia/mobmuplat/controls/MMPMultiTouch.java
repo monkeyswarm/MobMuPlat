@@ -55,6 +55,7 @@ public class MMPMultiTouch extends MMPControl {
 		//todo move to right place up/down
 		int action = event.getActionMasked();
 		if (action == MotionEvent.ACTION_DOWN) {
+			if (!this.isEnabled()) return false; //reject touch down if disabled.
 			getParent().requestDisallowInterceptTouchEvent(true);
 			this.paint.setColor(this.highlightColor);
 		} else if(action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {

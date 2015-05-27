@@ -111,6 +111,14 @@ public class MMPLabel extends MMPControl {
 	}
 	
 	public void receiveList(List<Object> messageArray){ 
+		super.receiveList(messageArray);
+		//ignore enable message
+		if (messageArray.size()>=2 && 
+				(messageArray.get(0) instanceof String) && 
+				messageArray.get(0).equals("enable") && 
+				(messageArray.get(1) instanceof Float)) {
+			return;
+		}
 	    //set new value
 	    //System.out.print("\nms size "+messageArray.size()+" "+messageArray.get(0));
 	    if (messageArray.size()==2 && (messageArray.get(0) instanceof String) && (messageArray.get(1) instanceof Float) && messageArray.get(0).equals("highlight")) {

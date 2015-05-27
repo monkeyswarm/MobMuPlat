@@ -86,6 +86,7 @@ public class MMPKnob extends MMPControl{
 	public boolean onTouchEvent(MotionEvent event) {
 		int action = event.getActionMasked();
         if (action == MotionEvent.ACTION_DOWN) {
+        	if (!this.isEnabled()) return false; //reject touch down if disabled.
         	getParent().requestDisallowInterceptTouchEvent(true);
         	_highlight = true;//invalidate() in setValue in next clause
         }  
@@ -155,6 +156,7 @@ public class MMPKnob extends MMPControl{
 	}
 	
 	public void receiveList(List<Object> messageArray){
+		super.receiveList(messageArray);
 		boolean sendVal  = true;
 		//if message preceded by "set", then set "sendVal" flag to NO, and strip off set and make new messages array without it
 	    if (messageArray.size()>0 && (messageArray.get(0) instanceof String) && messageArray.get(0).equals("set") ){
