@@ -1204,7 +1204,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
       //printf("\nenable location %.2f", val );
       if(val>0){
         if ([locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
-          [locationManager requestWhenInUseAuthorization];
+          [locationManager performSelector:@selector(requestWhenInUseAuthorization)];
         }
         [locationManager startUpdatingLocation];
         [locationManager startUpdatingHeading];

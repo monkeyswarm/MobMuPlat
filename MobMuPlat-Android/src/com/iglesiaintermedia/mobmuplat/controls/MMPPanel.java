@@ -62,6 +62,7 @@ public class MMPPanel extends MMPControl {
 		if (_imagePath!=null && !_myRect.isEmpty()) {
 			if(_imageBitmap!=null) _imageBitmap.recycle();
 			_imageBitmap = decodeSampledBitmapFromFile(_imagePath, (int)_myRect.width(), (int)_myRect.height());
+			invalidate();
 		}
 	}
 	
