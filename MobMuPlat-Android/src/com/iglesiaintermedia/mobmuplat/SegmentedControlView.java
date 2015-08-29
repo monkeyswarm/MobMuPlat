@@ -43,7 +43,7 @@ public class SegmentedControlView extends View {
 		_textRect = new Rect();
 		_itemCount = 1;//to prevent divide by zero?
 		_color = Color.BLACK;
-		setTextSize(20);
+		setTextSize(14);
 		
 		//just for layout editor
 		setItems(new String[]{"hi", "this", "is", "fun"});

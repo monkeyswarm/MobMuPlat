@@ -132,7 +132,7 @@ public class LANdiniLANManager {
 		        					Integer.valueOf(user.lastPerformedOGDID),
 		        					_syncServerName); //LANCHANGE
 		        	
-						user.send(LANdiniLANManager.OSCMessageFromList(msgList));
+						user.send(NetworkController.OSCMessageFromList(msgList));
 				}
 		    }
 		}
@@ -208,12 +208,6 @@ public class LANdiniLANManager {
         	}
         }
        };
-	
-    public static OSCMessage OSCMessageFromList(List<Object> msgList) {
-		if (msgList.get(0) instanceof String == false ) return null;
-		OSCMessage msg = new OSCMessage((String)msgList.get(0), msgList.subList(1, msgList.size()).toArray()); //last arg exclusive
-		return msg;
-	}
     
     public LANdiniLANManager(NetworkController nc) {
     	_userList = new ArrayList<LANdiniUser>();
@@ -225,12 +219,9 @@ public class LANdiniLANManager {
     }
     
     public void sendMsgToApp(List<Object> msgList) /*throws IOException*/ {
-        OSCMessage  msg = LANdiniLANManager.OSCMessageFromList(msgList);
+        OSCMessage  msg = NetworkController.OSCMessageFromList(msgList);
         //new SendTargetOSCTask().execute(msg); no more localhost, send direct
         _parentNetworkController.oscListener.acceptMessage(null, msg); //TODO interface/delegate
-        
-        //if([self.logDelegate respondsToSelector:@selector(logMsgInput:)] )
-          //  [self.logDelegate logMsgInput:msgArray];
     }
 
     public void setEnabled(boolean enabled) { //HERE shut off timers
@@ -363,7 +354,7 @@ public class LANdiniLANManager {
         	if(VERBOSE)Log.i("LANdini", "got to the api and network responders");
         	setupAPIResponders();
         	if(VERBOSE)Log.i("LANdini", "got to broadcast task");
-        	_broadcastTimer.startRepeatingTask(); //startBroadcastTimer();
+        	_broadcastTimer.startRepeatingTask(); //startBroadcastTimer(); //DEI when is this stopped????
         	if(VERBOSE)Log.i("LANdini", "got to ping task");
         	_pingAndMsgIDsTimer.startRepeatingTask(); //startPingAndMsgIDsTimer();
         	//NSLog(@"got to show gui");
@@ -632,7 +623,7 @@ public class LANdiniLANManager {
 
    private void broadcastMsg(List<Object> msgList) {
 	   //Log.i("broadcastMsg", ""+msgList.get(2)+" "+msgList.get(3));
-       OSCMessage msg = LANdiniLANManager.OSCMessageFromList(msgList);
+       OSCMessage msg = NetworkController.OSCMessageFromList(msgList);
        new SendBroadcastOSCTask().execute(msg);
 	   
         //if([self.logDelegate respondsToSelector:@selector(logLANdiniOutput:)] )
@@ -870,7 +861,7 @@ public class LANdiniLANManager {
 	                             theirTimeFloat,
 	                             Float.valueOf(getElapsedTime()) );
 	        
-	            OSCMessage msg = LANdiniLANManager.OSCMessageFromList(msgList2);
+	            OSCMessage msg = NetworkController.OSCMessageFromList(msgList2);
 				user.send(msg);
 	        } else{
 	            if(VERBOSE)Log.i("LANdini", "i should not be sending myself sync requests");

@@ -53,6 +53,7 @@ public class NetworkController extends Observable{
 	static public int DEFAULT_PORT_NUMBER = 54321;
 
 	public LANdiniLANManager landiniManager;
+	public PingAndConnectManager pingAndConnectManager;
 	private Activity _activity;
 	
 	//private String _ssid;
@@ -64,6 +65,12 @@ public class NetworkController extends Observable{
     		delegate.receiveOSCMessage((OSCMessage)msg.obj);
     	}
     };
+    
+    public static OSCMessage OSCMessageFromList(List<Object> msgList) {
+		if (msgList.get(0) instanceof String == false ) return null;
+		OSCMessage msg = new OSCMessage((String)msgList.get(0), msgList.subList(1, msgList.size()).toArray()); //last arg exclusive
+		return msg;
+	}
     
 	public OSCListener oscListener = new OSCListener() {
 		//@Override
@@ -91,6 +98,7 @@ public class NetworkController extends Observable{
 		_activity = activity;
 		setupOSC();
 		landiniManager = new LANdiniLANManager(this);
+		pingAndConnectManager = new PingAndConnectManager(this);
 		
 	}
 
@@ -251,13 +259,18 @@ public class NetworkController extends Observable{
 		//
 		//look for LANdini - this clause looks for /send, /send/GD, /send/OGD
 		//String address = (String)args[0];//check for isntanceof string first
+		// TODO pass through on no landini enabled?
 		if(args[0].equals("/send") || args[0].equals("/send/GD") || args[0].equals("/send/OGD")) {
 			if (landiniManager.isEnabled()) {
 				//send directly, not through localhost!
-				OSCMessage msg = LANdiniLANManager.OSCMessageFromList(Arrays.asList(args));
+				OSCMessage msg = NetworkController.OSCMessageFromList(Arrays.asList(args));
 				landiniManager.oscListener.acceptMessage(null, msg);
-				//[outPortToLANdini sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:list]]];
-
+			} 
+			if (pingAndConnectManager.isEnabled()) { 
+				// send/X becomes /send
+				args[0] = "/send";
+				OSCMessage msg = NetworkController.OSCMessageFromList(Arrays.asList(args));
+				pingAndConnectManager.oscListener.acceptMessage(null, msg);
 			}
 			/*else {
             //landini disabled: remake message without the first 2 landini elements and send out normal port
@@ -266,19 +279,17 @@ public class NetworkController extends Observable{
              [outPort sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:newList]]];
             }
         }*/
-		}
-		//other landini messages, keep passing to landini
-		else if (args[0].equals("/networkTime") ||
+		} else if (args[0].equals("/networkTime") || //other landini messages, keep passing to landini
 				args[0].equals("/numUsers") ||
 				args[0].equals("/userNames") ||
-				args[0].equals("/myName") ){
+				args[0].equals("/myName")) {
 
-        //[outPortToLANdini sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:list]]];
-			OSCMessage msg = LANdiniLANManager.OSCMessageFromList(Arrays.asList(args));
+			OSCMessage msg = NetworkController.OSCMessageFromList(Arrays.asList(args));
 			landiniManager.oscListener.acceptMessage(null, msg); //DANGEROUS! responders might not be set up...
-    }
-		//not for landini - send out regular!
-		else{
+		} else if (args[0].equals("/playerCount") || args[0].equals("/playerNumberSet") || args[0].equals("/myPlayerNumber")) {//other ping and connect messages
+			OSCMessage msg = NetworkController.OSCMessageFromList(Arrays.asList(args));
+			pingAndConnectManager.oscListener.acceptMessage(null, msg);
+		} else{ //not for landini or P&C - send out regular!
 			sendMessage(args);
 		}
 	}

@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.iglesiaintermedia.mobmuplat.NetworkController;
 import com.illposed.osc.OSCMessage;
 import com.illposed.osc.OSCPortOut;
 
@@ -84,7 +85,7 @@ public class LANdiniUser {
 				//below is: addr.sendMsg('/landini/sync/new_server', network.me.name);
 			    //Object[] msgArray = new Object[]{"/landini/sync/new_server", manager.me.name);
 			    List<Object> msgList = Arrays.asList((Object)"/landini/sync/new_server", LANdiniUser.this.manager.me.ip);
-				OSCMessage msg  = LANdiniLANManager.OSCMessageFromList(msgList);
+				OSCMessage msg  = NetworkController.OSCMessageFromList(msgList);
 				send(msg);   
 			}
 		});
@@ -194,7 +195,7 @@ public class LANdiniUser {
 	    //msgList2.add(1, manager.me.ip);
 	    msgList2.add(1, manager.me.name);
 	    
-	    OSCMessage msg = LANdiniLANManager.OSCMessageFromList(msgList2);
+	    OSCMessage msg = NetworkController.OSCMessageFromList(msgList2);
 	    send(msg);
         
 	   
@@ -224,7 +225,7 @@ public class LANdiniUser {
 	    msgList2.add(1,manager.me.name);
 	    msgList2.add(2, Integer.valueOf(ID));
 	    
-	    OSCMessage msg = LANdiniLANManager.OSCMessageFromList(msgList2);
+	    OSCMessage msg = NetworkController.OSCMessageFromList(msgList2);
 	    send(msg);
 		//log/listener
 	    //[_network.logDelegate logLANdiniOutput:msgArray2];
@@ -260,7 +261,7 @@ public class LANdiniUser {
 	    	msgList.add(IDInteger);
 	    }
 	    
-	    OSCMessage msg  = LANdiniLANManager.OSCMessageFromList(msgList);
+	    OSCMessage msg  = NetworkController.OSCMessageFromList(msgList);
 	    send(msg);
 	}
 
@@ -280,7 +281,7 @@ public class LANdiniUser {
 	    	    	msgList2.add(obj);
 	    	    } //todo copy from msgList and insert in front
 	    	    
-	    	    OSCMessage msg  = LANdiniLANManager.OSCMessageFromList(msgList2);
+	    	    OSCMessage msg  = NetworkController.OSCMessageFromList(msgList2);
 	    	    send(msg);
 	    	}
 	    }
@@ -301,7 +302,7 @@ public class LANdiniUser {
 	    msgList2.add(1,manager.me.name);
 	    msgList2.add(2, Integer.valueOf(ID));
 	    
-	    OSCMessage msg = LANdiniLANManager.OSCMessageFromList(msgList2);
+	    OSCMessage msg = NetworkController.OSCMessageFromList(msgList2);
 	    send(msg);
 		//log/listener
 	    //[_network.logDelegate logLANdiniOutput:msgArray2];
@@ -362,7 +363,7 @@ public class LANdiniUser {
 	            msgList.add(item);
 	        }
 	        
-	        OSCMessage msg  = LANdiniLANManager.OSCMessageFromList(msgList);
+	        OSCMessage msg  = NetworkController.OSCMessageFromList(msgList);
 	        send(msg);
 	    }
 	}
@@ -383,7 +384,7 @@ public class LANdiniUser {
 	            	msgList2.add(item);
 	            }
 	            
-	            OSCMessage msg  = LANdiniLANManager.OSCMessageFromList(msgList2);
+	            OSCMessage msg  = NetworkController.OSCMessageFromList(msgList2);
 	            send(msg);
 	        }
 	    }

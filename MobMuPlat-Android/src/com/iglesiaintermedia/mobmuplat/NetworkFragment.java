@@ -26,6 +26,11 @@ import com.iglesiaintermedia.LANdini.UserStateDelegate;
 
 
 
+
+
+
+
+
 //import android.app.Fragment;
 import android.support.v4.app.Fragment;
 import android.app.AlertDialog;
@@ -40,18 +45,22 @@ import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
 public class NetworkFragment extends Fragment implements SegmentedControlListener, Observer{
 
 	private MultiDirectFragment _multidirectFragment;
+	private PingAndConnectFragment _pingAndConnectFragment;
 	private LandiniFragment _landiniFragment;
 	private SegmentedControlView _seg;
 	private NetworkController _networkController;
@@ -82,19 +91,19 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 		_networkController.addObserver(this);
 		
 		_multidirectFragment = new MultiDirectFragment();
+		_pingAndConnectFragment = new PingAndConnectFragment();
 		_landiniFragment = new LandiniFragment();
-		_networkController.landiniManager.userStateDelegate = (UserStateDelegate)_landiniFragment; //why cast?
+		_networkController.landiniManager.userStateDelegate = (UserStateDelegate)_landiniFragment; //why cast? // MOVE TO SELF
+		_networkController.pingAndConnectManager.userStateDelegate = (PingAndConnectUserStateDelegate)_pingAndConnectFragment;
 		_networkController.asyncExceptionListener = _multidirectFragment; 
 		
 		_ssidTextView = (TextView)rootView.findViewById(R.id.textView1);
 		update(null, null);//set text
 		
 		_seg = (SegmentedControlView)rootView.findViewById(R.id.segView1);
-		_seg.setItems(new String[]{"Multicast & Direct", "LANdini"});
+		_seg.setItems(new String[]{"Multicast & Direct", "Ping & Connect", "LANdini"});
 		_seg.setSeethroughColor(Color.parseColor("#74CEFF"));
 		_seg.segmentedControlListener = this;
-		
-		//Log.i("NETWORK", "ip: "+getIPAddress(true));
 		
 		
 		//TODO based on if landini is enabled....
@@ -110,13 +119,14 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 		if (sectionIndex == 0) {
 			getChildFragmentManager().beginTransaction()
 				.replace(R.id.container, _multidirectFragment).commit();
-		} else if (sectionIndex == 1) {
+		} else if (sectionIndex == 1) { //Ping & Connect
 			getChildFragmentManager().beginTransaction()
-				.replace(R.id.container, _landiniFragment).commit();
+				.replace(R.id.container, _pingAndConnectFragment).commit();
+		} else if (sectionIndex == 2) { //LANdini
+			getChildFragmentManager().beginTransaction()
+			.replace(R.id.container, _landiniFragment).commit();
 		}
-		
 	}
-	
 	
 	@Override
 	public void update(Observable observable, Object data) {
@@ -139,9 +149,7 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
     }
 	
 
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
+	
 	public static class MultiDirectFragment extends Fragment implements AsyncExceptionListener{
 
 		private TextView _deviceIPTextView;
@@ -286,36 +294,110 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 		public void receiveException(Exception e, String message, String elementKey) {
 			// TODO Auto-generated method stub
 			showAlert(message);
-				
 		}
 	
-	
-	private void showAlert(String s) {
-		new AlertDialog.Builder(getActivity())
-	    .setTitle("Nope")
-	    .setMessage(s)
-	    .setPositiveButton(android.R.string.yes, null)
-	    .setIcon(R.drawable.ic_launcher)
-	     .show();
+		private void showAlert(String s) {
+			new AlertDialog.Builder(getActivity())
+			.setTitle("Nope")
+			.setMessage(s)
+			.setPositiveButton(android.R.string.yes, null)
+			.setIcon(R.drawable.ic_launcher)
+			.show();
+		}
 	}
+	
+	
+	public static class PingAndConnectFragment extends Fragment implements PingAndConnectUserStateDelegate, OnItemSelectedListener {
+
+		private ArrayAdapter<String> _adapter;
+		private ListView _listView;
+		private List<String> _userNamesList;
+		private Switch _enablePingAndConnectSwitch;
+		private NetworkController _networkController;
+		
+		public PingAndConnectFragment() {
+			super();
+			_userNamesList = new ArrayList<String>();
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			View rootView = inflater.inflate(R.layout.fragment_pingandconnect,
+					container, false);
+			//rootView.setBackgroundColor(Color.MAGENTA);
+			
+			_networkController = ((MainActivity)getActivity()).networkController;
+			//_networkTimeTextView = (TextView)rootView.findViewById(R.id.textView2);
+			_listView = (ListView)rootView.findViewById(R.id.listView1);
+			_adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, _userNamesList) ;
+			_listView.setAdapter(_adapter);
+			_enablePingAndConnectSwitch = (Switch)rootView.findViewById(R.id.switch1);
+			
+			_enablePingAndConnectSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+				   @Override
+				   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					   _networkController.pingAndConnectManager.setEnabled(isChecked);
+				   }
+			});
+			
+			Spinner spinner = (Spinner) rootView.findViewById(R.id.playernumber_spinner);
+			// Create an ArrayAdapter using the string array and a default spinner layout
+			String[] spinnerStrings = new String[]{"server","none","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"};
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinnerStrings);
+			// Specify the layout to use when the list of choices appears
+			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			// Apply the adapter to the spinner
+			spinner.setAdapter(adapter);
+			spinner.setSelection(1); // default = 1 = "none"
+			spinner.setOnItemSelectedListener(this);
+			
+			//set checked state in case we arriving and ping and connect is running.
+			if(_networkController.pingAndConnectManager.isEnabled()) {
+				_enablePingAndConnectSwitch.setChecked(true);
+				//refresh my player number
+				int num = _networkController.pingAndConnectManager.getPlayerNumber();
+				spinner.setSelection(num+1);
+				_networkController.pingAndConnectManager.updateUserState(); // send me a user update
+			}
+			
+			return rootView;
+		}
+
+		private void showAlert(String s) {
+			new AlertDialog.Builder(getActivity())
+		    .setTitle("Nope")
+		    .setMessage(s)
+		    .setPositiveButton(android.R.string.yes, null)
+		    .setIcon(R.drawable.ic_launcher)
+		     .show();
+		}
+		
+		
+		@Override
+		public void userStateChanged(String[] userStringList) {
+			_userNamesList.clear();
+			for (String string : userStringList) {
+				_userNamesList.add(string);
+			}
+			if (_adapter != null) {
+				_adapter.notifyDataSetChanged();
+			}
+		}
+		
+		@Override
+		public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+	        // An item was selected. You can retrieve the selected item using
+	        // parent.getItemAtPosition(pos)
+			_networkController.pingAndConnectManager.setPlayerNumber(pos-1);
+			
+	    }
+		@Override
+	    public void onNothingSelected(AdapterView<?> parent) {
+	        // Another interface callback
+	    }
+		
 	}
-	
-	
-	/*private void showBadHostAlert(String string) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setMessage(string);
-		builder.setCancelable(false);
-		builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
-		  {
-		    public void onClick(DialogInterface dialog, int id)
-		    {
-		      dialog.dismiss();
-		      
-		    }
-		  });
-		AlertDialog alert = builder.create();
-		alert.show();
-	}*/
 	
 	public static class LandiniFragment extends Fragment implements UserStateDelegate {
 
@@ -372,7 +454,7 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 			//set checked state in case we arriving and landini is running.
 			if(_networkController.landiniManager.isEnabled()) {
 				_enableLANdiniSwitch.setChecked(true);
-			}
+			} //TODO update list on arrive on view.
 			
 			return rootView;
 		}
@@ -400,7 +482,9 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 			for (LANdiniUser user : userList) {
 				_userNamesList.add(""+user.name + " "+user.ip);
 			}
-			_adapter.notifyDataSetChanged();
+			if (_adapter!=null) {
+				_adapter.notifyDataSetChanged();
+			}
 		}
 
 		@Override

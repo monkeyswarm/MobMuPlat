@@ -97,7 +97,14 @@ public class MMPMenu extends MMPControl {
     	
 	   	for(Object ob: messageArray){
 	    	if(ob instanceof String) newDataArray.add((String)ob);
-	   		else if(ob instanceof Float) newDataArray.add(String.format("%.3f",((Float)(ob)).floatValue()) );
+	   		else if(ob instanceof Float) { // format 
+	   			float val = ((Float)ob).floatValue();
+	   			if (val % 1 == 0) { //round number, display as integer
+	   				newDataArray.add(String.format("%d", (int)val));
+	   			} else {
+	   				newDataArray.add(String.format("%.3f", val));
+	   			}
+	   		}
 	   		else if(ob instanceof Integer) newDataArray.add(String.format("%d",((Integer)(ob)).intValue()) );
 	   	}
     	

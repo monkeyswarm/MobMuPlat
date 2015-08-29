@@ -1,0 +1,83 @@
+#N canvas 346 27 1024 759 10;
+#X obj 283 23 receive fromNetwork;
+#X obj 284 49 list trim;
+#X text 289 99 the first two (numUsers and userNames) are sent automatically
+each time the user list changes.;
+#X obj -226 48 receive fromGUI;
+#X obj -226 79 list trim;
+#X obj 632 391 loadbang;
+#X msg 311 223 list /numberLabel number of users: \$1;
+#X obj 292 377 send toGUI;
+#X msg 605 172 list /recSlider \$1;
+#X obj -216 502 send toNetwork;
+#X obj -92 526 send toGUI;
+#X obj 605 138 route /myCoolValue /clap;
+#X obj 628 494 table clap;
+#X obj 684 223 tabplay~ clap;
+#X obj 684 196 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 685 258 dac~;
+#X obj 630 462 soundfiler;
+#X msg 632 426 read -resize clap.wav clap;
+#X obj -148 184 select 1;
+#X text 607 109 stuff from user patch;
+#X text 72 499 print on screen label;
+#X obj -226 117 route /sendSlider /clapButton /destMenu;
+#X obj -70 6 send toGUI;
+#X obj -73 -41 loadbang;
+#X obj -73 181 unpack 0 s;
+#X msg -68 -16 list /destMenu all allButMe server 0 1 2 3 4 5 6 7 8
+;
+#X msg -73 39 list /playerCount \, list /playerNumberSet;
+#X text 291 83 api messages from Ping And Connect;
+#X obj 285 137 route /pingAndConnect/playerNumberSet /pingAndConnect/playerCount
+;
+#X obj -74 66 send toNetwork;
+#X obj -93 498 list prepend /sendMsgLabel;
+#X obj 364 294 list prepend /recMsgLabel;
+#X text 322 259 everything not from ping and connect API gets sent
+to be shown on screen label;
+#X text 14 17 request data on startup;
+#X text 14 -35 populate menu on startup;
+#X obj -214 407 list prepend /send all;
+#X msg -19 372 list /send \$1;
+#X msg -217 331 list /myCoolValue \$1;
+#X msg -141 358 list /clap;
+#X text -65 410 prepend "/send" and the destination ("all" \, "allButMe"
+\, "server" \, or a number signifying player number (where 0 = unassigned
+\, 1 = player 1 \, 2 = player 2 \, etc)).;
+#X obj 283 196 list prepend /namesLabel player numbers:;
+#X connect 0 0 1 0;
+#X connect 1 0 11 0;
+#X connect 1 0 28 0;
+#X connect 3 0 4 0;
+#X connect 4 0 21 0;
+#X connect 5 0 17 0;
+#X connect 6 0 7 0;
+#X connect 8 0 7 0;
+#X connect 11 0 8 0;
+#X connect 11 1 14 0;
+#X connect 13 0 15 0;
+#X connect 13 0 15 1;
+#X connect 14 0 13 0;
+#X connect 17 0 16 0;
+#X connect 18 0 38 0;
+#X connect 21 0 37 0;
+#X connect 21 1 18 0;
+#X connect 21 2 24 0;
+#X connect 23 0 25 0;
+#X connect 23 0 26 0;
+#X connect 24 1 36 0;
+#X connect 25 0 22 0;
+#X connect 26 0 29 0;
+#X connect 28 0 40 0;
+#X connect 28 1 6 0;
+#X connect 28 2 31 0;
+#X connect 30 0 10 0;
+#X connect 31 0 7 0;
+#X connect 35 0 9 0;
+#X connect 35 0 30 0;
+#X connect 36 0 35 1;
+#X connect 37 0 35 0;
+#X connect 38 0 35 0;
+#X connect 40 0 7 0;
