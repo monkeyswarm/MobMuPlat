@@ -92,7 +92,7 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 				
 			}	
 		});
-	   
+	   //TODO zips!
 	    //rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
 		return rootView;
 	}

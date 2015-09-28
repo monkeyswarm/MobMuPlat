@@ -1189,6 +1189,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	}
 
 	private void unpackZipInputStream(InputStream is, String zipname) {
+		Toast.makeText(this, "Unzipping "+zipname+" to Documents", Toast.LENGTH_LONG).show();;
 		new UnzipTask(is,zipname).execute();
 		/*ZipInputStream zis;
 		try {
