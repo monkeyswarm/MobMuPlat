@@ -39,6 +39,7 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -94,8 +95,8 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 	/* wear Set<String> _wearAddressSet;*/ 
 	
 	int _bgColor;
-
-	public ImageButton _settingsButton; //TODO make private again...is set in mainactivity loadScenePatchOnly
+	private Button _catchButton; // Just to catch a11y focus and allow footswitch.
+	private ImageButton _settingsButton;
 	private View _container;
 	PdUiDispatcher _dispatcher;
 
@@ -105,11 +106,6 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 		_mainActivity = (MainActivity)getActivity();
 		_allGUIControlMap = new HashMap<String,ArrayList<MMPControl>>();
 		/* wear _wearAddressSet = new HashSet<String>(); */
-		//init pd
-		//PdBase.setReceiver(receiver);
-		/*PdBase.subscribe("toGUI");//from pd
-		PdBase.subscribe("toNetwork");
-		PdBase.subscribe("toSystem");*/
 		
 		_dispatcher = new PdUiDispatcher() {
 			@Override
@@ -136,6 +132,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 
 		scrollRelativeLayout = (RelativeLayout)rootView.findViewById(R.id.relativeLayout);
 		//scrollRelativeLayout.setBackgroundColor(Color.GREEN);
+		_catchButton = (Button)rootView.findViewById(R.id.catchFocusButton);
 		_settingsButton = (ImageButton)rootView.findViewById(R.id.button1);
 		_settingsButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -228,6 +225,8 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 		//TODO RESET ports!
 
 		//TODO move to patch so we can add 
+		scrollRelativeLayout.addView(_catchButton);
+		_catchButton.setVisibility(View.VISIBLE);
 		scrollRelativeLayout.addView(_settingsButton);
 		_settingsButton.setVisibility(View.VISIBLE);//not really necc, since initial welcome load should set it visible...
 	}
@@ -573,6 +572,8 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 			}
 
 			//settings button
+			scrollRelativeLayout.addView(_catchButton);
+			_catchButton.setVisibility(View.VISIBLE);
 			scrollRelativeLayout.addView(_settingsButton);
 			_settingsButton.setVisibility(View.VISIBLE);
 

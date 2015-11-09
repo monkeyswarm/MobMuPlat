@@ -229,10 +229,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 				defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine.mmp", "MMPTutorial1-GUI.mmp", "MMPTutorial2-Input.mmp", "MMPTutorial3-Hardware.mmp", "MMPTutorial4-Networking.mmp","MMPTutorial5-Files.mmp","MMPExamples-Vocoder.mmp", "MMPExamples-Motion.mmp", "MMPExamples-Sequencer.mmp", "MMPExamples-GPS.mmp", "MMPTutorial6-2DGraphics.mmp", "MMPExamples-LANdini.mmp", "MMPExamples-Arp.mmp", "MMPExamples-TableGlitch.mmp", "MMPExamples-HID.mmp", "MMPExamples-PingAndConnect.mmp"); /*wear "MMPExamples-Watch.mmp"*/
 			}
 			else if (hardwareScreenType==CanvasType.canvasTypeTallPhone){
-				defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine-ip5.mmp", "MMPTutorial1-GUI-ip5.mmp", "MMPTutorial2-Input-ip5.mmp", "MMPTutorial3-Hardware-ip5.mmp", "MMPTutorial4-Networking-ip5.mmp","MMPTutorial5-Files-ip5.mmp", "MMPExamples-Vocoder-ip5.mmp", "MMPExamples-Motion-ip5.mmp", "MMPExamples-Sequencer-ip5.mmp","MMPExamples-GPS-ip5.mmp", "MMPTutorial6-2DGraphics-ip5.mmp", "MMPExamples-LANdini-ip5.mmp", "MMPExamples-Arp-ip5.mmp",  "MMPExamples-TableGlitch-ip5.mmp", "MMPExamples-HID-ip5.mmp", "MMPExamples-PingAndConnect-ip5.mmp");
+				defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine-ip5.mmp", "MMPTutorial1-GUI-ip5.mmp", "MMPTutorial2-Input-ip5.mmp", "MMPTutorial3-Hardware-ip5.mmp", "MMPTutorial4-Networking-ip5.mmp","MMPTutorial5-Files-ip5.mmp", "MMPExamples-Vocoder-ip5.mmp", "MMPExamples-Motion-ip5.mmp", "MMPExamples-Sequencer-ip5.mmp","MMPExamples-GPS-ip5.mmp", "MMPTutorial6-2DGraphics-ip5.mmp", "MMPExamples-LANdini-ip5.mmp", "MMPExamples-Arp-ip5.mmp",  "MMPExamples-TableGlitch-ip5.mmp", "MMPExamples-HID-ip5.mmp", "MMPExamples-PingAndConnect.mmp");
 			}
 			else{//wide tablet/pad
-				defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine-Pad.mmp", "MMPTutorial1-GUI-Pad.mmp", "MMPTutorial2-Input-Pad.mmp", "MMPTutorial3-Hardware-Pad.mmp", "MMPTutorial4-Networking-Pad.mmp","MMPTutorial5-Files-Pad.mmp", "MMPExamples-Vocoder-Pad.mmp", "MMPExamples-Motion-Pad.mmp", "MMPExamples-Sequencer-Pad.mmp","MMPExamples-GPS-Pad.mmp", "MMPTutorial6-2DGraphics-Pad.mmp", "MMPExamples-LANdini-Pad.mmp", "MMPExamples-Arp-Pad.mmp",  "MMPExamples-TableGlitch-Pad.mmp", "MMPExamples-HID-Pad.mmp", "MMPExamples-PingAndConnect-Pad.mmp");
+				defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine-Pad.mmp", "MMPTutorial1-GUI-Pad.mmp", "MMPTutorial2-Input-Pad.mmp", "MMPTutorial3-Hardware-Pad.mmp", "MMPTutorial4-Networking-Pad.mmp","MMPTutorial5-Files-Pad.mmp", "MMPExamples-Vocoder-Pad.mmp", "MMPExamples-Motion-Pad.mmp", "MMPExamples-Sequencer-Pad.mmp","MMPExamples-GPS-Pad.mmp", "MMPTutorial6-2DGraphics-Pad.mmp", "MMPExamples-LANdini-Pad.mmp", "MMPExamples-Arp-Pad.mmp",  "MMPExamples-TableGlitch-Pad.mmp", "MMPExamples-HID-Pad.mmp", "MMPExamples-PingAndConnect.mmp");
 			}
 
 			List<String> commonFilesList = Arrays.asList("MMPTutorial0-HelloSine.pd","MMPTutorial1-GUI.pd", "MMPTutorial2-Input.pd", "MMPTutorial3-Hardware.pd", "MMPTutorial4-Networking.pd","MMPTutorial5-Files.pd","cats1.jpg", "cats2.jpg","cats3.jpg","clap.wav","Welcome.pd",  "MMPExamples-Vocoder.pd", "vocod_channel.pd", "MMPExamples-Motion.pd", "MMPExamples-Sequencer.pd", "MMPExamples-GPS.pd", "MMPTutorial6-2DGraphics.pd", "MMPExamples-LANdini.pd", "MMPExamples-Arp.pd", "MMPExamples-TableGlitch.pd", "anderson1.wav", "MMPExamples-HID.pd", "MMPExamples-InterAppOSC.mmp", "MMPExamples-InterAppOSC.pd", "MMPExamples-PingAndConnect.pd"); //wear "MMPExamples-Watch.pd");
@@ -255,7 +255,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		}
 
 		//
-		AudioParameters.init(this);
+		//AudioParameters.init(this);
 		PdPreferences.initPreferences(getApplicationContext());
 		initSensors();
 		initLocation();
@@ -872,11 +872,23 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		try {
 			//Simulator breaks on audio input, so here's a little flag
 			boolean amOnSimulator = false;
-			pdService.initAudio(-1, amOnSimulator? 0 : -1, -1, -1);   // negative values will be replaced with defaults/preferences
+			pdService.initAudio(44100, amOnSimulator? 0 : -1, -1, -1);   // negative values will be replaced with defaults/preferences
 			pdService.startAudio();
 		} catch (IOException e) {
 			Log.e(TAG, "Audio init error: "+e.toString());
 		}
+	}
+	
+	public boolean setSampleRate(int rate) {
+		pdService.stopAudio();
+		try {
+			pdService.initAudio(rate, -1, -1, -1);   // negative values will be replaced with defaults/preferences
+			//pdService.startAudio();
+		} catch (IOException e) {
+			Log.e(TAG, "Audio init error: "+e.toString());
+		}
+		pdService.startAudio();
+		return true;
 	}
 
 	private void stopAudio() {
@@ -1191,51 +1203,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	private void unpackZipInputStream(InputStream is, String zipname) {
 		Toast.makeText(this, "Unzipping "+zipname+" to Documents", Toast.LENGTH_LONG).show();;
 		new UnzipTask(is,zipname).execute();
-		/*ZipInputStream zis;
-		try {
-			String filename;
-
-			zis = new ZipInputStream(new BufferedInputStream(is));          
-			ZipEntry ze;
-			byte[] buffer = new byte[1024];
-			int count;
-
-			while ((ze = zis.getNextEntry()) != null) {
-
-				filename = ze.getName();
-				Log.i("ZIP", "opening "+filename);
-
-				// Need to create directories if doesn't exist.
-				if (ze.isDirectory()) {
-					File fmd = new File(MainActivity.getDocumentsFolderPath(),  filename);
-					fmd.mkdirs();
-					continue;
-				}
-
-				File outFile = new File(MainActivity.getDocumentsFolderPath(), filename);
-				if(VERBOSE)Log.i(TAG, "zip writes to: "+outFile.getAbsolutePath());
-				FileOutputStream fout = new FileOutputStream(outFile);
-
-				while ((count = zis.read(buffer)) != -1) {
-					fout.write(buffer, 0, count);             
-				}
-
-				fout.close();               
-				zis.closeEntry();
-				if(VERBOSE)Log.i(TAG, "zip wrote "+filename);
-			}
-
-			zis.close();
-			//Log.i("ZIP", "complete");
-			showAlert("Unzipped contents of "+zipname+" into Documents folder.");
-		} 
-		catch(Exception e) {
-			e.printStackTrace();
-			showAlert("Error unzipping contents of "+zipname);
-			return false;
-		} 
-
-		return true;*/
 	}
 
 	private void unpackZip(String path, String zipname) {    
@@ -1297,7 +1264,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		if (event.getSource()==InputDevice.SOURCE_KEYBOARD) {
 			Object[] args = new Object[]{"/key", Integer.valueOf(keyCode)};
 			PdBase.sendList("fromSystem", args);
-			//return false; //don't consum
+			//don't consume - hardware hits show up here.
 		} else { //HID
 			InputDeviceState state = getInputDeviceState(event);
 			if (state != null && state.onKeyDown(event)) { //pd message sent in state.onKeyUp/Down
@@ -1316,15 +1283,15 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		if (event.getSource()==InputDevice.SOURCE_KEYBOARD) {
 			Object[] args = new Object[]{"/keyUp", Integer.valueOf(keyCode)};
 			PdBase.sendList("fromSystem", args);
-			//return true;
+			//don't consume - hardware hits show up here.
 		} else { //HID
-		InputDeviceState state = getInputDeviceState(event);
-		if (state != null && state.onKeyUp(event)) { //pd message sent in state.onKeyUp/Down
-			if (_hidFragment!=null && _hidFragment.isVisible()) {
-				_hidFragment.show(state);
+			InputDeviceState state = getInputDeviceState(event);
+			if (state != null && state.onKeyUp(event)) { //pd message sent in state.onKeyUp/Down
+				if (_hidFragment!=null && _hidFragment.isVisible()) {
+					_hidFragment.show(state);
 			}
 			//return true;
-		}    
+			}    
 			//return super.onKeyUp(keyCode, event);
 		}
 		return super.onKeyUp(keyCode, event);

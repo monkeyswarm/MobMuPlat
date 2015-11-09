@@ -11,7 +11,12 @@
         	android:id="@+id/relativeLayout"
         	android:layout_width="match_parent"
         	android:layout_height="match_parent" >
-
+			<Button
+			     android:id="@+id/catchFocusButton"
+			     android:layout_width="5dp"
+			     android:layout_height="5dp"
+			     android:visibility="gone"
+			     android:background="#00000000"/>
     	     <ImageButton
     	         android:id="@+id/button1"
     	         android:layout_width="80dp"

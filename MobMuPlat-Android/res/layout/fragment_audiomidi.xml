@@ -62,5 +62,22 @@
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:text="Audio runs while app is in background" />
+    
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:text="Sample Rate"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+    
+    <com.iglesiaintermedia.mobmuplat.SegmentedControlView
+        android:id="@+id/segView1"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    	android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_height="40dp"/>
 
 </LinearLayout>

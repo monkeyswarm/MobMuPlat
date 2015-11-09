@@ -6,6 +6,7 @@ import java.util.Observer;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +17,9 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-public class AudioMidiFragment extends Fragment implements Observer {
+public class AudioMidiFragment extends Fragment implements Observer, SegmentedControlListener {
 	
 	//private Button _refreshMidiButton;
 	private UsbMidiController _usbMidiController;
@@ -29,6 +28,8 @@ public class AudioMidiFragment extends Fragment implements Observer {
 	//public AudioDelegate audioDelegate;
 	private ArrayAdapter<String> adapterInput;
 	private ArrayAdapter<String> adapterOutput;
+	private SegmentedControlView _rateSeg;
+	private int[] _rates = new int[]{8000,11025,22050,32000,44100,48000};
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -85,7 +86,26 @@ public class AudioMidiFragment extends Fragment implements Observer {
 			   }
 		});
 		
-		//refreshList();
+		_rateSeg = (SegmentedControlView)rootView.findViewById(R.id.segView1);
+		_rateSeg.setTextSize(16);
+		_rateSeg.setItems(new String[]{"8000","11025","22050","32000","44100","48000"});
+		//_rateSeg.setSelectedIndex(4); //TODO double check this is default
+		_rateSeg.setColor(Color.WHITE);
+		_rateSeg.setSeethroughColor(Color.parseColor("#E85330"));
+		_rateSeg.segmentedControlListener = this;
+		
+		// get rate
+		int index = -1;
+		int rate = ((MainActivity)getActivity()).getSampleRate();
+		SparseIntArray rateToIndexSparseIntArray = new SparseIntArray();
+		rateToIndexSparseIntArray.put(8000, 0);
+		rateToIndexSparseIntArray.put(11025, 1);
+		rateToIndexSparseIntArray.put(22050, 2);
+		rateToIndexSparseIntArray.put(32000, 3);
+		rateToIndexSparseIntArray.put(44100, 4);
+		rateToIndexSparseIntArray.put(48000, 5);
+		index = rateToIndexSparseIntArray.get(rate);
+		_rateSeg.setSelectedIndex(index);
 		
 		/*_bufferSizeTextView = (TextView)rootView.findViewById(R.id.textViewBufferSize);
 		if(audioDelegate!=null)_bufferSizeTextView.setText("Audio Buffer Size: "+audioDelegate.getBufferSizeMS()+" ms");
@@ -98,16 +118,13 @@ public class AudioMidiFragment extends Fragment implements Observer {
 		_bufferSeg.setColor(Color.WHITE);
 		_bufferSeg.setSeethroughColor(Color.parseColor("#E85330"));
 		_bufferSeg.segmentedControlListener = this;
-		
-		_rateSeg = (SegmentedControlView)rootView.findViewById(R.id.segmentedControlViewSamplingRate);
-		_rateSeg.setTextSize(16);
-		_rateSeg.setItems(new String[]{"8000","11025","22050","32000","44100","34800"});
-		_rateSeg.setSelectedIndex(4); //TODO double check this is default
-		_rateSeg.setColor(Color.WHITE);
-		_rateSeg.setSeethroughColor(Color.parseColor("#E85330"));
-		_rateSeg.segmentedControlListener = this;*/
+		*/
 		
 		return rootView;
+	}
+	
+	public void onSegmentedControlChange(SegmentedControlView segmentedControl, int sectionIndex) {
+		boolean success = ((MainActivity)getActivity()).setSampleRate(_rates[sectionIndex]);
 	}
 
 	@Override  // from midi controller that it has refreshed data
