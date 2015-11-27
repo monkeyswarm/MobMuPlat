@@ -234,7 +234,7 @@ public class PingAndConnectManager {
     		}
     	} else if (address.equals("/send")) {  //TODO test if sending a send is bad!
     		Object[] args = msg.getArguments(); // all/allbutme/index/server, user address, user args
-    		if (args.length < 2 || !(args[1] instanceof String)) return;
+    		if (args.length < 2 || !(args[1] instanceof String)) return; //NOTE this rejects addresses that aren't strings.
     		Object destObj = args[0];
     		// Generate message without incoming address or destination
     		OSCMessage msg2 = new OSCMessage((String)args[1], Arrays.copyOfRange(args, 2, args.length)); //last arg exclusive

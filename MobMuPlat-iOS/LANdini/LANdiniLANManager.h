@@ -22,7 +22,7 @@
 
 @protocol LANdiniUserStateDelegate <NSObject>
 
--(void)userStateChanged:(NSArray*)msgArray;
+-(void)landiniUserStateChanged:(NSArray*)msgArray;
 -(void)syncServerChanged:(NSString*)newServerName;
 
 @end
@@ -33,14 +33,12 @@
 @property (strong, nonatomic) LANdiniUser * me;
 @property (weak, nonatomic) id<LANdiniLogDelegate> logDelegate;
 @property (weak, nonatomic) id<LANdiniUserStateDelegate> userDelegate;
-@property (readonly) BOOL enabled;
+@property (nonatomic) BOOL enabled;
 
-+ (NSString *)getIPAddress;
 + (OSCMessage*) OSCMessageFromArray:(NSArray*)vals; //array of address, object vals -> OSCMessage
 - (NSTimeInterval) elapsedTime;
 -(void)sendMsgToApp:(NSArray*)msgArray;
 
 -(NSTimeInterval)networkTime;
--(void)setEnabled:(BOOL)enabled;
 
 @end

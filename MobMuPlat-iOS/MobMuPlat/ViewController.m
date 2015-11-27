@@ -46,6 +46,7 @@
 #import "AudioHelpers.h"
 #import "MobMuPlatPdAudioUnit.h"
 #import "MobMuPlatUtil.h"
+#import "MMPNetworkingUtils.h"
 
 extern void expr_setup(void);
 extern void bonk_tilde_setup(void);
@@ -238,6 +239,10 @@ extern void pique_setup(void);
   //dev only
   //llm.logDelegate=self;
 
+  //ping and connect
+  pacm = [[PingAndConnectManager alloc] init];
+  pacm.userStateDelegate = settingsVC;
+
   //reachibility
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(reachabilityChanged:)
@@ -275,8 +280,8 @@ extern void pique_setup(void);
       defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine-Pad.mmp", @"MMPTutorial1-GUI-Pad.mmp", @"MMPTutorial2-Input-Pad.mmp", @"MMPTutorial3-Hardware-Pad.mmp", @"MMPTutorial4-Networking-Pad.mmp",@"MMPTutorial5-Files-Pad.mmp", @"MMPExamples-Vocoder-Pad.mmp", @"MMPExamples-Motion-Pad.mmp", @"MMPExamples-Sequencer-Pad.mmp",@"MMPExamples-GPS-Pad.mmp", @"MMPTutorial6-2DGraphics-Pad.mmp", @"MMPExamples-LANdini-Pad.mmp", @"MMPExamples-Arp-Pad.mmp",  @"MMPExamples-TableGlitch-Pad.mmp",nil];
     }
 
-    //NOTE InterAppOSC one version.
-    NSArray* commonFiles = [NSArray arrayWithObjects:@"MMPTutorial0-HelloSine.pd",@"MMPTutorial1-GUI.pd", @"MMPTutorial2-Input.pd", @"MMPTutorial3-Hardware.pd", @"MMPTutorial4-Networking.pd",@"MMPTutorial5-Files.pd",@"cats1.jpg", @"cats2.jpg",@"cats3.jpg",@"clap.wav",@"Welcome.pd",  @"MMPExamples-Vocoder.pd", @"vocod_channel.pd", @"MMPExamples-Motion.pd", @"MMPExamples-Sequencer.pd", @"MMPExamples-GPS.pd", @"MMPTutorial6-2DGraphics.pd", @"MMPExamples-LANdini.pd", @"MMPExamples-Arp.pd", @"MMPExamples-TableGlitch.pd", @"anderson1.wav", @"MMPExamples-InterAppOSC.mmp", @"MMPExamples-InterAppOSC.pd", nil];
+    //NOTE InterAppOSC & Ping and connect, one version.
+    NSArray* commonFiles = [NSArray arrayWithObjects:@"MMPTutorial0-HelloSine.pd",@"MMPTutorial1-GUI.pd", @"MMPTutorial2-Input.pd", @"MMPTutorial3-Hardware.pd", @"MMPTutorial4-Networking.pd",@"MMPTutorial5-Files.pd",@"cats1.jpg", @"cats2.jpg",@"cats3.jpg",@"clap.wav",@"Welcome.pd",  @"MMPExamples-Vocoder.pd", @"vocod_channel.pd", @"MMPExamples-Motion.pd", @"MMPExamples-Sequencer.pd", @"MMPExamples-GPS.pd", @"MMPTutorial6-2DGraphics.pd", @"MMPExamples-LANdini.pd", @"MMPExamples-Arp.pd", @"MMPExamples-TableGlitch.pd", @"anderson1.wav", @"MMPExamples-InterAppOSC.mmp", @"MMPExamples-InterAppOSC.pd", @"MMPExamples-PingAndConnect.pd", @"MMPExamples-PingAndConnect.mmp", nil];
 
     defaultPatches = [defaultPatches arrayByAddingObjectsFromArray:commonFiles];
 
@@ -357,6 +362,7 @@ extern void pique_setup(void);
   //delegate (from audio+midi screen of settingsVC) for setting audio+midi parameters (sampling rate, MIDI source, etc)
   settingsVC.audioDelegate = self;
   settingsVC.LANdiniDelegate = self;
+  settingsVC.pingAndConnectDelegate = self;
 
   navigationController = [[UINavigationController alloc] initWithRootViewController:settingsVC];
   navigationController.navigationBar.barStyle = UIBarStyleBlack;
@@ -593,8 +599,8 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   if(_inputPortNumber > 0){
     inPort = [manager createNewInputForPort:_inputPortNumber];
   }
-  outPortToLANdini = [manager createNewOutputToAddress:@"127.0.0.1" atPort:50506];
-  inPortFromLANdini = [manager createNewInputForPort:50505];
+  outPortToNetworkingModules = [manager createNewOutputToAddress:@"127.0.0.1" atPort:50506];
+  inPortFromNetworkingModules = [manager createNewInputForPort:50505];
   _isPortsConnected = YES;
 }
 
@@ -1111,24 +1117,30 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     //look for LANdini - this clause looks for /send, /send/GD, /send/OGD
     // TODO protect against cases like /sendsomethingelse while in landini!!!!
     if([[list objectAtIndex:0] rangeOfString:@"/send"].location == 0) {
-      if (llm.enabled) {
-        [outPortToLANdini sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:list]]];
-      }
-      else {
-        //landini disabled: remake message without the first 2 landini elements and send out normal port
+      if (llm.enabled|| pacm.enabled ) {
+        [outPortToNetworkingModules sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:list]]];
+      }  else {
+        //landini /ping & connect disabled: remake message without the first 2 landini elements and send out normal port
         if([list count]>2){
           NSArray* newList = [list subarrayWithRange:NSMakeRange(2, [list count]-2)];
           [outPort sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:newList]]];
         }
       }
     }
-    //other landini messages, keep passing to landini
+    //other landini/P&C messages, keep passing to landini
+    // DEI TODO just compare strings, no location.
     else if ([[list objectAtIndex:0] rangeOfString:@"/networkTime"].location == 0 ||
              [[list objectAtIndex:0] rangeOfString:@"/numUsers"].location == 0 ||
              [[list objectAtIndex:0] rangeOfString:@"/userNames"].location == 0 ||
-             [[list objectAtIndex:0] rangeOfString:@"/myName"].location == 0) {
+             [[list objectAtIndex:0] rangeOfString:@"/myName"].location == 0 ||
+      //
+             [[list objectAtIndex:0] rangeOfString:@"/playerCount"].location == 0 ||
+             [[list objectAtIndex:0] rangeOfString:@"/playerNumberSet"].location == 0 ||
+             [[list objectAtIndex:0] rangeOfString:@"/playerIpList"].location == 0 ||
+             [[list objectAtIndex:0] rangeOfString:@"/myPlayerNumber"].location == 0 ) {
 
-      [outPortToLANdini sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:list]]];
+
+      [outPortToNetworkingModules sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:list]]];
     }
     //not for landini - send out regular!
     else{
@@ -1263,7 +1275,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
       NSArray *msgArray2 = [NSArray arrayWithObjects:@"/timeString", humanDateString, nil];
       [PdBase sendList:msgArray2 toReceiver:@"fromSystem"];
     } else if ([[list objectAtIndex:0] isEqualToString:@"/getIpAddress"] ){
-      NSString *ipAddress = [LANdiniLANManager getIPAddress]; //String, nil if not found
+      NSString *ipAddress = [MMPNetworkingUtils ipAddress];//[LANdiniLANManager getIPAddress]; //String, nil if not found
       if (!ipAddress) {
         ipAddress = @"none";
       }
@@ -1646,6 +1658,16 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
 -(void)enableLANdini:(BOOL)enabled{
   [llm setEnabled:enabled];
+}
+
+#pragma mark PingAndConnect delegate from settings
+
+-(void)enablePingAndConnect:(BOOL)enabled {
+  [pacm setEnabled:enabled];
+}
+
+-(void)setPingAndConnectPlayerNumber:(NSInteger)playerNumber {
+  [pacm setPlayerNumber:playerNumber];
 }
 
 @end

@@ -8,10 +8,7 @@
 
 #import "LANdiniLANManager.h"
 
-
-//ip address
-#import <ifaddrs.h>
-#import <arpa/inet.h>
+#import "MMPNetworkingUtils.h"
 
 #define SC_DEFAULT_PORT 57120
 
@@ -53,10 +50,6 @@
     OSCOutPort* _targetAppAddr;
     OSCInPort* _inPortLocal;
     OSCInPort* _inPortNetwork;
-    
-    
-    
-    
 }
 @end
 
@@ -103,9 +96,7 @@
         _oscManager = [[OSCManager alloc] init];
         [_oscManager setDelegate:self];
         
-        //[self connectOSC:nil];
-        
-        
+
         //not called on startup
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterFG:) name:UIApplicationWillEnterForegroundNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterBG:) name:UIApplicationWillResignActiveNotification object:nil];
@@ -159,8 +150,8 @@
     [_userList removeAllObjects];
     [self receiveGetNamesRequest];
     [self receiveGetNumUsersRequest];
-    if([self.userDelegate respondsToSelector:@selector(userStateChanged:)])
-        [self.userDelegate userStateChanged:_userList];
+    if([self.userDelegate respondsToSelector:@selector(landiniUserStateChanged:)])
+        [self.userDelegate landiniUserStateChanged:_userList];
     
     [_oscManager deleteAllInputs];
     [_oscManager deleteAllOutputs];
@@ -191,7 +182,7 @@
 }
 
 -(void)connectionTimerMethod:(NSTimer*)timer{
-    NSString* address = [LANdiniLANManager getIPAddress];
+    NSString* address = [MMPNetworkingUtils ipAddress];
     if(address!=nil){
         NSLog(@"timer %p", _connectionTimer);
         [_connectionTimer invalidate];
@@ -224,8 +215,8 @@
     _connected = YES;
     [_userList addObject:_me];
     
-    if([self.userDelegate respondsToSelector:@selector(userStateChanged:)])
-        [self.userDelegate userStateChanged:_userList];
+    if([self.userDelegate respondsToSelector:@selector(landiniUserStateChanged:)])
+        [self.userDelegate landiniUserStateChanged:_userList];
     [self receiveGetNamesRequest];
     [self receiveGetNumUsersRequest];
     
@@ -644,7 +635,7 @@
         [self receiveGetNamesRequest];
         [self receiveGetNumUsersRequest];
         if([self.userDelegate respondsToSelector:@selector(userStateChanged:)])
-            [self.userDelegate userStateChanged:_userList];
+            [self.userDelegate landiniUserStateChanged:_userList];
         //end DEI edit
     }
     return usr;
@@ -678,8 +669,8 @@
         //DEI edit not in original supercollider: send the user client new users list
         [self receiveGetNamesRequest];
         [self receiveGetNumUsersRequest];
-        if([self.userDelegate respondsToSelector:@selector(userStateChanged:)])
-            [self.userDelegate userStateChanged:_userList];
+        if([self.userDelegate respondsToSelector:@selector(landiniUserStateChanged:)])
+            [self.userDelegate landiniUserStateChanged:_userList];
     }
     
 }
@@ -949,38 +940,6 @@
     
 }
 
-
-
-//-----
-
-+ (NSString *)getIPAddress {
-    NSString *address=nil;//return nil on not found
-    struct ifaddrs *interfaces = NULL;
-    struct ifaddrs *temp_addr = NULL;
-    int success = 0;
-    // retrieve the current interfaces - returns 0 on success
-    success = getifaddrs(&interfaces);
-    if (success == 0) {
-        // Loop through linked list of interfaces
-        temp_addr = interfaces;
-        while(temp_addr != NULL) {
-            if(temp_addr->ifa_addr->sa_family == AF_INET) {
-                // Check if interface is en0 which is the wifi connection on the iPhone
-                if([[NSString stringWithUTF8String:temp_addr->ifa_name] isEqualToString:@"en0"]) {
-                    // Get NSString from C String
-                    address = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_addr)->sin_addr)];
-                    NSLog(@"found ip %@", address);
-                }
-            }
-            temp_addr = temp_addr->ifa_next;
-        }
-    }
-    // Free memory
-    freeifaddrs(interfaces);
-    NSLog(@"my ip is %@", address);
-    return address;
-    
-}
 
 //=== utility
 -(LANdiniUser*)userInUserListWithName:(NSString*)userName{

@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -111,7 +112,7 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 	
 	private ArrayList<String> getFilenames() {
 		String state = Environment.getExternalStorageState();
-
+		Log.i("DOC state", state);
 		if (!(Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))) return null;
 		
 		File fileDir = new File(MainActivity.getDocumentsFolderPath());//device/sdcard
@@ -148,6 +149,7 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 	private void refreshFileList() {
 		ArrayList<String> files = getFilenames();
 		_filenamesList.clear();
+		if (files == null) return;
 		for (String filename : files) {
 			if (_isListFiltered){
 				if (isMMP(filename)) _filenamesList.add(filename);

@@ -19,12 +19,13 @@
 #import "PGMidi.h"
 #import "VVOSC.h"
 #import "LANdiniLANManager.h"
+#import "PingAndConnectManager.h"
 
 //@class OSCManager, OSCInPort, OSCOutPort;
 
 #import "Audiobus.h"
 
-@interface ViewController : UIViewController<PdReceiverDelegate, UIAccelerometerDelegate,  SettingsViewControllerDelegate, ControlDelegate, UIScrollViewDelegate, AudioSettingsDelegate, PGMidiDelegate, PGMidiSourceDelegate, OSCDelegateProtocol, PdMidiReceiverDelegate, CLLocationManagerDelegate, LANdiniDelegate>{
+@interface ViewController : UIViewController<PdReceiverDelegate, UIAccelerometerDelegate,  SettingsViewControllerDelegate, ControlDelegate, UIScrollViewDelegate, AudioSettingsDelegate, PGMidiDelegate, PGMidiSourceDelegate, OSCDelegateProtocol, PdMidiReceiverDelegate, CLLocationManagerDelegate, LANdiniDelegate, PingAndConnectDelegate>{
     
     
     UIButton * settingsButton;
@@ -38,9 +39,9 @@
     OSCInPort *inPort;
     OSCOutPort *outPort;
     
-    //LANdini
-    OSCInPort* inPortFromLANdini;
-    OSCOutPort* outPortToLANdini;
+    //LANdini and Ping&Connect
+    OSCInPort* inPortFromNetworkingModules;
+    OSCOutPort* outPortToNetworkingModules;
     
     //midi
     PGMidi *midi;
@@ -69,7 +70,8 @@
     CLLocationManager *locationManager;
     
     LANdiniLANManager* llm;
-   
+  PingAndConnectManager *pacm;
+
     Reachability* reach;
   int pageCount;
 }

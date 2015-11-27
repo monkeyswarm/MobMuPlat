@@ -162,6 +162,8 @@
 		F9295E7319BD19C6008691CB /* Welcome-Pad.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F9295E3119BD19C6008691CB /* Welcome-Pad.mmp */; };
 		F9295E7419BD19C6008691CB /* Welcome.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F9295E3219BD19C6008691CB /* Welcome.mmp */; };
 		F9295E7519BD19C6008691CB /* Welcome.pd in Resources */ = {isa = PBXBuildFile; fileRef = F9295E3319BD19C6008691CB /* Welcome.pd */; };
+		F93EF2D31C078AA400BCF5D3 /* MMPExamples-PingAndConnect.pd in Resources */ = {isa = PBXBuildFile; fileRef = F93EF2D11C078AA400BCF5D3 /* MMPExamples-PingAndConnect.pd */; };
+		F93EF2D41C078AA400BCF5D3 /* MMPExamples-PingAndConnect.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F93EF2D21C078AA400BCF5D3 /* MMPExamples-PingAndConnect.mmp */; };
 		F94FB0341A6F709E004EEF76 /* fiddle~.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB0281A6F709E004EEF76 /* fiddle~.c */; };
 		F94FB0351A6F709E004EEF76 /* loop~.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB0291A6F709E004EEF76 /* loop~.c */; };
 		F94FB0361A6F709E004EEF76 /* lrshift~.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB02A1A6F709E004EEF76 /* lrshift~.c */; };
@@ -179,6 +181,9 @@
 		F975609D1A6EADCD005CCE8E /* libpd-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F97560921A6E235B005CCE8E /* libpd-ios.a */; };
 		F97D45A819A541E000874EAA /* libAudiobus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F97D45A719A541E000874EAA /* libAudiobus.a */; };
 		F9967C3718F8C54D008E3828 /* MenuNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9967C3618F8C54D008E3828 /* MenuNavigationController.m */; };
+		F9B6E7AA1C0641E00036FB66 /* PingAndConnectManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B6E7A91C0641E00036FB66 /* PingAndConnectManager.m */; };
+		F9B6E7AD1C069CEA0036FB66 /* MMPNetworkingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B6E7AC1C069CEA0036FB66 /* MMPNetworkingUtils.m */; };
+		F9B6E7D21C06BD120036FB66 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F9B6E7D11C06BD120036FB66 /* LaunchScreen.storyboard */; };
 		F9DE7DC018F49D62007B9E45 /* MeMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = F9DE7DBF18F49D62007B9E45 /* MeMenu.m */; };
 		F9FC179B1A85735A00152392 /* MMPExamples-InterAppOSC.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F9FC17991A85735A00152392 /* MMPExamples-InterAppOSC.mmp */; };
 		F9FC179C1A85735A00152392 /* MMPExamples-InterAppOSC.pd in Resources */ = {isa = PBXBuildFile; fileRef = F9FC179A1A85735A00152392 /* MMPExamples-InterAppOSC.pd */; };
@@ -435,6 +440,8 @@
 		F9295E3119BD19C6008691CB /* Welcome-Pad.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Welcome-Pad.mmp"; sourceTree = "<group>"; };
 		F9295E3219BD19C6008691CB /* Welcome.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Welcome.mmp; sourceTree = "<group>"; };
 		F9295E3319BD19C6008691CB /* Welcome.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Welcome.pd; sourceTree = "<group>"; };
+		F93EF2D11C078AA400BCF5D3 /* MMPExamples-PingAndConnect.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "MMPExamples-PingAndConnect.pd"; sourceTree = "<group>"; };
+		F93EF2D21C078AA400BCF5D3 /* MMPExamples-PingAndConnect.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "MMPExamples-PingAndConnect.mmp"; sourceTree = "<group>"; };
 		F94FB0281A6F709E004EEF76 /* fiddle~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "fiddle~.c"; path = "pure-data/extra/fiddle~/fiddle~.c"; sourceTree = "<group>"; };
 		F94FB0291A6F709E004EEF76 /* loop~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "loop~.c"; path = "pure-data/extra/loop~/loop~.c"; sourceTree = "<group>"; };
 		F94FB02A1A6F709E004EEF76 /* lrshift~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "lrshift~.c"; path = "pure-data/extra/lrshift~/lrshift~.c"; sourceTree = "<group>"; };
@@ -459,6 +466,11 @@
 		F97D45B619A54D0300874EAA /* MobMuPlat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = MobMuPlat.entitlements; sourceTree = "<group>"; };
 		F9967C3518F8C54D008E3828 /* MenuNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuNavigationController.h; path = gui/MenuNavigationController.h; sourceTree = "<group>"; };
 		F9967C3618F8C54D008E3828 /* MenuNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MenuNavigationController.m; path = gui/MenuNavigationController.m; sourceTree = "<group>"; };
+		F9B6E7A81C0641E00036FB66 /* PingAndConnectManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PingAndConnectManager.h; path = LANdini/PingAndConnectManager.h; sourceTree = "<group>"; };
+		F9B6E7A91C0641E00036FB66 /* PingAndConnectManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PingAndConnectManager.m; path = LANdini/PingAndConnectManager.m; sourceTree = "<group>"; };
+		F9B6E7AB1C069CEA0036FB66 /* MMPNetworkingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMPNetworkingUtils.h; path = LANdini/MMPNetworkingUtils.h; sourceTree = "<group>"; };
+		F9B6E7AC1C069CEA0036FB66 /* MMPNetworkingUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPNetworkingUtils.m; path = LANdini/MMPNetworkingUtils.m; sourceTree = "<group>"; };
+		F9B6E7D11C06BD120036FB66 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F9DE7DBE18F49D62007B9E45 /* MeMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeMenu.h; path = gui/MeMenu.h; sourceTree = "<group>"; };
 		F9DE7DBF18F49D62007B9E45 /* MeMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeMenu.m; path = gui/MeMenu.m; sourceTree = "<group>"; };
 		F9FC17991A85735A00152392 /* MMPExamples-InterAppOSC.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "MMPExamples-InterAppOSC.mmp"; sourceTree = "<group>"; };
@@ -492,15 +504,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		90DFFB22187DC41700DD2149 /* LANdini */ = {
+		90DFFB22187DC41700DD2149 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
 				DC178CE11880FD9F00DD4BF8 /* LANdiniLANManager.h */,
 				DC178CE21880FD9F00DD4BF8 /* LANdiniLANManager.m */,
 				DC178CE31880FD9F00DD4BF8 /* LANdiniUser.h */,
 				DC178CE41880FD9F00DD4BF8 /* LANdiniUser.m */,
+				F9B6E7A81C0641E00036FB66 /* PingAndConnectManager.h */,
+				F9B6E7A91C0641E00036FB66 /* PingAndConnectManager.m */,
+				F9B6E7AB1C069CEA0036FB66 /* MMPNetworkingUtils.h */,
+				F9B6E7AC1C069CEA0036FB66 /* MMPNetworkingUtils.m */,
 			);
-			name = LANdini;
+			name = Networking;
 			sourceTree = "<group>";
 		};
 		DC0FC7E0172D81BC00E895C3 /* PGMidi */ = {
@@ -557,7 +573,7 @@
 				F9295DF019BD19C6008691CB /* Shared */,
 				F97D45A919A5453C00874EAA /* Audiobus */,
 				DC13B951188E04EB00647115 /* Reachability */,
-				90DFFB22187DC41700DD2149 /* LANdini */,
+				90DFFB22187DC41700DD2149 /* Networking */,
 				DC0FC7E0172D81BC00E895C3 /* PGMidi */,
 				DCE7370F16B5E31300512571 /* VVBasics */,
 				DCE7370D16B5E30300512571 /* VVOSC */,
@@ -601,6 +617,7 @@
 		DC233DB21655EDF500AC01C5 /* MobMuPlat */ = {
 			isa = PBXGroup;
 			children = (
+				F9B6E7D11C06BD120036FB66 /* LaunchScreen.storyboard */,
 				F97D45B619A54D0300874EAA /* MobMuPlat.entitlements */,
 				DCEF4F21188ECC7A00D6EE54 /* settings */,
 				DC1065AA16B4255000AD4091 /* graphics */,
@@ -823,6 +840,8 @@
 		F9295DF119BD19C6008691CB /* patches */ = {
 			isa = PBXGroup;
 			children = (
+				F93EF2D11C078AA400BCF5D3 /* MMPExamples-PingAndConnect.pd */,
+				F93EF2D21C078AA400BCF5D3 /* MMPExamples-PingAndConnect.mmp */,
 				F9FC17991A85735A00152392 /* MMPExamples-InterAppOSC.mmp */,
 				F9FC179A1A85735A00152392 /* MMPExamples-InterAppOSC.pd */,
 				F9295DF219BD19C6008691CB /* anderson1.wav */,
@@ -969,7 +988,7 @@
 		DC233D9F1655EDF500AC01C5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0450;
+				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = "Daniel Iglesia";
 				TargetAttributes = {
 					DC233DA71655EDF500AC01C5 = {
@@ -1064,6 +1083,7 @@
 				F9295E7319BD19C6008691CB /* Welcome-Pad.mmp in Resources */,
 				F9295E6B19BD19C6008691CB /* MMPTutorial5-Files.mmp in Resources */,
 				DCEF4F2C188ED1CD00D6EE54 /* SettingsViewController~iphone.xib in Resources */,
+				F9B6E7D21C06BD120036FB66 /* LaunchScreen.storyboard in Resources */,
 				F9FC179B1A85735A00152392 /* MMPExamples-InterAppOSC.mmp in Resources */,
 				F9295E3719BD19C6008691CB /* cats3.jpg in Resources */,
 				F9295E5F19BD19C6008691CB /* MMPTutorial2-Input.mmp in Resources */,
@@ -1113,7 +1133,9 @@
 				DC59573D1733805000CEBECC /* titlepad_ring_185x110.png in Resources */,
 				DC59573E1733805000CEBECC /* titlepad_text_46x142.png in Resources */,
 				F9295E5319BD19C6008691CB /* MMPExamples-Vocoder.mmp in Resources */,
+				F93EF2D41C078AA400BCF5D3 /* MMPExamples-PingAndConnect.mmp in Resources */,
 				F9295E3419BD19C6008691CB /* anderson1.wav in Resources */,
+				F93EF2D31C078AA400BCF5D3 /* MMPExamples-PingAndConnect.pd in Resources */,
 				F9295E6219BD19C6008691CB /* MMPTutorial3-Hardware-Pad.mmp in Resources */,
 				F9295E5219BD19C6008691CB /* MMPExamples-Vocoder-Pad.mmp in Resources */,
 				F9295E6F19BD19C6008691CB /* MMPTutorial6-2DGraphics.mmp in Resources */,
@@ -1159,6 +1181,7 @@
 				DCA9B92A17330F90000E59DD /* OSCAddressSpace.m in Sources */,
 				DCA9B92B17330F90000E59DD /* OSCBundle.m in Sources */,
 				DCA9B92C17330F90000E59DD /* OSCInPort.m in Sources */,
+				F9B6E7AA1C0641E00036FB66 /* PingAndConnectManager.m in Sources */,
 				DC13B957188E053200647115 /* Reachability.m in Sources */,
 				F94FB0391A6F709E004EEF76 /* bonk~.c in Sources */,
 				DC6A9FF71878F88900A7585A /* MAZeroingWeakRef.m in Sources */,
@@ -1187,6 +1210,7 @@
 				F95C52021909B1230074E0A6 /* MeTable.m in Sources */,
 				DC59570C1733800500CEBECC /* MeGrid.m in Sources */,
 				DC59570D1733800500CEBECC /* MeKnob.m in Sources */,
+				F9B6E7AD1C069CEA0036FB66 /* MMPNetworkingUtils.m in Sources */,
 				F975609A1A6EAC5F005CCE8E /* MobMuPlatUtil.m in Sources */,
 				F94FB0361A6F709E004EEF76 /* lrshift~.c in Sources */,
 				DC59570E1733800500CEBECC /* MeLabel.m in Sources */,
@@ -1232,6 +1256,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1304,6 +1329,7 @@
 					"-DUSEAPI_DUMMY",
 					"-DPD",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iglesiaintermedia.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1341,6 +1367,7 @@
 					"-DUSEAPI_DUMMY",
 					"-DPD",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iglesiaintermedia.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";

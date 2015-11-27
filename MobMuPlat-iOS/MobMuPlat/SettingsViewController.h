@@ -13,11 +13,13 @@
 #import "MeSlider.h"
 #import <MediaPlayer/MediaPlayer.h>
 #import "LANdiniLANManager.h"
+#import "PingAndConnectManager.h"
 #import "Reachability.h"
 
 @protocol SettingsViewControllerDelegate;
 @protocol AudioSettingsDelegate;
 @protocol LANdiniDelegate;
+@protocol PingAndConnectDelegate;
 
 typedef enum{
     canvasTypeWidePhone = 0,
@@ -26,7 +28,7 @@ typedef enum{
     canvasTypeTallTablet
 } canvasType;
 
-@interface SettingsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, LANdiniUserStateDelegate, UITextFieldDelegate>{
+@interface SettingsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, LANdiniUserStateDelegate, PingAndConnectUserStateDelegate, UITextFieldDelegate>{
     canvasType hardwareCanvasType;
     
     NSMutableArray *MMPFiles, *allFiles;
@@ -80,6 +82,7 @@ typedef enum{
 @property (nonatomic, strong) IBOutlet UIView *networkingSubView;
 
 @property (nonatomic, strong) IBOutlet UIView *LANdiniSubView;
+@property (nonatomic, strong) IBOutlet UIView *pingAndConnectSubView;
 @property (nonatomic, strong) IBOutlet UIView *multiDirectConnectionSubView;
 
 @property (nonatomic, strong) IBOutlet UITextField *ipAddressTextField;
@@ -92,11 +95,17 @@ typedef enum{
 @property (nonatomic, strong) IBOutlet UILabel* LANdiniTimeLabel;
 @property (nonatomic, strong) IBOutlet UITableView* LANdiniUserTableView;
 
+@property (nonatomic, strong) IBOutlet UISwitch* pingAndConnectEnableSwitch;
+@property (nonatomic, strong) IBOutlet UISegmentedControl* pingAndConnectPlayerNumberSeg;
+@property (nonatomic, strong) IBOutlet UITableView* pingAndConnectUserTableView;
 
 
-@property (nonatomic, assign) id <SettingsViewControllerDelegate> delegate;
-@property (nonatomic, assign) id <AudioSettingsDelegate> audioDelegate;
-@property (nonatomic, assign) id <LANdiniDelegate> LANdiniDelegate;
+
+@property (nonatomic, weak) id <SettingsViewControllerDelegate> delegate;
+@property (nonatomic, weak) id <AudioSettingsDelegate> audioDelegate;
+@property (nonatomic, weak) id <LANdiniDelegate> LANdiniDelegate;
+@property (nonatomic, weak) id <PingAndConnectDelegate> pingAndConnectDelegate;
+
 
 -(void)reloadFileTable;
 -(void)consolePrint:(NSString*)message;
@@ -134,5 +143,11 @@ typedef enum{
 @protocol LANdiniDelegate <NSObject>
 -(float)getLANdiniTime;
 -(void)enableLANdini:(BOOL)enable;
--(Reachability*)getReachability;
+-(Reachability*)getReachability; //move
 @end
+
+@protocol PingAndConnectDelegate <NSObject>
+-(void)enablePingAndConnect:(BOOL)enable;
+-(void)setPingAndConnectPlayerNumber:(NSInteger)playerNumber;
+@end
+

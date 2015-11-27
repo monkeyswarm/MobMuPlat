@@ -16,10 +16,13 @@
 #import "ZipArchive.h"
 
 #import <AVFoundation/AVFoundation.h>
+
+#import "MMPNetworkingUtils.h"
 #import "ViewController.h"
 
 @interface SettingsViewController () {
-  __weak NSArray* _LANdiniUserArray;
+  NSArray* _LANdiniUserArray;
+  NSArray *_pingAndConnectUserArray;
   NSTimer* _networkTimer;
   NSString* _LANdiniSyncServerName;
 }
@@ -30,6 +33,7 @@
 static NSString *documentsTableCellIdentifier = @"documentsTableCell";
 static NSString *midiTableCellIdentifier = @"midiTableCell";
 static NSString *landiniTableCellIdentifier = @"landiniTableCell";
+static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
 
 
 //what kind of device am I one? iphone 3.5", iphone 4", or ipad
@@ -195,7 +199,7 @@ static NSString *landiniTableCellIdentifier = @"landiniTableCell";
   if( [[[self.audioDelegate midi] destinations] count] >0 )
     [_midiDestinationTableView selectRowAtIndexPath:topIndexPath animated:NO scrollPosition:UITableViewScrollPositionTop];
 
-  [_audioMidiScrollView setContentSize:_audioMidiContentView.frame.size];
+  //[_audioMidiScrollView setContentSize:_audioMidiContentView.frame.size];
 
   int actualTicks = [self.audioDelegate actualTicksPerBuffer];
   _tickSeg.selectedSegmentIndex = (int)log2(actualTicks);
@@ -212,20 +216,20 @@ static NSString *landiniTableCellIdentifier = @"landiniTableCell";
   audioRouteView =  [[MPVolumeView alloc] initWithFrame:_audioRouteContainerView.frame];
   audioRouteView.showsRouteButton = YES;
   audioRouteView.showsVolumeSlider = NO;
-  [_audioMidiContentView addSubview:audioRouteView];
+//  [_audioMidiContentView addSubview:audioRouteView];
   [audioRouteView sizeToFit];
 
   //Network
 
   [_networkTypeSeg addTarget:self action:@selector(networkSegChanged:) forControlEvents:UIControlEventValueChanged];
 
-
-  [_networkingSubView addSubview:_LANdiniSubView];
-  [_networkingSubView addSubview:_multiDirectConnectionSubView];
+//  [_networkingSubView addSubview:_LANdiniSubView];
+//  [_networkingSubView addSubview:_pingAndConnectSubView];
+//  [_networkingSubView addSubview:_multiDirectConnectionSubView];
 
   //direct
   _ipAddressTextField.delegate = self;
-  _ipAddressTextField.text = self.delegate.outputIpAddress;
+  _ipAddressTextField.text = [MMPNetworkingUtils ipAddress];//self.delegate.outputIpAddress;
 
   [_ipAddressResetButton addTarget:self action:@selector(ipAddressResetButtonPressed) forControlEvents:UIControlEventTouchUpInside];
 
@@ -240,6 +244,12 @@ static NSString *landiniTableCellIdentifier = @"landiniTableCell";
   _LANdiniUserTableView.delegate = self;
   _LANdiniUserTableView.dataSource = self;
 
+  // Ping and connect
+  [_pingAndConnectEnableSwitch addTarget:self action:@selector(pingAndConnectSwitchHit:) forControlEvents:UIControlEventValueChanged];
+  _pingAndConnectUserTableView.delegate = self;
+  _pingAndConnectUserTableView.dataSource = self;
+  [_pingAndConnectPlayerNumberSeg addTarget:self action:@selector(pingAndConnectPlayerNumberSegChanged:) forControlEvents:UIControlEventValueChanged];
+
 
   //
   _documentView.layer.cornerRadius = cornerRadius;
@@ -253,6 +263,7 @@ static NSString *landiniTableCellIdentifier = @"landiniTableCell";
   _midiSourceTableView.layer.cornerRadius = cornerRadius;
   _midiDestinationTableView.layer.cornerRadius = cornerRadius;
   _LANdiniUserTableView.layer.cornerRadius = cornerRadius;
+  _pingAndConnectUserTableView.layer.cornerRadius = cornerRadius;
 
   if(hardwareCanvasType==canvasTypeWidePhone){
     if(SYSTEM_VERSION_LESS_THAN(@"7.0")){
@@ -505,6 +516,17 @@ BOOL LANdiniSwitchBool;
   }
 }
 
+- (void)pingAndConnectSwitchHit:(UISwitch*)sender {
+  [self.pingAndConnectDelegate enablePingAndConnect:[sender isOn]];
+}
+
+- (void)pingAndConnectPlayerNumberSegChanged:(UISegmentedControl *)sender {
+  NSInteger index = [sender selectedSegmentIndex];
+  if (index == 1)index = -1; //SERVER val, move it
+  else if (index > 1) index -= 1;
+  [_pingAndConnectDelegate setPingAndConnectPlayerNumber:index];
+}
+
 -(void)networkTime:(NSTimer*)timer{
   _LANdiniTimeLabel.text = [NSString stringWithFormat:@"Network time via %@:%.2f", _LANdiniSyncServerName, [self.LANdiniDelegate getLANdiniTime] ];
 }
@@ -631,7 +653,8 @@ BOOL LANdiniSwitchBool;
   int index = [sender selectedSegmentIndex];
   switch (index) {
     case 0: [_networkingSubView bringSubviewToFront: _multiDirectConnectionSubView]; break;
-    case 1: [_networkingSubView bringSubviewToFront: _LANdiniSubView]; break;
+    case 1: [_networkingSubView bringSubviewToFront: _pingAndConnectSubView]; break;
+    case 2: [_networkingSubView bringSubviewToFront: _LANdiniSubView]; break;
   }
 }
 
@@ -857,6 +880,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
   else if (tableView==_midiSourceTableView)return [[[self.audioDelegate midi] sources]  count];
   else if (tableView==_midiDestinationTableView)return [[[self.audioDelegate midi] destinations]  count];
   else if (tableView==_LANdiniUserTableView) return [_LANdiniUserArray count];
+  else if (tableView==_pingAndConnectUserTableView) return [_pingAndConnectUserArray count];
   else return 0;
 }
 
@@ -944,7 +968,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 
   }
 
-  else /*if (tableView==_LANdiniUserTableView)*/{
+  else if (tableView==_LANdiniUserTableView){
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:landiniTableCellIdentifier];
     LANdiniUser* user = [_LANdiniUserArray objectAtIndex:[indexPath row]];
 
@@ -955,12 +979,23 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
     }
     [cell textLabel].text=[NSString stringWithFormat:@"%@ - %@", user.name, user.ip];
     return cell;
+  } else if (tableView==_pingAndConnectUserTableView) {
+    UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:pingAndConnectTableCellIdentifier];
+    NSString* userString = [_pingAndConnectUserArray objectAtIndex:[indexPath row]];
+
+    if(cell==nil){
+      cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:pingAndConnectTableCellIdentifier] ;
+      if (hardwareCanvasType==canvasTypeWideTablet)cell.textLabel.font=[UIFont systemFontOfSize:24];
+      else cell.textLabel.font=[UIFont systemFontOfSize:12];
+    }
+    [cell textLabel].text = userString;
+    return cell;
   }
 }
 
 #pragma mark LANdiniUserDelegate - can be on non-main threads
 
--(void)userStateChanged:(NSArray*)userArray{
+-(void)landiniUserStateChanged:(NSArray*)userArray{
   _LANdiniUserArray = userArray;
   dispatch_async(dispatch_get_main_queue(), ^{
     [_LANdiniUserTableView reloadData];
@@ -969,6 +1004,15 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 
 -(void)syncServerChanged:(NSString*)newServerName{
   _LANdiniSyncServerName = newServerName;
+}
+
+#pragma mark PingAndConnectUserDelegate - can be on non-main threads
+
+- (void)pingAndConnectUserStateChanged:(NSArray*)userArray {
+  _pingAndConnectUserArray = userArray;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [_pingAndConnectUserTableView reloadData];
+  });
 }
 
 #pragma mark reachability from vC
@@ -981,7 +1025,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 -(void)updateNetworkLabel:(Reachability*)reach{
   NSString* network = [ViewController fetchSSIDInfo];
   if ([reach isReachable]) {
-    [_LANdiniNetworkLabel setText:[NSString stringWithFormat:@"Wifi network enabled: %@ \nMy IP address: %@", network ? network : @"", [LANdiniLANManager getIPAddress]]];
+    [_LANdiniNetworkLabel setText:[NSString stringWithFormat:@"Wifi network enabled: %@ \nMy IP address: %@", network ? network : @"", [MMPNetworkingUtils ipAddress]]];
   } else {
     _LANdiniNetworkLabel.text = @"Wifi network disabled";
   }
