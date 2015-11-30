@@ -5,3 +5,6 @@
 	path = libpd
 	url = git://github.com/libpd/libpd.git
 	branch = cocoa
+[submodule "PdParty"]
+	path = PdParty
+	url = https://github.com/danomatika/PdParty.git
