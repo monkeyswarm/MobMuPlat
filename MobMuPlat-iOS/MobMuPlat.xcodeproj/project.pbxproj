@@ -95,7 +95,6 @@
 		DCD8DF9317330D8B00767321 /* PGMidi.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCD8DF9217330D8A00767321 /* PGMidi.mm */; };
 		DCEF4F2C188ED1CD00D6EE54 /* SettingsViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */; };
 		DCFF717716B59F3100CDCEAE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DCFF717616B59F3100CDCEAE /* libz.dylib */; };
-		F91F2F751C0C182C00E979D4 /* Gui.m in Sources */ = {isa = PBXBuildFile; fileRef = F91F2F741C0C182C00E979D4 /* Gui.m */; };
 		F9295DE319BD1980008691CB /* MeMultiTouch.m in Sources */ = {isa = PBXBuildFile; fileRef = F9295DE219BD1980008691CB /* MeMultiTouch.m */; };
 		F9295E3419BD19C6008691CB /* anderson1.wav in Resources */ = {isa = PBXBuildFile; fileRef = F9295DF219BD19C6008691CB /* anderson1.wav */; };
 		F9295E3519BD19C6008691CB /* cats1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = F9295DF319BD19C6008691CB /* cats1.jpg */; };
@@ -182,6 +181,14 @@
 		F92AF7801C0C240500EED3BB /* Number.m in Sources */ = {isa = PBXBuildFile; fileRef = F92AF6031C0C1FE900EED3BB /* Number.m */; };
 		F92AF7811C0C240500EED3BB /* Symbol.m in Sources */ = {isa = PBXBuildFile; fileRef = F92AF6051C0C1FE900EED3BB /* Symbol.m */; };
 		F92AF7821C0C240B00EED3BB /* Widget.m in Sources */ = {isa = PBXBuildFile; fileRef = F92AF6071C0C1FE900EED3BB /* Widget.m */; };
+		F92AF7861C0CAB4700EED3BB /* DejaVuSansMono.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F92AF7841C0CAB4700EED3BB /* DejaVuSansMono.ttf */; };
+		F92AF7871C0CAB4700EED3BB /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = F92AF7851C0CAB4700EED3BB /* LICENSE */; };
+		F92AF78A1C0CABED00EED3BB /* MMPMenuButton.m in Sources */ = {isa = PBXBuildFile; fileRef = F92AF7891C0CABED00EED3BB /* MMPMenuButton.m */; };
+		F92AF7911C0D286C00EED3BB /* MMPPdPatchDisplayUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F92AF78F1C0D286C00EED3BB /* MMPPdPatchDisplayUtils.m */; };
+		F92AF7D51C0D6CDE00EED3BB /* Gui.m in Sources */ = {isa = PBXBuildFile; fileRef = F92AF7CF1C0D6CDE00EED3BB /* Gui.m */; };
+		F92AF7D61C0D6CDE00EED3BB /* MMPPdObjectBox.m in Sources */ = {isa = PBXBuildFile; fileRef = F92AF7D21C0D6CDE00EED3BB /* MMPPdObjectBox.m */; };
+		F92AF7D71C0D6CDE00EED3BB /* MMPGui.pd in Resources */ = {isa = PBXBuildFile; fileRef = F92AF7D31C0D6CDE00EED3BB /* MMPGui.pd */; };
+		F92AF7D81C0D6CDE00EED3BB /* MMPGuiUnSet.pd in Resources */ = {isa = PBXBuildFile; fileRef = F92AF7D41C0D6CDE00EED3BB /* MMPGuiUnSet.pd */; };
 		F93EF2D31C078AA400BCF5D3 /* MMPExamples-PingAndConnect.pd in Resources */ = {isa = PBXBuildFile; fileRef = F93EF2D11C078AA400BCF5D3 /* MMPExamples-PingAndConnect.pd */; };
 		F93EF2D41C078AA400BCF5D3 /* MMPExamples-PingAndConnect.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F93EF2D21C078AA400BCF5D3 /* MMPExamples-PingAndConnect.mmp */; };
 		F94FB0341A6F709E004EEF76 /* fiddle~.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB0281A6F709E004EEF76 /* fiddle~.c */; };
@@ -380,8 +387,6 @@
 		DCD8DF9217330D8A00767321 /* PGMidi.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PGMidi.mm; path = PGMidi/PGMidi.mm; sourceTree = "<group>"; };
 		DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "SettingsViewController~iphone.xib"; path = "settings/SettingsViewController~iphone.xib"; sourceTree = "<group>"; };
 		DCFF717616B59F3100CDCEAE /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		F91F2F731C0C182C00E979D4 /* Gui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Gui.h; sourceTree = "<group>"; };
-		F91F2F741C0C182C00E979D4 /* Gui.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Gui.m; sourceTree = "<group>"; };
 		F9295DE119BD1980008691CB /* MeMultiTouch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeMultiTouch.h; path = gui/MeMultiTouch.h; sourceTree = "<group>"; };
 		F9295DE219BD1980008691CB /* MeMultiTouch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeMultiTouch.m; path = gui/MeMultiTouch.m; sourceTree = "<group>"; };
 		F9295DE419BD19A5008691CB /* ABAnimatedTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ABAnimatedTrigger.h; path = Audiobus/ABAnimatedTrigger.h; sourceTree = "<group>"; };
@@ -567,6 +572,18 @@
 		F92AF68D1C0C1FE900EED3BB /* DispatchQueueLogFormatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DispatchQueueLogFormatter.h; sourceTree = "<group>"; };
 		F92AF68E1C0C1FE900EED3BB /* DispatchQueueLogFormatter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DispatchQueueLogFormatter.m; sourceTree = "<group>"; };
 		F92AF68F1C0C1FE900EED3BB /* README.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
+		F92AF7841C0CAB4700EED3BB /* DejaVuSansMono.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = DejaVuSansMono.ttf; sourceTree = "<group>"; };
+		F92AF7851C0CAB4700EED3BB /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		F92AF7881C0CABED00EED3BB /* MMPMenuButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMPMenuButton.h; sourceTree = "<group>"; };
+		F92AF7891C0CABED00EED3BB /* MMPMenuButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMPMenuButton.m; sourceTree = "<group>"; };
+		F92AF78F1C0D286C00EED3BB /* MMPPdPatchDisplayUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPPdPatchDisplayUtils.m; path = PdGui/MMPPdPatchDisplayUtils.m; sourceTree = "<group>"; };
+		F92AF7901C0D286C00EED3BB /* MMPPdPatchDisplayUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMPPdPatchDisplayUtils.h; path = PdGui/MMPPdPatchDisplayUtils.h; sourceTree = "<group>"; };
+		F92AF7CF1C0D6CDE00EED3BB /* Gui.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Gui.m; path = PdGui/Gui.m; sourceTree = "<group>"; };
+		F92AF7D01C0D6CDE00EED3BB /* Gui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Gui.h; path = PdGui/Gui.h; sourceTree = "<group>"; };
+		F92AF7D11C0D6CDE00EED3BB /* MMPPdObjectBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMPPdObjectBox.h; path = PdGui/MMPPdObjectBox.h; sourceTree = "<group>"; };
+		F92AF7D21C0D6CDE00EED3BB /* MMPPdObjectBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPPdObjectBox.m; path = PdGui/MMPPdObjectBox.m; sourceTree = "<group>"; };
+		F92AF7D31C0D6CDE00EED3BB /* MMPGui.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MMPGui.pd; path = PdGui/MMPGui.pd; sourceTree = "<group>"; };
+		F92AF7D41C0D6CDE00EED3BB /* MMPGuiUnSet.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MMPGuiUnSet.pd; path = PdGui/MMPGuiUnSet.pd; sourceTree = "<group>"; };
 		F93EF2D11C078AA400BCF5D3 /* MMPExamples-PingAndConnect.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "MMPExamples-PingAndConnect.pd"; sourceTree = "<group>"; };
 		F93EF2D21C078AA400BCF5D3 /* MMPExamples-PingAndConnect.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "MMPExamples-PingAndConnect.mmp"; sourceTree = "<group>"; };
 		F94FB0281A6F709E004EEF76 /* fiddle~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "fiddle~.c"; path = "pure-data/extra/fiddle~/fiddle~.c"; sourceTree = "<group>"; };
@@ -695,13 +712,13 @@
 		DC233D9D1655EDF500AC01C5 = {
 			isa = PBXGroup;
 			children = (
-				F99B1E871C0C11F700038320 /* PdParty */,
 				F94FB0331A6F709E004EEF76 /* externals */,
 				F975608C1A6E235B005CCE8E /* libpd.xcodeproj */,
 				F9295DF019BD19C6008691CB /* Shared */,
 				F97D45A919A5453C00874EAA /* Audiobus */,
 				DC13B951188E04EB00647115 /* Reachability */,
 				90DFFB22187DC41700DD2149 /* Networking */,
+				F99B1E871C0C11F700038320 /* PdParty */,
 				DC0FC7E0172D81BC00E895C3 /* PGMidi */,
 				DCE7370F16B5E31300512571 /* VVBasics */,
 				DCE7370D16B5E30300512571 /* VVOSC */,
@@ -745,6 +762,7 @@
 		DC233DB21655EDF500AC01C5 /* MobMuPlat */ = {
 			isa = PBXGroup;
 			children = (
+				F92AF78E1C0D282300EED3BB /* PdGui */,
 				F9B6E7D11C06BD120036FB66 /* LaunchScreen.storyboard */,
 				F97D45B619A54D0300874EAA /* MobMuPlat.entitlements */,
 				DCEF4F21188ECC7A00D6EE54 /* settings */,
@@ -766,8 +784,8 @@
 				F97560961A6E27CD005CCE8E /* MobMuPlatPdAudioUnit.m */,
 				F97560981A6EAC5F005CCE8E /* MobMuPlatUtil.h */,
 				F97560991A6EAC5F005CCE8E /* MobMuPlatUtil.m */,
-				F91F2F731C0C182C00E979D4 /* Gui.h */,
-				F91F2F741C0C182C00E979D4 /* Gui.m */,
+				F92AF7881C0CABED00EED3BB /* MMPMenuButton.h */,
+				F92AF7891C0CABED00EED3BB /* MMPMenuButton.m */,
 			);
 			path = MobMuPlat;
 			sourceTree = "<group>";
@@ -1285,6 +1303,31 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		F92AF7831C0CAB4700EED3BB /* fonts */ = {
+			isa = PBXGroup;
+			children = (
+				F92AF7841C0CAB4700EED3BB /* DejaVuSansMono.ttf */,
+				F92AF7851C0CAB4700EED3BB /* LICENSE */,
+			);
+			name = fonts;
+			path = ../PdParty/res/fonts;
+			sourceTree = "<group>";
+		};
+		F92AF78E1C0D282300EED3BB /* PdGui */ = {
+			isa = PBXGroup;
+			children = (
+				F92AF7CF1C0D6CDE00EED3BB /* Gui.m */,
+				F92AF7D01C0D6CDE00EED3BB /* Gui.h */,
+				F92AF7D11C0D6CDE00EED3BB /* MMPPdObjectBox.h */,
+				F92AF7D21C0D6CDE00EED3BB /* MMPPdObjectBox.m */,
+				F92AF7D31C0D6CDE00EED3BB /* MMPGui.pd */,
+				F92AF7D41C0D6CDE00EED3BB /* MMPGuiUnSet.pd */,
+				F92AF78F1C0D286C00EED3BB /* MMPPdPatchDisplayUtils.m */,
+				F92AF7901C0D286C00EED3BB /* MMPPdPatchDisplayUtils.h */,
+			);
+			name = PdGui;
+			sourceTree = "<group>";
+		};
 		F94FB0331A6F709E004EEF76 /* externals */ = {
 			isa = PBXGroup;
 			children = (
@@ -1335,6 +1378,7 @@
 		F99B1E871C0C11F700038320 /* PdParty */ = {
 			isa = PBXGroup;
 			children = (
+				F92AF7831C0CAB4700EED3BB /* fonts */,
 				F92AF5C31C0C1FE900EED3BB /* src */,
 				F92AF6371C0C1FE900EED3BB /* libs */,
 			);
@@ -1436,6 +1480,7 @@
 				DC233DB71655EDF500AC01C5 /* InfoPlist.strings in Resources */,
 				F9295E6019BD19C6008691CB /* MMPTutorial2-Input.pd in Resources */,
 				F9295E5419BD19C6008691CB /* MMPExamples-Vocoder.pd in Resources */,
+				F92AF7871C0CAB4700EED3BB /* LICENSE in Resources */,
 				F9295E6319BD19C6008691CB /* MMPTutorial3-Hardware.mmp in Resources */,
 				DCB5B94718888BF9003E6C2C /* Images.xcassets in Resources */,
 				DC6A9FF51878F88900A7585A /* LICENSE in Resources */,
@@ -1467,6 +1512,7 @@
 				F9FC179B1A85735A00152392 /* MMPExamples-InterAppOSC.mmp in Resources */,
 				F9295E3719BD19C6008691CB /* cats3.jpg in Resources */,
 				F9295E5F19BD19C6008691CB /* MMPTutorial2-Input.mmp in Resources */,
+				F92AF7D81C0D6CDE00EED3BB /* MMPGuiUnSet.pd in Resources */,
 				F9295E3A19BD19C6008691CB /* MMPExamples-Arp-Pad.mmp in Resources */,
 				DCB5B95718889355003E6C2C /* Icon@2x.png in Resources */,
 				DCB5B95418889355003E6C2C /* Icon-72.png in Resources */,
@@ -1483,8 +1529,10 @@
 				F9295E7019BD19C6008691CB /* MMPTutorial6-2DGraphics.pd in Resources */,
 				F9295E3C19BD19C6008691CB /* MMPExamples-Arp.pd in Resources */,
 				DC5957321733805000CEBECC /* title_cross_30x30.png in Resources */,
+				F92AF7861C0CAB4700EED3BB /* DejaVuSansMono.ttf in Resources */,
 				F9295E3B19BD19C6008691CB /* MMPExamples-Arp.mmp in Resources */,
 				DC5957331733805000CEBECC /* title_resistor_13x40.png in Resources */,
+				F92AF7D71C0D6CDE00EED3BB /* MMPGui.pd in Resources */,
 				F9295E7219BD19C6008691CB /* Welcome-ip5.mmp in Resources */,
 				DC5957341733805000CEBECC /* title_resistor_40x13.png in Resources */,
 				F9295E7419BD19C6008691CB /* Welcome.mmp in Resources */,
@@ -1544,6 +1592,7 @@
 				F94FB03B1A6F709E004EEF76 /* vexp_fun.c in Sources */,
 				DC035A1D16D96FC600F4FA62 /* SplashViewController.m in Sources */,
 				DC5A5ADB1882572300FC97D5 /* OSCQueryReply.m in Sources */,
+				F92AF78A1C0CABED00EED3BB /* MMPMenuButton.m in Sources */,
 				F92AF77C1C0C23FB00EED3BB /* Toggle.m in Sources */,
 				F94FB53918F596AB003BFB18 /* MenuViewController.m in Sources */,
 				F9DE7DC018F49D62007B9E45 /* MeMenu.m in Sources */,
@@ -1555,8 +1604,8 @@
 				DC178CE51880FD9F00DD4BF8 /* LANdiniLANManager.m in Sources */,
 				DCD8DF9317330D8B00767321 /* PGMidi.mm in Sources */,
 				DCA9B90717330F3D000E59DD /* MutLockArray.m in Sources */,
-				F91F2F751C0C182C00E979D4 /* Gui.m in Sources */,
 				F92AF7771C0C23EF00EED3BB /* Canvas.m in Sources */,
+				F92AF7911C0D286C00EED3BB /* MMPPdPatchDisplayUtils.m in Sources */,
 				F92AF77E1C0C240500EED3BB /* AtomWidget.m in Sources */,
 				DCA9B90817330F3D000E59DD /* MutLockDict.m in Sources */,
 				DCA9B90917330F3D000E59DD /* MutNRLockArray.m in Sources */,
@@ -1570,9 +1619,11 @@
 				DCA9B92A17330F90000E59DD /* OSCAddressSpace.m in Sources */,
 				F92AF77A1C0C23F700EED3BB /* Radio.m in Sources */,
 				DCA9B92B17330F90000E59DD /* OSCBundle.m in Sources */,
+				F92AF7D51C0D6CDE00EED3BB /* Gui.m in Sources */,
 				DCA9B92C17330F90000E59DD /* OSCInPort.m in Sources */,
 				F92AF77F1C0C240500EED3BB /* Comment.m in Sources */,
 				F9B6E7AA1C0641E00036FB66 /* PingAndConnectManager.m in Sources */,
+				F92AF7D61C0D6CDE00EED3BB /* MMPPdObjectBox.m in Sources */,
 				DC13B957188E053200647115 /* Reachability.m in Sources */,
 				F92AF7751C0C23E600EED3BB /* Util.m in Sources */,
 				F94FB0391A6F709E004EEF76 /* bonk~.c in Sources */,
@@ -1710,6 +1761,7 @@
 				CODE_SIGN_ENTITLEMENTS = MobMuPlat/MobMuPlat.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "MobMuPlat/MobMuPlat-Prefix.pch";
@@ -1748,6 +1800,7 @@
 				CODE_SIGN_ENTITLEMENTS = MobMuPlat/MobMuPlat.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "MobMuPlat/MobMuPlat-Prefix.pch";

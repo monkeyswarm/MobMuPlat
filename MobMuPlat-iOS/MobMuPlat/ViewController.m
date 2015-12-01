@@ -47,6 +47,11 @@
 #import "MobMuPlatPdAudioUnit.h"
 #import "MobMuPlatUtil.h"
 #import "MMPNetworkingUtils.h"
+#import "MMPPdPatchDisplayUtils.h"
+
+#import "Gui.h"
+#import "PdParser.h"
+#import "PdDispatcher.h"
 
 extern void expr_setup(void);
 extern void bonk_tilde_setup(void);
@@ -59,6 +64,9 @@ extern void pique_setup(void);
 
 @implementation ViewController {
   NSMutableArray *_keyCommandsArray;
+  Gui *_pdGui; //keep strong around for widgets to use (weakly).
+  CGFloat _settingsButtonDim;
+  CGFloat _settingsButtonOffset;
 }
 @synthesize audioController, settingsVC;
 
@@ -330,23 +338,16 @@ extern void pique_setup(void);
 
   canvasType hardwareCanvasType = [ViewController getCanvasType];
 
-  //create info label "underneath" interfaces, that show only when running no interface
-  patchOnlyLabel = [[UILabel alloc]init];
-  if(hardwareCanvasType==canvasTypeWideTablet){
-    patchOnlyLabel.frame = CGRectMake(40, 100, 768-80, 300);
-    [patchOnlyLabel setFont:[UIFont systemFontOfSize:28]];
-    settingsButton.frame=CGRectMake(20, 20, 40, 40);
+  if (hardwareCanvasType==canvasTypeWideTablet || hardwareCanvasType==canvasTypeTallTablet){
+    //settingsButton.frame=CGRectMake(20, 20, 40, 40);
+    _settingsButtonOffset = 20;
+    _settingsButtonDim = 40;
   }
-  else{
-    patchOnlyLabel.frame = CGRectMake(20, 100, 280, 300);
-    settingsButton.frame=CGRectMake(10, 10, 30, 30);
+  else {
+    //settingsButton.frame=CGRectMake(10, 10, 30, 30);
+    _settingsButtonOffset = 10;
+    _settingsButtonDim = 30;
   }
-  patchOnlyLabel.textAlignment=NSTextAlignmentCenter;
-  patchOnlyLabel.numberOfLines=6;
-  patchOnlyLabel.backgroundColor = [UIColor clearColor];
-  patchOnlyLabel.textColor=[UIColor whiteColor];
-  [self.view addSubview:patchOnlyLabel];
-
 
   //midi setup
   midi.delegate=self;
@@ -380,6 +381,12 @@ extern void pique_setup(void);
 
   [audioController setActive:YES];
 
+  // DEI new pd render - breaks old interface!
+  _pdGui = [[Gui alloc] init];
+  PdDispatcher *dispatcher = [[PdDispatcher alloc] init];
+  [Widget setDispatcher:dispatcher];
+  [PdBase setDelegate:dispatcher];
+
   //start default intro patch
   NSString* path;
   if(hardwareCanvasType==canvasTypeWidePhone )
@@ -397,6 +404,8 @@ extern void pique_setup(void);
     [self loadScene:[NSJSONSerialization JSONObjectWithData:data options:nil error:nil]];
   } else {
     //still put butotn
+    settingsButton.transform = CGAffineTransformMakeRotation(0);
+    settingsButton.frame = CGRectMake(_settingsButtonOffset, _settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
     [self.view addSubview:settingsButton];
   }
 
@@ -643,53 +652,175 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 -(void)flipInterface{
   isFlipped = !isFlipped;
   if(isFlipped) {
-    scrollView.transform = CGAffineTransformMakeRotation(M_PI+isLandscape*M_PI_2);
+    scrollView.transform = pdPatchView.transform = CGAffineTransformMakeRotation(M_PI+isLandscape*M_PI_2);
   } else {
-    scrollView.transform = CGAffineTransformMakeRotation(isLandscape*M_PI_2);
+    scrollView.transform = pdPatchView.transform = CGAffineTransformMakeRotation(isLandscape*M_PI_2);
   }
-
 }
 
-
 -(BOOL)loadScenePatchOnly:(NSString*)filename{
+  if (!filename) return NO;
 
-  if(scrollView)[scrollView removeFromSuperview];
-
-  [allGUIControl removeAllObjects];
-
-//  [self disconnectPorts];
-
-  [locationManager stopUpdatingLocation];
-  [locationManager stopUpdatingHeading];
-
-//  [self connectPorts];
-
-  if(openPDFile!=nil)[PdBase closeFile:openPDFile];
+  [self loadSceneCommonCleanup];
 
   NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
   NSString *publicDocumentsDir = [paths objectAtIndex:0];
 
-  openPDFile = [PdBase openFile:filename path:publicDocumentsDir];
-  if(!openPDFile) return NO;
-  NSLog(@"open pd file %@", filename);
+  //openPDFile = [PdBase openFile:filename path:publicDocumentsDir];
+  //if(!openPDFile) return NO;
+  //NSLog(@"open pd file %@", filename);
+
+  // Render new file for running with added send/receives.
+  //NSArray *paths2 = NSSearchPathForDirectoriesInDomains(NSTemporaryDirectory(), NSUserDomainMask, YES);
+  //NSString *tempDir = [paths2 objectAtIndex:0]; //CHECK
+  //NSString *tempDir = NSTemporaryDirectory(); //Can't use temp, because it looks for abstractions in same folder...
+  //NSFileManager *fileManager = [NSFileManager defaultManager];
+  NSString *fromPath = [publicDocumentsDir stringByAppendingPathComponent:filename];
+  NSString *toPath = [publicDocumentsDir stringByAppendingPathComponent:@"temp"];
+  //[fileManager copyItemAtPath:fromPath toPath:toPath error:nil]; //DEI ERROR CHECK and CLEAN UP AFTER!
+
+  //NSString *string = [NSString stringWithContentsOfFile:toPath encoding:NSASCIIStringEncoding error:nil];// DEI ERROR
+
+
+  NSArray *originalAtomLines = [PdParser getAtomLines:[PdParser readPatch:fromPath]];
+
+  NSArray *shimmedAtomLines = [MMPPdPatchDisplayUtils proccessNativeWidgetsFromAtomLines:originalAtomLines];
+
+  NSMutableString *outputString = [NSMutableString string];
+  for (NSArray *line in shimmedAtomLines) {
+    [outputString appendString:[line componentsJoinedByString:@" "]];
+    [outputString appendString:@";\n"];
+  }
+
+  NSError *error;
+  [outputString writeToFile:toPath atomically:YES encoding:NSASCIIStringEncoding error:&error];
+  //
+
+  //
+  openPDFile = [PdFile openFileNamed:@"temp" path:publicDocumentsDir]; //[PdFile openFileNamed:filename path:publicDocumentsDir];
+
+
+  NSArray *guiAtomLines = [MMPPdPatchDisplayUtils proccessGuiWidgetsFromAtomLines:originalAtomLines];
+
+
+// Compute canvas size
+  CGSize docCanvasSize = CGSizeMake([originalAtomLines[0][4] floatValue], [originalAtomLines[0][5] floatValue]); //DEI check
+  BOOL isOrientationLandscape = (docCanvasSize.width > docCanvasSize.height);
+  CGSize hardwareCanvasSize;
+  if (isOrientationLandscape) {
+    hardwareCanvasSize = CGSizeMake([[UIScreen mainScreen] bounds].size.height,
+                                    [[UIScreen mainScreen] bounds].size.width);
+  } else {
+    hardwareCanvasSize = CGSizeMake([[UIScreen mainScreen] bounds].size.width,
+                                    [[UIScreen mainScreen] bounds].size.height);
+  }
+  CGFloat hardwareCanvasRatio = hardwareCanvasSize.width / hardwareCanvasSize.height;
+
+  CGFloat canvasWidth, canvasHeight;
+  CGFloat canvasRatio;
+
+  canvasRatio = docCanvasSize.width / docCanvasSize.height;
+
+  if (canvasRatio > hardwareCanvasRatio) {
+    // The doc canvas has a wider aspect ratio than the hardware canvas;
+    // It will take the width of the screen and get letterboxed on top.
+    canvasWidth = hardwareCanvasSize.width ;
+    canvasHeight = canvasWidth / canvasRatio;
+    pdPatchView = [[UIView alloc] initWithFrame:CGRectMake(0, (hardwareCanvasSize.height - canvasHeight) / 2.0f, canvasWidth, canvasHeight)];
+  } else {
+    // The doc canvas has a taller aspect ratio thatn the hardware canvas;
+    // It will take the height of the screen and get letterboxed on the sides.
+    canvasHeight = hardwareCanvasSize.height;
+    canvasWidth = canvasHeight * canvasRatio;
+    pdPatchView = [[UIView alloc] initWithFrame:CGRectMake((hardwareCanvasSize.width - canvasWidth) / 2.0f, 0, canvasWidth, canvasHeight)];
+  }
+
+  pdPatchView.backgroundColor = [UIColor whiteColor];
+  [self.view addSubview:pdPatchView];
+
+  if(isOrientationLandscape){//rotate
+    isLandscape = YES;
+    CGPoint rotatePoint = CGPointMake(hardwareCanvasSize.height / 2.0f, hardwareCanvasSize.width / 2.0f);
+    pdPatchView.center = rotatePoint;
+    if(isFlipped){
+      pdPatchView.transform = CGAffineTransformMakeRotation(M_PI_2+M_PI);
+
+      settingsButton.transform = CGAffineTransformMakeRotation(M_PI_2+M_PI);
+      settingsButton.frame = CGRectMake(_settingsButtonOffset, self.view.frame.size.height - _settingsButtonOffset - _settingsButtonDim, _settingsButtonDim, _settingsButtonDim);
+    }
+    else {
+      pdPatchView.transform = CGAffineTransformMakeRotation(M_PI_2);
+
+      settingsButton.frame = CGRectMake(self.view.frame.size.width-_settingsButtonDim-_settingsButtonOffset, _settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
+      settingsButton.transform = CGAffineTransformMakeRotation(M_PI_2);
+    }
+  } else {
+    isLandscape = NO;
+    if(isFlipped){
+      pdPatchView.transform = CGAffineTransformMakeRotation(M_PI);
+
+      settingsButton.transform = CGAffineTransformMakeRotation(M_PI);
+      settingsButton.frame = CGRectMake(self.view.frame.size.width-_settingsButtonDim-_settingsButtonOffset, self.view.frame.size.height
+                                        -_settingsButtonDim-_settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
+
+    } else {
+      settingsButton.transform = CGAffineTransformMakeRotation(0);
+      settingsButton.frame = CGRectMake(_settingsButtonOffset, _settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
+    }
+  }
+  //DEI todo update button pos/rot on flipping.
+
+  //
+
+  _pdGui.parentViewSize = CGSizeMake(canvasWidth, canvasHeight);//pdPatchView.frame.size;//self.view.frame.size;
+
+  [_pdGui addWidgetsFromAtomLines:guiAtomLines];
+
+  for(Widget *widget in _pdGui.widgets) {
+    [widget replaceDollarZerosForGui:_pdGui fromPatch:openPDFile];
+    [pdPatchView addSubview:widget];
+  }
+  [_pdGui reshapeWidgets];
 
   [self.view addSubview:settingsButton];
-  patchOnlyLabel.text = [NSString stringWithFormat:@"running %@ \nwith no interface", filename];
 
   return YES;
+}
+
+//
+
+-(void)loadSceneCommonCleanup {
+  if(scrollView) {
+    [scrollView removeFromSuperview];
+    scrollView = nil;
+  }
+
+  if (pdPatchView) {
+    [pdPatchView removeFromSuperview];
+    pdPatchView = nil;
+  }
+
+  [allGUIControl removeAllObjects];
+
+  for (Widget *widget in _pdGui.widgets) {
+    [widget removeFromSuperview];
+  }
+  [_pdGui.widgets removeAllObjects];
+
+  //if pdfile is open, close it
+  if(openPDFile != nil) {
+    [openPDFile closeFile];
+    openPDFile = nil;
+  }
+
+  [locationManager stopUpdatingLocation];
+  [locationManager stopUpdatingHeading];
 }
 
 -(BOOL)loadScene:(NSDictionary*) sceneDict{
   if(!sceneDict)return NO;
 
-  if(scrollView)[scrollView removeFromSuperview];
-
-  [allGUIControl removeAllObjects];
-
-  [locationManager stopUpdatingLocation];
-  [locationManager stopUpdatingHeading];
-
-//  [self disconnectPorts];
+  [self loadSceneCommonCleanup];
 
   //type of canvas for device
   //canvasType hardwareCanvasType = [ViewController getCanvasType];
@@ -978,11 +1109,11 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
   //scroll to start page, and put settings button on top
   [scrollView zoomToRect:CGRectMake(docCanvasSize.width*startPageIndex, 0, docCanvasSize.width, docCanvasSize.height) animated:NO];
+  settingsButton.transform = CGAffineTransformMakeRotation(0);
+  settingsButton.frame = CGRectMake(_settingsButtonOffset, _settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
   [scrollView addSubview:settingsButton];
 
   ///===PureData patch
-  //if one is open, close it
-  if(openPDFile!=nil)[PdBase closeFile:openPDFile];
 
   if([sceneDict objectForKey:@"pdFile"]){
     NSString* filename = [sceneDict objectForKey:@"pdFile"];
@@ -990,7 +1121,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *publicDocumentsDir = [paths objectAtIndex:0];
 
-    openPDFile = [PdBase openFile:filename path:publicDocumentsDir];//attempt to open
+    openPDFile = [PdFile openFileNamed:filename path:publicDocumentsDir];//attempt to open
     NSLog(@"open pd file %@", filename );
 
     if(openPDFile==nil){//failure to load the named patch

@@ -11,6 +11,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import "PdAudioController.h"
 #import "PdBase.h"
+#import "PdFile.h"
 
 #import "Reachability.h"
 
@@ -29,12 +30,12 @@
     
     
     UIButton * settingsButton;
-    UILabel* patchOnlyLabel;
     UIView* scrollInnerView;
     
     NSMutableDictionary* allGUIControl;
-    UIScrollView* scrollView;
-    
+    UIScrollView* scrollView; // MMP gui
+  UIView *pdPatchView; //Native gui
+
     OSCManager *manager;
     OSCInPort *inPort;
     OSCOutPort *outPort;
@@ -55,7 +56,7 @@
     BOOL isFlipped;
    
     
-    void* openPDFile;
+    PdFile *openPDFile;
     AVCaptureDevice *avCaptureDevice;//for flash
     
     //audio settings
