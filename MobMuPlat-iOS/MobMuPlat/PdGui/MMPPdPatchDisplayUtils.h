@@ -10,10 +10,13 @@
 
 @interface MMPPdPatchDisplayUtils : NSObject
 
-/// Take pd file lines and replace gui elements with "shim" custom objects for gui-to-patch communication.
-+ (NSArray *)proccessNativeWidgetsFromAtomLines:(NSArray *)lines;
+/// Return two-item tuple
+/// [0] = processed lines to be written as the pd patch to execute. This
+/// [1] = proccessed lines to generate to the MMP GUI
++ (NSArray *)proccessAtomLines:(NSArray *)lines;
 
-/// Take pd file lines and extract gui elements, swap in custom to/from names.
-+ (NSArray *)proccessGuiWidgetsFromAtomLines:(NSArray *)lines;
+
+/// Call before opening a pd gui. Ensure that the Documents folder with the shim files exists.
++ (void)maybeCreatePdGuiFolderAndFiles;
 
 @end

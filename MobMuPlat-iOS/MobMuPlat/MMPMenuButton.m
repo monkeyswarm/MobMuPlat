@@ -8,14 +8,34 @@
 
 #import "MMPMenuButton.h"
 
-@implementation MMPMenuButton
+#define PADDING_PERCENT .1
+#define INTRABAR_PERCENT .1
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
+@implementation MMPMenuButton {
+  UIColor *_barColor;
 }
-*/
+
+- (void)drawRect:(CGRect)rect {
+  CGContextRef context = UIGraphicsGetCurrentContext();
+  //CGContextTranslateCTM(context, 0.5, 0.5); // snap to nearest pixel
+  //CGContextSetLineWidth(context, 1.0);
+
+  CGContextSetFillColorWithColor(context, _barColor.CGColor);
+  CGFloat barHorizPadding = PADDING_PERCENT * rect.size.width;
+  CGFloat barVerticalPadding = PADDING_PERCENT * rect.size.height;
+  CGFloat intraBarHeight = INTRABAR_PERCENT * rect.size.height;
+  CGFloat barHeight = (rect.size.height - intraBarHeight * 2 - barVerticalPadding * 2) / 3.0f;
+  CGFloat barWidth = rect.size.width - barHorizPadding * 2;
+  for (NSUInteger i=0;i<3;i++) {
+    CGRect barFrame =
+        CGRectMake(barHorizPadding, barVerticalPadding + i * (barHeight + intraBarHeight), barWidth, barHeight);
+    CGContextFillRect(context, barFrame);
+  }
+}
+
+- (void)setBarColor:(UIColor *)color {
+  _barColor = color;
+  [self setNeedsDisplay];
+}
 
 @end

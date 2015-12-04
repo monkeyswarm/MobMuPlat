@@ -29,7 +29,6 @@
 @interface ViewController : UIViewController<PdReceiverDelegate, UIAccelerometerDelegate,  SettingsViewControllerDelegate, ControlDelegate, UIScrollViewDelegate, AudioSettingsDelegate, PGMidiDelegate, PGMidiSourceDelegate, OSCDelegateProtocol, PdMidiReceiverDelegate, CLLocationManagerDelegate, LANdiniDelegate, PingAndConnectDelegate>{
     
     
-    UIButton * settingsButton;
     UIView* scrollInnerView;
     
     NSMutableDictionary* allGUIControl;

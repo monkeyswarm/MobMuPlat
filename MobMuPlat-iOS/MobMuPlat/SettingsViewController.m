@@ -778,14 +778,14 @@ BOOL LANdiniSwitchBool;
   else if ([suffix isEqualToString:@"pd"]){
     BOOL loaded = [self.delegate loadScenePatchOnly:filename];
     if(loaded)[self.delegate settingsViewControllerDidFinish:self];
-    else{//not sure why I commented this out...
-      /*UIAlertView *alert = [[UIAlertView alloc]
+    else{
+      UIAlertView *alert = [[UIAlertView alloc]
        initWithTitle: @"Bad PD format"
        message: @"Could not open PD file"
        delegate: nil
        cancelButtonTitle:@"OK"
        otherButtonTitles:nil];
-       [alert show];*/
+       [alert show];
     }
   }
 }

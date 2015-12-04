@@ -20,6 +20,7 @@
 }
 
 +(UIColor*) colorFromRGBArray:(NSArray*)rgbArray;//take three floats and turn into color
++(UIColor*)inverseColorFromRGBArray:(NSArray*)rgbArray;
 +(UIColor*) colorFromRGBAArray:(NSArray*)rgbaArray;//take 4 floats and turn into color with translucency
 
 -(void)receiveList:(NSArray*)inArray;

@@ -22,6 +22,9 @@
 #define DEFAULT_OUTPUT_PORT_NUMBER 54321
 #define DEFAULT_INPUT_PORT_NUMBER 54322
 
+#define SETTINGS_BUTTON_OFFSET_PERCENT .02 // percent of screen width
+#define SETTINGS_BUTTON_DIM_PERCENT .08 // percent of screen width
+
 #import "ViewController.h"
 
 #import "VVOSC.h"
@@ -48,6 +51,7 @@
 #import "MobMuPlatUtil.h"
 #import "MMPNetworkingUtils.h"
 #import "MMPPdPatchDisplayUtils.h"
+#import "MMPMenuButton.h"
 
 #import "Gui.h"
 #import "PdParser.h"
@@ -67,9 +71,11 @@ extern void pique_setup(void);
   Gui *_pdGui; //keep strong around for widgets to use (weakly).
   CGFloat _settingsButtonDim;
   CGFloat _settingsButtonOffset;
+  PdDispatcher *_pdDispatcher;
+  MMPMenuButton * _settingsButton;
 }
-@synthesize audioController, settingsVC;
 
+@synthesize audioController, settingsVC;
 
 - (NSArray *)keyCommands {
   if (!_keyCommandsArray) {
@@ -262,9 +268,6 @@ extern void pique_setup(void);
 
 
   //copy bundle stuff if not there, i.e. first time we are running it on a new version #
-  NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-  NSString *publicDocumentsDir = [paths objectAtIndex:0];
-  NSString* bundlePath = [[NSBundle mainBundle] bundlePath];
 
   canvasType hardwareCanvasType = [ViewController getCanvasType];
 
@@ -277,22 +280,23 @@ extern void pique_setup(void);
   //printf("\n bundle %s  already started %d", [bundleVersion cString], [alreadyStartedOnVersion boolValue]);
 
   if(!alreadyStartedOnVersion || [alreadyStartedOnVersion boolValue] == NO) {
-    NSArray* defaultPatches;
+    NSMutableArray* defaultPatches = [NSMutableArray array];
     if(hardwareCanvasType==canvasTypeWidePhone ){
-      defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine.mmp", @"MMPTutorial1-GUI.mmp", @"MMPTutorial2-Input.mmp", @"MMPTutorial3-Hardware.mmp", @"MMPTutorial4-Networking.mmp",@"MMPTutorial5-Files.mmp",@"MMPExamples-Vocoder.mmp", @"MMPExamples-Motion.mmp", @"MMPExamples-Sequencer.mmp", @"MMPExamples-GPS.mmp", @"MMPTutorial6-2DGraphics.mmp", @"MMPExamples-LANdini.mmp", @"MMPExamples-Arp.mmp", @"MMPExamples-TableGlitch.mmp", nil];
+      [defaultPatches addObjectsFromArray:@[ @"MMPTutorial0-HelloSine.mmp", @"MMPTutorial1-GUI.mmp", @"MMPTutorial2-Input.mmp", @"MMPTutorial3-Hardware.mmp", @"MMPTutorial4-Networking.mmp",@"MMPTutorial5-Files.mmp",@"MMPExamples-Vocoder.mmp", @"MMPExamples-Motion.mmp", @"MMPExamples-Sequencer.mmp", @"MMPExamples-GPS.mmp", @"MMPTutorial6-2DGraphics.mmp", @"MMPExamples-LANdini.mmp", @"MMPExamples-Arp.mmp", @"MMPExamples-TableGlitch.mmp" ]];
     }
     else if (hardwareCanvasType==canvasTypeTallPhone){
-      defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine-ip5.mmp", @"MMPTutorial1-GUI-ip5.mmp", @"MMPTutorial2-Input-ip5.mmp", @"MMPTutorial3-Hardware-ip5.mmp", @"MMPTutorial4-Networking-ip5.mmp",@"MMPTutorial5-Files-ip5.mmp", @"MMPExamples-Vocoder-ip5.mmp", @"MMPExamples-Motion-ip5.mmp", @"MMPExamples-Sequencer-ip5.mmp",@"MMPExamples-GPS-ip5.mmp", @"MMPTutorial6-2DGraphics-ip5.mmp", @"MMPExamples-LANdini-ip5.mmp", @"MMPExamples-Arp-ip5.mmp",  @"MMPExamples-TableGlitch-ip5.mmp", nil];
+      [defaultPatches addObjectsFromArray:@[ @"MMPTutorial0-HelloSine-ip5.mmp", @"MMPTutorial1-GUI-ip5.mmp", @"MMPTutorial2-Input-ip5.mmp", @"MMPTutorial3-Hardware-ip5.mmp", @"MMPTutorial4-Networking-ip5.mmp",@"MMPTutorial5-Files-ip5.mmp", @"MMPExamples-Vocoder-ip5.mmp", @"MMPExamples-Motion-ip5.mmp", @"MMPExamples-Sequencer-ip5.mmp",@"MMPExamples-GPS-ip5.mmp", @"MMPTutorial6-2DGraphics-ip5.mmp", @"MMPExamples-LANdini-ip5.mmp", @"MMPExamples-Arp-ip5.mmp",  @"MMPExamples-TableGlitch-ip5.mmp" ]];
     }
     else{//pad
-      defaultPatches=[NSArray arrayWithObjects: @"MMPTutorial0-HelloSine-Pad.mmp", @"MMPTutorial1-GUI-Pad.mmp", @"MMPTutorial2-Input-Pad.mmp", @"MMPTutorial3-Hardware-Pad.mmp", @"MMPTutorial4-Networking-Pad.mmp",@"MMPTutorial5-Files-Pad.mmp", @"MMPExamples-Vocoder-Pad.mmp", @"MMPExamples-Motion-Pad.mmp", @"MMPExamples-Sequencer-Pad.mmp",@"MMPExamples-GPS-Pad.mmp", @"MMPTutorial6-2DGraphics-Pad.mmp", @"MMPExamples-LANdini-Pad.mmp", @"MMPExamples-Arp-Pad.mmp",  @"MMPExamples-TableGlitch-Pad.mmp",nil];
+      [defaultPatches addObjectsFromArray:@[ @"MMPTutorial0-HelloSine-Pad.mmp", @"MMPTutorial1-GUI-Pad.mmp", @"MMPTutorial2-Input-Pad.mmp", @"MMPTutorial3-Hardware-Pad.mmp", @"MMPTutorial4-Networking-Pad.mmp",@"MMPTutorial5-Files-Pad.mmp", @"MMPExamples-Vocoder-Pad.mmp", @"MMPExamples-Motion-Pad.mmp", @"MMPExamples-Sequencer-Pad.mmp",@"MMPExamples-GPS-Pad.mmp", @"MMPTutorial6-2DGraphics-Pad.mmp", @"MMPExamples-LANdini-Pad.mmp", @"MMPExamples-Arp-Pad.mmp",  @"MMPExamples-TableGlitch-Pad.mmp" ]];
     }
 
     //NOTE InterAppOSC & Ping and connect, one version.
-    NSArray* commonFiles = [NSArray arrayWithObjects:@"MMPTutorial0-HelloSine.pd",@"MMPTutorial1-GUI.pd", @"MMPTutorial2-Input.pd", @"MMPTutorial3-Hardware.pd", @"MMPTutorial4-Networking.pd",@"MMPTutorial5-Files.pd",@"cats1.jpg", @"cats2.jpg",@"cats3.jpg",@"clap.wav",@"Welcome.pd",  @"MMPExamples-Vocoder.pd", @"vocod_channel.pd", @"MMPExamples-Motion.pd", @"MMPExamples-Sequencer.pd", @"MMPExamples-GPS.pd", @"MMPTutorial6-2DGraphics.pd", @"MMPExamples-LANdini.pd", @"MMPExamples-Arp.pd", @"MMPExamples-TableGlitch.pd", @"anderson1.wav", @"MMPExamples-InterAppOSC.mmp", @"MMPExamples-InterAppOSC.pd", @"MMPExamples-PingAndConnect.pd", @"MMPExamples-PingAndConnect.mmp", nil];
+    [defaultPatches addObjectsFromArray: @[ @"MMPTutorial0-HelloSine.pd",@"MMPTutorial1-GUI.pd", @"MMPTutorial2-Input.pd", @"MMPTutorial3-Hardware.pd", @"MMPTutorial4-Networking.pd",@"MMPTutorial5-Files.pd",@"cats1.jpg", @"cats2.jpg",@"cats3.jpg",@"clap.wav",@"Welcome.pd",  @"MMPExamples-Vocoder.pd", @"vocod_channel.pd", @"MMPExamples-Motion.pd", @"MMPExamples-Sequencer.pd", @"MMPExamples-GPS.pd", @"MMPTutorial6-2DGraphics.pd", @"MMPExamples-LANdini.pd", @"MMPExamples-Arp.pd", @"MMPExamples-TableGlitch.pd", @"anderson1.wav", @"MMPExamples-InterAppOSC.mmp", @"MMPExamples-InterAppOSC.pd", @"MMPExamples-PingAndConnect.pd", @"MMPExamples-PingAndConnect.mmp" ]];
 
-    defaultPatches = [defaultPatches arrayByAddingObjectsFromArray:commonFiles];
-
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *publicDocumentsDir = [paths objectAtIndex:0];
+    NSString* bundlePath = [[NSBundle mainBundle] bundlePath];
 
     for(NSString* patchName in defaultPatches){//copy all from default and common
       NSString* patchDocPath = [publicDocumentsDir stringByAppendingPathComponent:patchName];
@@ -307,7 +311,6 @@ extern void pique_setup(void);
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:appFirstStartOfVersionKey];
   }
   //end first run and copy
-
 
   return self;
 }
@@ -331,23 +334,12 @@ extern void pique_setup(void);
 
 
   //setup upper left info button, but don't add it anywhere yet
-  settingsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-  [settingsButton setImage:[UIImage imageNamed:@"infoicon_100x100.png"] forState:UIControlStateNormal];
-  [settingsButton addTarget:self action:@selector(showInfo:) forControlEvents:UIControlEventTouchUpInside];
+  _settingsButton = [[MMPMenuButton alloc] init];//[UIButton buttonWithType:UIButtonTypeCustom];
+  [_settingsButton addTarget:self action:@selector(showInfo:) forControlEvents:UIControlEventTouchUpInside];
 
+  _settingsButtonOffset = self.view.frame.size.width * SETTINGS_BUTTON_OFFSET_PERCENT;
+  _settingsButtonDim = self.view.frame.size.width * SETTINGS_BUTTON_DIM_PERCENT;
 
-  canvasType hardwareCanvasType = [ViewController getCanvasType];
-
-  if (hardwareCanvasType==canvasTypeWideTablet || hardwareCanvasType==canvasTypeTallTablet){
-    //settingsButton.frame=CGRectMake(20, 20, 40, 40);
-    _settingsButtonOffset = 20;
-    _settingsButtonDim = 40;
-  }
-  else {
-    //settingsButton.frame=CGRectMake(10, 10, 30, 30);
-    _settingsButtonOffset = 10;
-    _settingsButtonDim = 30;
-  }
 
   //midi setup
   midi.delegate=self;
@@ -383,11 +375,16 @@ extern void pique_setup(void);
 
   // DEI new pd render - breaks old interface!
   _pdGui = [[Gui alloc] init];
-  PdDispatcher *dispatcher = [[PdDispatcher alloc] init];
-  [Widget setDispatcher:dispatcher];
-  [PdBase setDelegate:dispatcher];
+  _pdDispatcher = [[PdDispatcher alloc] init];
+  [Widget setDispatcher:_pdDispatcher];
+  [PdBase setDelegate:_pdDispatcher];
+  // Add self as dispatch recipient for symbols
+  [_pdDispatcher addListener:self forSource:@"toGUI"];
+  [_pdDispatcher addListener:self forSource:@"toNetwork"];
+  [_pdDispatcher addListener:self forSource:@"toSystem"];
 
   //start default intro patch
+  canvasType hardwareCanvasType = [ViewController getCanvasType];
   NSString* path;
   if(hardwareCanvasType==canvasTypeWidePhone )
     path = [[NSBundle mainBundle] pathForResource:@"Welcome" ofType:@"mmp"];
@@ -404,11 +401,10 @@ extern void pique_setup(void);
     [self loadScene:[NSJSONSerialization JSONObjectWithData:data options:nil error:nil]];
   } else {
     //still put butotn
-    settingsButton.transform = CGAffineTransformMakeRotation(0);
-    settingsButton.frame = CGRectMake(_settingsButtonOffset, _settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
-    [self.view addSubview:settingsButton];
+    _settingsButton.transform = CGAffineTransformMakeRotation(0);
+    _settingsButton.frame = CGRectMake(_settingsButtonOffset, _settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
+    [self.view addSubview:_settingsButton];
   }
-
 }
 
 -(void)setupAudioBus {
@@ -662,46 +658,42 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   if (!filename) return NO;
 
   [self loadSceneCommonCleanup];
+  [_settingsButton setBarColor:[UIColor blackColor]];
+
+  [MMPPdPatchDisplayUtils maybeCreatePdGuiFolderAndFiles];
 
   NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
   NSString *publicDocumentsDir = [paths objectAtIndex:0];
 
-  //openPDFile = [PdBase openFile:filename path:publicDocumentsDir];
-  //if(!openPDFile) return NO;
-  //NSLog(@"open pd file %@", filename);
-
-  // Render new file for running with added send/receives.
-  //NSArray *paths2 = NSSearchPathForDirectoriesInDomains(NSTemporaryDirectory(), NSUserDomainMask, YES);
-  //NSString *tempDir = [paths2 objectAtIndex:0]; //CHECK
-  //NSString *tempDir = NSTemporaryDirectory(); //Can't use temp, because it looks for abstractions in same folder...
-  //NSFileManager *fileManager = [NSFileManager defaultManager];
   NSString *fromPath = [publicDocumentsDir stringByAppendingPathComponent:filename];
-  NSString *toPath = [publicDocumentsDir stringByAppendingPathComponent:@"temp"];
-  //[fileManager copyItemAtPath:fromPath toPath:toPath error:nil]; //DEI ERROR CHECK and CLEAN UP AFTER!
-
-  //NSString *string = [NSString stringWithContentsOfFile:toPath encoding:NSASCIIStringEncoding error:nil];// DEI ERROR
-
+  NSString *toPath = [publicDocumentsDir stringByAppendingPathComponent:@"tempPdFile"];
 
   NSArray *originalAtomLines = [PdParser getAtomLines:[PdParser readPatch:fromPath]];
 
-  NSArray *shimmedAtomLines = [MMPPdPatchDisplayUtils proccessNativeWidgetsFromAtomLines:originalAtomLines];
+  // Process original atom lines into a set of gui lines and a set of shimmed patch lines.
+  NSArray *processedAtomLinesTuple = [MMPPdPatchDisplayUtils proccessAtomLines:originalAtomLines];
+  if (!processedAtomLinesTuple) {
+    return NO;
+  }
+  NSArray *patchAtomLines = processedAtomLinesTuple[0];
+  NSArray *guiAtomLines = processedAtomLinesTuple[1];
 
   NSMutableString *outputString = [NSMutableString string];
-  for (NSArray *line in shimmedAtomLines) {
+  for (NSArray *line in patchAtomLines) {
     [outputString appendString:[line componentsJoinedByString:@" "]];
     [outputString appendString:@";\n"];
   }
 
+  // Write temp file to disk.
   NSError *error;
   [outputString writeToFile:toPath atomically:YES encoding:NSASCIIStringEncoding error:&error];
   //
 
   //
-  openPDFile = [PdFile openFileNamed:@"temp" path:publicDocumentsDir]; //[PdFile openFileNamed:filename path:publicDocumentsDir];
-
-
-  NSArray *guiAtomLines = [MMPPdPatchDisplayUtils proccessGuiWidgetsFromAtomLines:originalAtomLines];
-
+  openPDFile = [PdFile openFileNamed:@"tempPdFile" path:publicDocumentsDir];
+  if (!openPDFile) {
+    return NO;
+  }
 
 // Compute canvas size
   CGSize docCanvasSize = CGSizeMake([originalAtomLines[0][4] floatValue], [originalAtomLines[0][5] floatValue]); //DEI check
@@ -735,6 +727,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     pdPatchView = [[UIView alloc] initWithFrame:CGRectMake((hardwareCanvasSize.width - canvasWidth) / 2.0f, 0, canvasWidth, canvasHeight)];
   }
 
+  pdPatchView.clipsToBounds = YES; // Keep Pd gui boxes rendered within the view.
   pdPatchView.backgroundColor = [UIColor whiteColor];
   [self.view addSubview:pdPatchView];
 
@@ -745,27 +738,27 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     if(isFlipped){
       pdPatchView.transform = CGAffineTransformMakeRotation(M_PI_2+M_PI);
 
-      settingsButton.transform = CGAffineTransformMakeRotation(M_PI_2+M_PI);
-      settingsButton.frame = CGRectMake(_settingsButtonOffset, self.view.frame.size.height - _settingsButtonOffset - _settingsButtonDim, _settingsButtonDim, _settingsButtonDim);
+      _settingsButton.transform = CGAffineTransformMakeRotation(M_PI_2+M_PI);
+      _settingsButton.frame = CGRectMake(_settingsButtonOffset, self.view.frame.size.height - _settingsButtonOffset - _settingsButtonDim, _settingsButtonDim, _settingsButtonDim);
     }
     else {
       pdPatchView.transform = CGAffineTransformMakeRotation(M_PI_2);
 
-      settingsButton.frame = CGRectMake(self.view.frame.size.width-_settingsButtonDim-_settingsButtonOffset, _settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
-      settingsButton.transform = CGAffineTransformMakeRotation(M_PI_2);
+      _settingsButton.frame = CGRectMake(self.view.frame.size.width-_settingsButtonDim-_settingsButtonOffset, _settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
+      _settingsButton.transform = CGAffineTransformMakeRotation(M_PI_2);
     }
   } else {
     isLandscape = NO;
     if(isFlipped){
       pdPatchView.transform = CGAffineTransformMakeRotation(M_PI);
 
-      settingsButton.transform = CGAffineTransformMakeRotation(M_PI);
-      settingsButton.frame = CGRectMake(self.view.frame.size.width-_settingsButtonDim-_settingsButtonOffset, self.view.frame.size.height
+      _settingsButton.transform = CGAffineTransformMakeRotation(M_PI);
+      _settingsButton.frame = CGRectMake(self.view.frame.size.width-_settingsButtonDim-_settingsButtonOffset, self.view.frame.size.height
                                         -_settingsButtonDim-_settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
 
     } else {
-      settingsButton.transform = CGAffineTransformMakeRotation(0);
-      settingsButton.frame = CGRectMake(_settingsButtonOffset, _settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
+      _settingsButton.transform = CGAffineTransformMakeRotation(0);
+      _settingsButton.frame = CGRectMake(_settingsButtonOffset, _settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
     }
   }
   //DEI todo update button pos/rot on flipping.
@@ -782,7 +775,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   }
   [_pdGui reshapeWidgets];
 
-  [self.view addSubview:settingsButton];
+  [self.view addSubview:_settingsButton];
 
   return YES;
 }
@@ -942,8 +935,13 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   }
 
   //bg color
-  if([sceneDict objectForKey:@"backgroundColor"])
+  if([sceneDict objectForKey:@"backgroundColor"]) {
     scrollView.backgroundColor=[MeControl colorFromRGBArray:[sceneDict objectForKey:@"backgroundColor"]];
+    [_settingsButton setBarColor:[MeControl inverseColorFromRGBArray:[sceneDict objectForKey:@"backgroundColor"]]];
+  } else {
+    [_settingsButton setBarColor:[UIColor whiteColor]];
+  }
+
 
 
   //get array of all widgets
@@ -1109,9 +1107,9 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
   //scroll to start page, and put settings button on top
   [scrollView zoomToRect:CGRectMake(docCanvasSize.width*startPageIndex, 0, docCanvasSize.width, docCanvasSize.height) animated:NO];
-  settingsButton.transform = CGAffineTransformMakeRotation(0);
-  settingsButton.frame = CGRectMake(_settingsButtonOffset, _settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
-  [scrollView addSubview:settingsButton];
+  _settingsButton.transform = CGAffineTransformMakeRotation(0);
+  _settingsButton.frame = CGRectMake(_settingsButtonOffset, _settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
+  [scrollView addSubview:_settingsButton];
 
   ///===PureData patch
 

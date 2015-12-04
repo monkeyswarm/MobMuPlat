@@ -10,4 +10,6 @@
 
 @interface MMPMenuButton : UIButton
 
+- (void)setBarColor:(UIColor *)color;
+
 @end

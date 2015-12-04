@@ -19,10 +19,17 @@
   CGFloat centerX = self.view.frame.size.width / 2;
   CGFloat centerY = self.view.frame.size.height / 2;
 
-  titleRing=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"titlepad_ring_185x110"]];
-  titleText=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"titlepad_text_142x46"]];
-  titleCross=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"titlepad_cross_50x50"]];
-  titleResistor=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"titlepad_resistor_21x70"]];
+  if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+    titleRing=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"titlepad_ring_185x110"]];
+    titleText=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"titlepad_text_142x46"]];
+    titleCross=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"titlepad_cross_50x50"]];
+    titleResistor=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"titlepad_resistor_21x70"]];
+  } else {
+    titleRing=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"title_ring_110x67"]];
+    titleText=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"title_text_71x27"]];
+    titleCross=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"title_cross_30x30"]];
+    titleResistor=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"title_resistor_13x40"]];
+  }
 
   [self.view addSubview:titleRing];
   [self.view addSubview:titleText];
@@ -47,9 +54,9 @@
   frame.origin.y = titleRing.frame.origin.y + titleRing.frame.size.height + 10;
   titleText.frame = frame;
 
-  titleCross.center = CGPointMake(centerX-30,centerY);
-  titleResistor.center = CGPointMake(centerX+30,centerY);
-
+  CGFloat offsetWithinRing = titleRing.frame.size.width * .15;
+  titleCross.center = CGPointMake(centerX-offsetWithinRing,centerY);
+  titleResistor.center = CGPointMake(centerX+offsetWithinRing,centerY);
 
   [UIView commitAnimations];
 }

@@ -18,6 +18,10 @@
     return [UIColor colorWithRed:[[rgbArray objectAtIndex:0] floatValue] green:[[rgbArray objectAtIndex:1] floatValue] blue:[[rgbArray objectAtIndex:2] floatValue] alpha:1];
 }
 
++(UIColor*)inverseColorFromRGBArray:(NSArray*)rgbArray{
+  return [UIColor colorWithRed:fmodf([[rgbArray objectAtIndex:0] floatValue] + .5, 1.0f) green:fmodf([[rgbArray objectAtIndex:1] floatValue] + .5, 1.0f) blue:fmodf([[rgbArray objectAtIndex:2]  floatValue] + .5, 1.0f) alpha:1];
+}
+
 +(UIColor*)colorFromRGBAArray:(NSArray*)rgbaArray{
     return [UIColor colorWithRed:[[rgbaArray objectAtIndex:0] floatValue] green:[[rgbaArray objectAtIndex:1] floatValue] blue:[[rgbaArray objectAtIndex:2] floatValue] alpha:[[rgbaArray objectAtIndex:3] floatValue]];
 }

@@ -36,7 +36,6 @@
 		DC5957111733800500CEBECC /* MeSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = DC5957051733800500CEBECC /* MeSlider.m */; };
 		DC5957121733800500CEBECC /* MeToggle.m in Sources */ = {isa = PBXBuildFile; fileRef = DC5957071733800500CEBECC /* MeToggle.m */; };
 		DC5957131733800500CEBECC /* MeXYSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = DC5957091733800500CEBECC /* MeXYSlider.m */; };
-		DC5957311733805000CEBECC /* infoicon_100x100.png in Resources */ = {isa = PBXBuildFile; fileRef = DC59571B1733805000CEBECC /* infoicon_100x100.png */; };
 		DC5957321733805000CEBECC /* title_cross_30x30.png in Resources */ = {isa = PBXBuildFile; fileRef = DC59571C1733805000CEBECC /* title_cross_30x30.png */; };
 		DC5957331733805000CEBECC /* title_resistor_13x40.png in Resources */ = {isa = PBXBuildFile; fileRef = DC59571D1733805000CEBECC /* title_resistor_13x40.png */; };
 		DC5957341733805000CEBECC /* title_resistor_40x13.png in Resources */ = {isa = PBXBuildFile; fileRef = DC59571E1733805000CEBECC /* title_resistor_40x13.png */; };
@@ -187,8 +186,9 @@
 		F92AF7911C0D286C00EED3BB /* MMPPdPatchDisplayUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F92AF78F1C0D286C00EED3BB /* MMPPdPatchDisplayUtils.m */; };
 		F92AF7D51C0D6CDE00EED3BB /* Gui.m in Sources */ = {isa = PBXBuildFile; fileRef = F92AF7CF1C0D6CDE00EED3BB /* Gui.m */; };
 		F92AF7D61C0D6CDE00EED3BB /* MMPPdObjectBox.m in Sources */ = {isa = PBXBuildFile; fileRef = F92AF7D21C0D6CDE00EED3BB /* MMPPdObjectBox.m */; };
-		F92AF7D71C0D6CDE00EED3BB /* MMPGui.pd in Resources */ = {isa = PBXBuildFile; fileRef = F92AF7D31C0D6CDE00EED3BB /* MMPGui.pd */; };
-		F92AF7D81C0D6CDE00EED3BB /* MMPGuiUnSet.pd in Resources */ = {isa = PBXBuildFile; fileRef = F92AF7D41C0D6CDE00EED3BB /* MMPGuiUnSet.pd */; };
+		F92AF7D71C0D6CDE00EED3BB /* MMPPdGuiShim.pd in Resources */ = {isa = PBXBuildFile; fileRef = F92AF7D31C0D6CDE00EED3BB /* MMPPdGuiShim.pd */; };
+		F92AF7D81C0D6CDE00EED3BB /* MMPPdGuiNoSetShim.pd in Resources */ = {isa = PBXBuildFile; fileRef = F92AF7D41C0D6CDE00EED3BB /* MMPPdGuiNoSetShim.pd */; };
+		F92AF8351C0D6F7400EED3BB /* MMPPdMessageBox.m in Sources */ = {isa = PBXBuildFile; fileRef = F92AF8341C0D6F7400EED3BB /* MMPPdMessageBox.m */; };
 		F93EF2D31C078AA400BCF5D3 /* MMPExamples-PingAndConnect.pd in Resources */ = {isa = PBXBuildFile; fileRef = F93EF2D11C078AA400BCF5D3 /* MMPExamples-PingAndConnect.pd */; };
 		F93EF2D41C078AA400BCF5D3 /* MMPExamples-PingAndConnect.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F93EF2D21C078AA400BCF5D3 /* MMPExamples-PingAndConnect.mmp */; };
 		F94FB0341A6F709E004EEF76 /* fiddle~.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB0281A6F709E004EEF76 /* fiddle~.c */; };
@@ -211,6 +211,7 @@
 		F9B6E7AA1C0641E00036FB66 /* PingAndConnectManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B6E7A91C0641E00036FB66 /* PingAndConnectManager.m */; };
 		F9B6E7AD1C069CEA0036FB66 /* MMPNetworkingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B6E7AC1C069CEA0036FB66 /* MMPNetworkingUtils.m */; };
 		F9B6E7D21C06BD120036FB66 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F9B6E7D11C06BD120036FB66 /* LaunchScreen.storyboard */; };
+		F9DAA15D1C0F9B6700775149 /* MMPPdGuiMessageShim.pd in Resources */ = {isa = PBXBuildFile; fileRef = F9DAA15C1C0F9B6700775149 /* MMPPdGuiMessageShim.pd */; };
 		F9DE7DC018F49D62007B9E45 /* MeMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = F9DE7DBF18F49D62007B9E45 /* MeMenu.m */; };
 		F9FC179B1A85735A00152392 /* MMPExamples-InterAppOSC.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F9FC17991A85735A00152392 /* MMPExamples-InterAppOSC.mmp */; };
 		F9FC179C1A85735A00152392 /* MMPExamples-InterAppOSC.pd in Resources */ = {isa = PBXBuildFile; fileRef = F9FC179A1A85735A00152392 /* MMPExamples-InterAppOSC.pd */; };
@@ -292,7 +293,6 @@
 		DC5957071733800500CEBECC /* MeToggle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeToggle.m; path = gui/MeToggle.m; sourceTree = "<group>"; };
 		DC5957081733800500CEBECC /* MeXYSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeXYSlider.h; path = gui/MeXYSlider.h; sourceTree = "<group>"; };
 		DC5957091733800500CEBECC /* MeXYSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeXYSlider.m; path = gui/MeXYSlider.m; sourceTree = "<group>"; };
-		DC59571B1733805000CEBECC /* infoicon_100x100.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = infoicon_100x100.png; path = graphics/infoicon_100x100.png; sourceTree = "<group>"; };
 		DC59571C1733805000CEBECC /* title_cross_30x30.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = title_cross_30x30.png; path = graphics/title_cross_30x30.png; sourceTree = "<group>"; };
 		DC59571D1733805000CEBECC /* title_resistor_13x40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = title_resistor_13x40.png; path = graphics/title_resistor_13x40.png; sourceTree = "<group>"; };
 		DC59571E1733805000CEBECC /* title_resistor_40x13.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = title_resistor_40x13.png; path = graphics/title_resistor_40x13.png; sourceTree = "<group>"; };
@@ -582,8 +582,10 @@
 		F92AF7D01C0D6CDE00EED3BB /* Gui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Gui.h; path = PdGui/Gui.h; sourceTree = "<group>"; };
 		F92AF7D11C0D6CDE00EED3BB /* MMPPdObjectBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMPPdObjectBox.h; path = PdGui/MMPPdObjectBox.h; sourceTree = "<group>"; };
 		F92AF7D21C0D6CDE00EED3BB /* MMPPdObjectBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPPdObjectBox.m; path = PdGui/MMPPdObjectBox.m; sourceTree = "<group>"; };
-		F92AF7D31C0D6CDE00EED3BB /* MMPGui.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MMPGui.pd; path = PdGui/MMPGui.pd; sourceTree = "<group>"; };
-		F92AF7D41C0D6CDE00EED3BB /* MMPGuiUnSet.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MMPGuiUnSet.pd; path = PdGui/MMPGuiUnSet.pd; sourceTree = "<group>"; };
+		F92AF7D31C0D6CDE00EED3BB /* MMPPdGuiShim.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MMPPdGuiShim.pd; path = PdGui/MMPPdGuiShim.pd; sourceTree = "<group>"; };
+		F92AF7D41C0D6CDE00EED3BB /* MMPPdGuiNoSetShim.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MMPPdGuiNoSetShim.pd; path = PdGui/MMPPdGuiNoSetShim.pd; sourceTree = "<group>"; };
+		F92AF8331C0D6F7400EED3BB /* MMPPdMessageBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMPPdMessageBox.h; path = PdGui/MMPPdMessageBox.h; sourceTree = "<group>"; };
+		F92AF8341C0D6F7400EED3BB /* MMPPdMessageBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPPdMessageBox.m; path = PdGui/MMPPdMessageBox.m; sourceTree = "<group>"; };
 		F93EF2D11C078AA400BCF5D3 /* MMPExamples-PingAndConnect.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "MMPExamples-PingAndConnect.pd"; sourceTree = "<group>"; };
 		F93EF2D21C078AA400BCF5D3 /* MMPExamples-PingAndConnect.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "MMPExamples-PingAndConnect.mmp"; sourceTree = "<group>"; };
 		F94FB0281A6F709E004EEF76 /* fiddle~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "fiddle~.c"; path = "pure-data/extra/fiddle~/fiddle~.c"; sourceTree = "<group>"; };
@@ -615,6 +617,7 @@
 		F9B6E7AB1C069CEA0036FB66 /* MMPNetworkingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMPNetworkingUtils.h; path = LANdini/MMPNetworkingUtils.h; sourceTree = "<group>"; };
 		F9B6E7AC1C069CEA0036FB66 /* MMPNetworkingUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPNetworkingUtils.m; path = LANdini/MMPNetworkingUtils.m; sourceTree = "<group>"; };
 		F9B6E7D11C06BD120036FB66 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		F9DAA15C1C0F9B6700775149 /* MMPPdGuiMessageShim.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MMPPdGuiMessageShim.pd; path = PdGui/MMPPdGuiMessageShim.pd; sourceTree = "<group>"; };
 		F9DE7DBE18F49D62007B9E45 /* MeMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeMenu.h; path = gui/MeMenu.h; sourceTree = "<group>"; };
 		F9DE7DBF18F49D62007B9E45 /* MeMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeMenu.m; path = gui/MeMenu.m; sourceTree = "<group>"; };
 		F9FC17991A85735A00152392 /* MMPExamples-InterAppOSC.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "MMPExamples-InterAppOSC.mmp"; sourceTree = "<group>"; };
@@ -681,7 +684,6 @@
 				DCB5B95118889355003E6C2C /* Icon-72@2x.png */,
 				DCB5B95218889355003E6C2C /* Icon.png */,
 				DCB5B95318889355003E6C2C /* Icon@2x.png */,
-				DC59571B1733805000CEBECC /* infoicon_100x100.png */,
 				DC59571C1733805000CEBECC /* title_cross_30x30.png */,
 				DC59571D1733805000CEBECC /* title_resistor_13x40.png */,
 				DC59571E1733805000CEBECC /* title_resistor_40x13.png */,
@@ -1316,14 +1318,17 @@
 		F92AF78E1C0D282300EED3BB /* PdGui */ = {
 			isa = PBXGroup;
 			children = (
+				F9DAA15C1C0F9B6700775149 /* MMPPdGuiMessageShim.pd */,
 				F92AF7CF1C0D6CDE00EED3BB /* Gui.m */,
 				F92AF7D01C0D6CDE00EED3BB /* Gui.h */,
 				F92AF7D11C0D6CDE00EED3BB /* MMPPdObjectBox.h */,
 				F92AF7D21C0D6CDE00EED3BB /* MMPPdObjectBox.m */,
-				F92AF7D31C0D6CDE00EED3BB /* MMPGui.pd */,
-				F92AF7D41C0D6CDE00EED3BB /* MMPGuiUnSet.pd */,
+				F92AF7D31C0D6CDE00EED3BB /* MMPPdGuiShim.pd */,
+				F92AF7D41C0D6CDE00EED3BB /* MMPPdGuiNoSetShim.pd */,
 				F92AF78F1C0D286C00EED3BB /* MMPPdPatchDisplayUtils.m */,
 				F92AF7901C0D286C00EED3BB /* MMPPdPatchDisplayUtils.h */,
+				F92AF8331C0D6F7400EED3BB /* MMPPdMessageBox.h */,
+				F92AF8341C0D6F7400EED3BB /* MMPPdMessageBox.m */,
 			);
 			name = PdGui;
 			sourceTree = "<group>";
@@ -1512,10 +1517,11 @@
 				F9FC179B1A85735A00152392 /* MMPExamples-InterAppOSC.mmp in Resources */,
 				F9295E3719BD19C6008691CB /* cats3.jpg in Resources */,
 				F9295E5F19BD19C6008691CB /* MMPTutorial2-Input.mmp in Resources */,
-				F92AF7D81C0D6CDE00EED3BB /* MMPGuiUnSet.pd in Resources */,
+				F92AF7D81C0D6CDE00EED3BB /* MMPPdGuiNoSetShim.pd in Resources */,
 				F9295E3A19BD19C6008691CB /* MMPExamples-Arp-Pad.mmp in Resources */,
 				DCB5B95718889355003E6C2C /* Icon@2x.png in Resources */,
 				DCB5B95418889355003E6C2C /* Icon-72.png in Resources */,
+				F9DAA15D1C0F9B6700775149 /* MMPPdGuiMessageShim.pd in Resources */,
 				DC7DD717188F2A660068BA66 /* SettingsViewController~ipad.xib in Resources */,
 				F9295E6A19BD19C6008691CB /* MMPTutorial5-Files-Pad.mmp in Resources */,
 				F9FC179C1A85735A00152392 /* MMPExamples-InterAppOSC.pd in Resources */,
@@ -1525,14 +1531,13 @@
 				F9295E6D19BD19C6008691CB /* MMPTutorial6-2DGraphics-ip5.mmp in Resources */,
 				F9295E4419BD19C6008691CB /* MMPExamples-LANdini.pd in Resources */,
 				F9295E6819BD19C6008691CB /* MMPTutorial4-Networking.pd in Resources */,
-				DC5957311733805000CEBECC /* infoicon_100x100.png in Resources */,
 				F9295E7019BD19C6008691CB /* MMPTutorial6-2DGraphics.pd in Resources */,
 				F9295E3C19BD19C6008691CB /* MMPExamples-Arp.pd in Resources */,
 				DC5957321733805000CEBECC /* title_cross_30x30.png in Resources */,
 				F92AF7861C0CAB4700EED3BB /* DejaVuSansMono.ttf in Resources */,
 				F9295E3B19BD19C6008691CB /* MMPExamples-Arp.mmp in Resources */,
 				DC5957331733805000CEBECC /* title_resistor_13x40.png in Resources */,
-				F92AF7D71C0D6CDE00EED3BB /* MMPGui.pd in Resources */,
+				F92AF7D71C0D6CDE00EED3BB /* MMPPdGuiShim.pd in Resources */,
 				F9295E7219BD19C6008691CB /* Welcome-ip5.mmp in Resources */,
 				DC5957341733805000CEBECC /* title_resistor_40x13.png in Resources */,
 				F9295E7419BD19C6008691CB /* Welcome.mmp in Resources */,
@@ -1656,6 +1661,7 @@
 				DC59570B1733800500CEBECC /* MeControl.m in Sources */,
 				F94FB0371A6F709E004EEF76 /* pique.c in Sources */,
 				F95C52021909B1230074E0A6 /* MeTable.m in Sources */,
+				F92AF8351C0D6F7400EED3BB /* MMPPdMessageBox.m in Sources */,
 				DC59570C1733800500CEBECC /* MeGrid.m in Sources */,
 				F92AF7731C0C23D200EED3BB /* Log.m in Sources */,
 				DC59570D1733800500CEBECC /* MeKnob.m in Sources */,
