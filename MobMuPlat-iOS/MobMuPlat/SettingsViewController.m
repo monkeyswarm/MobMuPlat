@@ -453,6 +453,12 @@ static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
 
 }
 
+-(void)viewDidLayoutSubviews
+{
+  [super viewDidLayoutSubviews];
+  _audioMidiScrollView.contentSize = _audioMidiContentView.frame.size;
+}
+
 -(void)viewWillAppear:(BOOL)animated{
   _consoleTextView.text = consoleTextString;
   //ios 7 bug

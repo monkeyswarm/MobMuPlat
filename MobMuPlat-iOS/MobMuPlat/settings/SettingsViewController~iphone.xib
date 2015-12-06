@@ -57,8 +57,11 @@
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jzo-Qb-N4Y">
                     <rect key="frame" x="10" y="8" width="394" height="593"/>
                     <subviews>
-                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="wifi network:" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fw1-oI-RB4">
-                            <rect key="frame" x="20" y="8" width="260" height="50"/>
+                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="wifi network:" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fw1-oI-RB4">
+                            <rect key="frame" x="20" y="8" width="260" height="40"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="vAd-LH-bR5"/>
+                            </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                             <nil key="highlightedColor"/>
                         </label>
@@ -80,49 +83,47 @@
                                 <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OHo-WM-0TI">
                                     <rect key="frame" x="0.0" y="0.0" width="275" height="330"/>
                                     <subviews>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="enable LANdini (v.22):" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CCC-jq-OoT">
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="LANdini is an ad-hoc networking protocol for groups, with guaranteed delivery. All other clients must be LANdini-enabled." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kAS-V2-Eud">
+                                            <rect key="frame" x="0.0" y="0.0" width="275" height="49"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="enable LANdini (v.22):" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CCC-jq-OoT">
                                             <rect key="frame" x="20" y="52" width="147" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mb1-I8-Nw6">
-                                            <rect key="frame" x="0.0" y="107" width="275" height="37"/>
+                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="1Sk-5m-7Kw">
+                                            <rect key="frame" x="175" y="49" width="51" height="31"/>
+                                        </switch>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8on-GK-DIE">
+                                            <rect key="frame" x="-35" y="80" width="350" height="45"/>
+                                            <string key="text">Note that LANdini sends out multicast messages. 
+Some school/company networks may not like this. 
+Use a local router only for best results. </string>
+                                            <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mb1-I8-Nw6">
+                                            <rect key="frame" x="0.0" y="117" width="275" height="15"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="15" id="haF-Rj-9yS"/>
+                                            </constraints>
                                             <string key="text">network time:
 </string>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="LAN User List:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AQH-2o-BsZ">
-                                            <rect key="frame" x="0.0" y="135" width="260" height="21"/>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="LAN User List:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AQH-2o-BsZ">
+                                            <rect key="frame" x="0.0" y="137" width="260" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kAS-V2-Eud">
-                                            <rect key="frame" x="0.0" y="0.0" width="275" height="49"/>
-                                            <string key="text">LANdini is an ad-hoc networking protocol
-for groups, with guaranteed delivery. All other clients must be LANdini-enabled.</string>
-                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="1Sk-5m-7Kw">
-                                            <rect key="frame" x="175" y="46" width="51" height="31"/>
-                                        </switch>
-                                        <tableView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="s2z-u2-63O">
-                                            <rect key="frame" x="0.0" y="153" width="275" height="157"/>
+                                        <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="s2z-u2-63O">
+                                            <rect key="frame" x="0.0" y="158" width="275" height="157"/>
                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </tableView>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8on-GK-DIE">
-                                            <rect key="frame" x="-35" y="71" width="350" height="45"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="45" id="3ZW-j2-87r"/>
-                                            </constraints>
-                                            <string key="text">Note that LANdini sends out multicast messages. 
-Some school/company networks may not like this. 
-Use a local router only for best results. </string>
-                                            <fontDescription key="fontDescription" type="system" pointSize="10"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="See LANdini example for more info" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uUt-KY-jfR">
                                             <rect key="frame" x="10" y="310" width="260" height="21"/>
                                             <constraints>
@@ -137,71 +138,50 @@ Use a local router only for best results. </string>
                                         <constraint firstItem="mb1-I8-Nw6" firstAttribute="leading" secondItem="OHo-WM-0TI" secondAttribute="leading" constant="5" id="35t-v9-b2X"/>
                                         <constraint firstItem="uUt-KY-jfR" firstAttribute="top" secondItem="s2z-u2-63O" secondAttribute="bottom" constant="2" id="48K-np-ZdF"/>
                                         <constraint firstAttribute="trailing" secondItem="uUt-KY-jfR" secondAttribute="trailing" constant="5" id="6nx-uL-UML"/>
-                                        <constraint firstItem="kAS-V2-Eud" firstAttribute="leading" secondItem="OHo-WM-0TI" secondAttribute="leading" id="Emg-xJ-aK5"/>
-                                        <constraint firstItem="AQH-2o-BsZ" firstAttribute="top" secondItem="8on-GK-DIE" secondAttribute="bottom" constant="2" id="GN0-04-YHJ"/>
-                                        <constraint firstItem="AQH-2o-BsZ" firstAttribute="leading" secondItem="OHo-WM-0TI" secondAttribute="leading" id="TSy-Qt-OT4"/>
-                                        <constraint firstItem="8on-GK-DIE" firstAttribute="leading" secondItem="OHo-WM-0TI" secondAttribute="leading" constant="2" id="Vls-3Y-FGS"/>
-                                        <constraint firstAttribute="trailing" secondItem="s2z-u2-63O" secondAttribute="trailing" id="asq-dj-qhN"/>
-                                        <constraint firstAttribute="trailing" secondItem="8on-GK-DIE" secondAttribute="trailing" constant="2" id="aze-gp-ljw"/>
-                                        <constraint firstItem="kAS-V2-Eud" firstAttribute="centerX" secondItem="OHo-WM-0TI" secondAttribute="centerX" id="jUS-7f-aq3"/>
-                                        <constraint firstAttribute="trailing" secondItem="kAS-V2-Eud" secondAttribute="trailing" id="kIh-IP-gMm"/>
-                                        <constraint firstItem="8on-GK-DIE" firstAttribute="top" secondItem="kAS-V2-Eud" secondAttribute="bottom" constant="2" id="kbp-O6-x77"/>
+                                        <constraint firstAttribute="trailing" secondItem="AQH-2o-BsZ" secondAttribute="trailing" constant="5" id="9YP-lj-TDy"/>
+                                        <constraint firstItem="s2z-u2-63O" firstAttribute="top" secondItem="AQH-2o-BsZ" secondAttribute="bottom" constant="2" id="EmE-8r-6NU"/>
+                                        <constraint firstItem="kAS-V2-Eud" firstAttribute="leading" secondItem="OHo-WM-0TI" secondAttribute="leading" constant="5" id="Emg-xJ-aK5"/>
+                                        <constraint firstItem="8on-GK-DIE" firstAttribute="top" secondItem="1Sk-5m-7Kw" secondAttribute="bottom" constant="2" id="Fpb-Ki-i4k"/>
+                                        <constraint firstItem="CCC-jq-OoT" firstAttribute="top" secondItem="kAS-V2-Eud" secondAttribute="bottom" constant="3" id="Gi7-NT-VRg"/>
+                                        <constraint firstItem="AQH-2o-BsZ" firstAttribute="top" secondItem="mb1-I8-Nw6" secondAttribute="bottom" id="PXc-ND-W4v"/>
+                                        <constraint firstItem="1Sk-5m-7Kw" firstAttribute="leading" secondItem="CCC-jq-OoT" secondAttribute="trailing" constant="5" id="Q4O-Bh-PYi"/>
+                                        <constraint firstItem="8on-GK-DIE" firstAttribute="leading" secondItem="OHo-WM-0TI" secondAttribute="leading" constant="5" id="Vls-3Y-FGS"/>
+                                        <constraint firstAttribute="trailing" secondItem="s2z-u2-63O" secondAttribute="trailing" constant="5" id="asq-dj-qhN"/>
+                                        <constraint firstAttribute="trailing" secondItem="8on-GK-DIE" secondAttribute="trailing" constant="5" id="aze-gp-ljw"/>
+                                        <constraint firstItem="CCC-jq-OoT" firstAttribute="leading" secondItem="OHo-WM-0TI" secondAttribute="leading" constant="5" id="f9H-EU-6BV"/>
+                                        <constraint firstItem="1Sk-5m-7Kw" firstAttribute="top" secondItem="kAS-V2-Eud" secondAttribute="bottom" constant="2" id="fOZ-ZJ-Oc1"/>
+                                        <constraint firstAttribute="trailing" secondItem="mb1-I8-Nw6" secondAttribute="trailing" constant="5" id="jdM-sv-pLA"/>
+                                        <constraint firstAttribute="trailing" secondItem="kAS-V2-Eud" secondAttribute="trailing" constant="5" id="kIh-IP-gMm"/>
+                                        <constraint firstItem="AQH-2o-BsZ" firstAttribute="leading" secondItem="OHo-WM-0TI" secondAttribute="leading" constant="5" id="kT4-p7-9dH"/>
                                         <constraint firstItem="uUt-KY-jfR" firstAttribute="leading" secondItem="OHo-WM-0TI" secondAttribute="leading" constant="5" id="mVd-iM-8qi"/>
                                         <constraint firstAttribute="bottom" secondItem="uUt-KY-jfR" secondAttribute="bottom" id="rFg-Zf-w4V"/>
-                                        <constraint firstItem="s2z-u2-63O" firstAttribute="leading" secondItem="OHo-WM-0TI" secondAttribute="leading" id="rIx-nk-zbb"/>
-                                        <constraint firstItem="s2z-u2-63O" firstAttribute="top" secondItem="mb1-I8-Nw6" secondAttribute="bottom" constant="9" id="sqH-pw-rcP"/>
+                                        <constraint firstItem="s2z-u2-63O" firstAttribute="leading" secondItem="OHo-WM-0TI" secondAttribute="leading" constant="5" id="rIx-nk-zbb"/>
+                                        <constraint firstItem="mb1-I8-Nw6" firstAttribute="top" secondItem="8on-GK-DIE" secondAttribute="bottom" constant="2" id="weW-P7-Mdj"/>
+                                        <constraint firstItem="kAS-V2-Eud" firstAttribute="top" secondItem="OHo-WM-0TI" secondAttribute="top" constant="2" id="x3f-S1-k49"/>
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="paR-QD-hDa" userLabel="Ping and Connect">
                                     <rect key="frame" x="0.0" y="0.0" width="275" height="330"/>
                                     <subviews>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="enable Ping &amp; Connect" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WI0-Sb-4e3">
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Ping &amp; Connect is an ad-hoc networking protocol." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fpQ-82-deI">
+                                            <rect key="frame" x="-50" y="0.0" width="375" height="40"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="enable Ping &amp; Connect" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WI0-Sb-4e3">
                                             <rect key="frame" x="10" y="41" width="158" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="set player number" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jB5-MO-XX7">
-                                            <rect key="frame" x="10" y="63" width="158" height="21"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="LAN User List:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Em-Qt-kft">
-                                            <rect key="frame" x="0.0" y="156" width="260" height="21"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fpQ-82-deI">
-                                            <rect key="frame" x="-50" y="0.0" width="375" height="49"/>
-                                            <string key="text">Ping &amp; Connect is an ad-hoc 
-networking protocol.</string>
-                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="j7j-nU-ZXm">
-                                            <rect key="frame" x="-35" y="116" width="350" height="45"/>
-                                            <string key="text">Note that this sends out multicast messages. 
-Some school/company networks may not like this. 
-Use a local router only for best results. </string>
-                                            <fontDescription key="fontDescription" type="system" pointSize="10"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="scy-hy-weS">
-                                            <rect key="frame" x="176" y="36" width="51" height="31"/>
+                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="scy-hy-weS">
+                                            <rect key="frame" x="176" y="41" width="51" height="31"/>
                                         </switch>
-                                        <tableView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="XBR-g3-vsG">
-                                            <rect key="frame" x="0.0" y="177" width="275" height="115"/>
-                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        </tableView>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="See Ping &amp; Connect example for more info" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="s5j-fb-Vl0">
-                                            <rect key="frame" x="0.0" y="309" width="273" height="21"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="21" id="47d-bk-zhg"/>
-                                            </constraints>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="set player number" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jB5-MO-XX7">
+                                            <rect key="frame" x="10" y="72" width="158" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <segmentedControl opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" apportionsSegmentWidthsByContent="YES" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="eBq-65-C46">
+                                        <segmentedControl opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" apportionsSegmentWidthsByContent="YES" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="eBq-65-C46">
                                             <rect key="frame" x="8" y="86" width="267" height="29"/>
                                             <segments>
                                                 <segment title="none"/>
@@ -215,68 +195,115 @@ Use a local router only for best results. </string>
                                                 <segment title="7"/>
                                                 <segment title="8"/>
                                             </segments>
+                                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                         </segmentedControl>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="j7j-nU-ZXm">
+                                            <rect key="frame" x="-35" y="116" width="350" height="45"/>
+                                            <string key="text">Note that this sends out multicast messages. 
+Some school/company networks may not like this. 
+Use a local router only for best results. </string>
+                                            <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="LAN User List:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Em-Qt-kft">
+                                            <rect key="frame" x="0.0" y="161" width="260" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="XBR-g3-vsG">
+                                            <rect key="frame" x="0.0" y="182" width="275" height="115"/>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </tableView>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="See Ping &amp; Connect example for more info" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="s5j-fb-Vl0">
+                                            <rect key="frame" x="0.0" y="309" width="273" height="21"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="21" id="47d-bk-zhg"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
                                     </subviews>
                                     <color key="backgroundColor" red="0.45620438460000001" green="0.80656933779999995" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                     <constraints>
-                                        <constraint firstItem="XBR-g3-vsG" firstAttribute="leading" secondItem="paR-QD-hDa" secondAttribute="leading" id="0bF-ST-za3"/>
-                                        <constraint firstAttribute="trailing" secondItem="eBq-65-C46" secondAttribute="trailing" id="1NL-ca-u41"/>
+                                        <constraint firstItem="XBR-g3-vsG" firstAttribute="leading" secondItem="paR-QD-hDa" secondAttribute="leading" constant="5" id="0bF-ST-za3"/>
+                                        <constraint firstAttribute="trailing" secondItem="eBq-65-C46" secondAttribute="trailing" constant="5" id="1NL-ca-u41"/>
+                                        <constraint firstItem="j7j-nU-ZXm" firstAttribute="leading" secondItem="paR-QD-hDa" secondAttribute="leading" constant="5" id="5T1-YY-I2J"/>
                                         <constraint firstItem="s5j-fb-Vl0" firstAttribute="top" secondItem="XBR-g3-vsG" secondAttribute="bottom" constant="2" id="5mC-er-Fn9"/>
-                                        <constraint firstItem="fpQ-82-deI" firstAttribute="centerX" secondItem="paR-QD-hDa" secondAttribute="centerX" id="9Ur-Z4-Wgr"/>
-                                        <constraint firstItem="s5j-fb-Vl0" firstAttribute="leading" secondItem="paR-QD-hDa" secondAttribute="leading" id="KZm-RW-Wjz"/>
-                                        <constraint firstAttribute="trailing" secondItem="s5j-fb-Vl0" secondAttribute="trailing" id="L2W-yI-xhB"/>
-                                        <constraint firstItem="fpQ-82-deI" firstAttribute="leading" secondItem="paR-QD-hDa" secondAttribute="leading" id="ORq-tq-75B"/>
-                                        <constraint firstItem="j7j-nU-ZXm" firstAttribute="centerX" secondItem="paR-QD-hDa" secondAttribute="centerX" id="PIz-l1-ASr"/>
+                                        <constraint firstItem="s5j-fb-Vl0" firstAttribute="leading" secondItem="paR-QD-hDa" secondAttribute="leading" constant="10" id="KZm-RW-Wjz"/>
+                                        <constraint firstAttribute="trailing" secondItem="s5j-fb-Vl0" secondAttribute="trailing" constant="10" id="L2W-yI-xhB"/>
+                                        <constraint firstItem="WI0-Sb-4e3" firstAttribute="leading" secondItem="paR-QD-hDa" secondAttribute="leading" constant="5" id="LOg-qV-qi6"/>
+                                        <constraint firstItem="WI0-Sb-4e3" firstAttribute="top" secondItem="fpQ-82-deI" secondAttribute="bottom" constant="5" id="N3F-Fi-PkD"/>
+                                        <constraint firstItem="fpQ-82-deI" firstAttribute="leading" secondItem="paR-QD-hDa" secondAttribute="leading" constant="5" id="ORq-tq-75B"/>
+                                        <constraint firstItem="j7j-nU-ZXm" firstAttribute="top" secondItem="eBq-65-C46" secondAttribute="bottom" constant="5" id="PAt-UU-cHc"/>
                                         <constraint firstItem="eBq-65-C46" firstAttribute="top" secondItem="jB5-MO-XX7" secondAttribute="bottom" constant="2" id="PRy-zK-StL"/>
                                         <constraint firstAttribute="bottom" secondItem="s5j-fb-Vl0" secondAttribute="bottom" constant="2" id="UjH-KC-EyJ"/>
-                                        <constraint firstItem="XBR-g3-vsG" firstAttribute="top" secondItem="6Em-Qt-kft" secondAttribute="bottom" id="YMd-GN-8Tw"/>
+                                        <constraint firstItem="6Em-Qt-kft" firstAttribute="top" secondItem="j7j-nU-ZXm" secondAttribute="bottom" constant="5" id="XLE-9s-zuN"/>
+                                        <constraint firstItem="XBR-g3-vsG" firstAttribute="top" secondItem="6Em-Qt-kft" secondAttribute="bottom" constant="5" id="YMd-GN-8Tw"/>
+                                        <constraint firstItem="scy-hy-weS" firstAttribute="leading" secondItem="WI0-Sb-4e3" secondAttribute="trailing" constant="5" id="YtT-fw-QRV"/>
                                         <constraint firstItem="6Em-Qt-kft" firstAttribute="leading" secondItem="paR-QD-hDa" secondAttribute="leading" constant="5" id="aTM-r1-FOZ"/>
-                                        <constraint firstAttribute="trailing" secondItem="fpQ-82-deI" secondAttribute="trailing" id="c3D-vM-Ftv"/>
-                                        <constraint firstItem="eBq-65-C46" firstAttribute="leading" secondItem="paR-QD-hDa" secondAttribute="leading" constant="8" id="dbA-ZR-G0Q"/>
-                                        <constraint firstItem="jB5-MO-XX7" firstAttribute="leading" secondItem="paR-QD-hDa" secondAttribute="leading" constant="10" id="jwT-us-xaf"/>
-                                        <constraint firstAttribute="trailing" secondItem="XBR-g3-vsG" secondAttribute="trailing" id="qmJ-ni-4pF"/>
+                                        <constraint firstAttribute="trailing" secondItem="fpQ-82-deI" secondAttribute="trailing" constant="5" id="c3D-vM-Ftv"/>
+                                        <constraint firstItem="eBq-65-C46" firstAttribute="leading" secondItem="paR-QD-hDa" secondAttribute="leading" constant="5" id="dbA-ZR-G0Q"/>
+                                        <constraint firstAttribute="trailing" secondItem="j7j-nU-ZXm" secondAttribute="trailing" constant="5" id="h5U-Ar-DGx"/>
+                                        <constraint firstItem="jB5-MO-XX7" firstAttribute="leading" secondItem="paR-QD-hDa" secondAttribute="leading" constant="5" id="jwT-us-xaf"/>
+                                        <constraint firstItem="jB5-MO-XX7" firstAttribute="top" secondItem="WI0-Sb-4e3" secondAttribute="bottom" constant="1" id="q1j-LR-0Dh"/>
+                                        <constraint firstAttribute="trailing" secondItem="XBR-g3-vsG" secondAttribute="trailing" constant="5" id="qmJ-ni-4pF"/>
+                                        <constraint firstItem="fpQ-82-deI" firstAttribute="top" secondItem="paR-QD-hDa" secondAttribute="top" constant="5" id="wGR-Lw-Etu"/>
+                                        <constraint firstItem="scy-hy-weS" firstAttribute="top" secondItem="fpQ-82-deI" secondAttribute="bottom" constant="1" id="xLn-qk-Btt"/>
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EpL-mu-96r">
                                     <rect key="frame" x="0.0" y="0.0" width="275" height="330"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Network communication is multicast by default. You may instead specify a unicast IP address." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZnY-BJ-as4">
-                                            <rect key="frame" x="0.0" y="-1" width="275" height="40"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="275" height="35"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="nfW-EI-Twp">
+                                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="nfW-EI-Twp">
                                             <rect key="frame" x="0.0" y="37" width="275" height="30"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="30" id="AMC-q9-qsA"/>
+                                            </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                             <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation" returnKeyType="done"/>
                                         </textField>
-                                        <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cby-V4-Jmm">
-                                            <rect key="frame" x="46" y="67" width="183" height="30"/>
-                                            <state key="normal" title="Reset to multicast address">
-                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                            </state>
-                                        </button>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Output IP Address:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uei-eI-luO">
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Output IP Address:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uei-eI-luO">
                                             <rect key="frame" x="14" y="41" width="162" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="yhU-J8-F1v">
+                                        <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cby-V4-Jmm">
+                                            <rect key="frame" x="46" y="67" width="183" height="30"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="30" id="dbX-sK-vD0"/>
+                                            </constraints>
+                                            <state key="normal" title="Reset to multicast address">
+                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                        </button>
+                                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="yhU-J8-F1v">
                                             <rect key="frame" x="0.0" y="99" width="275" height="30"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="30" id="rch-hH-qeC"/>
+                                            </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                             <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation" returnKeyType="done"/>
                                         </textField>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Output Port:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KOq-2C-cD1">
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Output Port:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KOq-2C-cD1">
                                             <rect key="frame" x="14" y="103" width="95" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8ae-zg-AEz">
+                                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8ae-zg-AEz">
                                             <rect key="frame" x="0.0" y="132" width="275" height="30"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="30" id="FmS-lr-c5N"/>
+                                            </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                             <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation" returnKeyType="done"/>
                                         </textField>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Input Port:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aN4-2l-fI9">
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Input Port:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aN4-2l-fI9">
                                             <rect key="frame" x="14" y="136" width="81" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="highlightedColor"/>
@@ -285,16 +312,26 @@ Use a local router only for best results. </string>
                                     <color key="backgroundColor" red="0.45620438460000001" green="0.80656933779999995" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                     <constraints>
                                         <constraint firstItem="Cby-V4-Jmm" firstAttribute="leading" secondItem="EpL-mu-96r" secondAttribute="leading" constant="10" id="07Z-TO-zcV"/>
-                                        <constraint firstAttribute="trailing" secondItem="ZnY-BJ-as4" secondAttribute="trailing" id="1Eg-3g-1TJ"/>
-                                        <constraint firstItem="yhU-J8-F1v" firstAttribute="leading" secondItem="EpL-mu-96r" secondAttribute="leading" id="3bg-5B-JDs"/>
-                                        <constraint firstItem="ZnY-BJ-as4" firstAttribute="leading" secondItem="EpL-mu-96r" secondAttribute="leading" id="8WA-HZ-Ov6"/>
-                                        <constraint firstAttribute="trailing" secondItem="yhU-J8-F1v" secondAttribute="trailing" id="Cj5-k2-Hqe"/>
-                                        <constraint firstItem="8ae-zg-AEz" firstAttribute="leading" secondItem="EpL-mu-96r" secondAttribute="leading" id="Rh5-wY-VtI"/>
-                                        <constraint firstAttribute="trailing" secondItem="8ae-zg-AEz" secondAttribute="trailing" id="hGf-9c-MJa"/>
-                                        <constraint firstAttribute="trailing" secondItem="nfW-EI-Twp" secondAttribute="trailing" id="iYA-c1-x1y"/>
+                                        <constraint firstAttribute="trailing" secondItem="ZnY-BJ-as4" secondAttribute="trailing" constant="5" id="1Eg-3g-1TJ"/>
+                                        <constraint firstItem="8ae-zg-AEz" firstAttribute="top" secondItem="yhU-J8-F1v" secondAttribute="bottom" constant="5" id="29K-st-jJf"/>
+                                        <constraint firstItem="yhU-J8-F1v" firstAttribute="leading" secondItem="EpL-mu-96r" secondAttribute="leading" constant="5" id="3bg-5B-JDs"/>
+                                        <constraint firstItem="ZnY-BJ-as4" firstAttribute="leading" secondItem="EpL-mu-96r" secondAttribute="leading" constant="5" id="8WA-HZ-Ov6"/>
+                                        <constraint firstAttribute="trailing" secondItem="yhU-J8-F1v" secondAttribute="trailing" constant="5" id="Cj5-k2-Hqe"/>
+                                        <constraint firstItem="KOq-2C-cD1" firstAttribute="centerY" secondItem="yhU-J8-F1v" secondAttribute="centerY" id="Nzn-Ll-cBJ"/>
+                                        <constraint firstItem="Cby-V4-Jmm" firstAttribute="top" secondItem="nfW-EI-Twp" secondAttribute="bottom" constant="2" id="PEz-U3-MGk"/>
+                                        <constraint firstItem="8ae-zg-AEz" firstAttribute="leading" secondItem="EpL-mu-96r" secondAttribute="leading" constant="5" id="Rh5-wY-VtI"/>
+                                        <constraint firstItem="Uei-eI-luO" firstAttribute="centerY" secondItem="nfW-EI-Twp" secondAttribute="centerY" id="T6r-P2-wLV"/>
+                                        <constraint firstItem="aN4-2l-fI9" firstAttribute="centerY" secondItem="8ae-zg-AEz" secondAttribute="centerY" id="ZdF-sp-PqT"/>
+                                        <constraint firstItem="aN4-2l-fI9" firstAttribute="leading" secondItem="8ae-zg-AEz" secondAttribute="leading" constant="10" id="d08-LZ-j35"/>
+                                        <constraint firstItem="yhU-J8-F1v" firstAttribute="top" secondItem="Cby-V4-Jmm" secondAttribute="bottom" constant="2" id="eG6-0M-Vdw"/>
+                                        <constraint firstItem="KOq-2C-cD1" firstAttribute="leading" secondItem="yhU-J8-F1v" secondAttribute="leading" constant="10" id="eyW-FW-kdO"/>
+                                        <constraint firstItem="nfW-EI-Twp" firstAttribute="top" secondItem="ZnY-BJ-as4" secondAttribute="bottom" constant="2" id="fY9-nT-peO"/>
+                                        <constraint firstAttribute="trailing" secondItem="8ae-zg-AEz" secondAttribute="trailing" constant="5" id="hGf-9c-MJa"/>
+                                        <constraint firstAttribute="trailing" secondItem="nfW-EI-Twp" secondAttribute="trailing" constant="5" id="iYA-c1-x1y"/>
                                         <constraint firstItem="ZnY-BJ-as4" firstAttribute="top" secondItem="EpL-mu-96r" secondAttribute="top" constant="2" id="jdC-ZC-QY8"/>
-                                        <constraint firstItem="nfW-EI-Twp" firstAttribute="leading" secondItem="EpL-mu-96r" secondAttribute="leading" id="jlk-A7-JrN"/>
+                                        <constraint firstItem="nfW-EI-Twp" firstAttribute="leading" secondItem="EpL-mu-96r" secondAttribute="leading" constant="5" id="jlk-A7-JrN"/>
                                         <constraint firstAttribute="trailing" secondItem="Cby-V4-Jmm" secondAttribute="trailing" constant="10" id="spy-TG-Cer"/>
+                                        <constraint firstItem="Uei-eI-luO" firstAttribute="leading" secondItem="nfW-EI-Twp" secondAttribute="leading" constant="10" id="tkH-N3-x7s"/>
                                     </constraints>
                                 </view>
                             </subviews>
@@ -318,11 +355,14 @@ Use a local router only for best results. </string>
                     <color key="backgroundColor" red="0.45620438460000001" green="0.80656933779999995" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstItem="CUe-QD-ydR" firstAttribute="top" secondItem="vDI-Qy-l43" secondAttribute="bottom" constant="2" id="2UH-ni-TLk"/>
-                        <constraint firstAttribute="trailing" secondItem="vDI-Qy-l43" secondAttribute="trailing" constant="13" id="7Tu-TE-Lgu"/>
                         <constraint firstAttribute="trailing" secondItem="CUe-QD-ydR" secondAttribute="trailing" constant="10" id="Bo8-Ic-RP4"/>
-                        <constraint firstItem="vDI-Qy-l43" firstAttribute="leading" secondItem="Jzo-Qb-N4Y" secondAttribute="leading" constant="13" id="GIP-Zu-q3V"/>
-                        <constraint firstItem="vDI-Qy-l43" firstAttribute="top" secondItem="Jzo-Qb-N4Y" secondAttribute="top" constant="55" id="c2b-Sf-19j"/>
+                        <constraint firstAttribute="trailing" secondItem="fw1-oI-RB4" secondAttribute="trailing" constant="10" id="GJz-OQ-Frp"/>
+                        <constraint firstItem="vDI-Qy-l43" firstAttribute="leading" secondItem="Jzo-Qb-N4Y" secondAttribute="leading" constant="10" id="Hbf-hP-aHG"/>
+                        <constraint firstItem="fw1-oI-RB4" firstAttribute="leading" secondItem="Jzo-Qb-N4Y" secondAttribute="leading" constant="10" id="WsY-vx-Lq6"/>
                         <constraint firstAttribute="bottom" secondItem="CUe-QD-ydR" secondAttribute="bottom" id="hjR-48-NBE"/>
+                        <constraint firstItem="vDI-Qy-l43" firstAttribute="top" secondItem="fw1-oI-RB4" secondAttribute="bottom" constant="5" id="vAv-NM-R6d"/>
+                        <constraint firstAttribute="trailing" secondItem="vDI-Qy-l43" secondAttribute="trailing" constant="10" id="vO2-0B-PDo"/>
+                        <constraint firstItem="fw1-oI-RB4" firstAttribute="top" secondItem="Jzo-Qb-N4Y" secondAttribute="top" constant="5" id="vq9-Sa-eiy"/>
                         <constraint firstItem="CUe-QD-ydR" firstAttribute="leading" secondItem="Jzo-Qb-N4Y" secondAttribute="leading" constant="10" id="zpO-7w-pUu"/>
                     </constraints>
                 </view>
@@ -487,16 +527,16 @@ Use a local router only for best results. </string>
                                     <rect key="frame" x="155" y="30" width="125" height="80"/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </tableView>
-                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Select MIDI Input &amp; Output" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q9j-d4-GqO">
+                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Select MIDI Input &amp; Output" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q9j-d4-GqO">
                                     <rect key="frame" x="47" y="5" width="206" height="21"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Audio Buffer Size (in Pd blocks)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ae5-3f-1vM">
+                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Audio Buffer Size (in Pd blocks)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ae5-3f-1vM">
                                     <rect key="frame" x="30" y="117" width="241" height="21"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <segmentedControl opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="4" translatesAutoresizingMaskIntoConstraints="NO" id="7ZM-S8-9hq">
@@ -515,17 +555,17 @@ Use a local router only for best results. </string>
                                     </segments>
                                     <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </segmentedControl>
-                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pm3-MB-iI4">
+                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pm3-MB-iI4">
                                     <rect key="frame" x="30" y="172" width="241" height="33"/>
                                     <string key="text">request:
 actual:</string>
                                     <fontDescription key="fontDescription" type="system" pointSize="10"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Sampling Rate" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hSn-Zl-1vm">
+                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Sampling Rate" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hSn-Zl-1vm">
                                     <rect key="frame" x="25" y="205" width="250" height="21"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <segmentedControl opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="4" translatesAutoresizingMaskIntoConstraints="NO" id="nel-wk-XYx">
@@ -544,18 +584,18 @@ actual:</string>
                                     <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </segmentedControl>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zye-Nv-u80">
-                                    <rect key="frame" x="20" y="269" width="176" height="33"/>
+                                    <rect key="frame" x="8" y="269" width="188" height="33"/>
                                     <string key="text">app runs in background:
 for iOS controllers/sequencers)</string>
                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="choose from available devices:" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="40H-2g-EK4">
-                                    <rect key="frame" x="20" y="348" width="176" height="33"/>
+                                    <rect key="frame" x="14" y="348" width="182" height="33"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ved-fV-r3s">
+                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ved-fV-r3s">
                                     <rect key="frame" x="20" y="378" width="260" height="33"/>
                                     <string key="text">input:
 output:</string>
@@ -563,7 +603,7 @@ output:</string>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IbY-rZ-xNa">
-                                    <rect key="frame" x="20" y="301" width="176" height="49"/>
+                                    <rect key="frame" x="14" y="301" width="182" height="49"/>
                                     <string key="text">override audio input
 (allows system vibration
 and audio output routing)</string>
@@ -588,14 +628,24 @@ and audio output routing)</string>
                             </subviews>
                             <color key="backgroundColor" red="0.90898967760000005" green="0.32738093480000002" blue="0.18710275279999999" alpha="1" colorSpace="calibratedRGB"/>
                             <constraints>
+                                <constraint firstItem="Q9j-d4-GqO" firstAttribute="centerX" secondItem="TrW-s5-vQA" secondAttribute="centerX" id="2cy-Q3-Mit"/>
                                 <constraint firstItem="ag9-Xi-eUi" firstAttribute="leading" secondItem="c6h-Vz-iyZ" secondAttribute="trailing" constant="10" id="6bq-71-S59"/>
-                                <constraint firstItem="ag9-Xi-eUi" firstAttribute="leading" secondItem="c6h-Vz-iyZ" secondAttribute="trailing" constant="10" id="K75-Qg-e1L"/>
+                                <constraint firstItem="Ae5-3f-1vM" firstAttribute="centerX" secondItem="TrW-s5-vQA" secondAttribute="centerX" id="9HW-VF-wUB"/>
+                                <constraint firstAttribute="trailing" secondItem="nel-wk-XYx" secondAttribute="trailing" constant="20" id="Kbd-rz-wct"/>
+                                <constraint firstAttribute="trailing" secondItem="ag9-Xi-eUi" secondAttribute="trailing" constant="10" id="SmF-ES-RCe"/>
+                                <constraint firstItem="ag9-Xi-eUi" firstAttribute="width" secondItem="c6h-Vz-iyZ" secondAttribute="width" id="ZDN-dz-onz"/>
+                                <constraint firstAttribute="trailing" secondItem="7ZM-S8-9hq" secondAttribute="trailing" constant="20" id="dSw-ja-x7J"/>
+                                <constraint firstItem="nel-wk-XYx" firstAttribute="leading" secondItem="TrW-s5-vQA" secondAttribute="leading" constant="20" id="ed6-ir-2Wp"/>
+                                <constraint firstItem="c6h-Vz-iyZ" firstAttribute="leading" secondItem="TrW-s5-vQA" secondAttribute="leading" constant="10" id="fZE-sV-TJb"/>
+                                <constraint firstItem="7ZM-S8-9hq" firstAttribute="leading" secondItem="TrW-s5-vQA" secondAttribute="leading" constant="20" id="lJn-DJ-nUx"/>
+                                <constraint firstItem="hSn-Zl-1vm" firstAttribute="centerX" secondItem="TrW-s5-vQA" secondAttribute="centerX" id="qZw-wI-ej1"/>
+                                <constraint firstItem="Ved-fV-r3s" firstAttribute="centerX" secondItem="TrW-s5-vQA" secondAttribute="centerX" id="uZS-An-mGB"/>
+                                <constraint firstItem="pm3-MB-iI4" firstAttribute="centerX" secondItem="TrW-s5-vQA" secondAttribute="centerX" id="wEP-eE-hqg"/>
                             </constraints>
                         </view>
                     </subviews>
-                    <color key="backgroundColor" red="1" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="backgroundColor" red="0.90898967760000005" green="0.32738093480000002" blue="0.18710275279999999" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
-                        <constraint firstItem="TrW-s5-vQA" firstAttribute="height" secondItem="rwa-D0-SdT" secondAttribute="height" id="Rs1-YS-RCr"/>
                         <constraint firstItem="TrW-s5-vQA" firstAttribute="width" secondItem="rwa-D0-SdT" secondAttribute="width" id="cGw-hH-Dko"/>
                     </constraints>
                 </scrollView>

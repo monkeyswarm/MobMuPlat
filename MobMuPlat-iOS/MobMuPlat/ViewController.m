@@ -23,7 +23,7 @@
 #define DEFAULT_INPUT_PORT_NUMBER 54322
 
 #define SETTINGS_BUTTON_OFFSET_PERCENT .02 // percent of screen width
-#define SETTINGS_BUTTON_DIM_PERCENT .08 // percent of screen width
+#define SETTINGS_BUTTON_DIM_PERCENT .1 // percent of screen width
 
 #import "ViewController.h"
 
@@ -338,7 +338,7 @@ extern void pique_setup(void);
   [_settingsButton addTarget:self action:@selector(showInfo:) forControlEvents:UIControlEventTouchUpInside];
 
   _settingsButtonOffset = self.view.frame.size.width * SETTINGS_BUTTON_OFFSET_PERCENT;
-  _settingsButtonDim = self.view.frame.size.width * SETTINGS_BUTTON_DIM_PERCENT;
+  _settingsButtonDim = MAX(25, self.view.frame.size.width * SETTINGS_BUTTON_DIM_PERCENT);
 
 
   //midi setup
