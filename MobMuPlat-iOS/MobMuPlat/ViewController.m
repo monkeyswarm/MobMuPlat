@@ -22,8 +22,8 @@
 #define DEFAULT_OUTPUT_PORT_NUMBER 54321
 #define DEFAULT_INPUT_PORT_NUMBER 54322
 
-#define SETTINGS_BUTTON_OFFSET_PERCENT .02 // percent of screen width
-#define SETTINGS_BUTTON_DIM_PERCENT .1 // percent of screen width
+#define SETTINGS_BUTTON_OFFSET_PERCENT .01 // percent of screen width
+#define SETTINGS_BUTTON_DIM_PERCENT .09 // percent of screen width
 
 #import "ViewController.h"
 
@@ -55,7 +55,6 @@
 
 #import "Gui.h"
 #import "PdParser.h"
-#import "PdDispatcher.h"
 
 extern void expr_setup(void);
 extern void bonk_tilde_setup(void);
@@ -71,7 +70,7 @@ extern void pique_setup(void);
   Gui *_pdGui; //keep strong around for widgets to use (weakly).
   CGFloat _settingsButtonDim;
   CGFloat _settingsButtonOffset;
-  PdDispatcher *_pdDispatcher;
+  MMPPdDispatcher *_mmpPdDispatcher;
   MMPMenuButton * _settingsButton;
 }
 
@@ -309,6 +308,8 @@ extern void pique_setup(void);
     }
 
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:appFirstStartOfVersionKey];
+
+    //DEI force recopy of shims on upgrade!
   }
   //end first run and copy
 
@@ -375,13 +376,14 @@ extern void pique_setup(void);
 
   // DEI new pd render - breaks old interface!
   _pdGui = [[Gui alloc] init];
-  _pdDispatcher = [[PdDispatcher alloc] init];
-  [Widget setDispatcher:_pdDispatcher];
-  [PdBase setDelegate:_pdDispatcher];
+  _mmpPdDispatcher = [[MMPPdDispatcher alloc] init];
+  [Widget setDispatcher:_mmpPdDispatcher];
+  [PdBase setDelegate:_mmpPdDispatcher];
   // Add self as dispatch recipient for symbols
-  [_pdDispatcher addListener:self forSource:@"toGUI"];
-  [_pdDispatcher addListener:self forSource:@"toNetwork"];
-  [_pdDispatcher addListener:self forSource:@"toSystem"];
+  [_mmpPdDispatcher addListener:self forSource:@"toGUI"];
+  [_mmpPdDispatcher addListener:self forSource:@"toNetwork"];
+  [_mmpPdDispatcher addListener:self forSource:@"toSystem"];
+  _mmpPdDispatcher.printDelegate = self;
 
   //start default intro patch
   canvasType hardwareCanvasType = [ViewController getCanvasType];
@@ -939,10 +941,13 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     scrollView.backgroundColor=[MeControl colorFromRGBArray:[sceneDict objectForKey:@"backgroundColor"]];
     [_settingsButton setBarColor:[MeControl inverseColorFromRGBArray:[sceneDict objectForKey:@"backgroundColor"]]];
   } else {
-    [_settingsButton setBarColor:[UIColor whiteColor]];
+    [_settingsButton setBarColor:[UIColor whiteColor]]; //default, but shouldn't happen.
   }
 
-
+  if([sceneDict objectForKey:@"menuButtonColor"]) {
+    [_settingsButton setBarColor:
+         [MeControl colorFromRGBAArray:[sceneDict objectForKey:@"menuButtonColor"]]];
+  }
 
   //get array of all widgets
   NSArray* controlArray = [sceneDict objectForKey:@"gui"];

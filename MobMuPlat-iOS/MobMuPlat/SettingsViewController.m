@@ -980,7 +980,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 
     if(cell==nil){
       cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:landiniTableCellIdentifier] ;
-      if (hardwareCanvasType==canvasTypeWideTablet)cell.textLabel.font=[UIFont systemFontOfSize:24];
+      if (hardwareCanvasType==canvasTypeWideTablet)cell.textLabel.font=[UIFont systemFontOfSize:18];
       else cell.textLabel.font=[UIFont systemFontOfSize:12];
     }
     [cell textLabel].text=[NSString stringWithFormat:@"%@ - %@", user.name, user.ip];
@@ -991,7 +991,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 
     if(cell==nil){
       cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:pingAndConnectTableCellIdentifier] ;
-      if (hardwareCanvasType==canvasTypeWideTablet)cell.textLabel.font=[UIFont systemFontOfSize:24];
+      if (hardwareCanvasType==canvasTypeWideTablet)cell.textLabel.font=[UIFont systemFontOfSize:18];
       else cell.textLabel.font=[UIFont systemFontOfSize:12];
     }
     [cell textLabel].text = userString;

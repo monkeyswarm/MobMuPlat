@@ -94,6 +94,7 @@
 		DCD8DF9317330D8B00767321 /* PGMidi.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCD8DF9217330D8A00767321 /* PGMidi.mm */; };
 		DCEF4F2C188ED1CD00D6EE54 /* SettingsViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */; };
 		DCFF717716B59F3100CDCEAE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DCFF717616B59F3100CDCEAE /* libz.dylib */; };
+		F911D9741C14BB84005F9C01 /* MMPPdDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = F911D9731C14BB84005F9C01 /* MMPPdDispatcher.m */; };
 		F9295DE319BD1980008691CB /* MeMultiTouch.m in Sources */ = {isa = PBXBuildFile; fileRef = F9295DE219BD1980008691CB /* MeMultiTouch.m */; };
 		F9295E3419BD19C6008691CB /* anderson1.wav in Resources */ = {isa = PBXBuildFile; fileRef = F9295DF219BD19C6008691CB /* anderson1.wav */; };
 		F9295E3519BD19C6008691CB /* cats1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = F9295DF319BD19C6008691CB /* cats1.jpg */; };
@@ -387,6 +388,8 @@
 		DCD8DF9217330D8A00767321 /* PGMidi.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PGMidi.mm; path = PGMidi/PGMidi.mm; sourceTree = "<group>"; };
 		DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "SettingsViewController~iphone.xib"; path = "settings/SettingsViewController~iphone.xib"; sourceTree = "<group>"; };
 		DCFF717616B59F3100CDCEAE /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		F911D9721C14BB84005F9C01 /* MMPPdDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMPPdDispatcher.h; sourceTree = "<group>"; };
+		F911D9731C14BB84005F9C01 /* MMPPdDispatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMPPdDispatcher.m; sourceTree = "<group>"; };
 		F9295DE119BD1980008691CB /* MeMultiTouch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeMultiTouch.h; path = gui/MeMultiTouch.h; sourceTree = "<group>"; };
 		F9295DE219BD1980008691CB /* MeMultiTouch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeMultiTouch.m; path = gui/MeMultiTouch.m; sourceTree = "<group>"; };
 		F9295DE419BD19A5008691CB /* ABAnimatedTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ABAnimatedTrigger.h; path = Audiobus/ABAnimatedTrigger.h; sourceTree = "<group>"; };
@@ -788,6 +791,8 @@
 				F97560991A6EAC5F005CCE8E /* MobMuPlatUtil.m */,
 				F92AF7881C0CABED00EED3BB /* MMPMenuButton.h */,
 				F92AF7891C0CABED00EED3BB /* MMPMenuButton.m */,
+				F911D9721C14BB84005F9C01 /* MMPPdDispatcher.h */,
+				F911D9731C14BB84005F9C01 /* MMPPdDispatcher.m */,
 			);
 			path = MobMuPlat;
 			sourceTree = "<group>";
@@ -1630,6 +1635,7 @@
 				F9B6E7AA1C0641E00036FB66 /* PingAndConnectManager.m in Sources */,
 				F92AF7D61C0D6CDE00EED3BB /* MMPPdObjectBox.m in Sources */,
 				DC13B957188E053200647115 /* Reachability.m in Sources */,
+				F911D9741C14BB84005F9C01 /* MMPPdDispatcher.m in Sources */,
 				F92AF7751C0C23E600EED3BB /* Util.m in Sources */,
 				F94FB0391A6F709E004EEF76 /* bonk~.c in Sources */,
 				DC6A9FF71878F88900A7585A /* MAZeroingWeakRef.m in Sources */,

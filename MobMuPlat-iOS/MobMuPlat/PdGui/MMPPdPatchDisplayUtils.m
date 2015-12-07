@@ -85,8 +85,8 @@
 
       // add line to patch output
       [patchLines addObject:patchLine];
-      [guiLines addObject:guiLine];
-      if ([line[0] isEqualToString:@"#X"] && ![line[1] isEqualToString:@"connect"]) { //DEI just line index...
+      [guiLines addObject:guiLine]; // todo, not necc if level > 1?
+      if ([line[0] isEqualToString:@"#X"] && level == 1 && ![line[1] isEqualToString:@"connect"]) { //DEI just line index...
         objIndex++;
       }
     }
