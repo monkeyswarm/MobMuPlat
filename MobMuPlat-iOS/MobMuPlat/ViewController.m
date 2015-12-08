@@ -22,8 +22,8 @@
 #define DEFAULT_OUTPUT_PORT_NUMBER 54321
 #define DEFAULT_INPUT_PORT_NUMBER 54322
 
-#define SETTINGS_BUTTON_OFFSET_PERCENT .01 // percent of screen width
-#define SETTINGS_BUTTON_DIM_PERCENT .09 // percent of screen width
+#define SETTINGS_BUTTON_OFFSET_PERCENT .02 // percent of screen width
+#define SETTINGS_BUTTON_DIM_PERCENT .1 // percent of screen width
 
 #import "ViewController.h"
 
@@ -291,7 +291,7 @@ extern void pique_setup(void);
     }
 
     //NOTE InterAppOSC & Ping and connect, one version.
-    [defaultPatches addObjectsFromArray: @[ @"MMPTutorial0-HelloSine.pd",@"MMPTutorial1-GUI.pd", @"MMPTutorial2-Input.pd", @"MMPTutorial3-Hardware.pd", @"MMPTutorial4-Networking.pd",@"MMPTutorial5-Files.pd",@"cats1.jpg", @"cats2.jpg",@"cats3.jpg",@"clap.wav",@"Welcome.pd",  @"MMPExamples-Vocoder.pd", @"vocod_channel.pd", @"MMPExamples-Motion.pd", @"MMPExamples-Sequencer.pd", @"MMPExamples-GPS.pd", @"MMPTutorial6-2DGraphics.pd", @"MMPExamples-LANdini.pd", @"MMPExamples-Arp.pd", @"MMPExamples-TableGlitch.pd", @"anderson1.wav", @"MMPExamples-InterAppOSC.mmp", @"MMPExamples-InterAppOSC.pd", @"MMPExamples-PingAndConnect.pd", @"MMPExamples-PingAndConnect.mmp" ]];
+    [defaultPatches addObjectsFromArray: @[ @"MMPTutorial0-HelloSine.pd",@"MMPTutorial1-GUI.pd", @"MMPTutorial2-Input.pd", @"MMPTutorial3-Hardware.pd", @"MMPTutorial4-Networking.pd",@"MMPTutorial5-Files.pd",@"cats1.jpg", @"cats2.jpg",@"cats3.jpg",@"clap.wav",@"Welcome.pd",  @"MMPExamples-Vocoder.pd", @"vocod_channel.pd", @"MMPExamples-Motion.pd", @"MMPExamples-Sequencer.pd", @"MMPExamples-GPS.pd", @"MMPTutorial6-2DGraphics.pd", @"MMPExamples-LANdini.pd", @"MMPExamples-Arp.pd", @"MMPExamples-TableGlitch.pd", @"anderson1.wav", @"MMPExamples-InterAppOSC.mmp", @"MMPExamples-InterAppOSC.pd", @"MMPExamples-PingAndConnect.pd", @"MMPExamples-PingAndConnect.mmp", @"MMPExamples-NativeGUI.pd" ]];
 
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *publicDocumentsDir = [paths objectAtIndex:0];
@@ -309,7 +309,8 @@ extern void pique_setup(void);
 
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:appFirstStartOfVersionKey];
 
-    //DEI force recopy of shims on upgrade!
+    //Force recopy of shims on upgrade
+    [MMPPdPatchDisplayUtils maybeCreatePdGuiFolderAndFiles:YES];
   }
   //end first run and copy
 
@@ -374,7 +375,6 @@ extern void pique_setup(void);
 
   [audioController setActive:YES];
 
-  // DEI new pd render - breaks old interface!
   _pdGui = [[Gui alloc] init];
   _mmpPdDispatcher = [[MMPPdDispatcher alloc] init];
   [Widget setDispatcher:_mmpPdDispatcher];
@@ -662,7 +662,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   [self loadSceneCommonCleanup];
   [_settingsButton setBarColor:[UIColor blackColor]];
 
-  [MMPPdPatchDisplayUtils maybeCreatePdGuiFolderAndFiles];
+  [MMPPdPatchDisplayUtils maybeCreatePdGuiFolderAndFiles:NO]; //No = don't force overwrite if there.
 
   NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
   NSString *publicDocumentsDir = [paths objectAtIndex:0];
@@ -698,7 +698,18 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   }
 
 // Compute canvas size
-  CGSize docCanvasSize = CGSizeMake([originalAtomLines[0][4] floatValue], [originalAtomLines[0][5] floatValue]); //DEI check
+  if ([originalAtomLines count] == 0 || [originalAtomLines[0] count] < 6 || ![originalAtomLines[0][1] isEqualToString:@"canvas"] ) {
+    UIAlertView *alert = [[UIAlertView alloc]
+                          initWithTitle: @"Pd file not parsed"
+                          message: [NSString stringWithFormat:@"Pd file %@ not readable", filename]
+                          delegate: nil
+                          cancelButtonTitle:@"OK"
+                          otherButtonTitles:nil];
+    [alert show];
+
+  }
+
+  CGSize docCanvasSize = CGSizeMake([originalAtomLines[0][4] floatValue], [originalAtomLines[0][5] floatValue]);
   BOOL isOrientationLandscape = (docCanvasSize.width > docCanvasSize.height);
   CGSize hardwareCanvasSize;
   if (isOrientationLandscape) {

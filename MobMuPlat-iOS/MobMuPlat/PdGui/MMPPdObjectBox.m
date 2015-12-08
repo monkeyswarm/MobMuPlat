@@ -21,7 +21,6 @@
                                0,0); //deduce width and height...
 
   ob.valueLabel.text = [[line subarrayWithRange:NSMakeRange(4, [line count] - 4)] componentsJoinedByString:@" "];  //check size
-  //t.backgroundColor = [UIColor colorWithRed:0 green:0 blue:1 alpha:.2];
   return ob;
 }
 

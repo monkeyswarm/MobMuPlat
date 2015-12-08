@@ -35,8 +35,9 @@
                                              @"hsl" : @[@(11),@(12)],
                                              @"vsl" : @[@(11),@(12)],
                                              @"hradio" : @[@(9),@(10)],
-                                             @"vradio" : @[@(9),@(10)]
-                                             }; //TODO vu/canvas
+                                             @"vradio" : @[@(9),@(10)],
+                                             //@"vu" : @[@(-1), @(7)] not yet supported
+                                             }; //canvas ("cnv") doesn't need one
 
   @try {
     for(NSArray *line in lines) {
@@ -73,7 +74,7 @@
           //
           guiLine = [self guiMsgAtomLineFromAtomLine:line guiIndex:objIndex];
         } else if ([objType isEqualToString:@"connect"]) {
-          // assume all obj boxes are created by this point
+          // assume all obj boxes at level 1 are created by this point of gettign connections at level 1
           if (messageBoxIndexToIncomingConnectionIndices[line[4]]) { //if dict contains (msg box index) as key
             NSMutableSet *connectionSet = messageBoxIndexToIncomingConnectionIndices[line[4]];
             [connectionSet addObject:@[ line[2], line[3] ]]; //add tuple of obj index string, outlet index string
@@ -125,150 +126,22 @@
   return @[patchLines, guiLines];
 }
 
-/*+ (NSArray *)proccessNativeWidgetsFromAtomLines:(NSArray *)lines {
-  int level = 0;
-  NSUInteger index = 0;
-  NSMutableArray *result = [NSMutableArray array];
-  // key = message box index, val = set of connection tuples (obj index, outlet index) that connect into that message box.
-  NSMutableDictionary *messageBoxIndexToIncomingConnectionIndices = [NSMutableDictionary dictionary];
-
-  for(NSArray *line in lines) {
-
-    if(line.count >= 4) {
-
-      NSString *lineType = [line objectAtIndex:1];
-
-      // find canvas begin and end line
-      if([lineType isEqualToString:@"canvas"]) {
-        level++;
-        if(level == 1) {
-          [result addObject:line];
-        }
-      }
-      else if([lineType isEqualToString:@"restore"]) {
-        level -= 1;
-        [result addObject:line];
-      }
-      // find different types of UI element in the top level patch
-      else if(level == 1) {
-        if (line.count >= 2) {
-
-          // built in pd things
-          if([lineType isEqualToString:@"floatatom"]) {
-            [result addObject:[self shimAtomLineFromAtomLine:line guiIndex:index sendNameIndex:10 recNameIndex:9]];
-            //[self addNumber:line];
-          }
-          else if([lineType isEqualToString:@"symbolatom"]) {
-            [result addObject:[self shimAtomLineFromAtomLine:line guiIndex:index sendNameIndex:10 recNameIndex:9]];
-          }
-          else if([lineType isEqualToString:@"text"]) {
-            [result addObject:line]; //DEI we could strip out.
-          } else if ([lineType isEqualToString:@"msg"]) {
-            [result addObject:line]; //add unprocessed message box. key is a _string_ of the number
-            [messageBoxIndexToIncomingConnectionIndices setObject:[NSMutableSet set]
-                                                           forKey:[NSString stringWithFormat:@"%lu", index]];
-          }
-          else if([lineType isEqualToString:@"obj"] && line.count >= 5) {
-            NSString *objType = [line objectAtIndex:4];
-
-            // iem gui objects
-            if([objType isEqualToString:@"bng"]) {
-              [result addObject:[self shimAtomLineFromAtomLine:line guiIndex:index sendNameIndex:9 recNameIndex:10]];
-            }
-            else if([objType isEqualToString:@"tgl"]) {
-              //[self addToggle:line];
-              [result addObject:[self shimAtomLineFromAtomLine:line guiIndex:index sendNameIndex:7 recNameIndex:8]];
-            }
-            else if([objType isEqualToString:@"nbx"]) {
-              [result addObject:[self shimAtomLineFromAtomLine:line guiIndex:index sendNameIndex:11 recNameIndex:12]];
-              //[self addNumberbox2:line];
-            }
-            else if([objType isEqualToString:@"hsl"]) {
-              [result addObject:[self shimAtomLineFromAtomLine:line guiIndex:index sendNameIndex:11 recNameIndex:12]];
-              //[self addSlider:line withOrientation:WidgetOrientationHorizontal];
-            }
-            else if([objType isEqualToString:@"vsl"]) {
-              [result addObject:[self shimAtomLineFromAtomLine:line guiIndex:index sendNameIndex:11 recNameIndex:12]];
-              //[result addObject:[self shimAtomLineFromAtomLine:line guiIndex:index++]];
-              //[self addSlider:line withOrientation:WidgetOrientationVertical];
-            }
-            else if([objType isEqualToString:@"hradio"]) {
-              [result addObject:[self shimAtomLineFromAtomLine:line guiIndex:index sendNameIndex:9 recNameIndex:10]];
-              //[self addRadio:line withOrientation:WidgetOrientationHorizontal];
-            }
-            else if([objType isEqualToString:@"vradio"]) {
-              [result addObject:[self shimAtomLineFromAtomLine:line guiIndex:index sendNameIndex:9 recNameIndex:10]];
-              //[self addRadio:line withOrientation:WidgetOrientationVertical];
-            }
-            else if([objType isEqualToString:@"vu"]) {
-              //[self addVUMeter:line];
-              [result addObject:line];
-            }
-            else if([objType isEqualToString:@"cnv"]) {
-              //[self addCanvas:line];
-              [result addObject:line];
-            } else { //regular obj
-              // put all other lines at level 1back in DEI refactor!
-              [result addObject:line];
-            }
-          } else if ([lineType isEqualToString:@"connect"]) { // #X connect 87 0 88 0;
-            [result addObject:line];
-            // assume that connections are made after iterating through all objects
-            //if this connection connects _to_ a message, store it
-            if (messageBoxIndexToIncomingConnectionIndices[line[4]]) { //if dict contains msg box index as key
-              NSMutableSet *connectionSet = messageBoxIndexToIncomingConnectionIndices[line[4]];
-              [connectionSet addObject:@[ line[2], line[3] ]]; //add tuple of obj index, outlet index
-            }
-          } else {
-            // put all other lines at level 1back in DEI refactor!
-            [result addObject:line];
-          }
-        }
-      } else {
-        // put all other lines ato other levels back in DEI refactro!
-        [result addObject:line];
-      }
-    }
-    // increment obj index
-    if ([line[0] isEqualToString:@"#X"] && ![line[1] isEqualToString:@"connect"]) {
-      index++;
-    }
-  }
-
-  // Post-process the message boxes to connect to the message shims.
-  //NSArray *msgBoxIndices = [messageBoxIndexToIncomingConnectionIndices allKeys];
-  for (NSNumber *msgBoxIndexNum in [messageBoxIndexToIncomingConnectionIndices keyEnumerator]) {
-    // create shim
-    NSInteger msgBoxIndex = [msgBoxIndexNum integerValue];
-    [result addObject:@[ @"#X", @"obj", @"0", @"0", @"MMPMessageShim",
-                         [NSString stringWithFormat:@"%lu-gui-send", msgBoxIndex],
-                         [NSString stringWithFormat:@"%lu-gui-rec", msgBoxIndex]
-                         ]];
-    // for objects going into message box, connect them to shim as well
-    NSSet *connectionSet = messageBoxIndexToIncomingConnectionIndices[msgBoxIndexNum];
-    for (NSArray *connectionTuple in connectionSet) {
-    [result addObject:@[ @"#X", @"connect",
-                        [NSString stringWithFormat:@"%ld", (long)[connectionTuple[0] integerValue]],
-                        [NSString stringWithFormat:@"%ld", (long)[connectionTuple[1] integerValue]],
-                        [NSString stringWithFormat:@"%ld", (long)index], @"0" ]];
-    }
-
-    // connect shim to message box
-    [result addObject:@[ @"#X", @"connect", [NSString stringWithFormat:@"%ld", (long)index],
-                                             @"0",
-                                             [NSString stringWithFormat:@"%ld", (long)msgBoxIndex],
-                                              @"0"] ];
-    // inc
-     index++;
-  }
-
-  return result;
-}*/
 
 + (NSArray *)shimAtomLineFromAtomLine:(NSArray *)atomLine guiIndex:(NSUInteger)index sendNameIndex:(NSUInteger)sendNameIndex recNameIndex:(NSUInteger)recNameIndex{
   //DEI check length
   NSMutableArray *result = [[atomLine subarrayWithRange:NSMakeRange(0, 4)] mutableCopy]; //copy first 4
   [result setObject:@"obj" atIndexedSubscript:1]; //change floatatom,etc to obj
+
+  // vu meter doesn't have a "send" - not yet supported
+  /*if ([atomLine[4] isEqualToString:@"vu"]) {
+    [result addObject:@"MMPPdGuiFiles/MMPPdGuiNoSetShim"];
+    [result addObject: [NSString stringWithFormat:@"%lu-gui-send", (unsigned long)index]];//send name
+    [result addObject: [NSString stringWithFormat:@"%lu-gui-rec", index]];
+    [result addObject: [self shimSanitizeAtom:@"empty"]];
+    [result addObject: [self shimSanitizeAtom:atomLine[recNameIndex]]];
+    return result;
+  }*/
+
   // Bang gets special blocking shim, all others respect "set" and get default shim
   if ([atomLine[4] isEqualToString:@"bng"]) {
     [result addObject:@"MMPPdGuiFiles/MMPPdGuiNoSetShim"];
@@ -290,100 +163,6 @@
   }
 }
 
-/*+ (NSArray *)proccessGuiWidgetsFromAtomLines:(NSArray *)lines {
-  int level = 0;
-  NSUInteger index = 0;
-  NSMutableArray *result = [NSMutableArray array];
-
-  for(NSArray *line in lines) {
-
-    if(line.count >= 4) {
-
-      NSString *lineType = [line objectAtIndex:1];
-
-      // find canvas begin and end line
-      if([lineType isEqualToString:@"canvas"]) {
-        level++;
-        if(level == 1) {
-          [result addObject:line];
-        }
-      }
-      else if([lineType isEqualToString:@"restore"]) {
-        level -= 1;
-        [result addObject:line];
-      }
-      // find different types of UI element in the top level patch
-      else if(level == 1) {
-        if (line.count >= 2) {
-
-          // built in pd things
-          if([lineType isEqualToString:@"floatatom"]) {
-            [result addObject:[self guiAtomLineFromAtomLine:line guiIndex:index sendNameIndex:10 recNameIndex:9]];
-          }
-          else if([lineType isEqualToString:@"symbolatom"]) {
-            [result addObject:[self guiAtomLineFromAtomLine:line guiIndex:index sendNameIndex:10 recNameIndex:9]];
-          }
-          else if([lineType isEqualToString:@"text"]) {
-            [result addObject:line]; // no gui index increment
-          }
-          else if([lineType isEqualToString:@"obj"] && line.count >= 5) {
-            NSString *objType = [line objectAtIndex:4];
-
-            // iem gui objects
-            if([objType isEqualToString:@"bng"]) {
-              [result addObject:[self guiAtomLineFromAtomLine:line guiIndex:index sendNameIndex:9 recNameIndex:10]];
-            }
-            else if([objType isEqualToString:@"tgl"]) {
-              //[self addToggle:line];
-              [result addObject:[self guiAtomLineFromAtomLine:line guiIndex:index sendNameIndex:7 recNameIndex:8]];
-            }
-            else if([objType isEqualToString:@"nbx"]) {
-              //[self addNumberbox2:line];
-              [result addObject:[self guiAtomLineFromAtomLine:line guiIndex:index sendNameIndex:11 recNameIndex:12]];
-            }
-            else if([objType isEqualToString:@"hsl"]) {
-              //[self addSlider:line withOrientation:WidgetOrientationHorizontal];
-              [result addObject:[self guiAtomLineFromAtomLine:line guiIndex:index sendNameIndex:11 recNameIndex:12]];
-            }
-            else if([objType isEqualToString:@"vsl"]) {
-              [result addObject:[self guiAtomLineFromAtomLine:line guiIndex:index sendNameIndex:11 recNameIndex:12]];
-
-              //[self addSlider:line withOrientation:WidgetOrientationVertical];
-            }
-            else if([objType isEqualToString:@"hradio"]) {
-              [result addObject:[self guiAtomLineFromAtomLine:line guiIndex:index sendNameIndex:9 recNameIndex:10]];
-
-              //[self addRadio:line withOrientation:WidgetOrientationHorizontal];
-            }
-            else if([objType isEqualToString:@"vradio"]) {
-              [result addObject:[self guiAtomLineFromAtomLine:line guiIndex:index sendNameIndex:9 recNameIndex:10]];
-
-              //[self addRadio:line withOrientation:WidgetOrientationVertical];
-            }
-            else if([objType isEqualToString:@"vu"]) {
-              //[self addVUMeter:line];
-            }
-            else if([objType isEqualToString:@"cnv"]) {
-              //[self addCanvas:line];
-            } else {
-              // custom - all other obj
-              [result addObject:line];
-            }
-          } else if ([lineType isEqualToString:@"msg"]){
-            //[result addObject:line]; //TODO msg shim! TODO strip off preceding slashes for $1
-            [result addObject:[self guiMsgAtomLineFromAtomLine:line guiIndex:index]];
-          }
-        }
-      }
-    }
-    // increment obj index
-    if ([line[0] isEqualToString:@"#X"] && ![line[1] isEqualToString:@"connect"]) {
-      index++;
-    }
-  }
-  return result;
-}*/
-
 + (NSArray *)guiAtomLineFromAtomLine:(NSArray *)atomLine guiIndex:(NSUInteger)index sendNameIndex:(NSUInteger)sendNameIndex recNameIndex:(NSUInteger)recNameIndex {
   //DEI check length
   NSMutableArray *result = [atomLine mutableCopy];
@@ -402,13 +181,13 @@
   return result;
 }
 
-+ (void)maybeCreatePdGuiFolderAndFiles {
++ (void)maybeCreatePdGuiFolderAndFiles:(BOOL)shouldForce {
   NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
   NSString *publicDocumentsDir = [paths objectAtIndex:0];
 
   // Copy pd gui shim files if they are not there.
   NSString *patchDocFolderPath = [publicDocumentsDir stringByAppendingPathComponent:@"MMPPdGuiFiles"];
-  if(![[NSFileManager defaultManager] fileExistsAtPath:patchDocFolderPath]) { //if doesn't exist, copy.
+  if(![[NSFileManager defaultManager] fileExistsAtPath:patchDocFolderPath]) { //if doesn't exist, create folder.
     [[NSFileManager defaultManager] createDirectoryAtPath:patchDocFolderPath withIntermediateDirectories:NO attributes:nil error:nil];
   }
   NSArray *pdGuiPatchFiles = @[ @"MMPPdGuiShim.pd", @"MMPPdGuiNoSetShim.pd", @"MMPPdGuiMessageShim.pd"];
@@ -416,8 +195,15 @@
     NSString* patchDocPath = [patchDocFolderPath stringByAppendingPathComponent:patchName];
     NSString* patchBundlePath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:patchName];
     NSError* error = nil;
-    if(![[NSFileManager defaultManager] fileExistsAtPath:patchDocPath]) { //if doesn't exist, copy.
+    if (shouldForce) { //force overwrite
+      if([[NSFileManager defaultManager] fileExistsAtPath:patchDocPath]) {
+        [[NSFileManager defaultManager] removeItemAtPath:patchDocPath error:&error];
+      }
       [[NSFileManager defaultManager] copyItemAtPath:patchBundlePath toPath:patchDocPath error:&error];
+    } else {
+      if(![[NSFileManager defaultManager] fileExistsAtPath:patchDocPath]) { //if doesn't exist, copy.
+        [[NSFileManager defaultManager] copyItemAtPath:patchBundlePath toPath:patchDocPath error:&error];
+      }
     }
   }
 }

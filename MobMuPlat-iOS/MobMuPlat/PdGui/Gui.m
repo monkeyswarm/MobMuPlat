@@ -182,6 +182,8 @@
       }
       else if([lineType isEqualToString:@"restore"]) {
         level -= 1;
+        // render object [pd name]
+        [self addMMPPdObjectBox:line];
       }
       // find different types of UI element in the top level patch
       else if(level == 1) {

@@ -95,6 +95,7 @@
 		DCEF4F2C188ED1CD00D6EE54 /* SettingsViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */; };
 		DCFF717716B59F3100CDCEAE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DCFF717616B59F3100CDCEAE /* libz.dylib */; };
 		F911D9741C14BB84005F9C01 /* MMPPdDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = F911D9731C14BB84005F9C01 /* MMPPdDispatcher.m */; };
+		F91CB9B51C169F5C0088C445 /* MMPExamples-NativeGUI.pd in Resources */ = {isa = PBXBuildFile; fileRef = F91CB9B41C169F5C0088C445 /* MMPExamples-NativeGUI.pd */; };
 		F9295DE319BD1980008691CB /* MeMultiTouch.m in Sources */ = {isa = PBXBuildFile; fileRef = F9295DE219BD1980008691CB /* MeMultiTouch.m */; };
 		F9295E3419BD19C6008691CB /* anderson1.wav in Resources */ = {isa = PBXBuildFile; fileRef = F9295DF219BD19C6008691CB /* anderson1.wav */; };
 		F9295E3519BD19C6008691CB /* cats1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = F9295DF319BD19C6008691CB /* cats1.jpg */; };
@@ -390,6 +391,7 @@
 		DCFF717616B59F3100CDCEAE /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		F911D9721C14BB84005F9C01 /* MMPPdDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMPPdDispatcher.h; sourceTree = "<group>"; };
 		F911D9731C14BB84005F9C01 /* MMPPdDispatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMPPdDispatcher.m; sourceTree = "<group>"; };
+		F91CB9B41C169F5C0088C445 /* MMPExamples-NativeGUI.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "MMPExamples-NativeGUI.pd"; sourceTree = "<group>"; };
 		F9295DE119BD1980008691CB /* MeMultiTouch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeMultiTouch.h; path = gui/MeMultiTouch.h; sourceTree = "<group>"; };
 		F9295DE219BD1980008691CB /* MeMultiTouch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeMultiTouch.m; path = gui/MeMultiTouch.m; sourceTree = "<group>"; };
 		F9295DE419BD19A5008691CB /* ABAnimatedTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ABAnimatedTrigger.h; path = Audiobus/ABAnimatedTrigger.h; sourceTree = "<group>"; };
@@ -995,6 +997,7 @@
 		F9295DF119BD19C6008691CB /* patches */ = {
 			isa = PBXGroup;
 			children = (
+				F91CB9B41C169F5C0088C445 /* MMPExamples-NativeGUI.pd */,
 				F93EF2D11C078AA400BCF5D3 /* MMPExamples-PingAndConnect.pd */,
 				F93EF2D21C078AA400BCF5D3 /* MMPExamples-PingAndConnect.mmp */,
 				F9FC17991A85735A00152392 /* MMPExamples-InterAppOSC.mmp */,
@@ -1563,6 +1566,7 @@
 				DC59573B1733805000CEBECC /* titlepad_resistor_70x21.png in Resources */,
 				F9295E6519BD19C6008691CB /* MMPTutorial4-Networking-ip5.mmp in Resources */,
 				F9295E5719BD19C6008691CB /* MMPTutorial0-HelloSine.mmp in Resources */,
+				F91CB9B51C169F5C0088C445 /* MMPExamples-NativeGUI.pd in Resources */,
 				F9295E4A19BD19C6008691CB /* MMPExamples-Sequencer-Pad.mmp in Resources */,
 				F9295E5019BD19C6008691CB /* MMPExamples-TableGlitch.pd in Resources */,
 				F9295E3619BD19C6008691CB /* cats2.jpg in Resources */,

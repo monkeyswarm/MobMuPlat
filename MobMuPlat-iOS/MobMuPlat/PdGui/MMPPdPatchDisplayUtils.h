@@ -17,6 +17,6 @@
 
 
 /// Call before opening a pd gui. Ensure that the Documents folder with the shim files exists.
-+ (void)maybeCreatePdGuiFolderAndFiles;
++ (void)maybeCreatePdGuiFolderAndFiles:(BOOL)shouldForce;
 
 @end

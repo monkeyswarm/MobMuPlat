@@ -1,0 +1,96 @@
+#N canvas 634 57 477 687 12;
+#X text 21 589 Based on layout objects from PdParty and PdDroidParty.
+;
+#X obj 91 73 hsl 256 30 0 127 0 0 empty empty modulation 0 35 0 10
+-260097 -257985 -260097 0 1;
+#X obj 91 120 hsl 256 30 0 127 0 0 empty empty volume 0 35 0 10 -260097
+-257985 -260097 0 1;
+#N canvas 0 22 680 487 welcomeguts 0;
+#X obj 102 390 dac~;
+#X obj 101 337 *~;
+#X obj 217 255 phasor~;
+#X obj 215 227 * -10;
+#X obj 97 222 phasor~;
+#X obj 101 139 osc~;
+#X obj 99 113 * 7;
+#X obj 94 165 *~ 220;
+#X obj 146 168 osc~;
+#X obj 147 197 *~ 600;
+#X obj 145 137 * 0.74;
+#X obj 149 225 +~ 1200;
+#X obj 96 259 vcf~ 8;
+#X obj 97 196 +~ 330;
+#X obj 97 304 *~;
+#X obj 217 281 *~ 0.5;
+#X obj 217 306 +~ 0.5;
+#X obj 62 9 inlet;
+#X obj 105 8 inlet;
+#X obj 105 36 / 127;
+#X obj 63 35 / 127;
+#X floatatom 33 98 5 0 0 0 - - -, f 5;
+#X connect 1 0 0 0;
+#X connect 1 0 0 1;
+#X connect 2 0 15 0;
+#X connect 3 0 2 0;
+#X connect 4 0 12 0;
+#X connect 5 0 7 0;
+#X connect 6 0 5 0;
+#X connect 7 0 13 0;
+#X connect 8 0 9 0;
+#X connect 9 0 11 0;
+#X connect 10 0 8 0;
+#X connect 11 0 12 1;
+#X connect 12 0 14 0;
+#X connect 13 0 4 0;
+#X connect 14 0 1 0;
+#X connect 15 0 16 0;
+#X connect 16 0 14 1;
+#X connect 17 0 20 0;
+#X connect 18 0 19 0;
+#X connect 19 0 6 0;
+#X connect 19 0 10 0;
+#X connect 19 0 3 0;
+#X connect 20 0 1 1;
+#X connect 20 0 21 0;
+#X restore 90 164 pd welcomeguts;
+#X text 18 46 Here's the two controls from the "welcome" interface.
+;
+#X obj 40 252 bng 45 250 50 0 empty empty to_other_bang 0 -5 0 10 -204786
+-4032 -159808;
+#X obj 40 304 bng 30 250 50 0 empty empty empty 17 7 0 10 -262130 -260097
+-1;
+#X floatatom 229 284 10 0 0 0 - - -, f 10;
+#X obj 232 305 hsl 128 30 0 127 0 0 empty empty I'm_a_label! 100 5
+0 16 -262144 -258113 -1 0 1;
+#X floatatom 229 339 5 0 0 0 - - -, f 5;
+#X symbolatom 31 440 20 0 0 0 - - -, f 20;
+#X obj 31 414 symbol;
+#X msg 34 360 message_boxes...;
+#X msg 51 387 ...are_tappable;
+#X obj 229 228 hradio 45 1 0 4 empty empty empty 0 -8 0 10 -262144
+-1 -1 2;
+#X obj 253 440 tgl 45 0 /demoToggleSend /demoToggleReceive I'm_using_send_and_receive
+17 7 0 10 -4032 -260097 -258113 0 1;
+#X obj 242 399 tgl 30 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X obj 241 495 tgl 30 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X obj 278 399 s /demoToggleReceive;
+#X obj 277 495 r /demoToggleSend;
+#X text 39 624 (Note that attaching send/receive objects to each;
+#X text 45 643 GUI object is not necessary.);
+#X text 27 23 MobMuPlat supports "native" Pd patch GUI rendering.;
+#X text 15 561 Size your Pd patch window to the intended aspect ratio.
+;
+#X text 72 200 ... and the basic GUI widgets...;
+#X connect 1 0 3 1;
+#X connect 2 0 3 0;
+#X connect 5 0 6 0;
+#X connect 7 0 8 0;
+#X connect 8 0 9 0;
+#X connect 11 0 10 0;
+#X connect 12 0 11 0;
+#X connect 13 0 11 0;
+#X connect 14 0 7 0;
+#X connect 16 0 18 0;
+#X connect 19 0 17 0;
