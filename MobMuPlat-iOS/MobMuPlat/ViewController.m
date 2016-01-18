@@ -379,10 +379,7 @@ extern void pique_setup(void);
   _mmpPdDispatcher = [[MMPPdDispatcher alloc] init];
   [Widget setDispatcher:_mmpPdDispatcher];
   [PdBase setDelegate:_mmpPdDispatcher];
-  // Add self as dispatch recipient for symbols
-  [_mmpPdDispatcher addListener:self forSource:@"toGUI"];
-  [_mmpPdDispatcher addListener:self forSource:@"toNetwork"];
-  [_mmpPdDispatcher addListener:self forSource:@"toSystem"];
+
   _mmpPdDispatcher.printDelegate = self;
 
   //start default intro patch
@@ -659,7 +656,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 -(BOOL)loadScenePatchOnly:(NSString*)filename{
   if (!filename) return NO;
 
-  [self loadSceneCommonCleanup];
+  [self loadSceneCommonReset];
   [_settingsButton setBarColor:[UIColor blackColor]];
 
   [MMPPdPatchDisplayUtils maybeCreatePdGuiFolderAndFiles:NO]; //No = don't force overwrite if there.
@@ -691,12 +688,6 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   [outputString writeToFile:toPath atomically:YES encoding:NSASCIIStringEncoding error:&error];
   //
 
-  //
-  openPDFile = [PdFile openFileNamed:@"tempPdFile" path:publicDocumentsDir];
-  if (!openPDFile) {
-    return NO;
-  }
-
 // Compute canvas size
   if ([originalAtomLines count] == 0 || [originalAtomLines[0] count] < 6 || ![originalAtomLines[0][1] isEqualToString:@"canvas"] ) {
     UIAlertView *alert = [[UIAlertView alloc]
@@ -706,10 +697,11 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
                           cancelButtonTitle:@"OK"
                           otherButtonTitles:nil];
     [alert show];
-
+    return NO;
   }
 
   CGSize docCanvasSize = CGSizeMake([originalAtomLines[0][4] floatValue], [originalAtomLines[0][5] floatValue]);
+  // TODO chcek for zero/bad values
   BOOL isOrientationLandscape = (docCanvasSize.width > docCanvasSize.height);
   CGSize hardwareCanvasSize;
   if (isOrientationLandscape) {
@@ -780,7 +772,13 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
   _pdGui.parentViewSize = CGSizeMake(canvasWidth, canvasHeight);//pdPatchView.frame.size;//self.view.frame.size;
 
-  [_pdGui addWidgetsFromAtomLines:guiAtomLines];
+  [_pdGui addWidgetsFromAtomLines:guiAtomLines]; // create widgets first
+
+  //
+  openPDFile = [PdFile openFileNamed:@"tempPdFile" path:publicDocumentsDir]; //widgets get loadbang
+  if (!openPDFile) {
+    return NO;
+  }
 
   for(Widget *widget in _pdGui.widgets) {
     [widget replaceDollarZerosForGui:_pdGui fromPatch:openPDFile];
@@ -788,22 +786,22 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   }
   [_pdGui reshapeWidgets];
 
+  for(Widget *widget in _pdGui.widgets) {
+    [widget sendInitValue]; // We _DO_ need to send this, since gui objects hold the initial val, not the shims.
+  }
+
   [self.view addSubview:_settingsButton];
+
 
   return YES;
 }
 
 //
 
--(void)loadSceneCommonCleanup {
+-(void)loadSceneCommonReset {
   if(scrollView) {
     [scrollView removeFromSuperview];
     scrollView = nil;
-  }
-
-  if (pdPatchView) {
-    [pdPatchView removeFromSuperview];
-    pdPatchView = nil;
   }
 
   [allGUIControl removeAllObjects];
@@ -812,6 +810,18 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     [widget removeFromSuperview];
   }
   [_pdGui.widgets removeAllObjects];
+
+  if (pdPatchView) {
+    [pdPatchView removeFromSuperview];
+    pdPatchView = nil;
+  }
+
+  [_mmpPdDispatcher removeAllListeners]; // Hack because dispatcher holds strong references to listeners; they (pd native gui objects) won't get deallocated otherwise.
+
+  // (re-)Add self as dispatch recipient for MMP symbols.
+  [_mmpPdDispatcher addListener:self forSource:@"toGUI"];
+  [_mmpPdDispatcher addListener:self forSource:@"toNetwork"];
+  [_mmpPdDispatcher addListener:self forSource:@"toSystem"];
 
   //if pdfile is open, close it
   if(openPDFile != nil) {
@@ -826,7 +836,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 -(BOOL)loadScene:(NSDictionary*) sceneDict{
   if(!sceneDict)return NO;
 
-  [self loadSceneCommonCleanup];
+  [self loadSceneCommonReset];
 
   //type of canvas for device
   //canvasType hardwareCanvasType = [ViewController getCanvasType];

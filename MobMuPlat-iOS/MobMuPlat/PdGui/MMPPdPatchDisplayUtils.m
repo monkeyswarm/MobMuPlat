@@ -134,7 +134,7 @@
 
   // vu meter doesn't have a "send" - not yet supported
   /*if ([atomLine[4] isEqualToString:@"vu"]) {
-    [result addObject:@"MMPPdGuiFiles/MMPPdGuiNoSetShim"];
+    [result addObject:@"MMPPdGuiFiles/----"];
     [result addObject: [NSString stringWithFormat:@"%lu-gui-send", (unsigned long)index]];//send name
     [result addObject: [NSString stringWithFormat:@"%lu-gui-rec", index]];
     [result addObject: [self shimSanitizeAtom:@"empty"]];
@@ -142,11 +142,15 @@
     return result;
   }*/
 
-  // Bang gets special blocking shim, all others respect "set" and get default shim
-  if ([atomLine[4] isEqualToString:@"bng"]) {
-    [result addObject:@"MMPPdGuiFiles/MMPPdGuiNoSetShim"];
-  } else {
-    [result addObject: @"MMPPdGuiFiles/MMPPdGuiShim"];
+  // Bang gets special blocking shim, symbol gets another, all others are float
+  if ([atomLine[4] isEqualToString:@"bng"]) { //DEI rfactor for objName from index 1 or 4.
+    [result addObject:@"MMPPdGuiFiles/MMPPdGuiBangShim"];
+  } else if ([atomLine[1] isEqualToString:@"symbolatom"]){
+    [result addObject: @"MMPPdGuiFiles/MMPPdGuiSymbolShim"];
+  } else if ([atomLine[4] isEqualToString:@"tgl"]) {
+    [result addObject:@"MMPPdGuiFiles/MMPPdGuiToggleShim"];
+  } else { // floatatom, hsl vsl hradio vradio nbx
+    [result addObject: @"MMPPdGuiFiles/MMPPdGuiFloatShim"];
   }
   [result addObject: [NSString stringWithFormat:@"%lu-gui-send", (unsigned long)index]];//send name
   [result addObject: [NSString stringWithFormat:@"%lu-gui-rec", index]];
@@ -190,7 +194,7 @@
   if(![[NSFileManager defaultManager] fileExistsAtPath:patchDocFolderPath]) { //if doesn't exist, create folder.
     [[NSFileManager defaultManager] createDirectoryAtPath:patchDocFolderPath withIntermediateDirectories:NO attributes:nil error:nil];
   }
-  NSArray *pdGuiPatchFiles = @[ @"MMPPdGuiShim.pd", @"MMPPdGuiNoSetShim.pd", @"MMPPdGuiMessageShim.pd"];
+  NSArray *pdGuiPatchFiles = @[ @"MMPPdGuiFloatShim.pd", @"MMPPdGuiSymbolShim.pd", @"MMPPdGuiBangShim.pd", @"MMPPdGuiMessageShim.pd", @"MMPPdGuiToggleShim.pd"];
   for(NSString* patchName in pdGuiPatchFiles){
     NSString* patchDocPath = [patchDocFolderPath stringByAppendingPathComponent:patchName];
     NSString* patchBundlePath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:patchName];

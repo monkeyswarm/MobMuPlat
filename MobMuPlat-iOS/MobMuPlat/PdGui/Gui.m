@@ -182,8 +182,10 @@
       }
       else if([lineType isEqualToString:@"restore"]) {
         level -= 1;
-        // render object [pd name]
-        [self addMMPPdObjectBox:line];
+        if (level == 1) {
+          // render object [pd name]
+          [self addMMPPdObjectBox:line];
+        }
       }
       // find different types of UI element in the top level patch
       else if(level == 1) {
@@ -268,13 +270,14 @@
 
 #pragma Utils
 
+//DEI change to handl "#0" in the pd string
 - (NSString *)replaceDollarZeroStringsIn:(NSString *)string fromPatch:(PdFile *)patch {
   if(!string || !patch) {return string;}
   NSMutableString *newString = [NSMutableString stringWithString:string];
-  [newString replaceOccurrencesOfString:@"\\$0"
+  [newString replaceOccurrencesOfString:@"#0"//@"\\$0"
                              withString:[[NSNumber numberWithInt:patch.dollarZero] stringValue]
                                 options:NSCaseInsensitiveSearch
-                                  range:NSMakeRange(0, newString.length)];
+                                  range:NSMakeRange(0, newString.length)]; // DEI just at front?
   //	[newString replaceOccurrencesOfString:@"$0"
   //							   withString:[[NSNumber numberWithInt:patch.dollarZero] stringValue]
   //								  options:NSCaseInsensitiveSearch
