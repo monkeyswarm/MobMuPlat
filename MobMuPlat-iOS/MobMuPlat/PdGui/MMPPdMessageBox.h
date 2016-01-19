@@ -8,6 +8,8 @@
 
 #import "AtomWidget.h"
 
+@class Gui;
+
 @interface MMPPdMessageBox : AtomWidget
 
 + (id)messageBoxFromAtomLine:(NSArray *)line withGui:(Gui *)gui;

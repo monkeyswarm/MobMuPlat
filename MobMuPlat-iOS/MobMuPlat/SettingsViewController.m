@@ -18,7 +18,7 @@
 #import <AVFoundation/AVFoundation.h>
 
 #import "MMPNetworkingUtils.h"
-#import "ViewController.h"
+#import "MMPViewController.h"
 
 @interface SettingsViewController () {
   NSArray* _LANdiniUserArray;
@@ -1029,7 +1029,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 }
 
 -(void)updateNetworkLabel:(Reachability*)reach{
-  NSString* network = [ViewController fetchSSIDInfo];
+  NSString* network = [MMPViewController fetchSSIDInfo];
   if ([reach isReachable]) {
     [_LANdiniNetworkLabel setText:[NSString stringWithFormat:@"Wifi network enabled: %@ \nMy IP address: %@", network ? network : @"", [MMPNetworkingUtils ipAddress]]];
   } else {

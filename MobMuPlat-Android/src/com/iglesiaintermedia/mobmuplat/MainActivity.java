@@ -93,14 +93,19 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable; */
 
+
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.iglesiaintermedia.mobmuplat.PatchFragment.CanvasType;
 import com.iglesiaintermedia.mobmuplat.controls.*;
+import com.iglesiaintermedia.mobmuplat.nativepdgui.MMPPdGuiUtils;
 import com.illposed.osc.OSCMessage;
 import com.example.inputmanagercompat.InputManagerCompat;
 import com.example.inputmanagercompat.InputManagerCompat.InputDeviceListener;
+
+import cx.mccormick.pddroidparty.PdParser;
 
 public class MainActivity extends FragmentActivity implements LocationListener, SensorEventListener, AudioDelegate, InputDeviceListener, OnBackStackChangedListener {
 	private static final String TAG = "MobMuPlat MainActivity";
@@ -113,7 +118,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 	//Pd
 	private PdService pdService = null;
-	private int openPDFileHandle;
+	private int openPdFileHandle; //aka dollarZero.
 
 	//HID
 	private InputManagerCompat _inputManager;
@@ -546,25 +551,32 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		getActionBar().hide();
 
 		//TODO RESET ports?
-		_patchFragment.loadScenePatchOnly(filenameToLoad);
-		loadPdFile(filenameToLoad);
+		MMPPdGuiUtils.maybeCreatePdGuiFolderAndFiles(getAssets(), false); //don't force overwrite if it is there
+		
+		_patchFragment.loadScenePatchOnly(filenameToLoad); // calls loadPdFile
 	}
 
-	public void loadPdFile(String pdFilename) {
+	public int loadPdFile(String pdFilename) {
 		// load pd patch
-		if(openPDFileHandle != 0)PdBase.closePatch(openPDFileHandle); 
+		if(openPdFileHandle != 0) {
+			PdBase.closePatch(openPdFileHandle); 
+			openPdFileHandle = 0;
+		}
 		//open
 		// File patchFile = null;
 		if(pdFilename!=null) {
 			try {
 				File pdFile = new File(MainActivity.getDocumentsFolderPath(), pdFilename);
-				openPDFileHandle = PdBase.openPatch(pdFile);
+				openPdFileHandle = PdBase.openPatch(pdFile);
 			} catch (FileNotFoundException e) {
 				showAlert("PD file "+pdFilename+" not found.");
+				openPdFileHandle = 0;
 			} catch (IOException e) {
 				showAlert("I/O error on loading PD file "+pdFilename+".");
+				openPdFileHandle = 0;
 			}
 		}
+		return openPdFileHandle;
 	}
 
 	static public String readMMPToString(String filename) {

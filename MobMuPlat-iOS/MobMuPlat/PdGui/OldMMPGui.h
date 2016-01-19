@@ -33,7 +33,7 @@
 
 @class PdFile;
 
-@interface Gui : NSObject
+@interface OldMMPGui : NSObject
 
 @property (strong, nonatomic) NSMutableArray *widgets;	// widget array
 @property (assign, nonatomic) CGSize parentViewSize; // current view size

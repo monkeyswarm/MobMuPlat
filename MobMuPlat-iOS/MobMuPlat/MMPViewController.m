@@ -25,7 +25,7 @@
 #define SETTINGS_BUTTON_OFFSET_PERCENT .02 // percent of screen width
 #define SETTINGS_BUTTON_DIM_PERCENT .1 // percent of screen width
 
-#import "ViewController.h"
+#import "MMPViewController.h"
 
 #import "VVOSC.h"
 
@@ -53,7 +53,7 @@
 #import "MMPPdPatchDisplayUtils.h"
 #import "MMPMenuButton.h"
 
-#import "Gui.h"
+#import "MMPGui.h"
 #import "PdParser.h"
 
 extern void expr_setup(void);
@@ -65,9 +65,9 @@ extern void lrshift_tilde_setup(void);
 extern void sigmund_tilde_setup(void);
 extern void pique_setup(void);
 
-@implementation ViewController {
+@implementation MMPViewController {
   NSMutableArray *_keyCommandsArray;
-  Gui *_pdGui; //keep strong around for widgets to use (weakly).
+  MMPGui *_pdGui; //keep strong around for widgets to use (weakly).
   CGFloat _settingsButtonDim;
   CGFloat _settingsButtonOffset;
   MMPPdDispatcher *_mmpPdDispatcher;
@@ -268,7 +268,7 @@ extern void pique_setup(void);
 
   //copy bundle stuff if not there, i.e. first time we are running it on a new version #
 
-  canvasType hardwareCanvasType = [ViewController getCanvasType];
+  canvasType hardwareCanvasType = [MMPViewController getCanvasType];
 
   //first run on new version
   NSString *bundleVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
@@ -366,7 +366,6 @@ extern void pique_setup(void);
 
   //PD setup
   // set self as PdRecieverDelegate to recieve messages from Libpd
-  [PdBase setDelegate:self];
   [PdBase setMidiDelegate:self];
 
   [PdBase subscribe:@"toGUI"];
@@ -375,7 +374,7 @@ extern void pique_setup(void);
 
   [audioController setActive:YES];
 
-  _pdGui = [[Gui alloc] init];
+  _pdGui = [[MMPGui alloc] init];
   _mmpPdDispatcher = [[MMPPdDispatcher alloc] init];
   [Widget setDispatcher:_mmpPdDispatcher];
   [PdBase setDelegate:_mmpPdDispatcher];
@@ -383,7 +382,7 @@ extern void pique_setup(void);
   _mmpPdDispatcher.printDelegate = self;
 
   //start default intro patch
-  canvasType hardwareCanvasType = [ViewController getCanvasType];
+  canvasType hardwareCanvasType = [MMPViewController getCanvasType];
   NSString* path;
   if(hardwareCanvasType==canvasTypeWidePhone )
     path = [[NSBundle mainBundle] pathForResource:@"Welcome" ofType:@"mmp"];
@@ -653,9 +652,25 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   }
 }
 
+- (BOOL)loadScenePatchOnlyFromBundle:(NSBundle *)bundle filename:(NSString *)filename { //testing
+  if (!filename) return NO;
+  NSString* bundlePath = [bundle resourcePath] ;
+  NSString* patchBundlePath = [bundlePath stringByAppendingPathComponent:filename];
+  return [self loadScenePatchOnly:filename fullPath:patchBundlePath];
+}
+
+//
 -(BOOL)loadScenePatchOnly:(NSString*)filename{
   if (!filename) return NO;
+  NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+  NSString *publicDocumentsDir = [paths objectAtIndex:0];
+  NSString *fromPath = [publicDocumentsDir stringByAppendingPathComponent:filename];
 
+  return [self loadScenePatchOnly:filename fullPath:fromPath];
+}
+
+- (BOOL)loadScenePatchOnly:(NSString *)filename fullPath:(NSString *)fromPath {
+  if (!fromPath) return NO;
   [self loadSceneCommonReset];
   [_settingsButton setBarColor:[UIColor blackColor]];
 
@@ -663,8 +678,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
   NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
   NSString *publicDocumentsDir = [paths objectAtIndex:0];
-
-  NSString *fromPath = [publicDocumentsDir stringByAppendingPathComponent:filename];
+  //NSString *fromPath = [publicDocumentsDir stringByAppendingPathComponent:filename];
   NSString *toPath = [publicDocumentsDir stringByAppendingPathComponent:@"tempPdFile"];
 
   NSArray *originalAtomLines = [PdParser getAtomLines:[PdParser readPatch:fromPath]];
@@ -787,7 +801,8 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   [_pdGui reshapeWidgets];
 
   for(Widget *widget in _pdGui.widgets) {
-    [widget sendInitValue]; // We _DO_ need to send this, since gui objects hold the initial val, not the shims.
+    //[widget sendInitValue]; // We _DO_ need to send this, since gui objects hold the initial val, not the shims.
+    [widget setup]; //see if we can move up
   }
 
   [self.view addSubview:_settingsButton];
@@ -799,6 +814,29 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 //
 
 -(void)loadSceneCommonReset {
+  // temp - recurse and add to directory paths.
+  [PdBase clearSearchPath];
+  NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+  NSString *publicDocumentsDir = [paths objectAtIndex:0];
+  [PdBase addToSearchPath:publicDocumentsDir];
+  //NSString *path = [publicDocumentsDir stringByAppendingPathComponent:@"testlib"];
+
+  NSDirectoryEnumerator *enumerator =
+  [[NSFileManager defaultManager] enumeratorAtURL:[NSURL URLWithString:publicDocumentsDir]
+                       includingPropertiesForKeys:@[NSURLIsDirectoryKey]
+                                          options:NSDirectoryEnumerationSkipsHiddenFiles
+                                     errorHandler:nil];
+
+  NSURL *fileURL;
+  NSNumber *isDirectory;
+  while ((fileURL = [enumerator nextObject]) != nil){
+    BOOL success = [fileURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:nil];
+    if (success && [isDirectory boolValue]) {
+      [PdBase addToSearchPath:[fileURL path]];
+    }
+  }
+  // end temp
+
   if(scrollView) {
     [scrollView removeFromSuperview];
     scrollView = nil;
@@ -1273,12 +1311,12 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     // TODO protect against cases like /sendsomethingelse while in landini!!!!
     if([[list objectAtIndex:0] rangeOfString:@"/send"].location == 0) {
       if (llm.enabled|| pacm.enabled ) {
-        [outPortToNetworkingModules sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:list]]];
+        [outPortToNetworkingModules sendThisPacket:[OSCPacket createWithContent:[MMPViewController oscMessageFromList:list]]];
       }  else {
         //landini /ping & connect disabled: remake message without the first 2 landini elements and send out normal port
         if([list count]>2){
           NSArray* newList = [list subarrayWithRange:NSMakeRange(2, [list count]-2)];
-          [outPort sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:newList]]];
+          [outPort sendThisPacket:[OSCPacket createWithContent:[MMPViewController oscMessageFromList:newList]]];
         }
       }
     }
@@ -1295,11 +1333,11 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
              [[list objectAtIndex:0] rangeOfString:@"/myPlayerNumber"].location == 0 ) {
 
 
-      [outPortToNetworkingModules sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:list]]];
+      [outPortToNetworkingModules sendThisPacket:[OSCPacket createWithContent:[MMPViewController oscMessageFromList:list]]];
     }
     //not for landini - send out regular!
     else{
-      [outPort sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:list]]];
+      [outPort sendThisPacket:[OSCPacket createWithContent:[MMPViewController oscMessageFromList:list]]];
     }
   }
 
@@ -1402,7 +1440,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
      }*/
     //Reachability
     else if([[list objectAtIndex:0] isEqualToString:@"/getReachability"]){
-      NSArray* msgArray=[NSArray arrayWithObjects:@"/reachability", [NSNumber numberWithFloat:[reach isReachable]? 1.0f : 0.0f ], [ViewController fetchSSIDInfo], nil];
+      NSArray* msgArray=[NSArray arrayWithObjects:@"/reachability", [NSNumber numberWithFloat:[reach isReachable]? 1.0f : 0.0f ], [MMPViewController fetchSSIDInfo], nil];
       [PdBase sendList:msgArray toReceiver:@"fromSystem"];
     }
     else if([[list objectAtIndex:0] isEqualToString:@"/setPage"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
@@ -1782,7 +1820,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 #pragma mark Reachability
 
 -(void)reachabilityChanged:(NSNotification*)note {
-  NSString* network = [ViewController fetchSSIDInfo];
+  NSString* network = [MMPViewController fetchSSIDInfo];
   NSArray* msgArray=[NSArray arrayWithObjects:@"/reachability", [NSNumber numberWithFloat:[reach isReachable]? 1.0f : 0.0f ], network , nil];
   [PdBase sendList:msgArray toReceiver:@"fromSystem"];
 }

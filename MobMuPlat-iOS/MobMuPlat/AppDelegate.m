@@ -8,7 +8,7 @@
 
 #import "AppDelegate.h"
 
-#import "ViewController.h"
+#import "MMPViewController.h"
 #import "ZipArchive.h"
 #import "SplashViewController.h"
 
@@ -25,7 +25,7 @@
     [splashController launchSplash];
    
     //main VC - loads and then is set as rootVC when splash is finished
-    self.viewController = [[ViewController alloc] init];
+    self.viewController = [[MMPViewController alloc] init];
     
     [self.window makeKeyAndVisible];
     

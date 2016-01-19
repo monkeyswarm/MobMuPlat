@@ -36,15 +36,40 @@
 -(void)setImagePath:(NSString*)imagePath{
     _imagePath=imagePath;
     NSString* filename = [[imagePath componentsSeparatedByString:@"/"] lastObject];
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    /*NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *publicDocumentsDir = [paths objectAtIndex:0];
     NSString* docPath = [publicDocumentsDir stringByAppendingPathComponent:filename];
-    if([[NSFileManager defaultManager] fileExistsAtPath:docPath])
-        [imageView setImage:[[UIImage alloc]initWithContentsOfFile:docPath] ];
-    else{//file not found
+    if([[NSFileManager defaultManager] fileExistsAtPath:docPath])*/
+    NSString *path = [self findFile:filename];
+  if (path) {
+         [imageView setImage:[[UIImage alloc]initWithContentsOfFile:path] ];
+  } else{//file not found
         [imageView setImage:nil];
         theLabel.hidden=NO;
     }
+}
+
+// Search whole doc directory tree for file.
+// TODO batch this somehow.
+- (NSString *)findFile:(NSString *)filename {
+  NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+  NSString *publicDocumentsDir = [paths objectAtIndex:0];
+  //NSString *path = [publicDocumentsDir stringByAppendingPathComponent:@"testlib"];
+
+  NSDirectoryEnumerator *enumerator =
+  [[NSFileManager defaultManager] enumeratorAtURL:[NSURL URLWithString:publicDocumentsDir]
+                       includingPropertiesForKeys:@[]
+                                          options:NSDirectoryEnumerationSkipsHiddenFiles
+                                     errorHandler:nil];
+
+  NSURL *fileURL;
+  while ((fileURL = [enumerator nextObject]) != nil){
+    if ([filename isEqualToString:[[fileURL path] lastPathComponent]]) {
+      return [fileURL path];
+    }
+  }
+  return nil;
+
 }
 
 -(void)setColor:(UIColor *)color{

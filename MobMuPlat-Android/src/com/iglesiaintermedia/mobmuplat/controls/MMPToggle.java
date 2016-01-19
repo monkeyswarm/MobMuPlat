@@ -35,7 +35,7 @@ public class MMPToggle extends MMPControl {
 		if (!this.isEnabled()) return true;
         int action = event.getAction();
         if (action == MotionEvent.ACTION_DOWN) {
-        	if (!this.isEnabled()) return false; //reject touch down if disabled.
+        	if (!this.isEnabled()) return false; //reject touch down if disabled. TODO check removal.
         	getParent().requestDisallowInterceptTouchEvent(true);// dont' send touches up to scroll view
         	setValue(1 - _value);
         	sendValue();

@@ -1,6 +1,7 @@
 package com.iglesiaintermedia.mobmuplat;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
@@ -23,6 +24,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.text.TextUtils;
@@ -69,14 +71,17 @@ import com.iglesiaintermedia.mobmuplat.controls.MMPTable;
 import com.iglesiaintermedia.mobmuplat.controls.MMPToggle;
 import com.iglesiaintermedia.mobmuplat.controls.MMPUnknown;
 import com.iglesiaintermedia.mobmuplat.controls.MMPXYSlider;
+import com.iglesiaintermedia.mobmuplat.nativepdgui.MMPPdGui;
+import com.iglesiaintermedia.mobmuplat.nativepdgui.MMPPdGuiUtils;
+import com.iglesiaintermedia.mobmuplat.nativepdgui.Widget;
+
+import cx.mccormick.pddroidparty.PdParser;
 
 public class PatchFragment extends Fragment implements ControlDelegate, PagingScrollViewDelegate, PdListener{
 	private String TAG = "PatchFragment";
 
 	public PagingHorizontalScrollView scrollContainer;
-	public RelativeLayout scrollRelativeLayout;
-
-	private float screenRatio = 1;
+	public RelativeLayout scrollRelativeLayout; //content view of the scroll view.
 
 	public enum CanvasType{ canvasTypeWidePhone ,canvasTypeTallPhone , canvasTypeWideTablet, canvasTypeTallTablet }
 
@@ -117,6 +122,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 		_dispatcher.addListener("toNetwork", this);
 		_dispatcher.addListener("toSystem", this);
 		PdBase.setReceiver(_dispatcher);
+		Widget.setDispatcher(_dispatcher);
 		
 	}
 
@@ -204,15 +210,90 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 		return Color.argb((int)(rgbaArray.get(3).getAsFloat()*255), (int)(rgbaArray.get(0).getAsFloat()*255), (int)(rgbaArray.get(1).getAsFloat()*255), (int)(rgbaArray.get(2).getAsFloat()*255)  );
 	}
 	
+	private void loadSceneCommonReset() {
+		
+	}
+	
 	public void loadScenePatchOnly(String filenameToLoad) {
+		// DEI tODO common cleanup
+		loadSceneCommonReset();
 		//don't bother with rotation for now...
 		scrollRelativeLayout.removeAllViews();
+		
+		String path = MainActivity.getDocumentsFolderPath() + File.separator + filenameToLoad;
+		ArrayList<String[]> originalAtomLines = PdParser.parsePatch(path);
+		
+		List<String[]>[] processedAtomLinesTuple = MMPPdGuiUtils.proccessAtomLines(originalAtomLines);
+		if (processedAtomLinesTuple == null) {
+			return;
+		}
+		
+		List<String[]> patchAtomLines = processedAtomLinesTuple[0];
+		List<String[]> guiAtomLines = processedAtomLinesTuple[1];
+		
+		// Format temp file
+		StringBuilder outputStringBuilder = new StringBuilder();
+		for (String[] line : patchAtomLines) {
+			outputStringBuilder.append(TextUtils.join(" ", line));
+			outputStringBuilder.append(";\n");
+		}
+		
+		// Write file to disk
+		File file = new File(MainActivity.getDocumentsFolderPath(), "tempPdFile");
+		FileOutputStream outputStream;
 
+		try {
+		  outputStream = new FileOutputStream(file);//_mainActivity.openFileOutput(, Context.MODE_PRIVATE);
+		  outputStream.write(outputStringBuilder.toString().getBytes());
+		  outputStream.close();
+		} catch (Exception e) {
+		  e.printStackTrace();
+		}
+		
+		// derive patch layout
+		if (guiAtomLines.size() == 0 || guiAtomLines.get(0).length < 6 || !guiAtomLines.get(0)[1].equals("canvas") ) {
+			// ALERT! or move this check to main activity
+		    return;
+		}
+		
+		float docCanvasSizeWidth = Float.parseFloat(guiAtomLines.get(0)[4]);
+		float docCanvasSizeHeight = Float.parseFloat(guiAtomLines.get(0)[5]);
+		// DEI check for zero/bad values
+		boolean isOrientationLandscape = (docCanvasSizeWidth > docCanvasSizeHeight); 
+		
+		int screenWidth = _container.getWidth();//_rootView.getWidth();
+		int screenHeight = _container.getHeight();//_rootView.getHeight();
+		//if(MainActivity.VERBOSE)Log.i(TAG, "load patch _container dim "+screenWidth+" "+screenHeight);
+		if(screenWidth==0 || screenHeight == 0) return;//error
+		
+		double xRatio = (double)screenWidth/docCanvasSizeWidth;
+		double yRatio = (double)screenHeight/docCanvasSizeHeight;
+		float screenRatio = (float)Math.min(xRatio, yRatio);
+		//if(MainActivity.VERBOSE)Log.i(TAG, "ref size "+referenceWidth+" "+referenceHeight+" pgc "+_pageCount);
+
+		FrameLayout.LayoutParams flp = new FrameLayout.LayoutParams((int)(docCanvasSizeWidth*screenRatio),(int)(docCanvasSizeHeight*screenRatio));
+		flp.gravity = Gravity.CENTER;
+		scrollContainer.setLayoutParams(flp);
+		
 		//reset scroll to one page
-		scrollContainer.setLayoutParams(new FrameLayout.LayoutParams(_container.getWidth(),_container.getHeight()));
-		scrollRelativeLayout.setLayoutParams(new FrameLayout.LayoutParams(_container.getWidth(),_container.getHeight()));
-		scrollRelativeLayout.setBackgroundColor(Color.GRAY);
-		TextView tv = new TextView(_mainActivity);
+		//scrollContainer.setLayoutParams(new FrameLayout.LayoutParams(_container.getWidth(),_container.getHeight()));
+		scrollRelativeLayout.setLayoutParams(flp);//new FrameLayout.LayoutParams(_container.getWidth(),_container.getHeight()));
+		scrollRelativeLayout.setBackgroundColor(Color.WHITE);
+		scrollRelativeLayout.setClipChildren(false); //move. allow rendering of labels outside widget bounds.
+		
+		float scale = _container.getWidth() / docCanvasSizeWidth;
+		MMPPdGui mPdGui = new MMPPdGui();
+		mPdGui.buildUI(_mainActivity, guiAtomLines, scale); // create widgets
+		
+		int dollarSignZero = _mainActivity.loadPdFile("tempPdFile");//filenameToLoad); // loadbang to widgets
+		
+		for (Widget widget : mPdGui.widgets) {
+			widget.replaceDollarZero(dollarSignZero);
+			scrollRelativeLayout.addView(widget);
+		}
+		//TODO call post-init method on gui objects.
+		
+		/*TextView tv = new TextView(_mainActivity);
 		tv.setText("running "+filenameToLoad+"\nwith no interface");
 		tv.setTextColor(Color.WHITE);
 		tv.setGravity(Gravity.CENTER);
@@ -221,8 +302,11 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 		rlp.addRule(RelativeLayout.CENTER_VERTICAL); 
 		rlp.addRule(RelativeLayout.CENTER_HORIZONTAL); 
 		tv.setLayoutParams(rlp);
-		scrollRelativeLayout.addView(tv);
+		scrollRelativeLayout.addView(tv);*/
 		//TODO RESET ports!
+		
+		
+		
 
 		//TODO move to patch so we can add 
 		scrollRelativeLayout.addView(_catchButton);
@@ -320,7 +404,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 			}
 			double xRatio = (double)screenWidth/referenceWidth;
 			double yRatio = (double)screenHeight/referenceHeight;
-			screenRatio = (float)Math.min(xRatio, yRatio);
+			float screenRatio = (float)Math.min(xRatio, yRatio);
 			if(MainActivity.VERBOSE)Log.i(TAG, "ref size "+referenceWidth+" "+referenceHeight+" pgc "+_pageCount);
 
 			FrameLayout.LayoutParams flp = new FrameLayout.LayoutParams((int)(referenceWidth*screenRatio),(int)(referenceHeight*screenRatio));

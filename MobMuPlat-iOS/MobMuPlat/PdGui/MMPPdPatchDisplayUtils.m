@@ -142,7 +142,7 @@
     return result;
   }*/
 
-  // Bang gets special blocking shim, symbol gets another, all others are float
+  // bang, tgl, symbolatom get special shim, all others are float
   if ([atomLine[4] isEqualToString:@"bng"]) { //DEI rfactor for objName from index 1 or 4.
     [result addObject:@"MMPPdGuiFiles/MMPPdGuiBangShim"];
   } else if ([atomLine[1] isEqualToString:@"symbolatom"]){

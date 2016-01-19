@@ -16,7 +16,7 @@
  * See https://github.com/danomatika/PdParty for documentation
  *
  */
-#import "Gui.h"
+#import "OldMMPGui.h"
 
 #import "PdParser.h"
 #import "PdFile.h"
@@ -29,7 +29,7 @@
 // iem
 #import "Bang.h"
 #import "Toggle.h"
-#import "Numberbox2.h"
+#import "Number2.h"
 #import "Slider.h"
 #import "Radio.h"
 #import "VUMeter.h"
@@ -39,7 +39,7 @@
 #import "MMPPdObjectBox.h"
 #import "MMPPdMessageBox.h"
 
-@interface Gui ()
+@interface OldMMPGui ()
 
 @property (assign, readwrite) int patchWidth;
 @property (assign, readwrite) int patchHeight;
@@ -51,7 +51,7 @@
 
 @end
 
-@implementation Gui
+@implementation OldMMPGui
 
 - (id)init {
   self = [super init];
@@ -105,7 +105,7 @@
 }
 
 - (void)addNumberbox2:(NSArray *)atomLine {
-  Numberbox2 *n = [Numberbox2 numberbox2FromAtomLine:atomLine withGui:self];
+  Number2 *n = [Number2 number2FromAtomLine:atomLine withGui:self];
   if(n) {
     [self.widgets addObject:n];
     DDLogVerbose(@"Gui: added %@", n.type);

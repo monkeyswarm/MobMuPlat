@@ -14,6 +14,8 @@
 		<string>git://github.com/libpd/libpd.git</string>
 		<key>21702B533F2B785EABE84F69CE47832B96F87747</key>
 		<string>https://github.com/monkeyswarm/MobMuPlat.git</string>
+		<key>6608CF3AAE53BB9E3AD17105469DAA429CF9024B</key>
+		<string>https://github.com/danomatika/PdParty.git</string>
 		<key>6F7A20C0CDB7BDCD5180DBA15CA6EBFFD435B7B5</key>
 		<string>https://github.com/pure-data/pure-data.git</string>
 	</dict>
@@ -25,6 +27,8 @@
 		<string>../../..libpd</string>
 		<key>21702B533F2B785EABE84F69CE47832B96F87747</key>
 		<string>../../..</string>
+		<key>6608CF3AAE53BB9E3AD17105469DAA429CF9024B</key>
+		<string>../../../PdParty/</string>
 		<key>6F7A20C0CDB7BDCD5180DBA15CA6EBFFD435B7B5</key>
 		<string>../../..libpd/pure-data</string>
 	</dict>
@@ -51,6 +55,14 @@
 			<string>1A0B07D1631AC7F0F17FCE76695E42D64F01958F</string>
 			<key>IDESourceControlWCCName</key>
 			<string>MobMuPlatlibpd</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>6608CF3AAE53BB9E3AD17105469DAA429CF9024B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>PdParty</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
