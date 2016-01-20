@@ -1,25 +1,30 @@
 //
-//  MMPPdNumber2.m
+//  MMPPdToggle.m
 //  MobMuPlat
 //
 //  Created by diglesia on 1/18/16.
 //  Copyright © 2016 Daniel Iglesia. All rights reserved.
 //
 
-#import "MMPPdNumber2.h"
+#import "MMPPdToggle.h"
 
-@implementation MMPPdNumber2
+@implementation MMPPdToggle
+
+- (void)sendInitValue {
+  [super sendInitValue];
+  [self sendFloat:self.value];
+}
 
 #pragma mark WidgetListener
 
 - (void)receiveBangFromSource:(NSString *)source {
+  [self toggle];
   //[self sendFloat:self.value];
 }
 
 - (void)receiveFloat:(float)received fromSource:(NSString *)source {
   self.value = received;
-  //[self sendFloat:self.value];
+  //[self sendFloat:received]; // Pd 0.46+ doesn't clip incoming values
 }
 
-//TODO touch diff per scale
 @end

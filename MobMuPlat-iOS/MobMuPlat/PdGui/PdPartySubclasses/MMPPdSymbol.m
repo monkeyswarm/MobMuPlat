@@ -10,6 +10,11 @@
 
 @implementation MMPPdSymbol
 
+- (void)sendInitValue {
+  [super sendInitValue];
+  [self sendFloat:self.value];
+}
+
 #pragma mark WidgetListener
 
 - (void)receiveBangFromSource:(NSString *)source {

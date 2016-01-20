@@ -12,6 +12,6 @@
 
 @interface MMPPdMessageBox : AtomWidget
 
-+ (id)messageBoxFromAtomLine:(NSArray *)line withGui:(Gui *)gui;
+//+ (id)messageBoxFromAtomLine:(NSArray *)line withGui:(Gui *)gui;
 
 @end

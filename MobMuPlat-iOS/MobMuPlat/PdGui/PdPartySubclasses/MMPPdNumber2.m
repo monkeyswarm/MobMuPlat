@@ -1,14 +1,19 @@
 //
-//  MMPPdRadio.m
+//  MMPPdNumber2.m
 //  MobMuPlat
 //
 //  Created by diglesia on 1/18/16.
 //  Copyright © 2016 Daniel Iglesia. All rights reserved.
 //
 
-#import "MMPPdRadio.h"
+#import "MMPPdNumber2.h"
 
-@implementation MMPPdRadio
+@implementation MMPPdNumber2
+
+- (void)sendInitValue {
+  [super sendInitValue];
+  [self sendFloat:self.value];
+}
 
 #pragma mark WidgetListener
 
@@ -18,7 +23,8 @@
 
 - (void)receiveFloat:(float)received fromSource:(NSString *)source {
   self.value = received;
-  //[super sendFloat:received]; // Pd 0.46+ doesn't clip incoming values
+  //[self sendFloat:self.value];
 }
 
+//TODO touch diff per scale
 @end

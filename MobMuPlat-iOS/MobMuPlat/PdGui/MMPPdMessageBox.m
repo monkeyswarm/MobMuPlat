@@ -14,30 +14,25 @@
 
 @implementation MMPPdMessageBox {
   CGFloat _strokeWidth;
-  Gui *_gui;
 }
 
-+ (id)messageBoxFromAtomLine:(NSArray *)line withGui:(Gui *)gui {
-  MMPPdMessageBox *mb = [[MMPPdMessageBox alloc] initWithGui:gui];
-
-
-  mb.originalFrame = CGRectMake(
-                               [[line objectAtIndex:2] floatValue], [[line objectAtIndex:3] floatValue],
-                               0,0); //deduce width and height...
-
-  mb.valueLabel.text = [[line subarrayWithRange:NSMakeRange(4, [line count] - 6)] componentsJoinedByString:@" "];  //check size
-
-  //last two atoms (added via post-MMP-processing) will be the send/rec names
-  mb.sendName = [line objectAtIndex:[line count]-2];
-  mb.receiveName = [line objectAtIndex:[line count]-1];
-  return mb;
-}
-
-- (instancetype)initWithGui:(Gui *)gui {
-  self = [super init];
-  if (self) {
-    _gui = gui;
+- (id)initWithAtomLine:(NSArray *)line andGui:(Gui *)gui {
+  if(line.count < 7) { // sanity check
+   DDLogWarn(@"MMPPdMessageBox: cannot create, atom line length < 7");
+   return nil;
+  }
+  self = [super initWithAtomLine:line andGui:gui];
+  if(self) {
     _strokeWidth = 1;
+    self.originalFrame = CGRectMake([[line objectAtIndex:2] floatValue],
+                                    [[line objectAtIndex:3] floatValue],
+                                    0,0); //deduce width and height when reshaping.
+
+    self.valueLabel.text =
+        [[line subarrayWithRange:NSMakeRange(4, [line count] - 6)] componentsJoinedByString:@" "];  //check size
+    //last two atoms (added via post-MMP-processing) will be the send/rec names
+    self.sendName = [line objectAtIndex:[line count]-2];
+    self.receiveName = [line objectAtIndex:[line count]-1];
   }
   return self;
 }
@@ -50,7 +45,7 @@
 
   // bounds as path
   CGMutablePathRef path = CGPathCreateMutable();
-  CGFloat indent = INDENT * _gui.scaleX;
+  CGFloat indent = INDENT * self.gui.scaleX;
   CGPathMoveToPoint(path, NULL, 0, 0);
   CGPathAddLineToPoint(path, NULL, rect.size.width-1, 0);
   CGPathAddLineToPoint(path, NULL, rect.size.width-1-indent, indent);
@@ -73,9 +68,9 @@
   CGPathRelease(path);
 }
 
-- (void)reshapeForGui:(Gui *)gui { //don't use self.valueWidth
+- (void)reshape { //don't use self.valueWidth
   // value label
-  self.valueLabel.font = [UIFont fontWithName:GUI_FONT_NAME size:gui.fontSize * gui.scaleX];
+  self.valueLabel.font = [UIFont fontWithName:GUI_FONT_NAME size:self.gui.fontSize * self.gui.scaleX];
   CGSize charSize = [@"0" sizeWithFont:self.valueLabel.font]; // assumes monspaced font
   self.valueLabel.preferredMaxLayoutWidth = charSize.width * MAX(self.label.text.length,3);
   [self.valueLabel sizeToFit];
@@ -84,15 +79,15 @@
     // make sure width matches valueWidth
     valueLabelFrame.size.width = self.valueLabel.preferredMaxLayoutWidth;
   }
-  valueLabelFrame.origin = CGPointMake(round(gui.scaleX), round(gui.scaleX));
+  valueLabelFrame.origin = CGPointMake(round(self.gui.scaleX), round(self.gui.scaleX));
   self.valueLabel.frame = valueLabelFrame;
 
   // bounds from value label size
   self.frame = CGRectMake(
-                          round(self.originalFrame.origin.x * gui.scaleX),
-                          round(self.originalFrame.origin.y * gui.scaleY),
-                          round(CGRectGetWidth(self.valueLabel.frame) + (2 * gui.scaleX) +INDENT ),
-                          round(CGRectGetHeight(self.valueLabel.frame) + (2 * gui.scaleX)));
+                          round(self.originalFrame.origin.x * self.gui.scaleX),
+                          round(self.originalFrame.origin.y * self.gui.scaleY),
+                          round(CGRectGetWidth(self.valueLabel.frame) + (2 * self.gui.scaleX) +INDENT ),
+                          round(CGRectGetHeight(self.valueLabel.frame) + (2 * self.gui.scaleX)));
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -112,7 +107,7 @@
   // set message sets value without sending
   if([message isEqualToString:@"set"] && arguments.count > 0) {
     self.valueLabel.text = [arguments componentsJoinedByString:@" "];
-    [self reshapeForGui:_gui]; //TODO DEi this breaks showing this in multiple guis.
+    [self reshape]; //TODO DEi this breaks showing this in multiple guis.
     [self setNeedsDisplay]; //check if needed
   }
 }

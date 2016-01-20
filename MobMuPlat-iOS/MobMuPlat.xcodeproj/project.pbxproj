@@ -210,18 +210,6 @@
 		F93FC07C1C4E067F0059E39F /* MMPGui.m in Sources */ = {isa = PBXBuildFile; fileRef = F93FC07A1C4E067F0059E39F /* MMPGui.m */; };
 		F93FC0801C4E0E0E0059E39F /* MMPPdBang.m in Sources */ = {isa = PBXBuildFile; fileRef = F93FC07F1C4E0E0E0059E39F /* MMPPdBang.m */; };
 		F93FC0811C4E0E0E0059E39F /* MMPPdBang.m in Sources */ = {isa = PBXBuildFile; fileRef = F93FC07F1C4E0E0E0059E39F /* MMPPdBang.m */; };
-		F93FC0841C4E0FF70059E39F /* MMPPdNumber2.m in Sources */ = {isa = PBXBuildFile; fileRef = F93FC0831C4E0FF70059E39F /* MMPPdNumber2.m */; };
-		F93FC0851C4E0FF70059E39F /* MMPPdNumber2.m in Sources */ = {isa = PBXBuildFile; fileRef = F93FC0831C4E0FF70059E39F /* MMPPdNumber2.m */; };
-		F93FC0881C4E10820059E39F /* MMPPdRadio.m in Sources */ = {isa = PBXBuildFile; fileRef = F93FC0871C4E10820059E39F /* MMPPdRadio.m */; };
-		F93FC0891C4E10820059E39F /* MMPPdRadio.m in Sources */ = {isa = PBXBuildFile; fileRef = F93FC0871C4E10820059E39F /* MMPPdRadio.m */; };
-		F93FC08C1C4E11C00059E39F /* MMPPdSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = F93FC08B1C4E11C00059E39F /* MMPPdSlider.m */; };
-		F93FC08D1C4E11C00059E39F /* MMPPdSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = F93FC08B1C4E11C00059E39F /* MMPPdSlider.m */; };
-		F93FC0901C4E12440059E39F /* MMPPdToggle.m in Sources */ = {isa = PBXBuildFile; fileRef = F93FC08F1C4E12440059E39F /* MMPPdToggle.m */; };
-		F93FC0911C4E12440059E39F /* MMPPdToggle.m in Sources */ = {isa = PBXBuildFile; fileRef = F93FC08F1C4E12440059E39F /* MMPPdToggle.m */; };
-		F93FC0941C4E12800059E39F /* MMPPdNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = F93FC0931C4E12800059E39F /* MMPPdNumber.m */; };
-		F93FC0951C4E12800059E39F /* MMPPdNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = F93FC0931C4E12800059E39F /* MMPPdNumber.m */; };
-		F93FC0981C4E12C00059E39F /* MMPPdSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = F93FC0971C4E12C00059E39F /* MMPPdSymbol.m */; };
-		F93FC0991C4E12C00059E39F /* MMPPdSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = F93FC0971C4E12C00059E39F /* MMPPdSymbol.m */; };
 		F94FB0341A6F709E004EEF76 /* fiddle~.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB0281A6F709E004EEF76 /* fiddle~.c */; };
 		F94FB0351A6F709E004EEF76 /* loop~.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB0291A6F709E004EEF76 /* loop~.c */; };
 		F94FB0361A6F709E004EEF76 /* lrshift~.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB02A1A6F709E004EEF76 /* lrshift~.c */; };
@@ -239,6 +227,14 @@
 		F975609D1A6EADCD005CCE8E /* libpd-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F97560921A6E235B005CCE8E /* libpd-ios.a */; };
 		F97D45A819A541E000874EAA /* libAudiobus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F97D45A719A541E000874EAA /* libAudiobus.a */; };
 		F9967C3718F8C54D008E3828 /* MenuNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9967C3618F8C54D008E3828 /* MenuNavigationController.m */; };
+		F9AB5F3E1C4EC2CC007F6A21 /* SettingsViewControllerIOS5~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = F9AB5F3C1C4EC2CC007F6A21 /* SettingsViewControllerIOS5~iphone.xib */; };
+		F9AB5F3F1C4EC2CC007F6A21 /* SettingsViewControllerIOS5~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = F9AB5F3D1C4EC2CC007F6A21 /* SettingsViewControllerIOS5~ipad.xib */; };
+		F9AB5FF11C503018007F6A21 /* MMPPdNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = F9AB5FE61C503018007F6A21 /* MMPPdNumber.m */; };
+		F9AB5FF21C503018007F6A21 /* MMPPdNumber2.m in Sources */ = {isa = PBXBuildFile; fileRef = F9AB5FE81C503018007F6A21 /* MMPPdNumber2.m */; };
+		F9AB5FF31C503018007F6A21 /* MMPPdRadio.m in Sources */ = {isa = PBXBuildFile; fileRef = F9AB5FEA1C503018007F6A21 /* MMPPdRadio.m */; };
+		F9AB5FF41C503018007F6A21 /* MMPPdSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = F9AB5FEC1C503018007F6A21 /* MMPPdSlider.m */; };
+		F9AB5FF51C503018007F6A21 /* MMPPdSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = F9AB5FEE1C503018007F6A21 /* MMPPdSymbol.m */; };
+		F9AB5FF61C503018007F6A21 /* MMPPdToggle.m in Sources */ = {isa = PBXBuildFile; fileRef = F9AB5FF01C503018007F6A21 /* MMPPdToggle.m */; };
 		F9B6E7AA1C0641E00036FB66 /* PingAndConnectManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B6E7A91C0641E00036FB66 /* PingAndConnectManager.m */; };
 		F9B6E7AD1C069CEA0036FB66 /* MMPNetworkingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B6E7AC1C069CEA0036FB66 /* MMPNetworkingUtils.m */; };
 		F9DAA15D1C0F9B6700775149 /* MMPPdGuiMessageShim.pd in Resources */ = {isa = PBXBuildFile; fileRef = F9DAA15C1C0F9B6700775149 /* MMPPdGuiMessageShim.pd */; };
@@ -653,18 +649,6 @@
 		F93FC07A1C4E067F0059E39F /* MMPGui.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPGui.m; path = PdGui/MMPGui.m; sourceTree = "<group>"; };
 		F93FC07E1C4E0E0E0059E39F /* MMPPdBang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMPPdBang.h; path = PdGui/PdPartySubclasses/MMPPdBang.h; sourceTree = "<group>"; };
 		F93FC07F1C4E0E0E0059E39F /* MMPPdBang.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPPdBang.m; path = PdGui/PdPartySubclasses/MMPPdBang.m; sourceTree = "<group>"; };
-		F93FC0821C4E0FF70059E39F /* MMPPdNumber2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMPPdNumber2.h; sourceTree = "<group>"; };
-		F93FC0831C4E0FF70059E39F /* MMPPdNumber2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMPPdNumber2.m; sourceTree = "<group>"; };
-		F93FC0861C4E10820059E39F /* MMPPdRadio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMPPdRadio.h; sourceTree = "<group>"; };
-		F93FC0871C4E10820059E39F /* MMPPdRadio.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMPPdRadio.m; sourceTree = "<group>"; };
-		F93FC08A1C4E11C00059E39F /* MMPPdSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMPPdSlider.h; sourceTree = "<group>"; };
-		F93FC08B1C4E11C00059E39F /* MMPPdSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMPPdSlider.m; sourceTree = "<group>"; };
-		F93FC08E1C4E12440059E39F /* MMPPdToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMPPdToggle.h; sourceTree = "<group>"; };
-		F93FC08F1C4E12440059E39F /* MMPPdToggle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMPPdToggle.m; sourceTree = "<group>"; };
-		F93FC0921C4E12800059E39F /* MMPPdNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMPPdNumber.h; sourceTree = "<group>"; };
-		F93FC0931C4E12800059E39F /* MMPPdNumber.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMPPdNumber.m; sourceTree = "<group>"; };
-		F93FC0961C4E12C00059E39F /* MMPPdSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMPPdSymbol.h; sourceTree = "<group>"; };
-		F93FC0971C4E12C00059E39F /* MMPPdSymbol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMPPdSymbol.m; sourceTree = "<group>"; };
 		F94FB0281A6F709E004EEF76 /* fiddle~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "fiddle~.c"; path = "pure-data/extra/fiddle~/fiddle~.c"; sourceTree = "<group>"; };
 		F94FB0291A6F709E004EEF76 /* loop~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "loop~.c"; path = "pure-data/extra/loop~/loop~.c"; sourceTree = "<group>"; };
 		F94FB02A1A6F709E004EEF76 /* lrshift~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "lrshift~.c"; path = "pure-data/extra/lrshift~/lrshift~.c"; sourceTree = "<group>"; };
@@ -689,6 +673,20 @@
 		F97D45B619A54D0300874EAA /* MobMuPlat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = MobMuPlat.entitlements; sourceTree = "<group>"; };
 		F9967C3518F8C54D008E3828 /* MenuNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuNavigationController.h; path = gui/MenuNavigationController.h; sourceTree = "<group>"; };
 		F9967C3618F8C54D008E3828 /* MenuNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MenuNavigationController.m; path = gui/MenuNavigationController.m; sourceTree = "<group>"; };
+		F9AB5F3C1C4EC2CC007F6A21 /* SettingsViewControllerIOS5~iphone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "SettingsViewControllerIOS5~iphone.xib"; path = "settings/SettingsViewControllerIOS5~iphone.xib"; sourceTree = "<group>"; };
+		F9AB5F3D1C4EC2CC007F6A21 /* SettingsViewControllerIOS5~ipad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "SettingsViewControllerIOS5~ipad.xib"; path = "settings/SettingsViewControllerIOS5~ipad.xib"; sourceTree = "<group>"; };
+		F9AB5FE51C503018007F6A21 /* MMPPdNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMPPdNumber.h; path = PdGui/PdPartySubclasses/MMPPdNumber.h; sourceTree = "<group>"; };
+		F9AB5FE61C503018007F6A21 /* MMPPdNumber.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPPdNumber.m; path = PdGui/PdPartySubclasses/MMPPdNumber.m; sourceTree = "<group>"; };
+		F9AB5FE71C503018007F6A21 /* MMPPdNumber2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMPPdNumber2.h; path = PdGui/PdPartySubclasses/MMPPdNumber2.h; sourceTree = "<group>"; };
+		F9AB5FE81C503018007F6A21 /* MMPPdNumber2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPPdNumber2.m; path = PdGui/PdPartySubclasses/MMPPdNumber2.m; sourceTree = "<group>"; };
+		F9AB5FE91C503018007F6A21 /* MMPPdRadio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMPPdRadio.h; path = PdGui/PdPartySubclasses/MMPPdRadio.h; sourceTree = "<group>"; };
+		F9AB5FEA1C503018007F6A21 /* MMPPdRadio.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPPdRadio.m; path = PdGui/PdPartySubclasses/MMPPdRadio.m; sourceTree = "<group>"; };
+		F9AB5FEB1C503018007F6A21 /* MMPPdSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMPPdSlider.h; path = PdGui/PdPartySubclasses/MMPPdSlider.h; sourceTree = "<group>"; };
+		F9AB5FEC1C503018007F6A21 /* MMPPdSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPPdSlider.m; path = PdGui/PdPartySubclasses/MMPPdSlider.m; sourceTree = "<group>"; };
+		F9AB5FED1C503018007F6A21 /* MMPPdSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMPPdSymbol.h; path = PdGui/PdPartySubclasses/MMPPdSymbol.h; sourceTree = "<group>"; };
+		F9AB5FEE1C503018007F6A21 /* MMPPdSymbol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPPdSymbol.m; path = PdGui/PdPartySubclasses/MMPPdSymbol.m; sourceTree = "<group>"; };
+		F9AB5FEF1C503018007F6A21 /* MMPPdToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMPPdToggle.h; path = PdGui/PdPartySubclasses/MMPPdToggle.h; sourceTree = "<group>"; };
+		F9AB5FF01C503018007F6A21 /* MMPPdToggle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPPdToggle.m; path = PdGui/PdPartySubclasses/MMPPdToggle.m; sourceTree = "<group>"; };
 		F9B6E7A81C0641E00036FB66 /* PingAndConnectManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PingAndConnectManager.h; path = LANdini/PingAndConnectManager.h; sourceTree = "<group>"; };
 		F9B6E7A91C0641E00036FB66 /* PingAndConnectManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PingAndConnectManager.m; path = LANdini/PingAndConnectManager.m; sourceTree = "<group>"; };
 		F9B6E7AB1C069CEA0036FB66 /* MMPNetworkingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMPNetworkingUtils.h; path = LANdini/MMPNetworkingUtils.h; sourceTree = "<group>"; };
@@ -1039,6 +1037,8 @@
 			children = (
 				DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */,
 				DC7DD716188F2A660068BA66 /* SettingsViewController~ipad.xib */,
+				F9AB5F3C1C4EC2CC007F6A21 /* SettingsViewControllerIOS5~iphone.xib */,
+				F9AB5F3D1C4EC2CC007F6A21 /* SettingsViewControllerIOS5~ipad.xib */,
 			);
 			name = settings;
 			sourceTree = "<group>";
@@ -1456,20 +1456,20 @@
 		F93FC07D1C4E0DD70059E39F /* PdPartySubclasses */ = {
 			isa = PBXGroup;
 			children = (
+				F9AB5FE51C503018007F6A21 /* MMPPdNumber.h */,
+				F9AB5FE61C503018007F6A21 /* MMPPdNumber.m */,
+				F9AB5FE71C503018007F6A21 /* MMPPdNumber2.h */,
+				F9AB5FE81C503018007F6A21 /* MMPPdNumber2.m */,
+				F9AB5FE91C503018007F6A21 /* MMPPdRadio.h */,
+				F9AB5FEA1C503018007F6A21 /* MMPPdRadio.m */,
+				F9AB5FEB1C503018007F6A21 /* MMPPdSlider.h */,
+				F9AB5FEC1C503018007F6A21 /* MMPPdSlider.m */,
+				F9AB5FED1C503018007F6A21 /* MMPPdSymbol.h */,
+				F9AB5FEE1C503018007F6A21 /* MMPPdSymbol.m */,
+				F9AB5FEF1C503018007F6A21 /* MMPPdToggle.h */,
+				F9AB5FF01C503018007F6A21 /* MMPPdToggle.m */,
 				F93FC07E1C4E0E0E0059E39F /* MMPPdBang.h */,
 				F93FC07F1C4E0E0E0059E39F /* MMPPdBang.m */,
-				F93FC0821C4E0FF70059E39F /* MMPPdNumber2.h */,
-				F93FC0831C4E0FF70059E39F /* MMPPdNumber2.m */,
-				F93FC0861C4E10820059E39F /* MMPPdRadio.h */,
-				F93FC0871C4E10820059E39F /* MMPPdRadio.m */,
-				F93FC08A1C4E11C00059E39F /* MMPPdSlider.h */,
-				F93FC08B1C4E11C00059E39F /* MMPPdSlider.m */,
-				F93FC08E1C4E12440059E39F /* MMPPdToggle.h */,
-				F93FC08F1C4E12440059E39F /* MMPPdToggle.m */,
-				F93FC0921C4E12800059E39F /* MMPPdNumber.h */,
-				F93FC0931C4E12800059E39F /* MMPPdNumber.m */,
-				F93FC0961C4E12C00059E39F /* MMPPdSymbol.h */,
-				F93FC0971C4E12C00059E39F /* MMPPdSymbol.m */,
 			);
 			name = PdPartySubclasses;
 			sourceTree = "<group>";
@@ -1689,10 +1689,12 @@
 				DCB5B95418889355003E6C2C /* Icon-72.png in Resources */,
 				F9DAA15D1C0F9B6700775149 /* MMPPdGuiMessageShim.pd in Resources */,
 				DC7DD717188F2A660068BA66 /* SettingsViewController~ipad.xib in Resources */,
+				F9AB5F3F1C4EC2CC007F6A21 /* SettingsViewControllerIOS5~ipad.xib in Resources */,
 				F9295E6A19BD19C6008691CB /* MMPTutorial5-Files-Pad.mmp in Resources */,
 				F9FC179C1A85735A00152392 /* MMPExamples-InterAppOSC.pd in Resources */,
 				F9295E7119BD19C6008691CB /* vocod_channel.pd in Resources */,
 				F9295E3F19BD19C6008691CB /* MMPExamples-GPS.mmp in Resources */,
+				F9AB5F3E1C4EC2CC007F6A21 /* SettingsViewControllerIOS5~iphone.xib in Resources */,
 				F9295E4919BD19C6008691CB /* MMPExamples-Sequencer-ip5.mmp in Resources */,
 				F9295E6D19BD19C6008691CB /* MMPTutorial6-2DGraphics-ip5.mmp in Resources */,
 				F9295E4419BD19C6008691CB /* MMPExamples-LANdini.pd in Resources */,
@@ -1763,6 +1765,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F9AB5FF51C503018007F6A21 /* MMPPdSymbol.m in Sources */,
 				F92AF7701C0C202C00EED3BB /* DDLog.m in Sources */,
 				F94FB03C1A6F709E004EEF76 /* vexp_if.c in Sources */,
 				DC233DB91655EDF500AC01C5 /* main.m in Sources */,
@@ -1779,7 +1782,6 @@
 				F92AF77C1C0C23FB00EED3BB /* Toggle.m in Sources */,
 				F94FB53918F596AB003BFB18 /* MenuViewController.m in Sources */,
 				F9DE7DC018F49D62007B9E45 /* MeMenu.m in Sources */,
-				F93FC0841C4E0FF70059E39F /* MMPPdNumber2.m in Sources */,
 				DC178CE61880FD9F00DD4BF8 /* LANdiniUser.m in Sources */,
 				F94FB0381A6F709E004EEF76 /* sigmund~.c in Sources */,
 				90DFFB2B187DF85B00DD2149 /* MeLCD.m in Sources */,
@@ -1789,12 +1791,13 @@
 				DCD8DF9317330D8B00767321 /* PGMidi.mm in Sources */,
 				DCA9B90717330F3D000E59DD /* MutLockArray.m in Sources */,
 				F92AF7771C0C23EF00EED3BB /* Canvas.m in Sources */,
+				F9AB5FF41C503018007F6A21 /* MMPPdSlider.m in Sources */,
 				F92AF7911C0D286C00EED3BB /* MMPPdPatchDisplayUtils.m in Sources */,
 				F92AF77E1C0C240500EED3BB /* AtomWidget.m in Sources */,
 				DCA9B90817330F3D000E59DD /* MutLockDict.m in Sources */,
 				DCA9B90917330F3D000E59DD /* MutNRLockArray.m in Sources */,
-				F93FC0981C4E12C00059E39F /* MMPPdSymbol.m in Sources */,
 				F92AF7741C0C23E400EED3BB /* PdParser.m in Sources */,
+				F9AB5FF61C503018007F6A21 /* MMPPdToggle.m in Sources */,
 				DCA9B90A17330F3D000E59DD /* MutNRLockDict.m in Sources */,
 				F92AF7721C0C203900EED3BB /* DDFileLogger.m in Sources */,
 				DCA9B90C17330F3D000E59DD /* ObjectHolder.m in Sources */,
@@ -1822,15 +1825,16 @@
 				F94FB0351A6F709E004EEF76 /* loop~.c in Sources */,
 				DCA9B92F17330F90000E59DD /* OSCNode.m in Sources */,
 				F9967C3718F8C54D008E3828 /* MenuNavigationController.m in Sources */,
+				F9AB5FF31C503018007F6A21 /* MMPPdRadio.m in Sources */,
 				DCA9B93017330F90000E59DD /* OSCOutPort.m in Sources */,
 				DCA9B93117330F90000E59DD /* OSCPacket.m in Sources */,
 				F92AF77D1C0C23FE00EED3BB /* VUMeter.m in Sources */,
+				F9AB5FF21C503018007F6A21 /* MMPPdNumber2.m in Sources */,
 				F93FC0801C4E0E0E0059E39F /* MMPPdBang.m in Sources */,
 				DCA9B93217330F90000E59DD /* OSCStringAdditions.m in Sources */,
 				F97560971A6E27CD005CCE8E /* MobMuPlatPdAudioUnit.m in Sources */,
 				DCA9B93417330F90000E59DD /* OSCValue.m in Sources */,
 				DCA9B93517330F90000E59DD /* OSCZeroConfDomain.m in Sources */,
-				F93FC08C1C4E11C00059E39F /* MMPPdSlider.m in Sources */,
 				DCA9B93617330F90000E59DD /* OSCZeroConfManager.m in Sources */,
 				F94FB0341A6F709E004EEF76 /* fiddle~.c in Sources */,
 				DCA9B93A17331028000E59DD /* ZipArchive.mm in Sources */,
@@ -1841,11 +1845,8 @@
 				DCA9B9461733103B000E59DD /* unzip.c in Sources */,
 				DCA9B9471733103B000E59DD /* zip.c in Sources */,
 				F93FC07B1C4E067F0059E39F /* MMPGui.m in Sources */,
-				F93FC0881C4E10820059E39F /* MMPPdRadio.m in Sources */,
 				DC59570A1733800500CEBECC /* MeButton.m in Sources */,
 				DC59570B1733800500CEBECC /* MeControl.m in Sources */,
-				F93FC0901C4E12440059E39F /* MMPPdToggle.m in Sources */,
-				F93FC0941C4E12800059E39F /* MMPPdNumber.m in Sources */,
 				F94FB0371A6F709E004EEF76 /* pique.c in Sources */,
 				F95C52021909B1230074E0A6 /* MeTable.m in Sources */,
 				F92AF8351C0D6F7400EED3BB /* MMPPdMessageBox.m in Sources */,
@@ -1855,6 +1856,7 @@
 				F9B6E7AD1C069CEA0036FB66 /* MMPNetworkingUtils.m in Sources */,
 				F975609A1A6EAC5F005CCE8E /* MobMuPlatUtil.m in Sources */,
 				F94FB0361A6F709E004EEF76 /* lrshift~.c in Sources */,
+				F9AB5FF11C503018007F6A21 /* MMPPdNumber.m in Sources */,
 				DC59570E1733800500CEBECC /* MeLabel.m in Sources */,
 				F92AF7761C0C23EC00EED3BB /* Bang.m in Sources */,
 				DC59570F1733800500CEBECC /* MeMultiSlider.m in Sources */,
@@ -1872,18 +1874,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F93FC0991C4E12C00059E39F /* MMPPdSymbol.m in Sources */,
-				F93FC0911C4E12440059E39F /* MMPPdToggle.m in Sources */,
 				F93FC0811C4E0E0E0059E39F /* MMPPdBang.m in Sources */,
 				F93FC05A1C4D79570059E39F /* MobMuPlatTests.m in Sources */,
 				F93FC0781C4E06610059E39F /* Gui.m in Sources */,
-				F93FC08D1C4E11C00059E39F /* MMPPdSlider.m in Sources */,
 				F93FC06E1C4E02EB0059E39F /* Number2.m in Sources */,
-				F93FC0891C4E10820059E39F /* MMPPdRadio.m in Sources */,
-				F93FC0851C4E0FF70059E39F /* MMPPdNumber2.m in Sources */,
 				F93FC07C1C4E067F0059E39F /* MMPGui.m in Sources */,
 				F93FC0741C4E043D0059E39F /* TextViewLogger.m in Sources */,
-				F93FC0951C4E12800059E39F /* MMPPdNumber.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

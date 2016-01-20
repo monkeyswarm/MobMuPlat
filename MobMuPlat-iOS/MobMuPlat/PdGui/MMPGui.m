@@ -65,14 +65,14 @@
 #
 
 - (void)addMMPPdObjectBox:(NSArray *)atomLine {
-  MMPPdObjectBox *objectBox = [MMPPdObjectBox objectBoxFromAtomLine:atomLine withGui:self];
+  MMPPdObjectBox *objectBox = [[MMPPdObjectBox alloc] initWithAtomLine:atomLine andGui:self];
   if (objectBox) {
     [self.widgets addObject:objectBox];
   }
 }
 
 - (void)addMMPPdMessageBox:(NSArray *)atomLine {
-  MMPPdMessageBox *messageBox = [MMPPdMessageBox messageBoxFromAtomLine:atomLine withGui:self];
+  MMPPdMessageBox *messageBox = [[MMPPdMessageBox alloc] initWithAtomLine:atomLine andGui:self];
   if (messageBox) {
     [self.widgets addObject:messageBox];
   }
@@ -83,7 +83,7 @@
 #pragma mark Add Widgets
 
 - (void)addNumber:(NSArray *)atomLine {
-  MMPPdNumber *n = [MMPPdNumber numberFromAtomLine:atomLine withGui:self];
+  MMPPdNumber *n = [[MMPPdNumber alloc] initWithAtomLine:atomLine andGui:self];
   if(n) {
     [self.widgets addObject:n];
     DDLogVerbose(@"Gui: added %@", n.type);
@@ -91,7 +91,7 @@
 }
 
 - (void)addSymbol:(NSArray *)atomLine {
-  MMPPdSymbol *s = [MMPPdSymbol symbolFromAtomLine:atomLine withGui:self];
+  MMPPdSymbol *s = [[MMPPdSymbol alloc] initWithAtomLine:atomLine andGui:self];
   if(s) {
     [self.widgets addObject:s];
     DDLogVerbose(@"Gui: added %@", s.type);
@@ -99,7 +99,7 @@
 }
 
 - (void)addBang:(NSArray *)atomLine {
-  MMPPdBang *b = [MMPPdBang bangFromAtomLine:atomLine withGui:self];
+  MMPPdBang *b = [[MMPPdBang alloc] initWithAtomLine:atomLine andGui:self];
   if(b) {
     [self.widgets addObject:b];
     DDLogVerbose(@"Gui: added %@", b.type);
@@ -107,7 +107,7 @@
 }
 
 - (void)addToggle:(NSArray *)atomLine {
-  MMPPdToggle *t = [MMPPdToggle toggleFromAtomLine:atomLine withGui:self];
+  MMPPdToggle *t = [[MMPPdToggle alloc] initWithAtomLine:atomLine andGui:self];
   if(t) {
     [self.widgets addObject:t];
     DDLogVerbose(@"Gui: added %@", t.type);
@@ -115,15 +115,16 @@
 }
 
 - (void)addNumber2:(NSArray *)atomLine {
-  MMPPdNumber2 *n = [MMPPdNumber2 number2FromAtomLine:atomLine withGui:self];
+  MMPPdNumber2 *n = [[MMPPdNumber2 alloc] initWithAtomLine:atomLine andGui:self];
   if(n) {
     [self.widgets addObject:n];
     DDLogVerbose(@"Gui: added %@", n.type);
   }
 }
 
-/*- (void)addSlider:(NSArray *)atomLine withOrientation:(WidgetOrientation)orientation {
-  Slider *s = [Slider sliderFromAtomLine:atomLine withOrientation:orientation withGui:self];
+- (void)addSlider:(NSArray *)atomLine withOrientation:(WidgetOrientation)orientation {
+  MMPPdSlider *s = [[MMPPdSlider alloc] initWithAtomLine:atomLine andGui:self];
+  s.orientation = orientation;
   if(s) {
     [self.widgets addObject:s];
     DDLogVerbose(@"Gui: added %@", s.type);
@@ -131,11 +132,12 @@
 }
 
 - (void)addRadio:(NSArray *)atomLine withOrientation:(WidgetOrientation)orientation {
-  Radio *r = [Radio radioFromAtomLine:atomLine withOrientation:orientation withGui:self];
+  MMPPdRadio *r = [[MMPPdRadio alloc] initWithAtomLine:atomLine andGui:self];
+  r.orientation = orientation;
   if(r) {
     [self.widgets addObject:r];
     DDLogVerbose(@"Gui: added %@", r.type);
   }
-}*/
+}
 
 @end

@@ -14,7 +14,7 @@
 
 @interface MMPPdObjectBox : AtomWidget
 
-+ (id)objectBoxFromAtomLine:(NSArray *)line withGui:(Gui *)gui;
+//+ (id)objectBoxFromAtomLine:(NSArray *)line withGui:(Gui *)gui;
 
 @end
 

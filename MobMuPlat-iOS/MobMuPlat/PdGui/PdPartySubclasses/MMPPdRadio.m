@@ -1,14 +1,19 @@
 //
-//  MMPPdSlider.m
+//  MMPPdRadio.m
 //  MobMuPlat
 //
 //  Created by diglesia on 1/18/16.
 //  Copyright © 2016 Daniel Iglesia. All rights reserved.
 //
 
-#import "MMPPdSlider.h"
+#import "MMPPdRadio.h"
 
-@implementation MMPPdSlider
+@implementation MMPPdRadio
+
+- (void)sendInitValue {
+  [super sendInitValue];
+  [self sendFloat:self.value];
+}
 
 #pragma mark WidgetListener
 
