@@ -782,6 +782,17 @@ BOOL LANdiniSwitchBool;
 
   //pd file, load the file via "loadScenePatchOnly"
   else if ([suffix isEqualToString:@"pd"]){
+    if (SYSTEM_VERSION_LESS_THAN(@"6.0")) {
+      UIAlertView *alert = [[UIAlertView alloc]
+                            initWithTitle: @"Too old..."
+                            message: @"Opening native PD GUIs requires iOS 6 and above."
+                            delegate: nil
+                            cancelButtonTitle:@"OK"
+                            otherButtonTitles:nil];
+      [alert show];
+      return;
+    }
+
     BOOL loaded = [self.delegate loadScenePatchOnly:filename];
     if(loaded)[self.delegate settingsViewControllerDidFinish:self];
     else{

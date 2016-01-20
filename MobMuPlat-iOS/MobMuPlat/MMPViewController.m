@@ -153,8 +153,13 @@ extern void pique_setup(void);
   [midi setVirtualSourceEnabled:YES];
   //[midi.virtualSourceDestination]
 
+  // If iOS 5, then use non-auto-layout xib files.
+  if (SYSTEM_VERSION_LESS_THAN(@"6.0")) {
+    settingsVC = [[SettingsViewController alloc] initWithNibName:@"SettingsViewControllerIOS5" bundle:nil];
+  } else {
+    settingsVC = [[SettingsViewController alloc] initWithNibName:nil bundle:nil];
+  }
 
-  settingsVC = [[SettingsViewController alloc] initWithNibName:nil bundle:nil];
   int ticksPerBuffer;
 
 #if TARGET_IPHONE_SIMULATOR
