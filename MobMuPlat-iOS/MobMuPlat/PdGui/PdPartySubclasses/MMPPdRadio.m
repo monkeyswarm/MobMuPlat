@@ -10,10 +10,6 @@
 
 @implementation MMPPdRadio
 
-- (void)sendInitValue {
-  [super sendInitValue];
-  [self sendFloat:self.value];
-}
 
 #pragma mark WidgetListener
 

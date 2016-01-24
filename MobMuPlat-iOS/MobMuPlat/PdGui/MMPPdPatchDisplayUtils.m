@@ -19,25 +19,29 @@
   NSUInteger level = 0;
   NSUInteger objIndex = 0;
 
-  // Bookeeping for message box connections
-  // key = message box index, val = set of connection tuples (obj index, outlet index) that connect into that message box.
-  NSMutableDictionary *messageBoxIndexToIncomingConnectionIndices = [NSMutableDictionary dictionary];
+  // Bookeeping for all gui object box connections
+  // key = message box index as STRING, val = set of connection tuples (obj index, outlet index) that connect into that message box.
+  NSMutableDictionary<NSString *, NSMutableSet *> *objectIndexToIncomingConnectionIndices = [NSMutableDictionary dictionary];
 
+  // Bookkeeping to generate extra receive objects for grabbing receive-name messages
+  // key = obj index as string, val = receive name
+  NSMutableDictionary<NSString *, NSString *> *objectIndexToPatchReceiveName = [NSMutableDictionary dictionary];
+  
   // Bookkeeping for grabbing send/rec names
   // key = linetype string, val = tuple of send and rec indices.
 
   NSDictionary *objTypeToSendRecIndeces = @{
-                                             @"floatatom" : @[@(10),@(9)],
-                                             @"symbolatom" : @[@(10),@(9)],
-                                             @"bng" : @[@(9),@(10)],
-                                             @"tgl" : @[@(7),@(8)],
-                                             @"nbx" : @[@(11),@(12)],
-                                             @"hsl" : @[@(11),@(12)],
-                                             @"vsl" : @[@(11),@(12)],
-                                             @"hradio" : @[@(9),@(10)],
-                                             @"vradio" : @[@(9),@(10)],
-                                             //@"vu" : @[@(-1), @(7)] not yet supported
-                                             }; //canvas ("cnv") doesn't need one
+                                            @"floatatom" : @[@(10),@(9)],
+                                            @"symbolatom" : @[@(10),@(9)],
+                                            @"bng" : @[@(9),@(10)],
+                                            @"tgl" : @[@(7),@(8)],
+                                            @"nbx" : @[@(11),@(12)],
+                                            @"hsl" : @[@(11),@(12)],
+                                            @"vsl" : @[@(11),@(12)],
+                                            @"hradio" : @[@(9),@(10)],
+                                            @"vradio" : @[@(9),@(10)],
+                                            //@"vu" : @[@(-1), @(7)] not yet supported
+                                            }; //canvas ("cnv") doesn't need one
 
   @try {
     for(NSArray *line in lines) {
@@ -52,31 +56,40 @@
       else if([lineType isEqualToString:@"restore"]) {
         level--;
       }
-        // find different types of UI element in the top level patch
+      // find different types of UI element in the top level patch
       else if(level == 1) {
         // built in pd things
         NSString *objType = [line[1] isEqualToString:@"obj"] ? line[4] : line[1];
         if (objTypeToSendRecIndeces[objType]) {
           // floatatom, symbolatom, bng, tgl, nbox, etc....
           NSArray *sendRecIndeces = objTypeToSendRecIndeces[objType];
-          patchLine = [self shimAtomLineFromAtomLine:line
-                                            guiIndex:objIndex
-                                       sendNameIndex:[sendRecIndeces[0] unsignedIntegerValue]
-                                        recNameIndex:[sendRecIndeces[1] unsignedIntegerValue]];
+
           guiLine = [self guiAtomLineFromAtomLine:line
                                          guiIndex:objIndex
                                     sendNameIndex:[sendRecIndeces[0] unsignedIntegerValue]
                                      recNameIndex:[sendRecIndeces[1] unsignedIntegerValue]];
+
+          NSString *objIndexString = [NSString stringWithFormat:@"%lu", objIndex];
+          objectIndexToIncomingConnectionIndices[objIndexString] = [NSMutableSet set];
+
+          // grab patch receive handle and store
+          NSString *recHandle = line[[sendRecIndeces[1] unsignedIntegerValue]];
+          if (recHandle &&
+              ![recHandle isEqualToString:@"-"] &&
+              ![recHandle isEqualToString:@"empty"] ) {
+            objectIndexToPatchReceiveName[objIndexString] = recHandle;
+          }
+
         } else if ([objType isEqualToString:@"msg"]) {
-          //
-          [messageBoxIndexToIncomingConnectionIndices setObject:[NSMutableSet set]
-                                                         forKey:[NSString stringWithFormat:@"%lu", objIndex]];
-          //
           guiLine = [self guiMsgAtomLineFromAtomLine:line guiIndex:objIndex];
+
+          NSString *objIndexString = [NSString stringWithFormat:@"%lu", objIndex];
+          objectIndexToIncomingConnectionIndices[objIndexString] = [NSMutableSet set];
         } else if ([objType isEqualToString:@"connect"]) {
+          // grab connections to message box, create new connections in the set
           // assume all obj boxes at level 1 are created by this point of gettign connections at level 1
-          if (messageBoxIndexToIncomingConnectionIndices[line[4]]) { //if dict contains (msg box index) as key
-            NSMutableSet *connectionSet = messageBoxIndexToIncomingConnectionIndices[line[4]];
+          if (objectIndexToIncomingConnectionIndices[line[4]]) { //if dict contains (msg box index) as key
+            NSMutableSet *connectionSet = objectIndexToIncomingConnectionIndices[line[4]];
             [connectionSet addObject:@[ line[2], line[3] ]]; //add tuple of obj index string, outlet index string
           }
         } else {
@@ -85,7 +98,7 @@
       }
 
       // add line to patch output
-      [patchLines addObject:patchLine];
+      [patchLines addObject:patchLine]; //TODO patchlines are unaffected at this point.
       [guiLines addObject:guiLine]; // todo, not necc if level > 1?
       if ([line[0] isEqualToString:@"#X"] && level == 1 && ![line[1] isEqualToString:@"connect"]) { //DEI just line index...
         objIndex++;
@@ -96,75 +109,59 @@
     return nil;
   }
 
-  // Post-process the message boxes to connect to the message shims.
-  for (NSNumber *msgBoxIndexNum in [messageBoxIndexToIncomingConnectionIndices keyEnumerator]) {
+  // Post-process patch lines, to add the send/rec boxesand connections to gui objects to shim.
+  for (NSString *objBoxToShimIndexString in [objectIndexToIncomingConnectionIndices keyEnumerator]) {
     // create shim
-    NSInteger msgBoxIndex = [msgBoxIndexNum integerValue];
-    [patchLines addObject:@[ @"#X", @"obj", @"0", @"0", @"MMPPdGuiFiles/MMPPdGuiMessageShim",
-                         [NSString stringWithFormat:@"%lu-gui-send", msgBoxIndex],
-                         [NSString stringWithFormat:@"%lu-gui-rec", msgBoxIndex]
-                         ]];
-    // for objects going into message box, connect them to shim as well
-    NSSet *connectionSet = messageBoxIndexToIncomingConnectionIndices[msgBoxIndexNum];
+    NSInteger objBoxToShimIndex = [objBoxToShimIndexString integerValue];
+    /*[patchLines addObject:@[ @"#X", @"obj", @"0", @"0", @"MMPPdGuiFiles/MMPPdGuiMessageShim",
+     [NSString stringWithFormat:@"%lu-gui-send", msgBoxIndex],
+     [NSString stringWithFormat:@"%lu-gui-rec", msgBoxIndex]
+     ]];*/
+
+    NSString *shimSendHandle =[NSString stringWithFormat:@"%lu-gui-rec", objBoxToShimIndex];
+    NSString *shimRecHandle = [NSString stringWithFormat:@"%lu-gui-send", objBoxToShimIndex];
+
+    NSArray *newPatchLine1 = @[ @"#X", @"obj", @"0", @"0", @"s",shimSendHandle ];
+    NSArray *newPatchLine2 = @[ @"#X", @"obj", @"0", @"0", @"r",shimRecHandle ]; //maybe not nec, if no incoming??
+
+    [patchLines addObject:newPatchLine1]; //objIndex
+    [patchLines addObject:newPatchLine2]; //objIndex+1
+
+    // for all objects going into obj box, connect them to SEND shim
+    NSSet *connectionSet = objectIndexToIncomingConnectionIndices[objBoxToShimIndexString];
     for (NSArray *connectionTuple in connectionSet) {
       [patchLines addObject:@[ @"#X", @"connect",
-                           connectionTuple[0],
-                           connectionTuple[1],
-                           [NSString stringWithFormat:@"%ld", (long)objIndex],
-                           @"0" ]];
+                               connectionTuple[0],
+                               connectionTuple[1],
+                               [NSString stringWithFormat:@"%ld", (long)objIndex],
+                               @"0" ]];
     }
 
-    // connect shim to message box
-    [patchLines addObject:@[ @"#X", @"connect", [NSString stringWithFormat:@"%ld", (long)objIndex],
-                         @"0",
-                         [NSString stringWithFormat:@"%ld", (long)msgBoxIndex],
-                         @"0"] ];
+    // connect RECEIVE shim to OBJ box
+    [patchLines addObject:@[ @"#X", @"connect", [NSString stringWithFormat:@"%ld", (long)objIndex+1],
+                             @"0",
+                             [NSString stringWithFormat:@"%ld", (long)objBoxToShimIndex],
+                             @"0"] ];
+
+
+    //if there's a receive handle, send to that SEND shim too
+    if (objectIndexToPatchReceiveName[objBoxToShimIndexString]) {
+      NSArray *newPatchLine3 = @[ @"#X", @"obj", @"0", @"0", @"r",
+                                  objectIndexToPatchReceiveName[objBoxToShimIndexString] ]; //objIndex+2
+      [patchLines addObject:newPatchLine3];
+      [patchLines addObject:@[ @"#X", @"connect",
+                               [NSString stringWithFormat:@"%ld", (long)objIndex+2],
+                               @"0",
+                               [NSString stringWithFormat:@"%ld", (long)objIndex],
+                               @"0" ]];
+      objIndex++;
+    }
+
     // inc
-    objIndex++;
+    objIndex+=2;
   }
 
   return @[patchLines, guiLines];
-}
-
-
-+ (NSArray *)shimAtomLineFromAtomLine:(NSArray *)atomLine guiIndex:(NSUInteger)index sendNameIndex:(NSUInteger)sendNameIndex recNameIndex:(NSUInteger)recNameIndex{
-  //DEI check length
-  NSMutableArray *result = [[atomLine subarrayWithRange:NSMakeRange(0, 4)] mutableCopy]; //copy first 4
-  [result setObject:@"obj" atIndexedSubscript:1]; //change floatatom,etc to obj
-
-  // vu meter doesn't have a "send" - not yet supported
-  /*if ([atomLine[4] isEqualToString:@"vu"]) {
-    [result addObject:@"MMPPdGuiFiles/----"];
-    [result addObject: [NSString stringWithFormat:@"%lu-gui-send", (unsigned long)index]];//send name
-    [result addObject: [NSString stringWithFormat:@"%lu-gui-rec", index]];
-    [result addObject: [self shimSanitizeAtom:@"empty"]];
-    [result addObject: [self shimSanitizeAtom:atomLine[recNameIndex]]];
-    return result;
-  }*/
-
-  // bang, tgl, symbolatom get special shim, all others are float
-  if ([atomLine[4] isEqualToString:@"bng"]) { //DEI rfactor for objName from index 1 or 4.
-    [result addObject:@"MMPPdGuiFiles/MMPPdGuiBangShim"];
-  } else if ([atomLine[1] isEqualToString:@"symbolatom"]){
-    [result addObject: @"MMPPdGuiFiles/MMPPdGuiSymbolShim"];
-  } else if ([atomLine[4] isEqualToString:@"tgl"]) {
-    [result addObject:@"MMPPdGuiFiles/MMPPdGuiToggleShim"];
-  } else { // floatatom, hsl vsl hradio vradio nbx
-    [result addObject: @"MMPPdGuiFiles/MMPPdGuiFloatShim"];
-  }
-  [result addObject: [NSString stringWithFormat:@"%lu-gui-send", (unsigned long)index]];//send name
-  [result addObject: [NSString stringWithFormat:@"%lu-gui-rec", index]];
-  [result addObject: [self shimSanitizeAtom:atomLine[sendNameIndex]]];
-  [result addObject: [self shimSanitizeAtom:atomLine[recNameIndex]]]; //Check range
-  return result;
-}
-
-+ (NSString *)shimSanitizeAtom:(NSString *)atom {
-  if ([atom characterAtIndex:[atom length]-1] == ',') { //strip off trailing comma (from floatatom line)
-    return [atom substringToIndex:[atom length]-1];
-  } else {
-    return atom;
-  }
 }
 
 + (NSArray *)guiAtomLineFromAtomLine:(NSArray *)atomLine guiIndex:(NSUInteger)index sendNameIndex:(NSUInteger)sendNameIndex recNameIndex:(NSUInteger)recNameIndex {

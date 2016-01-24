@@ -10,10 +10,6 @@
 
 @implementation MMPPdNumber
 
-- (void)sendInitValue {
-  [super sendInitValue];
-  [self sendFloat:self.value];
-}
 
 #pragma mark WidgetListener
 

@@ -18,10 +18,6 @@
 
 @implementation MMPPdBang
 
-- (void)sendInitValue {
-  [super sendInitValue]; // super animates bang
-  [self sendBang]; // we need to send it out
-}
 
 #pragma mark Touches
 

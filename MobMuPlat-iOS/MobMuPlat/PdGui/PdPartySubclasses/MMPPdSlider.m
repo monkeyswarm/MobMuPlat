@@ -10,10 +10,6 @@
 
 @implementation MMPPdSlider
 
-- (void)sendInitValue {
-  [super sendInitValue];
-  [self sendFloat:self.value];
-}
 
 #pragma mark WidgetListener
 

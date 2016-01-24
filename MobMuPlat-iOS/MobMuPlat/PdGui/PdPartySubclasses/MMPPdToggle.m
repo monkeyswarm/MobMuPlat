@@ -10,21 +10,17 @@
 
 @implementation MMPPdToggle
 
-- (void)sendInitValue {
-  [super sendInitValue];
-  [self sendFloat:self.value];
-}
 
 #pragma mark WidgetListener
 
 - (void)receiveBangFromSource:(NSString *)source {
   [self toggle];
-  //[self sendFloat:self.value];
+  //[self sendFloat:self.value]; //Don't send
 }
 
 - (void)receiveFloat:(float)received fromSource:(NSString *)source {
   self.value = received;
-  //[self sendFloat:received]; // Pd 0.46+ doesn't clip incoming values
+  //[self sendFloat:received]; // Don't send
 }
 
 @end

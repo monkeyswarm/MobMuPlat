@@ -192,10 +192,6 @@
 		F92AF8351C0D6F7400EED3BB /* MMPPdMessageBox.m in Sources */ = {isa = PBXBuildFile; fileRef = F92AF8341C0D6F7400EED3BB /* MMPPdMessageBox.m */; };
 		F93EF2D31C078AA400BCF5D3 /* MMPExamples-PingAndConnect.pd in Resources */ = {isa = PBXBuildFile; fileRef = F93EF2D11C078AA400BCF5D3 /* MMPExamples-PingAndConnect.pd */; };
 		F93EF2D41C078AA400BCF5D3 /* MMPExamples-PingAndConnect.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F93EF2D21C078AA400BCF5D3 /* MMPExamples-PingAndConnect.mmp */; };
-		F93FC04B1C4CB29F0059E39F /* MMPPdGuiFloatShim.pd in Resources */ = {isa = PBXBuildFile; fileRef = F93FC04A1C4CB29F0059E39F /* MMPPdGuiFloatShim.pd */; };
-		F93FC04E1C4CB3660059E39F /* MMPPdGuiSymbolShim.pd in Resources */ = {isa = PBXBuildFile; fileRef = F93FC04D1C4CB3660059E39F /* MMPPdGuiSymbolShim.pd */; };
-		F93FC0501C4CB8DD0059E39F /* MMPPdGuiToggleShim.pd in Resources */ = {isa = PBXBuildFile; fileRef = F93FC04F1C4CB8DD0059E39F /* MMPPdGuiToggleShim.pd */; };
-		F93FC0521C4CBDF90059E39F /* MMPPdGuiBangShim.pd in Resources */ = {isa = PBXBuildFile; fileRef = F93FC0511C4CBDF90059E39F /* MMPPdGuiBangShim.pd */; };
 		F93FC05A1C4D79570059E39F /* MobMuPlatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F93FC0591C4D79570059E39F /* MobMuPlatTests.m */; };
 		F93FC0651C4D7AA20059E39F /* ShimTest1.pd in Resources */ = {isa = PBXBuildFile; fileRef = F93FC0641C4D7AA20059E39F /* ShimTest1.pd */; };
 		F93FC0681C4D7D0F0059E39F /* libpd-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F97560921A6E235B005CCE8E /* libpd-ios.a */; };
@@ -237,7 +233,6 @@
 		F9AB5FF61C503018007F6A21 /* MMPPdToggle.m in Sources */ = {isa = PBXBuildFile; fileRef = F9AB5FF01C503018007F6A21 /* MMPPdToggle.m */; };
 		F9B6E7AA1C0641E00036FB66 /* PingAndConnectManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B6E7A91C0641E00036FB66 /* PingAndConnectManager.m */; };
 		F9B6E7AD1C069CEA0036FB66 /* MMPNetworkingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B6E7AC1C069CEA0036FB66 /* MMPNetworkingUtils.m */; };
-		F9DAA15D1C0F9B6700775149 /* MMPPdGuiMessageShim.pd in Resources */ = {isa = PBXBuildFile; fileRef = F9DAA15C1C0F9B6700775149 /* MMPPdGuiMessageShim.pd */; };
 		F9DE7DC018F49D62007B9E45 /* MeMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = F9DE7DBF18F49D62007B9E45 /* MeMenu.m */; };
 		F9FC179B1A85735A00152392 /* MMPExamples-InterAppOSC.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F9FC17991A85735A00152392 /* MMPExamples-InterAppOSC.mmp */; };
 		F9FC179C1A85735A00152392 /* MMPExamples-InterAppOSC.pd in Resources */ = {isa = PBXBuildFile; fileRef = F9FC179A1A85735A00152392 /* MMPExamples-InterAppOSC.pd */; };
@@ -630,10 +625,6 @@
 		F92AF8341C0D6F7400EED3BB /* MMPPdMessageBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPPdMessageBox.m; path = PdGui/MMPPdMessageBox.m; sourceTree = "<group>"; };
 		F93EF2D11C078AA400BCF5D3 /* MMPExamples-PingAndConnect.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "MMPExamples-PingAndConnect.pd"; sourceTree = "<group>"; };
 		F93EF2D21C078AA400BCF5D3 /* MMPExamples-PingAndConnect.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "MMPExamples-PingAndConnect.mmp"; sourceTree = "<group>"; };
-		F93FC04A1C4CB29F0059E39F /* MMPPdGuiFloatShim.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MMPPdGuiFloatShim.pd; path = PdGui/MMPPdGuiFloatShim.pd; sourceTree = "<group>"; };
-		F93FC04D1C4CB3660059E39F /* MMPPdGuiSymbolShim.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MMPPdGuiSymbolShim.pd; path = PdGui/MMPPdGuiSymbolShim.pd; sourceTree = "<group>"; };
-		F93FC04F1C4CB8DD0059E39F /* MMPPdGuiToggleShim.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MMPPdGuiToggleShim.pd; path = PdGui/MMPPdGuiToggleShim.pd; sourceTree = "<group>"; };
-		F93FC0511C4CBDF90059E39F /* MMPPdGuiBangShim.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MMPPdGuiBangShim.pd; path = PdGui/MMPPdGuiBangShim.pd; sourceTree = "<group>"; };
 		F93FC0571C4D79570059E39F /* MobMuPlatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MobMuPlatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F93FC0591C4D79570059E39F /* MobMuPlatTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MobMuPlatTests.m; sourceTree = "<group>"; };
 		F93FC05B1C4D79570059E39F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -691,7 +682,6 @@
 		F9B6E7A91C0641E00036FB66 /* PingAndConnectManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PingAndConnectManager.m; path = LANdini/PingAndConnectManager.m; sourceTree = "<group>"; };
 		F9B6E7AB1C069CEA0036FB66 /* MMPNetworkingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMPNetworkingUtils.h; path = LANdini/MMPNetworkingUtils.h; sourceTree = "<group>"; };
 		F9B6E7AC1C069CEA0036FB66 /* MMPNetworkingUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPNetworkingUtils.m; path = LANdini/MMPNetworkingUtils.m; sourceTree = "<group>"; };
-		F9DAA15C1C0F9B6700775149 /* MMPPdGuiMessageShim.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MMPPdGuiMessageShim.pd; path = PdGui/MMPPdGuiMessageShim.pd; sourceTree = "<group>"; };
 		F9DE7DBE18F49D62007B9E45 /* MeMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeMenu.h; path = gui/MeMenu.h; sourceTree = "<group>"; };
 		F9DE7DBF18F49D62007B9E45 /* MeMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeMenu.m; path = gui/MeMenu.m; sourceTree = "<group>"; };
 		F9FC17991A85735A00152392 /* MMPExamples-InterAppOSC.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "MMPExamples-InterAppOSC.mmp"; sourceTree = "<group>"; };
@@ -1416,15 +1406,10 @@
 			isa = PBXGroup;
 			children = (
 				F93FC07D1C4E0DD70059E39F /* PdPartySubclasses */,
-				F93FC04F1C4CB8DD0059E39F /* MMPPdGuiToggleShim.pd */,
-				F93FC04D1C4CB3660059E39F /* MMPPdGuiSymbolShim.pd */,
-				F93FC04A1C4CB29F0059E39F /* MMPPdGuiFloatShim.pd */,
-				F9DAA15C1C0F9B6700775149 /* MMPPdGuiMessageShim.pd */,
 				F92AF7CF1C0D6CDE00EED3BB /* OldMMPGui.m */,
 				F92AF7D01C0D6CDE00EED3BB /* OldMMPGui.h */,
 				F92AF7D11C0D6CDE00EED3BB /* MMPPdObjectBox.h */,
 				F92AF7D21C0D6CDE00EED3BB /* MMPPdObjectBox.m */,
-				F93FC0511C4CBDF90059E39F /* MMPPdGuiBangShim.pd */,
 				F92AF78F1C0D286C00EED3BB /* MMPPdPatchDisplayUtils.m */,
 				F92AF7901C0D286C00EED3BB /* MMPPdPatchDisplayUtils.h */,
 				F92AF8331C0D6F7400EED3BB /* MMPPdMessageBox.h */,
@@ -1671,8 +1656,6 @@
 				F9295E4819BD19C6008691CB /* MMPExamples-Motion.pd in Resources */,
 				F9295E3919BD19C6008691CB /* MMPExamples-Arp-ip5.mmp in Resources */,
 				F9295E7519BD19C6008691CB /* Welcome.pd in Resources */,
-				F93FC0521C4CBDF90059E39F /* MMPPdGuiBangShim.pd in Resources */,
-				F93FC0501C4CB8DD0059E39F /* MMPPdGuiToggleShim.pd in Resources */,
 				DCB5B95518889355003E6C2C /* Icon-72@2x.png in Resources */,
 				F9295E5919BD19C6008691CB /* MMPTutorial1-GUI-ip5.mmp in Resources */,
 				F9295E6619BD19C6008691CB /* MMPTutorial4-Networking-Pad.mmp in Resources */,
@@ -1687,7 +1670,6 @@
 				F9295E3A19BD19C6008691CB /* MMPExamples-Arp-Pad.mmp in Resources */,
 				DCB5B95718889355003E6C2C /* Icon@2x.png in Resources */,
 				DCB5B95418889355003E6C2C /* Icon-72.png in Resources */,
-				F9DAA15D1C0F9B6700775149 /* MMPPdGuiMessageShim.pd in Resources */,
 				DC7DD717188F2A660068BA66 /* SettingsViewController~ipad.xib in Resources */,
 				F9AB5F3F1C4EC2CC007F6A21 /* SettingsViewControllerIOS5~ipad.xib in Resources */,
 				F9295E6A19BD19C6008691CB /* MMPTutorial5-Files-Pad.mmp in Resources */,
@@ -1709,7 +1691,6 @@
 				DC5957331733805000CEBECC /* title_resistor_13x40.png in Resources */,
 				F9295E7219BD19C6008691CB /* Welcome-ip5.mmp in Resources */,
 				DC5957341733805000CEBECC /* title_resistor_40x13.png in Resources */,
-				F93FC04B1C4CB29F0059E39F /* MMPPdGuiFloatShim.pd in Resources */,
 				F9295E7419BD19C6008691CB /* Welcome.mmp in Resources */,
 				DC5957351733805000CEBECC /* title_ring_67x110.png in Resources */,
 				F9295E6719BD19C6008691CB /* MMPTutorial4-Networking.mmp in Resources */,
@@ -1740,7 +1721,6 @@
 				F93EF2D41C078AA400BCF5D3 /* MMPExamples-PingAndConnect.mmp in Resources */,
 				F9295E3419BD19C6008691CB /* anderson1.wav in Resources */,
 				F93EF2D31C078AA400BCF5D3 /* MMPExamples-PingAndConnect.pd in Resources */,
-				F93FC04E1C4CB3660059E39F /* MMPPdGuiSymbolShim.pd in Resources */,
 				F9295E6219BD19C6008691CB /* MMPTutorial3-Hardware-Pad.mmp in Resources */,
 				F9295E5219BD19C6008691CB /* MMPExamples-Vocoder-Pad.mmp in Resources */,
 				F9295E6F19BD19C6008691CB /* MMPTutorial6-2DGraphics.mmp in Resources */,
