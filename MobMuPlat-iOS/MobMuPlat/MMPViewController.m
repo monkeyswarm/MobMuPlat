@@ -124,8 +124,12 @@ extern void pique_setup(void);
   return hardwareCanvasType;
 }
 
--(id)init{
-  self=[super init];
+-(instancetype)init {
+  return [self initWithAudioBusEnabled:YES];
+}
+
+-(instancetype)initWithAudioBusEnabled:(BOOL)audioBusEnabled {
+  self=[super initWithNibName:nil bundle:nil];
 
   mixingEnabled = YES;
 
@@ -182,7 +186,7 @@ extern void pique_setup(void);
   [audioController configureTicksPerBuffer:ticksPerBuffer];
   //[audioController print];
 
-  if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
+  if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") && audioBusEnabled) {
     // do stuff for iOS 7 and newer
     [self setupAudioBus];
   }
@@ -819,18 +823,18 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 //
 
 -(void)loadSceneCommonReset {
-  // temp - recurse and add to directory paths.
+  // Recurse and add subfolders to Pd directory paths. TODO: only do on file system change?
   [PdBase clearSearchPath];
   NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
   NSString *publicDocumentsDir = [paths objectAtIndex:0];
+  // Add documents directory.
   [PdBase addToSearchPath:publicDocumentsDir];
-  //NSString *path = [publicDocumentsDir stringByAppendingPathComponent:@"testlib"];
-
+  // Iterate subfolders.
   NSDirectoryEnumerator *enumerator =
-  [[NSFileManager defaultManager] enumeratorAtURL:[NSURL URLWithString:publicDocumentsDir]
-                       includingPropertiesForKeys:@[NSURLIsDirectoryKey]
-                                          options:NSDirectoryEnumerationSkipsHiddenFiles
-                                     errorHandler:nil];
+      [[NSFileManager defaultManager] enumeratorAtURL:[NSURL URLWithString:publicDocumentsDir]
+                           includingPropertiesForKeys:@[NSURLIsDirectoryKey]
+                                              options:NSDirectoryEnumerationSkipsHiddenFiles
+                                         errorHandler:nil];
 
   NSURL *fileURL;
   NSNumber *isDirectory;
@@ -840,7 +844,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
       [PdBase addToSearchPath:[fileURL path]];
     }
   }
-  // end temp
+  // End recursion of file paths.
 
   if(scrollView) {
     [scrollView removeFromSuperview];
@@ -1302,6 +1306,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
 //PureData has sent out a message from the patch (from a receive object, we look for messages from "toNetwork","toGUI","toSystem")
 - (void)receiveList:(NSArray *)list fromSource:(NSString *)source{
+  NSLog(@"rec: %@", list);
   if([list count]==0){
     NSLog(@"got zero args from %@", source);
     return;//protect against bad elements that got dropped from array...
@@ -1487,6 +1492,8 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 - (void)receivePrint:(NSString *)message
 {
   [settingsVC consolePrint:message];
+  //TEMP
+  NSLog(message);
 }
 
 //receive OSC message from network, format into message to send into PureData patch

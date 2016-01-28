@@ -93,8 +93,6 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable; */
 
-
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
@@ -551,7 +549,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		getActionBar().hide();
 
 		//TODO RESET ports?
-		MMPPdGuiUtils.maybeCreatePdGuiFolderAndFiles(getAssets(), false); //don't force overwrite if it is there
+//		MMPPdGuiUtils.maybeCreatePdGuiFolderAndFiles(getAssets(), false); //don't force overwrite if it is there
 		
 		_patchFragment.loadScenePatchOnly(filenameToLoad); // calls loadPdFile
 	}

@@ -30,7 +30,7 @@
 
     self.valueLabel.text =
         [[line subarrayWithRange:NSMakeRange(4, [line count] - 6)] componentsJoinedByString:@" "];  //check size
-    //last two atoms (added via post-MMP-processing) will be the send/rec names
+    //last two atoms (added via post-MMP-processing) will be the send/rec names!!!
     self.sendName = [line objectAtIndex:[line count]-2];
     self.receiveName = [line objectAtIndex:[line count]-1];
   }

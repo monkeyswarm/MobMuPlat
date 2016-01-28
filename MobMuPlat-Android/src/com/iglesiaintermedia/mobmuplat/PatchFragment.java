@@ -215,6 +215,29 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 	}
 	
 	public void loadScenePatchOnly(String filenameToLoad) {
+	//====Temp retain old behavior
+		//don't bother with rotation for now...
+		scrollRelativeLayout.removeAllViews();
+		//reset scroll to one page
+		scrollContainer.setLayoutParams(new FrameLayout.LayoutParams(_container.getWidth(),_container.getHeight()));
+		scrollRelativeLayout.setLayoutParams(new FrameLayout.LayoutParams(_container.getWidth(),_container.getHeight()));
+		scrollRelativeLayout.setBackgroundColor(Color.GRAY);
+		TextView tv = new TextView(_mainActivity);
+		tv.setText("running "+filenameToLoad+"\nwith no interface");
+		tv.setTextColor(Color.WHITE);
+		tv.setGravity(Gravity.CENTER);
+
+		RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		rlp.addRule(RelativeLayout.CENTER_VERTICAL); 
+		rlp.addRule(RelativeLayout.CENTER_HORIZONTAL); 
+		tv.setLayoutParams(rlp);
+		scrollRelativeLayout.addView(tv);
+
+		_mainActivity.loadPdFile(filenameToLoad);
+
+	
+	//====
+/*
 		// DEI tODO common cleanup
 		loadSceneCommonReset();
 		//don't bother with rotation for now...
@@ -293,18 +316,8 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 		}
 		//TODO call post-init method on gui objects.
 		
-		/*TextView tv = new TextView(_mainActivity);
-		tv.setText("running "+filenameToLoad+"\nwith no interface");
-		tv.setTextColor(Color.WHITE);
-		tv.setGravity(Gravity.CENTER);
-
-		RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		rlp.addRule(RelativeLayout.CENTER_VERTICAL); 
-		rlp.addRule(RelativeLayout.CENTER_HORIZONTAL); 
-		tv.setLayoutParams(rlp);
-		scrollRelativeLayout.addView(tv);*/
 		//TODO RESET ports!
-		
+		*/
 		
 		
 

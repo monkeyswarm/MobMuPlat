@@ -11,6 +11,7 @@
 // MobMuPlat additions.
 #import "MMPPdObjectBox.h"
 #import "MMPPdMessageBox.h"
+#import "MMPPdArrayWidget.h"
 
 // MobMuPlat gui object subclasses
 #import "MMPPdNumber.h"
@@ -21,14 +22,26 @@
 #import "MMPPdNumber2.h"
 #import "MMPPdToggle.h"
 
-@implementation MMPGui
+@implementation MMPGui {
+  BOOL _inLevel2CanvasShowingArray;
+}
 
 - (BOOL)addObjectType:(NSString *)type fromAtomLine:(NSArray *)atomLine {
   BOOL retVal = [super addObjectType:type fromAtomLine:atomLine];
   if (retVal) return YES; // super handled it
-  // Render object box
-  [self addMMPPdObjectBox:atomLine];
-  return YES;
+
+  // check against restore graph, etc...
+  //if ([type isEqualToString:@"obj"]) {
+    // Render object box
+    [self addMMPPdObjectBox:atomLine];
+    return YES;
+   /*else if ([type isEqualToString:@"array"]) {
+    // Render graphical array.
+    [self addMMPPdArrayWidget:atomLine];
+  } else {
+    return NO;
+  }*/
+  return NO;
 }
 
 - (void)addWidgetsFromAtomLines:(NSArray *)lines {
@@ -37,8 +50,9 @@
   // MMP wants a few more things.
 
   int level = 0;
-  for(NSArray *line in lines) {
 
+  for(NSUInteger lineIndex = 0; lineIndex<lines.count; lineIndex++) {
+    NSArray* line = lines[lineIndex];
     if(line.count >= 4) {
 
       NSString *lineType = [line objectAtIndex:1];
@@ -46,17 +60,42 @@
       // find canvas begin and end line
       if([lineType isEqualToString:@"canvas"]) {
         level++;
+
       }
       else if([lineType isEqualToString:@"restore"]) {
         level -= 1;
         // TODO render pd box as box, but not a graph/canvas!
-        if (level == 1) {
+        if (level == 1 && !_inLevel2CanvasShowingArray) {
           // render object [pd name]
           [self addMMPPdObjectBox:line];
         }
+        _inLevel2CanvasShowingArray = NO;
       }
-      else if([lineType isEqualToString:@"msg"]) {
-        [self addMMPPdMessageBox:line]; //
+      else if([lineType isEqualToString:@"msg"] && level==1) {
+        [self addMMPPdMessageBox:line];
+      }
+      //
+      else if([lineType isEqualToString:@"array"] && level==2) {
+        _inLevel2CanvasShowingArray = YES;
+        //expect
+        // #X array <arrayname> 100 float 3; (this line) last element is bit mask of save/no save and draw type (poly,points,bez)
+        // #A <values, if save contents is on>
+        // #X coords 0 1 100 -1 300 140 1 0 0;
+        // #X restore 8 17 graph;
+        BOOL willHaveSaveData = ([line[5] integerValue] & 0x1) == 1;
+        // check line count
+        NSUInteger expectedSubsequentLineCount = willHaveSaveData ? 3 : 2;
+        if (lines.count <= lineIndex + expectedSubsequentLineCount) {
+          continue;
+        }
+        NSArray *arrayValueLine = willHaveSaveData ? lines[lineIndex+1] : nil;
+        NSArray *arrayCoordsLine = willHaveSaveData ?
+                                   lines[lineIndex+2] :
+                                   lines[lineIndex+1];
+        NSArray *arrayRestoreLine = willHaveSaveData ?
+                                    lines[lineIndex+3] :
+                                    lines[lineIndex+2];
+        [self addMMPPdArrayWidget:line valuesLine:arrayValueLine coordsLine:arrayCoordsLine restoreLine:arrayRestoreLine];
       }
     }
   }
@@ -78,6 +117,19 @@
   }
 }
 
+- (void)addMMPPdArrayWidget:(NSArray *)atomLine
+                 valuesLine:(NSArray *)arrayValueLine
+                 coordsLine:(NSArray *)coordsLine
+                restoreLine:(NSArray *)restoreLine {
+  MMPPdArrayWidget *arrayWidget = [[MMPPdArrayWidget alloc] initWithAtomLine:atomLine
+                                                                  valuesLine:arrayValueLine
+                                                                  coordsLine:coordsLine
+                                                                 restoreLine:restoreLine
+                                                                      andGui:self];
+  if (arrayWidget) {
+    [self.widgets addObject:arrayWidget];
+  }
+}
 
 // Override super to add MMP subclasses.
 #pragma mark Add Widgets

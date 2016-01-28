@@ -94,6 +94,8 @@
 		DCD8DF9317330D8B00767321 /* PGMidi.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCD8DF9217330D8A00767321 /* PGMidi.mm */; };
 		DCEF4F2C188ED1CD00D6EE54 /* SettingsViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */; };
 		DCFF717716B59F3100CDCEAE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DCFF717616B59F3100CDCEAE /* libz.dylib */; };
+		F903D0631C57D34A001A4844 /* LoadbangTest.pd in Resources */ = {isa = PBXBuildFile; fileRef = F903D0621C57D34A001A4844 /* LoadbangTest.pd */; };
+		F903D1561C582C4F001A4844 /* MMPPdArrayWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = F903D1551C582C4F001A4844 /* MMPPdArrayWidget.m */; };
 		F911D9741C14BB84005F9C01 /* MMPPdDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = F911D9731C14BB84005F9C01 /* MMPPdDispatcher.m */; };
 		F91CB9B51C169F5C0088C445 /* MMPExamples-NativeGUI.pd in Resources */ = {isa = PBXBuildFile; fileRef = F91CB9B41C169F5C0088C445 /* MMPExamples-NativeGUI.pd */; };
 		F91CB9BB1C16AEBE0088C445 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F91CB9B81C16AEBE0088C445 /* Default-568h@2x.png */; };
@@ -422,6 +424,9 @@
 		DCD8DF9217330D8A00767321 /* PGMidi.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PGMidi.mm; path = PGMidi/PGMidi.mm; sourceTree = "<group>"; };
 		DCEF4F2B188ED1CD00D6EE54 /* SettingsViewController~iphone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "SettingsViewController~iphone.xib"; path = "settings/SettingsViewController~iphone.xib"; sourceTree = "<group>"; };
 		DCFF717616B59F3100CDCEAE /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		F903D0621C57D34A001A4844 /* LoadbangTest.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LoadbangTest.pd; sourceTree = "<group>"; };
+		F903D1541C582C4F001A4844 /* MMPPdArrayWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMPPdArrayWidget.h; sourceTree = "<group>"; };
+		F903D1551C582C4F001A4844 /* MMPPdArrayWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMPPdArrayWidget.m; sourceTree = "<group>"; };
 		F911D9721C14BB84005F9C01 /* MMPPdDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMPPdDispatcher.h; sourceTree = "<group>"; };
 		F911D9731C14BB84005F9C01 /* MMPPdDispatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMPPdDispatcher.m; sourceTree = "<group>"; };
 		F91CB9B41C169F5C0088C445 /* MMPExamples-NativeGUI.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "MMPExamples-NativeGUI.pd"; sourceTree = "<group>"; };
@@ -1416,6 +1421,8 @@
 				F92AF8341C0D6F7400EED3BB /* MMPPdMessageBox.m */,
 				F93FC0791C4E067F0059E39F /* MMPGui.h */,
 				F93FC07A1C4E067F0059E39F /* MMPGui.m */,
+				F903D1541C582C4F001A4844 /* MMPPdArrayWidget.h */,
+				F903D1551C582C4F001A4844 /* MMPPdArrayWidget.m */,
 			);
 			name = PdGui;
 			sourceTree = "<group>";
@@ -1433,6 +1440,7 @@
 		F93FC0631C4D7AA20059E39F /* MMPUnitTestPatches */ = {
 			isa = PBXGroup;
 			children = (
+				F903D0621C57D34A001A4844 /* LoadbangTest.pd */,
 				F93FC0641C4D7AA20059E39F /* ShimTest1.pd */,
 			);
 			path = MMPUnitTestPatches;
@@ -1735,6 +1743,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F93FC0651C4D7AA20059E39F /* ShimTest1.pd in Resources */,
+				F903D0631C57D34A001A4844 /* LoadbangTest.pd in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1837,6 +1846,7 @@
 				F975609A1A6EAC5F005CCE8E /* MobMuPlatUtil.m in Sources */,
 				F94FB0361A6F709E004EEF76 /* lrshift~.c in Sources */,
 				F9AB5FF11C503018007F6A21 /* MMPPdNumber.m in Sources */,
+				F903D1561C582C4F001A4844 /* MMPPdArrayWidget.m in Sources */,
 				DC59570E1733800500CEBECC /* MeLabel.m in Sources */,
 				F92AF7761C0C23EC00EED3BB /* Bang.m in Sources */,
 				DC59570F1733800500CEBECC /* MeMultiSlider.m in Sources */,
@@ -1964,6 +1974,10 @@
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "MobMuPlat/MobMuPlat-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/**";
 				INFOPLIST_FILE = "MobMuPlat/MobMuPlat-Info.plist";
 				INSTALL_GROUP = "";
@@ -2045,6 +2059,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "MobMuPlat/MobMuPlat-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -2067,7 +2082,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.iglesiaintermedia.MobMuPlatTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MobMuPlat.app/MobMuPlat";
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../libpd/**";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../libpd/** $(SRCROOT)/../PdParty/src/** $(SRCROOT)/../PdParty/libs";
 			};
 			name = Debug;
 		};
@@ -2089,6 +2104,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "MobMuPlat/MobMuPlat-Prefix.pch";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -2106,7 +2122,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.iglesiaintermedia.MobMuPlatTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MobMuPlat.app/MobMuPlat";
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../libpd/**";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../libpd/** $(SRCROOT)/../PdParty/src/** $(SRCROOT)/../PdParty/libs";
 			};
 			name = Release;
 		};

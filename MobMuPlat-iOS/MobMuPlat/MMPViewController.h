@@ -78,6 +78,9 @@
   int pageCount;
 }
 
+// TODO separate audiobus.
+- (instancetype)initWithAudioBusEnabled:(BOOL)audioBusEnabled NS_DESIGNATED_INITIALIZER;
+
 -(void)connectPorts;
 -(void)disconnectPorts;
 -(BOOL)isAudioBusConnected;
