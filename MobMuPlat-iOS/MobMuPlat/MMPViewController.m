@@ -70,7 +70,6 @@ extern void pique_setup(void);
   MMPGui *_pdGui; //keep strong around for widgets to use (weakly).
   CGFloat _settingsButtonDim;
   CGFloat _settingsButtonOffset;
-  MMPPdDispatcher *_mmpPdDispatcher;
   MMPMenuButton * _settingsButton;
 }
 
@@ -274,6 +273,21 @@ extern void pique_setup(void);
   reach.reachableOnWWAN = NO;
   [reach startNotifier];
 
+  //PD setup
+  // set self as PdRecieverDelegate to recieve messages from Libpd
+  [PdBase setMidiDelegate:self];
+
+  [PdBase subscribe:@"toGUI"];
+  [PdBase subscribe:@"toNetwork"];
+  [PdBase subscribe:@"toSystem"];
+
+  _pdGui = [[MMPGui alloc] init];
+  _mmpPdDispatcher = [[MMPPdDispatcher alloc] init];
+  [Widget setDispatcher:_mmpPdDispatcher];
+  [PdBase setDelegate:_mmpPdDispatcher];
+
+  _mmpPdDispatcher.printDelegate = self;
+  //
 
   //copy bundle stuff if not there, i.e. first time we are running it on a new version #
 
@@ -318,8 +332,6 @@ extern void pique_setup(void);
 
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:appFirstStartOfVersionKey];
 
-    //Force recopy of shims on upgrade
-    [MMPPdPatchDisplayUtils maybeCreatePdGuiFolderAndFiles:YES];
   }
   //end first run and copy
 
@@ -372,23 +384,7 @@ extern void pique_setup(void);
   navigationController.navigationBar.barStyle = UIBarStyleBlack;
   navigationController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
 
-
-  //PD setup
-  // set self as PdRecieverDelegate to recieve messages from Libpd
-  [PdBase setMidiDelegate:self];
-
-  [PdBase subscribe:@"toGUI"];
-  [PdBase subscribe:@"toNetwork"];
-  [PdBase subscribe:@"toSystem"];
-
-  [audioController setActive:YES];
-
-  _pdGui = [[MMPGui alloc] init];
-  _mmpPdDispatcher = [[MMPPdDispatcher alloc] init];
-  [Widget setDispatcher:_mmpPdDispatcher];
-  [PdBase setDelegate:_mmpPdDispatcher];
-
-  _mmpPdDispatcher.printDelegate = self;
+   [audioController setActive:YES];
 
   //start default intro patch
   canvasType hardwareCanvasType = [MMPViewController getCanvasType];
@@ -682,8 +678,6 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   if (!fromPath) return NO;
   [self loadSceneCommonReset];
   [_settingsButton setBarColor:[UIColor blackColor]];
-
-  [MMPPdPatchDisplayUtils maybeCreatePdGuiFolderAndFiles:NO]; //No = don't force overwrite if there.
 
   NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
   NSString *publicDocumentsDir = [paths objectAtIndex:0];
@@ -1493,7 +1487,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 {
   [settingsVC consolePrint:message];
   //TEMP
-  NSLog(message);
+  //NSLog(message);
 }
 
 //receive OSC message from network, format into message to send into PureData patch

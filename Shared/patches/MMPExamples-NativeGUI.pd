@@ -1,4 +1,4 @@
-#N canvas 634 57 477 687 12;
+#N canvas 35 73 477 687 12;
 #X text 21 589 Based on layout objects from PdParty and PdDroidParty.
 ;
 #X obj 94 71 hsl 256 30 0 127 0 0 empty empty modulation 0 35 0 10

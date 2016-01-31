@@ -76,6 +76,9 @@
 
     Reachability* reach;
   int pageCount;
+  //
+  @public // exposed for testing
+  MMPPdDispatcher *_mmpPdDispatcher;
 }
 
 // TODO separate audiobus.

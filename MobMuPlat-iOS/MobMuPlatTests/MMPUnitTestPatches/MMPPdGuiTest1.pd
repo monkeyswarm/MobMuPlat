@@ -1,0 +1,24 @@
+#N canvas 24 292 527 325 10;
+#X obj 22 45 tgl 15 1 empty empty empty 17 7 0 10 -262144 -1 -1 1 1
+;
+#X floatatom 22 67 5 0 0 0 - - testInitToggleToNumber, f 5;
+#X obj 81 46 hsl 128 15 100 110 0 1 empty empty empty -2 -8 0 10 -262144
+-1 -1 6400 1;
+#X floatatom 78 66 10 0 0 0 - - testInitSliderToNumber, f 10;
+#X obj 247 48 hradio 15 1 1 8 empty empty empty 0 -8 0 10 -262144 -1
+-1 6;
+#X floatatom 246 69 5 0 0 0 - - -, f 5;
+#X obj 387 49 bng 15 250 50 1 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 387 72 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X obj 412 49 nbx 5 14 -1e+37 1e+37 0 1 empty empty empty 0 -8 0 10
+-262144 -1 -1 89 256;
+#X floatatom 412 71 5 0 0 0 - - -, f 5;
+#X text 18 18 test initialization values & number send - number boxes
+(and toggle) have send values to test.;
+#X connect 0 0 1 0;
+#X connect 2 0 3 0;
+#X connect 4 0 5 0;
+#X connect 6 0 7 0;
+#X connect 8 0 9 0;

@@ -15,8 +15,4 @@
 /// [1] = proccessed lines to generate to the MMP GUI
 + (NSArray *)proccessAtomLines:(NSArray *)lines;
 
-
-/// Call before opening a pd gui. Ensure that the Documents folder with the shim files exists.
-+ (void)maybeCreatePdGuiFolderAndFiles:(BOOL)shouldForce;
-
 @end

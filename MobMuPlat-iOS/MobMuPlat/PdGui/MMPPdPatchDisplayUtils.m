@@ -182,31 +182,4 @@
   return result;
 }
 
-+ (void)maybeCreatePdGuiFolderAndFiles:(BOOL)shouldForce {
-  NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-  NSString *publicDocumentsDir = [paths objectAtIndex:0];
-
-  // Copy pd gui shim files if they are not there.
-  NSString *patchDocFolderPath = [publicDocumentsDir stringByAppendingPathComponent:@"MMPPdGuiFiles"];
-  if(![[NSFileManager defaultManager] fileExistsAtPath:patchDocFolderPath]) { //if doesn't exist, create folder.
-    [[NSFileManager defaultManager] createDirectoryAtPath:patchDocFolderPath withIntermediateDirectories:NO attributes:nil error:nil];
-  }
-  NSArray *pdGuiPatchFiles = @[ @"MMPPdGuiFloatShim.pd", @"MMPPdGuiSymbolShim.pd", @"MMPPdGuiBangShim.pd", @"MMPPdGuiMessageShim.pd", @"MMPPdGuiToggleShim.pd"];
-  for(NSString* patchName in pdGuiPatchFiles){
-    NSString* patchDocPath = [patchDocFolderPath stringByAppendingPathComponent:patchName];
-    NSString* patchBundlePath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:patchName];
-    NSError* error = nil;
-    if (shouldForce) { //force overwrite
-      if([[NSFileManager defaultManager] fileExistsAtPath:patchDocPath]) {
-        [[NSFileManager defaultManager] removeItemAtPath:patchDocPath error:&error];
-      }
-      [[NSFileManager defaultManager] copyItemAtPath:patchBundlePath toPath:patchDocPath error:&error];
-    } else {
-      if(![[NSFileManager defaultManager] fileExistsAtPath:patchDocPath]) { //if doesn't exist, copy.
-        [[NSFileManager defaultManager] copyItemAtPath:patchBundlePath toPath:patchDocPath error:&error];
-      }
-    }
-  }
-}
-
 @end

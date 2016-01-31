@@ -219,6 +219,8 @@
 		F94FB03C1A6F709E004EEF76 /* vexp_if.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB0301A6F709E004EEF76 /* vexp_if.c */; };
 		F94FB03D1A6F709E004EEF76 /* vexp.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB0311A6F709E004EEF76 /* vexp.c */; };
 		F94FB53918F596AB003BFB18 /* MenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F94FB53818F596AB003BFB18 /* MenuViewController.m */; };
+		F954C5721C5A807800CDD26D /* MMPPdComment.m in Sources */ = {isa = PBXBuildFile; fileRef = F954C5711C5A807800CDD26D /* MMPPdComment.m */; };
+		F95701BB1C5D5B8700D9A4C6 /* MMPPdGuiTest1.pd in Resources */ = {isa = PBXBuildFile; fileRef = F95701BA1C5D5B8700D9A4C6 /* MMPPdGuiTest1.pd */; };
 		F95C52021909B1230074E0A6 /* MeTable.m in Sources */ = {isa = PBXBuildFile; fileRef = F95C52011909B1230074E0A6 /* MeTable.m */; };
 		F97560971A6E27CD005CCE8E /* MobMuPlatPdAudioUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = F97560961A6E27CD005CCE8E /* MobMuPlatPdAudioUnit.m */; };
 		F975609A1A6EAC5F005CCE8E /* MobMuPlatUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = F97560991A6EAC5F005CCE8E /* MobMuPlatUtil.m */; };
@@ -658,6 +660,9 @@
 		F94FB0321A6F709E004EEF76 /* vexp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vexp.h; path = "pure-data/extra/expr~/vexp.h"; sourceTree = "<group>"; };
 		F94FB53718F596AB003BFB18 /* MenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuViewController.h; path = gui/MenuViewController.h; sourceTree = "<group>"; };
 		F94FB53818F596AB003BFB18 /* MenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MenuViewController.m; path = gui/MenuViewController.m; sourceTree = "<group>"; };
+		F954C5701C5A807800CDD26D /* MMPPdComment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMPPdComment.h; sourceTree = "<group>"; };
+		F954C5711C5A807800CDD26D /* MMPPdComment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMPPdComment.m; sourceTree = "<group>"; };
+		F95701BA1C5D5B8700D9A4C6 /* MMPPdGuiTest1.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MMPPdGuiTest1.pd; sourceTree = "<group>"; };
 		F95C52001909B1230074E0A6 /* MeTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeTable.h; path = gui/MeTable.h; sourceTree = "<group>"; };
 		F95C52011909B1230074E0A6 /* MeTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeTable.m; path = gui/MeTable.m; sourceTree = "<group>"; };
 		F975608C1A6E235B005CCE8E /* libpd.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libpd.xcodeproj; path = ../libpd/libpd.xcodeproj; sourceTree = "<group>"; };
@@ -1440,6 +1445,7 @@
 		F93FC0631C4D7AA20059E39F /* MMPUnitTestPatches */ = {
 			isa = PBXGroup;
 			children = (
+				F95701BA1C5D5B8700D9A4C6 /* MMPPdGuiTest1.pd */,
 				F903D0621C57D34A001A4844 /* LoadbangTest.pd */,
 				F93FC0641C4D7AA20059E39F /* ShimTest1.pd */,
 			);
@@ -1463,6 +1469,8 @@
 				F9AB5FF01C503018007F6A21 /* MMPPdToggle.m */,
 				F93FC07E1C4E0E0E0059E39F /* MMPPdBang.h */,
 				F93FC07F1C4E0E0E0059E39F /* MMPPdBang.m */,
+				F954C5701C5A807800CDD26D /* MMPPdComment.h */,
+				F954C5711C5A807800CDD26D /* MMPPdComment.m */,
 			);
 			name = PdPartySubclasses;
 			sourceTree = "<group>";
@@ -1744,6 +1752,7 @@
 			files = (
 				F93FC0651C4D7AA20059E39F /* ShimTest1.pd in Resources */,
 				F903D0631C57D34A001A4844 /* LoadbangTest.pd in Resources */,
+				F95701BB1C5D5B8700D9A4C6 /* MMPPdGuiTest1.pd in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1836,6 +1845,7 @@
 				F93FC07B1C4E067F0059E39F /* MMPGui.m in Sources */,
 				DC59570A1733800500CEBECC /* MeButton.m in Sources */,
 				DC59570B1733800500CEBECC /* MeControl.m in Sources */,
+				F954C5721C5A807800CDD26D /* MMPPdComment.m in Sources */,
 				F94FB0371A6F709E004EEF76 /* pique.c in Sources */,
 				F95C52021909B1230074E0A6 /* MeTable.m in Sources */,
 				F92AF8351C0D6F7400EED3BB /* MMPPdMessageBox.m in Sources */,

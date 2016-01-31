@@ -87,7 +87,7 @@
                           round(self.originalFrame.origin.x * self.gui.scaleX),
                           round(self.originalFrame.origin.y * self.gui.scaleY),
                           round(CGRectGetWidth(self.valueLabel.frame) + (2 * self.gui.scaleX) +INDENT ),
-                          round(CGRectGetHeight(self.valueLabel.frame) + (2 * self.gui.scaleX)));
+                          round(CGRectGetHeight(self.valueLabel.frame) + (4 * self.gui.scaleY))); //MMP was 2 * scaleX
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {

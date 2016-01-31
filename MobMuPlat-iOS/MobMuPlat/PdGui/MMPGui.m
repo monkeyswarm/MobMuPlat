@@ -21,6 +21,7 @@
 #import "MMPPdRadio.h"
 #import "MMPPdNumber2.h"
 #import "MMPPdToggle.h"
+#import "MMPPdComment.h"
 
 @implementation MMPGui {
   BOOL _inLevel2CanvasShowingArray;
@@ -189,6 +190,14 @@
   if(r) {
     [self.widgets addObject:r];
     DDLogVerbose(@"Gui: added %@", r.type);
+  }
+}
+
+- (void)addComment:(NSArray *)atomLine {
+  MMPPdComment *c = [[MMPPdComment alloc] initWithAtomLine:atomLine andGui:self];
+  if(c) {
+    [self.widgets addObject:c];
+    DDLogVerbose(@"Gui: added %@", c.type);
   }
 }
 

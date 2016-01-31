@@ -74,11 +74,12 @@
   self.valueLabel.frame = valueLabelFrame;
 
   // bounds from value label size
+  // MMP: add some padding below label
   self.frame = CGRectMake(
                           round(self.originalFrame.origin.x * self.gui.scaleX),
                           round(self.originalFrame.origin.y * self.gui.scaleY),
-                          round(CGRectGetWidth(self.valueLabel.frame) + (2 * self.gui.scaleX)),
-                          round(CGRectGetHeight(self.valueLabel.frame) + (2 * self.gui.scaleX)));
+                          round(CGRectGetWidth(self.valueLabel.frame) + (4 * self.gui.scaleX)), //was 2
+                          round(CGRectGetHeight(self.valueLabel.frame) + (4 * self.gui.scaleY))); //was 2 * scaleX
 }
 
 
