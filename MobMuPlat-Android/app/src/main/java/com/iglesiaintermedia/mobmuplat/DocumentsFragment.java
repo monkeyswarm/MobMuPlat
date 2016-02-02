@@ -116,8 +116,10 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 		if (!(Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))) return null;
 		
 		File fileDir = new File(MainActivity.getDocumentsFolderPath());//device/sdcard
+
 		ArrayList<String> fileList = new ArrayList<String>();
 	    File[] files = fileDir.listFiles();
+		if (files == null)return null;
 	    Arrays.sort(files); //listfiles does not have an order...
 	    if (files.length == 0)
 	        return null;
