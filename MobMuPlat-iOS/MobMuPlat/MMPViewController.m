@@ -71,6 +71,9 @@ extern void pique_setup(void);
   CGFloat _settingsButtonDim;
   CGFloat _settingsButtonOffset;
   MMPMenuButton * _settingsButton;
+
+  //
+  BOOL _flipped;
 }
 
 @synthesize audioController, settingsVC;
@@ -277,9 +280,10 @@ extern void pique_setup(void);
   // set self as PdRecieverDelegate to recieve messages from Libpd
   [PdBase setMidiDelegate:self];
 
-  [PdBase subscribe:@"toGUI"];
+  // handled in load scene common reset.
+  /*[PdBase subscribe:@"toGUI"];
   [PdBase subscribe:@"toNetwork"];
-  [PdBase subscribe:@"toSystem"];
+  [PdBase subscribe:@"toSystem"];*/
 
   _pdGui = [[MMPGui alloc] init];
   _mmpPdDispatcher = [[MMPPdDispatcher alloc] init];
@@ -384,7 +388,34 @@ extern void pique_setup(void);
   navigationController.navigationBar.barStyle = UIBarStyleBlack;
   navigationController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
 
-   [audioController setActive:YES];
+  [audioController setActive:YES];
+
+  _flipped = [[NSUserDefaults standardUserDefaults] boolForKey:@"MMPFlipInterface"]; //grab from defaults. TODO interact with settignsVC.
+
+  BOOL autoLoad = [[NSUserDefaults standardUserDefaults] boolForKey:@"MMPAutoLoadLastPatch"];
+  if (autoLoad) {
+    NSString *lastDocPath = [[NSUserDefaults standardUserDefaults] objectForKey:@"MMPLastOpenedInterfaceOrPdPath"];
+    NSString* suffix = [[lastDocPath componentsSeparatedByString: @"."] lastObject];
+    BOOL loaded = NO;
+    if([suffix isEqualToString:@"mmp"]){
+      loaded = [self loadMMPSceneFromDocPath:lastDocPath];
+    } else if ([suffix isEqualToString:@"pd"]) {
+      loaded = [self loadScenePatchOnlyFromDocPath:lastDocPath];
+    }
+    if (loaded){ //success.
+      return;
+    } else { //failure
+      // TODO: this shows double-alert. Fix.
+      UIAlertView *alert = [[UIAlertView alloc]
+                          initWithTitle: @"Could not auto-load"
+                          message: [NSString stringWithFormat:@"Could not auto-load %@, perhaps it moved?", lastDocPath]
+                          delegate: nil
+                          cancelButtonTitle:@"OK"
+                          otherButtonTitles:nil];
+    [alert show];
+    }
+
+  }
 
   //start default intro patch
   canvasType hardwareCanvasType = [MMPViewController getCanvasType];
@@ -396,13 +427,8 @@ extern void pique_setup(void);
   else//pad
     path = [[NSBundle mainBundle] pathForResource:@"Welcome-Pad" ofType:@"mmp"];
 
-  NSString* jsonString = [NSString stringWithContentsOfFile: path encoding:NSUTF8StringEncoding error:nil];
-
-  if(jsonString){
-    //[self loadScene:[jsonString objectFromJSONString]];
-    NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
-    [self loadScene:[NSJSONSerialization JSONObjectWithData:data options:nil error:nil]];
-  } else {
+  BOOL loaded = [self loadMMPSceneFromFullPath:path];
+  if (!loaded) {
     //still put butotn
     _settingsButton.transform = CGAffineTransformMakeRotation(0);
     _settingsButton.frame = CGRectMake(_settingsButtonOffset, _settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
@@ -648,8 +674,8 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   [self dismissModalViewControllerAnimated:YES];
 }
 
--(void)flipInterface{
-  isFlipped = !isFlipped;
+-(void)flipInterface:(BOOL)isFlipped {
+  _flipped = isFlipped;
   if(isFlipped) {
     scrollView.transform = pdPatchView.transform = CGAffineTransformMakeRotation(M_PI+isLandscape*M_PI_2);
   } else {
@@ -661,20 +687,24 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   if (!filename) return NO;
   NSString* bundlePath = [bundle resourcePath] ;
   NSString* patchBundlePath = [bundlePath stringByAppendingPathComponent:filename];
-  return [self loadScenePatchOnly:filename fullPath:patchBundlePath];
+  return [self loadScenePatchOnlyFromPath:patchBundlePath];
 }
 
-//
--(BOOL)loadScenePatchOnly:(NSString*)filename{
-  if (!filename) return NO;
+// assumes document dir
+-(BOOL)loadScenePatchOnlyFromDocPath:(NSString*)docPath{
+  if (!docPath) return NO;
   NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
   NSString *publicDocumentsDir = [paths objectAtIndex:0];
-  NSString *fromPath = [publicDocumentsDir stringByAppendingPathComponent:filename];
+  NSString *fromPath = [publicDocumentsDir stringByAppendingPathComponent:docPath];
 
-  return [self loadScenePatchOnly:filename fullPath:fromPath];
+  BOOL loaded = [self loadScenePatchOnlyFromPath:fromPath];
+  if (loaded) {
+    [self trackLastOpenedDocPath:docPath];
+  }
+  return loaded;
 }
 
-- (BOOL)loadScenePatchOnly:(NSString *)filename fullPath:(NSString *)fromPath {
+- (BOOL)loadScenePatchOnlyFromPath:(NSString *)fromPath {
   if (!fromPath) return NO;
   [self loadSceneCommonReset];
   [_settingsButton setBarColor:[UIColor blackColor]];
@@ -709,7 +739,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   if ([originalAtomLines count] == 0 || [originalAtomLines[0] count] < 6 || ![originalAtomLines[0][1] isEqualToString:@"canvas"] ) {
     UIAlertView *alert = [[UIAlertView alloc]
                           initWithTitle: @"Pd file not parsed"
-                          message: [NSString stringWithFormat:@"Pd file %@ not readable", filename]
+                          message: [NSString stringWithFormat:@"Pd file not readable"]
                           delegate: nil
                           cancelButtonTitle:@"OK"
                           otherButtonTitles:nil];
@@ -757,7 +787,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     isLandscape = YES;
     CGPoint rotatePoint = CGPointMake(hardwareCanvasSize.height / 2.0f, hardwareCanvasSize.width / 2.0f);
     pdPatchView.center = rotatePoint;
-    if(isFlipped){
+    if(_flipped){
       pdPatchView.transform = CGAffineTransformMakeRotation(M_PI_2+M_PI);
 
       _settingsButton.transform = CGAffineTransformMakeRotation(M_PI_2+M_PI);
@@ -771,7 +801,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     }
   } else {
     isLandscape = NO;
-    if(isFlipped){
+    if(_flipped){
       pdPatchView.transform = CGAffineTransformMakeRotation(M_PI);
 
       _settingsButton.transform = CGAffineTransformMakeRotation(M_PI);
@@ -810,8 +840,12 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
   [self.view addSubview:_settingsButton];
 
-
   return YES;
+}
+
+- (void)trackLastOpenedDocPath:(NSString *)docPath {
+  // Can't store full path, need to store path relative to documents.
+  [[NSUserDefaults standardUserDefaults] setObject:docPath forKey:@"MMPLastOpenedInterfaceOrPdPath"];
 }
 
 //
@@ -874,7 +908,29 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   [locationManager stopUpdatingHeading];
 }
 
--(BOOL)loadScene:(NSDictionary*) sceneDict{
+-(BOOL)loadMMPSceneFromFullPath:(NSString *)fullPath {
+  NSString* jsonString = [NSString stringWithContentsOfFile:fullPath encoding:NSUTF8StringEncoding error:nil];
+  NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+  if(!data)return NO;
+  NSDictionary* sceneDict = [NSJSONSerialization JSONObjectWithData:data options:nil error:nil];
+
+  return [self loadMMPSceneFromJSON:sceneDict];
+}
+
+- (BOOL)loadMMPSceneFromDocPath:(NSString *)docPath {
+  NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+  NSString *publicDocumentsDir = [paths objectAtIndex:0];
+  NSString* fullPath = [publicDocumentsDir stringByAppendingPathComponent:docPath];
+
+  BOOL loaded = [self loadMMPSceneFromFullPath:fullPath];
+  if (loaded) {
+    [self trackLastOpenedDocPath:docPath];
+  }
+
+  return loaded;
+}
+
+-(BOOL)loadMMPSceneFromJSON:(NSDictionary*) sceneDict{
   if(!sceneDict)return NO;
 
   [self loadSceneCommonReset];
@@ -968,7 +1024,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     isLandscape = YES;
     CGPoint rotatePoint = CGPointMake(hardwareCanvasSize.height / 2.0f, hardwareCanvasSize.width / 2.0f);
     scrollView.center = rotatePoint;
-    if(isFlipped){
+    if(_flipped){
       scrollView.transform = CGAffineTransformMakeRotation(M_PI_2+M_PI);
     }
     else {
@@ -976,7 +1032,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     }
   } else {
     isLandscape = NO;
-    if(isFlipped){
+    if(_flipped){
       scrollView.transform = CGAffineTransformMakeRotation(M_PI);
     }
   }
@@ -1224,8 +1280,8 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
                           cancelButtonTitle:@"OK"
                           otherButtonTitles:nil];
     [alert show];
+    return NO;
   }
-
 
   return YES;
 }
@@ -1264,13 +1320,13 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
 -(UIInterfaceOrientation)orientation{
   if (isLandscape) {
-    if (isFlipped) {
+    if (_flipped) {
       return UIInterfaceOrientationLandscapeLeft;
     } else {
       return UIInterfaceOrientationLandscapeRight;
     }
   } else {
-    if (isFlipped) {
+    if (_flipped) {
       return UIInterfaceOrientationPortraitUpsideDown;
     } else {
       return UIInterfaceOrientationPortrait;
@@ -1300,7 +1356,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
 //PureData has sent out a message from the patch (from a receive object, we look for messages from "toNetwork","toGUI","toSystem")
 - (void)receiveList:(NSArray *)list fromSource:(NSString *)source{
-  NSLog(@"rec: %@", list);
+  //NSLog(@"rec: %@", list);
   if([list count]==0){
     NSLog(@"got zero args from %@", source);
     return;//protect against bad elements that got dropped from array...

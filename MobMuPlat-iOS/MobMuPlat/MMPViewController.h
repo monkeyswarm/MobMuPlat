@@ -54,7 +54,7 @@
 	
   BOOL mixingEnabled;
     BOOL isLandscape;
-    BOOL isFlipped;
+    
    
     
     PdFile *openPDFile;

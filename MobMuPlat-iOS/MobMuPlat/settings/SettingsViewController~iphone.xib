@@ -19,6 +19,7 @@
                 <outlet property="audioMidiViewButton" destination="6e5-hL-t5E" id="24z-cK-oNI"/>
                 <outlet property="audioRouteContainerView" destination="4ry-H7-1jl" id="c4B-gO-V4N"/>
                 <outlet property="audioRouteLabel" destination="Ved-fV-r3s" id="CAr-Q0-caP"/>
+                <outlet property="autoLoadButton" destination="j8w-sP-81f" id="BnC-6Z-YP8"/>
                 <outlet property="clearConsoleButton" destination="Rxx-z8-lcI" id="y4w-aU-M0U"/>
                 <outlet property="consoleTextView" destination="aU3-fC-jVS" id="r48-KW-B8h"/>
                 <outlet property="consoleView" destination="tm1-Ey-OH2" id="o0k-YU-1XP"/>
@@ -434,47 +435,6 @@ Use a local router only for best results. </string>
                         <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                 </button>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bbb-eu-PYZ">
-                    <rect key="frame" x="10" y="8" width="394" height="593"/>
-                    <subviews>
-                        <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="7if-bL-GZD">
-                            <rect key="frame" x="10" y="11" width="280" height="370"/>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        </tableView>
-                        <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RKH-wj-XyU">
-                            <rect key="frame" x="10" y="389" width="135" height="30"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                            <state key="normal" title="show all files">
-                                <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                            </state>
-                        </button>
-                        <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fEK-gL-YRS" userLabel="Button - flip interface">
-                            <rect key="frame" x="155" y="389" width="135" height="30"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                            <state key="normal" title="flip interface">
-                                <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                            </state>
-                        </button>
-                    </subviews>
-                    <color key="backgroundColor" red="0.5" green="0.0" blue="0.5" alpha="1" colorSpace="calibratedRGB"/>
-                    <constraints>
-                        <constraint firstItem="fEK-gL-YRS" firstAttribute="top" secondItem="7if-bL-GZD" secondAttribute="bottom" constant="8" id="6Ob-TH-PQg"/>
-                        <constraint firstItem="RKH-wj-XyU" firstAttribute="top" secondItem="7if-bL-GZD" secondAttribute="bottom" constant="8" id="EGv-Bg-LZm"/>
-                        <constraint firstAttribute="bottom" secondItem="fEK-gL-YRS" secondAttribute="bottom" constant="10" id="K0n-yy-cl1"/>
-                        <constraint firstItem="fEK-gL-YRS" firstAttribute="top" secondItem="7if-bL-GZD" secondAttribute="bottom" constant="8" id="MpM-dH-mya"/>
-                        <constraint firstItem="RKH-wj-XyU" firstAttribute="leading" secondItem="bbb-eu-PYZ" secondAttribute="leading" constant="10" id="OHr-Kn-xMV"/>
-                        <constraint firstItem="fEK-gL-YRS" firstAttribute="leading" secondItem="RKH-wj-XyU" secondAttribute="trailing" constant="10" id="Xip-hi-hfm"/>
-                        <constraint firstItem="7if-bL-GZD" firstAttribute="leading" secondItem="bbb-eu-PYZ" secondAttribute="leading" constant="10" id="d1N-Em-93j"/>
-                        <constraint firstItem="fEK-gL-YRS" firstAttribute="leading" secondItem="RKH-wj-XyU" secondAttribute="trailing" constant="10" id="eqM-79-t3g"/>
-                        <constraint firstItem="RKH-wj-XyU" firstAttribute="width" secondItem="fEK-gL-YRS" secondAttribute="width" id="fdn-r7-yb1"/>
-                        <constraint firstItem="7if-bL-GZD" firstAttribute="top" secondItem="bbb-eu-PYZ" secondAttribute="top" constant="11" id="iUR-WD-IK5"/>
-                        <constraint firstAttribute="bottom" secondItem="RKH-wj-XyU" secondAttribute="bottom" constant="10" id="nFb-f9-7VL"/>
-                        <constraint firstAttribute="trailing" secondItem="7if-bL-GZD" secondAttribute="trailing" constant="10" id="sjs-c6-gg7"/>
-                        <constraint firstAttribute="trailing" secondItem="fEK-gL-YRS" secondAttribute="trailing" constant="10" id="wcY-dD-nT8"/>
-                    </constraints>
-                </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tm1-Ey-OH2">
                     <rect key="frame" x="10" y="8" width="394" height="593"/>
                     <subviews>
@@ -649,6 +609,57 @@ and audio output routing)</string>
                         <constraint firstItem="TrW-s5-vQA" firstAttribute="width" secondItem="rwa-D0-SdT" secondAttribute="width" id="cGw-hH-Dko"/>
                     </constraints>
                 </scrollView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bbb-eu-PYZ">
+                    <rect key="frame" x="10" y="8" width="394" height="593"/>
+                    <subviews>
+                        <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="7if-bL-GZD">
+                            <rect key="frame" x="10" y="11" width="280" height="370"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </tableView>
+                        <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RKH-wj-XyU">
+                            <rect key="frame" x="10" y="389" width="110" height="30"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                            <state key="normal" title="show all files">
+                                <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fEK-gL-YRS" userLabel="Button - flip interface">
+                            <rect key="frame" x="128" y="389" width="110" height="30"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                            <state key="normal" title="flip interface">
+                                <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j8w-sP-81f" userLabel="Button - auto load">
+                            <rect key="frame" x="238" y="389" width="110" height="30"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                            <state key="normal" title="load on start">
+                                <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" red="0.5" green="0.0" blue="0.5" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstItem="fEK-gL-YRS" firstAttribute="top" secondItem="7if-bL-GZD" secondAttribute="bottom" constant="8" id="6Ob-TH-PQg"/>
+                        <constraint firstItem="RKH-wj-XyU" firstAttribute="top" secondItem="7if-bL-GZD" secondAttribute="bottom" constant="8" id="EGv-Bg-LZm"/>
+                        <constraint firstAttribute="bottom" secondItem="fEK-gL-YRS" secondAttribute="bottom" constant="10" id="K0n-yy-cl1"/>
+                        <constraint firstItem="RKH-wj-XyU" firstAttribute="leading" secondItem="bbb-eu-PYZ" secondAttribute="leading" constant="10" id="OHr-Kn-xMV"/>
+                        <constraint firstItem="j8w-sP-81f" firstAttribute="width" secondItem="fEK-gL-YRS" secondAttribute="width" id="PxS-SY-enW"/>
+                        <constraint firstAttribute="trailing" secondItem="j8w-sP-81f" secondAttribute="trailing" constant="10" id="TnP-Si-hFm"/>
+                        <constraint firstItem="fEK-gL-YRS" firstAttribute="leading" secondItem="RKH-wj-XyU" secondAttribute="trailing" constant="10" id="Xip-hi-hfm"/>
+                        <constraint firstItem="j8w-sP-81f" firstAttribute="leading" secondItem="fEK-gL-YRS" secondAttribute="trailing" constant="10" id="a7g-XX-tuL"/>
+                        <constraint firstItem="7if-bL-GZD" firstAttribute="leading" secondItem="bbb-eu-PYZ" secondAttribute="leading" constant="10" id="d1N-Em-93j"/>
+                        <constraint firstAttribute="bottom" secondItem="j8w-sP-81f" secondAttribute="bottom" constant="10" id="fG5-Nl-jNH"/>
+                        <constraint firstItem="RKH-wj-XyU" firstAttribute="width" secondItem="fEK-gL-YRS" secondAttribute="width" id="fdn-r7-yb1"/>
+                        <constraint firstItem="7if-bL-GZD" firstAttribute="top" secondItem="bbb-eu-PYZ" secondAttribute="top" constant="11" id="iUR-WD-IK5"/>
+                        <constraint firstItem="j8w-sP-81f" firstAttribute="top" secondItem="7if-bL-GZD" secondAttribute="bottom" constant="8" id="lmm-tG-f4a"/>
+                        <constraint firstAttribute="bottom" secondItem="RKH-wj-XyU" secondAttribute="bottom" constant="10" id="nFb-f9-7VL"/>
+                        <constraint firstAttribute="trailing" secondItem="7if-bL-GZD" secondAttribute="trailing" constant="10" id="sjs-c6-gg7"/>
+                    </constraints>
+                </view>
             </subviews>
             <color key="backgroundColor" white="0.39560231854838712" alpha="1" colorSpace="calibratedWhite"/>
             <constraints>

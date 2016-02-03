@@ -28,8 +28,10 @@
 }
 @end
 
-@implementation SettingsViewController
-@synthesize delegate;
+@implementation SettingsViewController {
+  BOOL _mmpOrAll, _flipped, _autoLoad;
+}
+
 static NSString *documentsTableCellIdentifier = @"documentsTableCell";
 static NSString *midiTableCellIdentifier = @"midiTableCell";
 static NSString *landiniTableCellIdentifier = @"landiniTableCell";
@@ -146,6 +148,11 @@ static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
     buttonRadius=5;
   }
 
+  //
+  _mmpOrAll = [[NSUserDefaults standardUserDefaults] boolForKey:@"MMPShowAllFiles"];
+  _flipped = [[NSUserDefaults standardUserDefaults] boolForKey:@"MMPFlipInterface"];
+  _autoLoad = [[NSUserDefaults standardUserDefaults] boolForKey:@"MMPAutoLoadLastPatch"];
+
   //top buttons
   [_documentViewButton addTarget:self action:@selector(showLoadDoc:) forControlEvents:UIControlEventTouchUpInside];
   _documentViewButton.layer.cornerRadius = buttonRadius;
@@ -175,11 +182,19 @@ static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
   _showFilesButton.layer.borderWidth = 1;
   _showFilesButton.layer.borderColor = [UIColor whiteColor].CGColor;
   _showFilesButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+  [self refreshShowFilesButton];
 
   [_flipInterfaceButton addTarget:self action:@selector(flipInterfaceButtonHit:) forControlEvents:UIControlEventTouchUpInside];
   _flipInterfaceButton.layer.cornerRadius = buttonRadius;
   _flipInterfaceButton.layer.borderWidth = 1;
   _flipInterfaceButton.layer.borderColor = [UIColor whiteColor].CGColor;
+  [self refreshFlipButton];
+
+  [_autoLoadButton addTarget:self action:@selector(autoLoadButtonHit:) forControlEvents:UIControlEventTouchUpInside];
+  _autoLoadButton.layer.cornerRadius = buttonRadius;
+  _autoLoadButton.layer.borderWidth = 1;
+  _autoLoadButton.layer.borderColor = [UIColor whiteColor].CGColor;
+  [self refreshAutoLoadButton];
 
   //console
   [_clearConsoleButton addTarget:self action:@selector(clearConsole:) forControlEvents:UIControlEventTouchUpInside];
@@ -544,39 +559,52 @@ BOOL LANdiniSwitchBool;
 
 
 -(void)showFilesButtonHit:(id)sender{
-  if([_showFilesButton tag]==0){//is showing mmp, change to show all
-    mmpOrAll=YES;
-    [self reloadFileTable];
-    [_showFilesButton setTitle:@"show only mmp files" forState:UIControlStateNormal];
+  _mmpOrAll = !_mmpOrAll;
+  [self reloadFileTable];
+  [[NSUserDefaults standardUserDefaults] setBool:_mmpOrAll forKey:@"MMPShowAllFiles"]; //Move to view did close.
+  [self refreshShowFilesButton];
+}
+
+-(void)refreshShowFilesButton {
+  if(_mmpOrAll){//is showing mmp, change to show all
     _showFilesButton.backgroundColor = [UIColor whiteColor];
     [_showFilesButton setTitleColor:[UIColor purpleColor] forState:UIControlStateNormal];
-    _showFilesButton.tag=1;
-  }
-  else{
-    mmpOrAll=NO;
-    [self reloadFileTable];
-    [_showFilesButton setTitle:@"show all files" forState:UIControlStateNormal];
+  } else {
     _showFilesButton.backgroundColor = [UIColor purpleColor];
     [_showFilesButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    _showFilesButton.tag=0;
   }
 }
 
 -(void)flipInterfaceButtonHit:(id)sender{
-  //self.view.transform = CGAffineTransformMakeRotation(M_PI);
-  [self.delegate flipInterface];
-  if([_flipInterfaceButton tag]==0){//is showing mmp, change to show all
-    [_flipInterfaceButton setTitle:@"unflip interface" forState:UIControlStateNormal];
+  _flipped = !_flipped;
+  [self.delegate flipInterface:_flipped];
+  [[NSUserDefaults standardUserDefaults] setBool:_flipped forKey:@"MMPFlipInterface"];
+  [self refreshFlipButton];
+}
+
+- (void)refreshFlipButton {
+  if (_flipped) {
     _flipInterfaceButton.backgroundColor = [UIColor whiteColor];
     [_flipInterfaceButton setTitleColor:[UIColor purpleColor] forState:UIControlStateNormal];
-    _flipInterfaceButton.tag=1;
-  }
-  else{
-
-    [_flipInterfaceButton setTitle:@"flip interface" forState:UIControlStateNormal];
+  } else{
     _flipInterfaceButton.backgroundColor = [UIColor purpleColor];
     [_flipInterfaceButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    _flipInterfaceButton.tag=0;
+  }
+}
+
+-(void)autoLoadButtonHit:(id)sender {
+  _autoLoad = !_autoLoad;
+  [[NSUserDefaults standardUserDefaults] setBool:_autoLoad forKey:@"MMPAutoLoadLastPatch"];
+  [self refreshAutoLoadButton];
+}
+
+- (void)refreshAutoLoadButton {
+  if(_autoLoad){
+    _autoLoadButton.backgroundColor = [UIColor whiteColor];
+    [_autoLoadButton setTitleColor:[UIColor purpleColor] forState:UIControlStateNormal];
+  } else{
+    _autoLoadButton.backgroundColor = [UIColor purpleColor];
+    [_autoLoadButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
   }
 }
 
@@ -726,17 +754,14 @@ BOOL LANdiniSwitchBool;
   NSString *publicDocumentsDir = [paths objectAtIndex:0];
 
   //pull filename from either allFiles or MMPFiles, depending on which list we are looking at
-  NSString* filename = [(mmpOrAll ? allFiles : MMPFiles)objectAtIndex:[indexPath row]];
+  NSString* filename = [(_mmpOrAll ? allFiles : MMPFiles)objectAtIndex:[indexPath row]];
   NSString* fullPath = [publicDocumentsDir stringByAppendingPathComponent:filename];
   NSString* suffix = [[filename componentsSeparatedByString: @"."] lastObject];
 
   //if an MMP file, open JSONString and load it
   if([suffix isEqualToString:@"mmp"]){
-    NSString* jsonString = [NSString stringWithContentsOfFile:fullPath encoding:NSUTF8StringEncoding error:nil];
-    //NSDictionary* sceneDict = [jsonString JSONValue];
-    NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
-    NSDictionary* sceneDict = [NSJSONSerialization JSONObjectWithData:data options:nil error:nil];
-    BOOL loaded = [self.delegate loadScene:sceneDict];
+    //BOOL loaded = [self.delegate loadScene:sceneDict];
+    BOOL loaded = [self.delegate loadMMPSceneFromDocPath:filename];
     if(loaded)[self.delegate settingsViewControllerDidFinish:self];//successful load, flip back to main ViewController
     else{//failed load
       UIAlertView *alert = [[UIAlertView alloc]
@@ -793,7 +818,7 @@ BOOL LANdiniSwitchBool;
       return;
     }
 
-    BOOL loaded = [self.delegate loadScenePatchOnly:filename];
+    BOOL loaded = [self.delegate loadScenePatchOnlyFromDocPath:filename];
     if(loaded)[self.delegate settingsViewControllerDidFinish:self];
     else{
       UIAlertView *alert = [[UIAlertView alloc]
@@ -813,7 +838,7 @@ BOOL LANdiniSwitchBool;
   NSString *publicDocumentsDir = [paths objectAtIndex:0];
 
   //pull filename from either allFiles or MMPFiles, depending on which list we are looking at
-  NSString* filename = [(mmpOrAll ? allFiles : MMPFiles)objectAtIndex:[indexPath row]];
+  NSString* filename = [(_mmpOrAll ? allFiles : MMPFiles)objectAtIndex:[indexPath row]];
   NSString* fullPath = [publicDocumentsDir stringByAppendingPathComponent:filename];
   //NSString* suffix = [[filename componentsSeparatedByString: @"."] lastObject];
 
@@ -829,7 +854,7 @@ BOOL LANdiniSwitchBool;
       [alert show];
 
     } else{//success
-      [(mmpOrAll ? allFiles : MMPFiles) removeObjectAtIndex:[indexPath row]];
+      [(_mmpOrAll ? allFiles : MMPFiles) removeObjectAtIndex:[indexPath row]];
     }
   }
   //else error?
@@ -893,7 +918,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-  if(tableView == _documentsTableView)return [(mmpOrAll ? allFiles : MMPFiles) count];
+  if(tableView == _documentsTableView)return [(_mmpOrAll ? allFiles : MMPFiles) count];
   else if (tableView==_midiSourceTableView)return [[[self.audioDelegate midi] sources]  count];
   else if (tableView==_midiDestinationTableView)return [[[self.audioDelegate midi] destinations]  count];
   else if (tableView==_LANdiniUserTableView) return [_LANdiniUserArray count];
@@ -918,7 +943,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
   //if we are looking at MMP files only, then everything is highlightable.
-  if(!mmpOrAll)return YES;
+  if(!_mmpOrAll)return YES;
 
   UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
   //todo centralize this repeated logic
@@ -940,8 +965,8 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
       else cell.textLabel.font=[UIFont systemFontOfSize:16];
     }
 
-    cell.textLabel.text=[(mmpOrAll ? allFiles : MMPFiles) objectAtIndex:[indexPath row]];
-    NSString* suffix = [[[(mmpOrAll ? allFiles : MMPFiles) objectAtIndex:[indexPath row]] componentsSeparatedByString: @"."] lastObject];
+    cell.textLabel.text=[(_mmpOrAll ? allFiles : MMPFiles) objectAtIndex:[indexPath row]];
+    NSString* suffix = [[[(_mmpOrAll ? allFiles : MMPFiles) objectAtIndex:[indexPath row]] componentsSeparatedByString: @"."] lastObject];
     if([suffix isEqualToString:@"mmp"] || [suffix isEqualToString:@"zip"] || [suffix isEqualToString:@"pd"]){
       cell.textLabel.textColor = [UIColor blackColor];
       //cell.userInteractionEnabled=YES;

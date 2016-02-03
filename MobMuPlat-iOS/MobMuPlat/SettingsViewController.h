@@ -32,7 +32,6 @@ typedef enum{
     canvasType hardwareCanvasType;
     
     NSMutableArray *MMPFiles, *allFiles;
-    BOOL mmpOrAll;
 
     NSString* consoleTextString;
     
@@ -61,6 +60,8 @@ typedef enum{
 @property (nonatomic, strong) IBOutlet UITableView* documentsTableView;
 @property (nonatomic, strong) IBOutlet UIButton* showFilesButton;
 @property (nonatomic, strong) IBOutlet UIButton* flipInterfaceButton;
+@property (nonatomic, strong) IBOutlet UIButton* autoLoadButton;
+
 
 @property (nonatomic, strong) IBOutlet UITextView* consoleTextView;
 @property (nonatomic, strong) IBOutlet UIButton* clearConsoleButton;
@@ -115,9 +116,10 @@ typedef enum{
 
 @protocol SettingsViewControllerDelegate <NSObject>
 - (void)settingsViewControllerDidFinish:(SettingsViewController *)controller;
-- (BOOL)loadScene:(NSDictionary*)sceneDict;
-- (BOOL)loadScenePatchOnly:(NSString*)filename;
-- (void)flipInterface;
+//- (BOOL)loadScene:(NSDictionary*)sceneDict;
+-(BOOL)loadMMPSceneFromDocPath:(NSString *)docPath;
+- (BOOL)loadScenePatchOnlyFromDocPath:(NSString*)docPath;
+- (void)flipInterface:(BOOL)isFlipped;
 @property(copy, nonatomic) NSString *outputIpAddress;
 @property(nonatomic)int inputPortNumber;
 @property(nonatomic)int outputPortNumber;

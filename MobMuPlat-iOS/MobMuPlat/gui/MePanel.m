@@ -34,6 +34,7 @@
 }
 
 -(void)setImagePath:(NSString*)imagePath{
+  if([imagePath length] == 0) return;
     _imagePath=imagePath;
     NSString* filename = [[imagePath componentsSeparatedByString:@"/"] lastObject];
     /*NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
