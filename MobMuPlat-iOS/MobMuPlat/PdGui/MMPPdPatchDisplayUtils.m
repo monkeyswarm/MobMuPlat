@@ -20,8 +20,8 @@
   NSUInteger objIndex = 0;
 
   // Bookeeping for all gui object box connections
-  // key = message box index as STRING, val = set of connection tuples (obj index, outlet index) that connect into that message box.
-  NSMutableDictionary<NSString *, NSMutableSet *> *objectIndexToIncomingConnectionIndices = [NSMutableDictionary dictionary];
+  // key = message box index as STRING, val = set of connection tuples (obj index, outlet index) that connect into that obj box.
+  NSMutableDictionary<NSString *, NSMutableSet<NSArray<NSString *> *> *> *objectIndexToIncomingConnectionIndices = [NSMutableDictionary dictionary];
 
   // Bookkeeping to generate extra receive objects for grabbing receive-name messages
   // key = obj index as string, val = receive name
@@ -72,7 +72,7 @@
                                     sendNameIndex:[sendRecIndeces[0] unsignedIntegerValue]
                                      recNameIndex:[sendRecIndeces[1] unsignedIntegerValue]];
 
-          NSString *objIndexString = [NSString stringWithFormat:@"%lu", objIndex];
+          NSString *objIndexString = [NSString stringWithFormat:@"%lu", objIndex]; //TODO key by number? use array?
           objectIndexToIncomingConnectionIndices[objIndexString] = [NSMutableSet set];
 
           // grab patch receive handle and store
@@ -91,7 +91,6 @@
                 ![sendHandle isEqualToString:@"-"]) {
               unshimmableObjectIndexToPatchSendName[objIndexString] = sendHandle;
             }
-            NSString *recHandle = line[[sendRecIndeces[1] unsignedIntegerValue]];
             if (recHandle &&
                 ![recHandle isEqualToString:@"-"]) {
               unshimmableObjectIndexToPatchReceiveName[objIndexString] = recHandle;
@@ -124,8 +123,7 @@
       // add line to patch output
       [patchLines addObject:patchLine];
       [guiLines addObject:guiLine]; // todo, not necc if level > 1?
-      if ([line[0] isEqualToString:@"#X"] && level == 1 && ![line[1] isEqualToString:@"connect"]) { //DEI just line index...
-        objIndex++;
+      if ([line[0] isEqualToString:@"#X"] && level == 1 && ![line[1] isEqualToString:@"connect"]) {        objIndex++;
       }
     }
   } @catch (NSException *exception) {

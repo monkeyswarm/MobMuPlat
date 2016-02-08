@@ -25,7 +25,6 @@
   //[self receiveBangFromSource:@""];
   [self bang];
   [self sendBang];
-  //TODO scroll diff based on scale.
 }
 
 #pragma mark WidgetListener

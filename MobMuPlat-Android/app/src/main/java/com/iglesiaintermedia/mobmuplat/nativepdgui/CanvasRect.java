@@ -18,7 +18,7 @@ public class CanvasRect extends Widget {
 		
 		sendname = atomline[8];
 		setReceiveName(atomline[9]);
-		label = sanitizeLabel(atomline[10]);
+		labelString = sanitizeLabel(atomline[10]);
 		labelpos[0] = Float.parseFloat(atomline[11]);
 		labelpos[1] = Float.parseFloat(atomline[12]);
 		labelfont = Integer.parseInt(atomline[13]);

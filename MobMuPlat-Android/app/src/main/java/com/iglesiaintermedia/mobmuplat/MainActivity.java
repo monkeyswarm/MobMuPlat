@@ -549,8 +549,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		getActionBar().hide();
 
 		//TODO RESET ports?
-//		MMPPdGuiUtils.maybeCreatePdGuiFolderAndFiles(getAssets(), false); //don't force overwrite if it is there
-		
 		_patchFragment.loadScenePatchOnly(filenameToLoad); // calls loadPdFile
 	}
 

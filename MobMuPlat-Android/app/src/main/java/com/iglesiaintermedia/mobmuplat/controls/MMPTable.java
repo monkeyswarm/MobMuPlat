@@ -67,7 +67,7 @@ public class MMPTable extends MMPControl {
 		draw(0, _tableSize-1);
 	}
 	
-	private void draw(int startIndex, int endIndex) {
+	private void draw(int startIndex, int endIndex) { //TODO invalidation range is unimplemented...
 		invalidate();
 	}
 	

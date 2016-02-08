@@ -65,7 +65,6 @@
       }
       else if([lineType isEqualToString:@"restore"]) {
         level -= 1;
-        // TODO render pd box as box, but not a graph/canvas!
         if (level == 1 && !_inLevel2CanvasShowingArray) {
           // render object [pd name]
           [self addMMPPdObjectBox:line];

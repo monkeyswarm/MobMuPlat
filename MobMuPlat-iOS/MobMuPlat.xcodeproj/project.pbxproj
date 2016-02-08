@@ -2023,6 +2023,7 @@
 				CODE_SIGN_ENTITLEMENTS = MobMuPlat/MobMuPlat.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
 				ENABLE_BITCODE = NO;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;

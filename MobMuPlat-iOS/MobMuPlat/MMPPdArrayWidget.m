@@ -60,7 +60,6 @@
   self.label.font = [UIFont fontWithName:self.gui.fontName size:self.gui.fontSize * self.gui.scaleX];
   [self.label sizeToFit];
 
-  // set the label pos from the LRUD setting
   int labelPosY = -self.label.frame.size.height - (2 * self.gui.scaleX);
   self.label.frame = CGRectMake(0, labelPosY,
                                 CGRectGetWidth(self.label.frame), CGRectGetHeight(self.label.frame));
