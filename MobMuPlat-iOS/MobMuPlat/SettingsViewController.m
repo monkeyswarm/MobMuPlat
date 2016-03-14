@@ -906,7 +906,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
   }
 
   else if (tableView==_midiSourceTableView){
-    [self.audioDelegate setMidiSourceIndex:[indexPath indexAtPosition:1] ];
+    //[self.audioDelegate setMidiSourceIndex:[indexPath indexAtPosition:1] ];
   }
   else if (tableView==_midiDestinationTableView){
     [self.audioDelegate setMidiDestinationIndex:[indexPath indexAtPosition:1] ];

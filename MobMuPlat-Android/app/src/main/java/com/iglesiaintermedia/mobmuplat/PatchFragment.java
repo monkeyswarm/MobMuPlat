@@ -16,6 +16,7 @@ import org.puredata.android.utils.PdUiDispatcher;
 import org.puredata.core.PdBase;
 import org.puredata.core.PdListener;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -98,7 +99,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 
     int _bgColor;
     private Button _catchButton; // Just to catch a11y focus and allow footswitch.
-    private ImageButton _settingsButton;
+    private MMPMenuButton _settingsButton;
     private View _container;
     PdUiDispatcher _dispatcher;
     MMPPdGui mPdGui;
@@ -142,7 +143,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
         scrollRelativeLayout = (RelativeLayout)rootView.findViewById(R.id.relativeLayout);
         //scrollRelativeLayout.setBackgroundColor(Color.GREEN);
         _catchButton = (Button)rootView.findViewById(R.id.catchFocusButton);
-        _settingsButton = (ImageButton)rootView.findViewById(R.id.button1);
+        _settingsButton = (MMPMenuButton)rootView.findViewById(R.id.button1);
         _settingsButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -213,6 +214,19 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
         return Color.argb((int)(rgbaArray.get(3).getAsFloat()*255), (int)(rgbaArray.get(0).getAsFloat()*255), (int)(rgbaArray.get(1).getAsFloat()*255), (int)(rgbaArray.get(2).getAsFloat()*255)  );
     }
 
+    private static int inverseColorFromColor(int color) {
+        int a = ((color >> 24) & 0xFF) << 24;
+        int r =
+                ((color >> 16) & 0xFF) + 128 % 256 << 16;
+        int g =
+                ((color >> 8) & 0xFF)  + 128 % 256 << 8;
+        int b =
+                (color & 0xFF)  + 128 % 256;
+        int result =  a |r |g |b;
+
+        return result;
+    }
+
     private void loadSceneCommonReset() {
         //TODO check recursion of file paths.
         _allGUIControlMap.clear();
@@ -229,14 +243,13 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
         //TODO: is there a pdfile to close here?
 
         _mainActivity.stopLocationUpdates();
+
+        _settingsButton.setBarColor(Color.BLACK);
     }
 
-    public void loadScenePatchOnly(String filenameToLoad) {
+    public void loadScenePatchOnly(List<String[]>originalAtomLines) {
         loadSceneCommonReset();
         //don't bother with rotation for now...
-
-        String path = MainActivity.getDocumentsFolderPath() + File.separator + filenameToLoad;
-        ArrayList<String[]> originalAtomLines = PdParser.parsePatch(path);
 
         List<String[]>[] processedAtomLinesTuple = MMPPdGuiUtils.proccessAtomLines(originalAtomLines);
         if (processedAtomLinesTuple == null) {
@@ -290,11 +303,13 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
         flp.gravity = Gravity.CENTER;
         scrollContainer.setLayoutParams(flp);
 
+        FrameLayout.LayoutParams flp2 = new FrameLayout.LayoutParams((int)(docCanvasSizeWidth*scale),(int)(docCanvasSizeHeight*scale));
+        flp2.gravity = Gravity.LEFT;
         //reset scroll to one page
         //scrollContainer.setLayoutParams(new FrameLayout.LayoutParams(_container.getWidth(),_container.getHeight()));
-        scrollRelativeLayout.setLayoutParams(flp);//new FrameLayout.LayoutParams(_container.getWidth(),_container.getHeight()));
+        scrollRelativeLayout.setLayoutParams(flp2);//new FrameLayout.LayoutParams(_container.getWidth(),_container.getHeight()));
         scrollRelativeLayout.setBackgroundColor(Color.WHITE);
-        scrollRelativeLayout.setClipChildren(false); //move. allow rendering of labels outside widget bounds.
+        scrollRelativeLayout.setClipChildren(false); //move. allow rendering of labels outside widget bounds. EATS DRAW CPU!?
 
         //float scale = _container.getWidth() / docCanvasSizeWidth;
         mPdGui.buildUI(_mainActivity, guiAtomLines, scale); // create widgets
@@ -306,6 +321,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
             scrollRelativeLayout.addView(widget);
             widget.setup();
         }
+        //scrollRelativeLayout.setClipChildren(true); //set back to true after labels are drawn.???
         //TODO call post-init method on gui objects.
 
 
@@ -420,6 +436,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
             int layoutHeight = (int)(referenceHeight*screenRatio);
             if(MainActivity.VERBOSE)Log.i(TAG, "set scrollrelativelayout dim "+layoutWidth+" "+layoutHeight);
             scrollRelativeLayout.setLayoutParams(new FrameLayout.LayoutParams(layoutWidth,layoutHeight));
+            scrollRelativeLayout.setClipChildren(true);
 
             //
             if(topDict.getAsJsonArray("backgroundColor")!=null){
@@ -429,6 +446,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
                 else if (colorArray.size()==3)
                     _bgColor = colorFromRGBArray(colorArray);
                 scrollRelativeLayout.setBackgroundColor(_bgColor);
+                _settingsButton.setBarColor(inverseColorFromColor(_bgColor));
             }
 
             final String pdFilename;
@@ -856,6 +874,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
     }
 }
 
+@SuppressLint("ValidFragment")
 class MenuFragment extends Fragment{
 
     private MMPMenu _menu;
@@ -863,6 +882,7 @@ class MenuFragment extends Fragment{
     private ListView _listView;
     private ArrayAdapter<String> _adapter;
 
+    //TODO clean this up so it has an empty constructor so it can be re-instantiated.
     public MenuFragment(MMPMenu menu, int bgColor) {
         super();
         _menu = menu;
@@ -916,7 +936,7 @@ class MenuFragment extends Fragment{
         return rootView;
     }
 }
-
+@SuppressLint("ValidFragment") //TODO make public
 class SplashFragment extends Fragment{
 
     View rootView;

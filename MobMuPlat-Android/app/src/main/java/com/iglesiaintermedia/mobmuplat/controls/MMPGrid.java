@@ -95,7 +95,7 @@ public class MMPGrid extends MMPControl {
 	        int indexX =(int)(((Float)(messageArray.get(0))).floatValue());
 	        int indexY =(int)(((Float)(messageArray.get(1))).floatValue());
 	        int val =(int)(((Float)(messageArray.get(2))).floatValue());
-	        if(indexX<_dimX && indexY<_dimY) {//todo: what happens on negative???
+	        if(indexX >= 0 && indexX<_dimX && indexY >=0 && indexY<_dimY) {
 	        	boolean val2 = val > 0 ? true : false;
 	        	_buttonViewArray[indexX][indexY].setValue(val2);
 	        	if (sendVal){

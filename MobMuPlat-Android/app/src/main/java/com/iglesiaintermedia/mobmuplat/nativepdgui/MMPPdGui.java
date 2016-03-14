@@ -48,23 +48,21 @@ public class MMPPdGui {
                     inLevel2CanvasShowingArray = true;
                     //expect
                     // #X array <arrayname> 100 float 3; (this line) last element is bit mask of save/no save and draw type (poly,points,bez)
-                    // #A <values, if save contents is on>
+                    // #A index <values, if save contents is on>
+                    // #A ...
                     // #X coords 0 1 100 -1 300 140 1 0 0;
                     // #X restore 8 17 graph;
-                    boolean willHaveSaveData = (Integer.parseInt(line[5]) & 0x1) == 1;
-                    // check line count
-                    int expectedSubsequentLineCount = willHaveSaveData ? 3 : 2;
-                    if (atomlines.size() <= lineIndex + expectedSubsequentLineCount) {
-                        continue;
+                    //boolean willHaveSaveData = (Integer.parseInt(line[5]) & 0x1) == 1;
+
+                    // scan over #A lines. We don't need to track array values here.
+                    lineIndex++;
+                    while ((atomlines.get(lineIndex))[0].equals("#A")) {
+                        lineIndex++;
                     }
-                    String[] arrayValueLine = willHaveSaveData ? atomlines.get(lineIndex + 1) : null;
-                    String[] arrayCoordsLine = willHaveSaveData ?
-                            atomlines.get(lineIndex + 2) :
-                            atomlines.get(lineIndex + 1);
-                    String[] arrayRestoreLine = willHaveSaveData ?
-                            atomlines.get(lineIndex + 3) :
-                            atomlines.get(lineIndex + 2);
-                    ArrayWidget arrayWidget = new ArrayWidget(context, line, arrayValueLine, arrayCoordsLine, arrayRestoreLine, scale, fontSize);
+                    //line index is now at "#X coords"
+                    String[] arrayCoordsLine = atomlines.get(lineIndex);
+                    String[] arrayRestoreLine = atomlines.get(lineIndex + 1);
+                    ArrayWidget arrayWidget = new ArrayWidget(context, line, arrayCoordsLine, arrayRestoreLine, scale, fontSize);
                     widgets.add(arrayWidget);
                 } else if (level == 1) { // find different types of UI element in the top level patch
                     if (line.length >= 2) {

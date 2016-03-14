@@ -80,22 +80,21 @@
         //expect
         // #X array <arrayname> 100 float 3; (this line) last element is bit mask of save/no save and draw type (poly,points,bez)
         // #A <values, if save contents is on>
+        // #A ...
+        // ...
         // #X coords 0 1 100 -1 300 140 1 0 0;
         // #X restore 8 17 graph;
-        BOOL willHaveSaveData = ([line[5] integerValue] & 0x1) == 1;
-        // check line count
-        NSUInteger expectedSubsequentLineCount = willHaveSaveData ? 3 : 2;
-        if (lines.count <= lineIndex + expectedSubsequentLineCount) {
-          continue;
+        //BOOL willHaveSaveData = ([line[5] integerValue] & 0x1) == 1;
+
+        // scan over #A lines. We don't need to track array values here.
+        lineIndex++;
+        while ([lines[lineIndex][0] isEqualToString:@"#A"]) { //Add bounds checking
+          lineIndex++;
         }
-        NSArray *arrayValueLine = willHaveSaveData ? lines[lineIndex+1] : nil;
-        NSArray *arrayCoordsLine = willHaveSaveData ?
-                                   lines[lineIndex+2] :
-                                   lines[lineIndex+1];
-        NSArray *arrayRestoreLine = willHaveSaveData ?
-                                    lines[lineIndex+3] :
-                                    lines[lineIndex+2];
-        [self addMMPPdArrayWidget:line valuesLine:arrayValueLine coordsLine:arrayCoordsLine restoreLine:arrayRestoreLine];
+        // line index is now at "#X coords"
+        NSArray *arrayCoordsLine = lines[lineIndex];
+        NSArray *arrayRestoreLine = lines[lineIndex+1];
+        [self addMMPPdArrayWidget:line coordsLine:arrayCoordsLine restoreLine:arrayRestoreLine];
       }
     }
   }
@@ -118,11 +117,9 @@
 }
 
 - (void)addMMPPdArrayWidget:(NSArray *)atomLine
-                 valuesLine:(NSArray *)arrayValueLine
                  coordsLine:(NSArray *)coordsLine
                 restoreLine:(NSArray *)restoreLine {
   MMPPdArrayWidget *arrayWidget = [[MMPPdArrayWidget alloc] initWithAtomLine:atomLine
-                                                                  valuesLine:arrayValueLine
                                                                   coordsLine:coordsLine
                                                                  restoreLine:restoreLine
                                                                       andGui:self];

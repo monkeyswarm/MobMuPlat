@@ -42,23 +42,23 @@ public class AudioMidiFragment extends Fragment implements Observer, SegmentedCo
 		
 		
 		_listViewInput = (ListView)rootView.findViewById(R.id.listViewInput);
-		_listViewInput.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		_listViewInput.setChoiceMode(ListView.CHOICE_MODE_NONE);
 		_listViewOutput = (ListView)rootView.findViewById(R.id.listViewOutput);
 		_listViewOutput.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		
-		 adapterInput = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_single_choice, _usbMidiController.midiInputStringList);
+		 adapterInput = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, _usbMidiController.midiInputStringList);
 		 _listViewInput.setAdapter(adapterInput);
 		 adapterOutput = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_single_choice, _usbMidiController.midiOutputStringList);
 		 _listViewOutput.setAdapter(adapterOutput);
 		
-		_listViewInput.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		/*_listViewInput.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parentAdapter, View view, int position,long id) {
 				//TextView clickedView = (TextView) view;
 				//Toast.makeText(getActivity(), "Item with id ["+id+"] - Position ["+position+"] - Planet ["+clickedView.getText()+"]", Toast.LENGTH_SHORT).show();
 				_usbMidiController.connectInputAtIndex(position);
 				refreshList();
 			}
-		});
+		});*/
 		
 		_listViewOutput.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parentAdapter, View view, int position,long id) {
@@ -137,10 +137,10 @@ public class AudioMidiFragment extends Fragment implements Observer, SegmentedCo
 		adapterInput.notifyDataSetChanged();
 		adapterOutput.notifyDataSetChanged();
 		
-		_listViewInput.clearChoices();
-		int inputIndex = _usbMidiController.getCurrInputIndex(); //-1 for nothing
-		if (inputIndex>=0)
-			_listViewInput.setItemChecked(inputIndex, true);
+		//_listViewInput.clearChoices();
+		//int inputIndex = _usbMidiController.getCurrInputIndex(); //-1 for nothing
+		//if (inputIndex>=0)
+		//	_listViewInput.setItemChecked(inputIndex, true);
 		
 		_listViewOutput.clearChoices();
 		int outputIndex = _usbMidiController.getCurrOutputIndex(); //-1 for nothing

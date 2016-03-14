@@ -133,7 +133,7 @@ typedef enum{
 -(int)setRate:(int)inRate;
 -(int)sampleRate;
 -(PGMidi*) midi;
--(void)setMidiSourceIndex:(int)index;
+//-(void)setMidiSourceIndex:(int)index;
 -(void)setMidiDestinationIndex:(int)index;
 -(int)setChannelCount:(int)newChannelCount;
 - (void)setAudioInputEnabled:(BOOL)enabled; //for mic input vs vibration

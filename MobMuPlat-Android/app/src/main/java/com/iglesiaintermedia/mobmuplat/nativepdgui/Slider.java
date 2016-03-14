@@ -73,6 +73,23 @@ public class Slider extends Widget {
         setY(dRect.top);
     }
 
+    //
+    public void setValue(float value) {
+        double g;
+        value = Math.min(Math.max(value, minValue), maxValue); //DEI check
+
+        super.setValue(value);
+
+        if(log) { // float to pos
+            g = Math.log(value / minValue) / sizeConvFactor;
+        }
+        else {
+            g = (value - minValue) / sizeConvFactor;
+        }
+        _controlValue = (int)(100.0*g + 0.49999);
+        controlPos = _controlValue;
+    }
+
     private void  setControlValue(int controlValue) {
         _controlValue = controlValue;
         controlPos = controlValue;
@@ -185,6 +202,7 @@ public class Slider extends Widget {
                     controlPos -= controlPos % 100;
                 }
                 setControlValue(v);
+                controlPos = v;
 
                 // don't resend old values
                 if(old != v) {

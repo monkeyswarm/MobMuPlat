@@ -112,7 +112,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	private FrameLayout _topLayout;
 	public CanvasType hardwareScreenType;
 	// Bookmark it between config change
-	private String _fileToLoad;
+	private Object _fileDataToLoad; //mmp patches = Json string, pd patches = List<String[]>atomLines
+    private boolean _fileDataToLoadIsPatchOnly;
 
 	//Pd
 	private PdService pdService = null;
@@ -238,7 +239,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 				defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine-Pad.mmp", "MMPTutorial1-GUI-Pad.mmp", "MMPTutorial2-Input-Pad.mmp", "MMPTutorial3-Hardware-Pad.mmp", "MMPTutorial4-Networking-Pad.mmp","MMPTutorial5-Files-Pad.mmp", "MMPExamples-Vocoder-Pad.mmp", "MMPExamples-Motion-Pad.mmp", "MMPExamples-Sequencer-Pad.mmp","MMPExamples-GPS-Pad.mmp", "MMPTutorial6-2DGraphics-Pad.mmp", "MMPExamples-LANdini-Pad.mmp", "MMPExamples-Arp-Pad.mmp",  "MMPExamples-TableGlitch-Pad.mmp", "MMPExamples-HID-Pad.mmp", "MMPExamples-PingAndConnect.mmp");
 			}
 
-			List<String> commonFilesList = Arrays.asList("MMPTutorial0-HelloSine.pd","MMPTutorial1-GUI.pd", "MMPTutorial2-Input.pd", "MMPTutorial3-Hardware.pd", "MMPTutorial4-Networking.pd","MMPTutorial5-Files.pd","cats1.jpg", "cats2.jpg","cats3.jpg","clap.wav","Welcome.pd",  "MMPExamples-Vocoder.pd", "vocod_channel.pd", "MMPExamples-Motion.pd", "MMPExamples-Sequencer.pd", "MMPExamples-GPS.pd", "MMPTutorial6-2DGraphics.pd", "MMPExamples-LANdini.pd", "MMPExamples-Arp.pd", "MMPExamples-TableGlitch.pd", "anderson1.wav", "MMPExamples-HID.pd", "MMPExamples-InterAppOSC.mmp", "MMPExamples-InterAppOSC.pd", "MMPExamples-PingAndConnect.pd"); //wear "MMPExamples-Watch.pd");
+			List<String> commonFilesList = Arrays.asList("MMPTutorial0-HelloSine.pd","MMPTutorial1-GUI.pd", "MMPTutorial2-Input.pd", "MMPTutorial3-Hardware.pd", "MMPTutorial4-Networking.pd","MMPTutorial5-Files.pd","cats1.jpg", "cats2.jpg","cats3.jpg","clap.wav","Welcome.pd",  "MMPExamples-Vocoder.pd", "vocod_channel.pd", "MMPExamples-Motion.pd", "MMPExamples-Sequencer.pd", "MMPExamples-GPS.pd", "MMPTutorial6-2DGraphics.pd", "MMPExamples-LANdini.pd", "MMPExamples-Arp.pd", "MMPExamples-TableGlitch.pd", "anderson1.wav", "MMPExamples-HID.pd", "MMPExamples-InterAppOSC.mmp", "MMPExamples-InterAppOSC.pd", "MMPExamples-PingAndConnect.pd", "MMPExamples-NativeGUI.pd"); //wear "MMPExamples-Watch.pd");
 
 			for (String filename : defaultPatchesList) {
 				copyAsset(filename);
@@ -531,25 +532,42 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	public void loadScene(String filenameToLoad) {
 		getActionBar().hide();
 
-		_fileToLoad = filenameToLoad;
+
 		String fileJSON = readMMPToString(filenameToLoad);
 		boolean requestedChange = setOrientationOfMMP(fileJSON);
 
+        _fileDataToLoad = fileJSON;
+        _fileDataToLoadIsPatchOnly = false;
+
 		if(!requestedChange){
 			_patchFragment.loadSceneFromJSON(fileJSON);
-			_fileToLoad = null;
+			_fileDataToLoad = null;
 		}
 		//otherwise is being loaded in onConfigChange
 	}
 
 	public void loadScenePatchOnly(String filenameToLoad) {
 		//don't bother with rotation for now...
-		stopLocationUpdates();
+		stopLocationUpdates(); //move? handled in common reset?
 		
 		getActionBar().hide();
 
+        String path = MainActivity.getDocumentsFolderPath() + File.separator + filenameToLoad;
+        ArrayList<String[]> originalAtomLines = PdParser.parsePatch(path);
+
+        _fileDataToLoad = originalAtomLines;
+        _fileDataToLoadIsPatchOnly = true;
+
+        boolean requestedChange = setOrientationOfMMPPatchOnly(originalAtomLines);
+
+		if(!requestedChange){
+			_patchFragment.loadScenePatchOnly(originalAtomLines);
+			_fileDataToLoad = null;
+		}
+        //otherwise is being loaded in onConfigChange
+
 		//TODO RESET ports?
-		_patchFragment.loadScenePatchOnly(filenameToLoad); // calls loadPdFile
+		//_patchFragment.loadScenePatchOnly(filenameToLoad); // calls loadPdFile
 	}
 
 	public int loadPdFile(String pdFilename) {
@@ -732,63 +750,59 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		}
 	}
 
-	private boolean setOrientationOfMMP(String jsonString){ //returns whether there was a change
-		JsonParser parser = new JsonParser();
-		try {
-			JsonObject topDict = parser.parse(jsonString).getAsJsonObject();//top dict
-			int screenOrientation = this.getWindow().getWindowManager().getDefaultDisplay().getRotation();// on tablet rotation_0 = "natural"= landscape
-			int mmpOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+    private boolean setOrientationOfMMP(String jsonString) { //returns whether there was a change
+        JsonParser parser = new JsonParser();
+        try {
+            JsonObject topDict = parser.parse(jsonString).getAsJsonObject();//top dict
+            int mmpOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
 			if(topDict.get("isOrientationLandscape")!=null) {
 				boolean isOrientationLandscape = topDict.get("isOrientationLandscape").getAsBoolean();
 				if (isOrientationLandscape)mmpOrientation=ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
 			}
 
-			int naturalOrientation = getDeviceNaturalOrientation();
-			if (naturalOrientation == Configuration.ORIENTATION_PORTRAIT) { //phones, 7" tablets
-				if ((mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && screenOrientation!=Surface.ROTATION_0) ||
-						(mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && screenOrientation!=Surface.ROTATION_90)) {
-					if(VERBOSE)Log.i(TAG, "requesting orientation...surface = "+screenOrientation);
-					this.setRequestedOrientation(mmpOrientation);
-					return true;
-				}
-			}
-			//"natural" = landscape = big tablet
-			else if (naturalOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-				if ((mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && screenOrientation!=Surface.ROTATION_270) || //weird that it thinks that rotation 270 is portrait
-						(mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && screenOrientation!=Surface.ROTATION_0)) {
-					if(VERBOSE)Log.i(TAG, "requesting orientation...surface = "+screenOrientation);
-					this.setRequestedOrientation(mmpOrientation);
-					return true;
-				}
-			}
-			return false;
-		} catch(JsonParseException e) {
-			showAlert("Unable to parse interface file.");
-		}	
-		return false;
-	}
+            return setOrientation(mmpOrientation);
 
-	/*
-	private void copyAllDocuments() { //doesn't work with linked files!
-		//AssetManager am = getAssets();
-		String [] list;
-		try {
-			list = getAssets().list("");
-			if (list.length > 0) {
-				// This is a folder
-				for (String filename : list) {
-					//if (!listAssetFiles(path + "/" + file))
-					Log.i(TAG, "file "+filename); 
-					//getAssets().open(fileName;)
-					copyAsset(filename);
-				}
-			} else {
-				Log.i(TAG, "file single ");
-			}//path is a file
-		} catch (IOException e) {
-
+        } catch(JsonParseException e) {
+            showAlert("Unable to parse interface file.");
 		}
-	}*/
+		return false;
+    }
+
+    private boolean setOrientationOfMMPPatchOnly(List<String[]> originalAtomLines) {
+        // DEI check for zero/bad values
+        float docCanvasSizeWidth = Float.parseFloat(originalAtomLines.get(0)[4]);
+        float docCanvasSizeHeight = Float.parseFloat(originalAtomLines.get(0)[5]);
+
+        boolean isOrientationLandscape = (docCanvasSizeWidth > docCanvasSizeHeight);
+        return setOrientation(isOrientationLandscape ?
+                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE :
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
+
+	private boolean setOrientation(int mmpOrientation){  //returns whether there was a change
+
+        int screenOrientation = this.getWindow().getWindowManager().getDefaultDisplay().getRotation();// on tablet rotation_0 = "natural"= landscape
+
+        int naturalOrientation = getDeviceNaturalOrientation();
+        if (naturalOrientation == Configuration.ORIENTATION_PORTRAIT) { //phones, 7" tablets
+            if ((mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && screenOrientation!=Surface.ROTATION_0) ||
+                    (mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && screenOrientation!=Surface.ROTATION_90)) {
+                if(VERBOSE)Log.i(TAG, "requesting orientation...surface = "+screenOrientation);
+                this.setRequestedOrientation(mmpOrientation);
+                return true;
+            }
+        }
+        //"natural" = landscape = big tablet
+        else if (naturalOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if ((mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && screenOrientation!=Surface.ROTATION_270) || //weird that it thinks that rotation 270 is portrait
+                    (mmpOrientation==ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && screenOrientation!=Surface.ROTATION_0)) {
+                if(VERBOSE)Log.i(TAG, "requesting orientation...surface = "+screenOrientation);
+                this.setRequestedOrientation(mmpOrientation);
+                return true;
+            }
+        }
+        return false;
+	}
 
 	private void copyInputStream(InputStream in, String filename, boolean showAlert) {
 		File file = new File(MainActivity.getDocumentsFolderPath(), filename);
@@ -844,21 +858,24 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	// on orientation changed
 	public void onConfigurationChanged (Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		Log.i(TAG, "ACT on config changed - file to load "+_fileToLoad);
-		//if(_fileToLoad!=null)initGui(_fileToLoad);
-		//initGui();
 		ViewTreeObserver observer = _topLayout.getViewTreeObserver();
 		observer.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
 
-			@Override
-			public void onGlobalLayout() {
-				_topLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-				if(_fileToLoad!=null) {	
-					_patchFragment.loadSceneFromJSON(readMMPToString(_fileToLoad));
-					_fileToLoad = null;
-				}
-			}
-		});
+            @Override
+            public void onGlobalLayout() {
+                _topLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                if (_fileDataToLoad != null) {
+                    if (_fileDataToLoadIsPatchOnly) {
+                        _patchFragment.loadScenePatchOnly((List<String[]>)_fileDataToLoad);
+                    } else {
+                        _patchFragment.loadSceneFromJSON((String) _fileDataToLoad);
+                    }
+                    _fileDataToLoad = null;
+
+                    //DEI need to load tables?
+                }
+            }
+        });
 	}
 
 	private final ServiceConnection pdConnection = new ServiceConnection() {

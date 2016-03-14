@@ -23,7 +23,6 @@
 }
 
 - (id)initWithAtomLine:(NSArray *)atomLine // #X array
-            valuesLine:(NSArray *)arrayValueLine
             coordsLine:(NSArray *)coordsLine
            restoreLine:(NSArray *)restoreLine
                 andGui:(Gui *)gui {

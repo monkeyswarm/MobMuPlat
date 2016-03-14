@@ -8,8 +8,8 @@ android {
         applicationId "com.iglesiaintermedia.mobmuplat"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 13
-        versionName "0.19"
+        versionCode 15
+        versionName "0.20"
     }
     buildTypes {
         release {
@@ -26,6 +26,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.android.support:design:22.2.1'
     compile files('libs/gson-2.2.4.jar')
-    compile 'org.puredata.android:pd-core:1.0.0'
+    compile 'org.puredata.android:pd-core:1.0.1'
 
 }

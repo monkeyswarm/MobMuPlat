@@ -47,9 +47,9 @@
     
     //midi
     PGMidi *midi;
-    PGMidiSource *currMidiSource;
+    //PGMidiSource *currMidiSource;
     PGMidiDestination *currMidiDestination;
-    int currMidiSourceIndex;
+    //int currMidiSourceIndex;
     int currMidiDestinationIndex;
 	
   BOOL mixingEnabled;

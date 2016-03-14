@@ -112,7 +112,7 @@ public class Widget extends RelativeLayout implements PdListener {
 
     public void drawLabel(Canvas canvas) {
         if (labelString != null) {
-            //paint.setStrokeWidth(0); //draws text filled in instead of line
+            paint.setStrokeWidth(0); //draws text filled in instead of line
             paint.setColor(labelcolor);
             paint.setTextSize(labelsize * scale);
 

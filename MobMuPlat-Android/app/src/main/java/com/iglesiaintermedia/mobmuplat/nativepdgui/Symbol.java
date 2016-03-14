@@ -40,8 +40,10 @@ public class Symbol extends AtomWidget {
             paint.getTextBounds("symbol", 0, 6, rect);
             width = rect.width();
         } else {
-            paint.getTextBounds("0", 0, 1, rect);
-            width = charWidth * rect.width();
+            StringBuilder sb = new StringBuilder();
+            for (int i=0;i<charWidth;i++)sb.append("0");
+            paint.getTextBounds(sb.toString(), 0, charWidth, rect);
+            width = rect.width();
         }
         RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + width + 8*scale), Math.round(y + (fontSize + 4)*scale));
 
@@ -52,7 +54,7 @@ public class Symbol extends AtomWidget {
 
     private void setSymbolValue(String val) {
         symbolValue = val;
-        if(charWidth == 0) {
+        if(charWidth == 0) { //resize
             Rect rect = new Rect();
             paint.getTextBounds(symbolValue, 0, symbolValue.length(), rect);
             //getLayoutParams().width = rect.width(); //TODO test
@@ -67,7 +69,11 @@ public class Symbol extends AtomWidget {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas); // draw box, label.
         float h = getHeight();
-        canvas.drawText(symbolValue, 0, h-(3*scale), paint);
+        String val = symbolValue;
+        if (charWidth!=0 && val.length()>charWidth) { //truncate
+            val = val.substring(0,charWidth-1)+">";
+        }
+        canvas.drawText(val, 0, h-(3*scale), paint);
     }
 
     //

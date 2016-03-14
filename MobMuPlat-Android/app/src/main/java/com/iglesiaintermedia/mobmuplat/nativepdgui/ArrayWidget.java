@@ -21,20 +21,19 @@ public class ArrayWidget extends Widget {
 
     private int _tableSize;
     private float _tableData[];
-    private Rect _clipRect;
-    private Path _path;
     int _prevTableIndex;
+
+    private int width, height;
 
     public ArrayWidget(Context context,
                        String[] atomline,
-                       String[] arrayValueLine,
                        String[] coordsLine,
                        String[] restoreLine,
                        float scale,
                        int fontSize) {
         super(context, scale);
-        _clipRect = new Rect();
-        _path = new Path();
+
+        //_clipRect = new Rect(); // dirty rect doesn't work
 
         float x = Float.parseFloat(restoreLine[2]) * scale;
         float y = Float.parseFloat(restoreLine[3]) * scale;
@@ -79,6 +78,12 @@ public class ArrayWidget extends Widget {
     }
 
     @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        width = w;
+        height = h;
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         float w = getWidth(); //TODO check if this is much slower than storing as an ivar one0time.
         float h = getHeight();
@@ -100,10 +105,9 @@ public class ArrayWidget extends Widget {
 
         if(_tableData==null)return;
 
-        _path.reset();
-        canvas.getClipBounds(_clipRect);
+        /*canvas.getClipBounds(_clipRect);
         int indexDrawPointA = _clipRect.left;
-        int indexDrawPointB = _clipRect.right;
+        int indexDrawPointB = _clipRect.right;*/
 
         //canvas.drawRect(_myRectF, this.paint);
 
@@ -112,7 +116,7 @@ public class ArrayWidget extends Widget {
         //paint.setStrokeWidth(scale);
         //this.paint.setColor(this.highlightColor);
 
-        for (int i = indexDrawPointA; i<indexDrawPointB; i++) {
+        for (int i = 0; i<width; i++) {
             int tableIndex = (int)((float)i/getWidth()*_tableSize);
             float y = _tableData[tableIndex];
             /*float unflippedY = 1-( (y-displayYRangeLow)/(displayYRangeHigh - displayYRangeLow));
@@ -141,12 +145,13 @@ public class ArrayWidget extends Widget {
             float unflippedMaxY = 1-( (maxValForPoint-displayYRangeLow)/(displayYRangeHigh - displayYRangeLow));
             unflippedMaxY *= h;
 
-            _path.moveTo(i, unflippedMinY);
-            _path.lineTo(i, unflippedMaxY + scale); //plus "scale" = plus one "point", so that line is one point thick
+            canvas.drawLine(i,unflippedMinY,i,unflippedMaxY+scale,paint);
+            //_path.moveTo(i, unflippedMinY);
+            //_path.lineTo(i, unflippedMaxY + scale); //plus "scale" = plus one "point", so that line is one point thick
             //Log.i("GRAPH", ""+i+" "+unflippedMinY+" "+unflippedMaxY+1);
         }
         // draw line
-        canvas.drawPath(_path, this.paint);
+        //canvas.drawPath(_path, this.paint);
         // ALSO draw fill on fill mode...
         /*if (displayMode == 1) {// fill
             this.paint.setStyle(Paint.Style.FILL);

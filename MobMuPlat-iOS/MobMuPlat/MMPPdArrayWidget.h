@@ -11,7 +11,6 @@
 @interface MMPPdArrayWidget : Widget
 
 - (id)initWithAtomLine:(NSArray *)atomLine
-            valuesLine:(NSArray *)arrayValueLine
             coordsLine:(NSArray *)coordsLine
            restoreLine:(NSArray *)restoreLine
                 andGui:(Gui *)gui;

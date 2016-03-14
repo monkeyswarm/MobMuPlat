@@ -6,9 +6,12 @@ import java.util.List;
 import org.puredata.core.PdBase;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.MotionEvent;
@@ -32,6 +35,10 @@ public class MMPTable extends MMPControl {
 	// draw bookkeeping
 	private float _touchDownPointX, _dragPointX;
 	private int _prevTableIndex;
+
+    // Better drawing of paths by creating separate canvas/bitmap, draw path to that.
+	Bitmap _drawBitmap;
+    Canvas _drawCanvas;
 	
 	public MMPTable(Context context, float screenRatio) {
 		super(context, screenRatio);
@@ -64,7 +71,7 @@ public class MMPTable extends MMPControl {
 	}
 	
 	private void draw() {
-		draw(0, _tableSize-1);
+		draw(0, _tableSize - 1);
 	}
 	
 	private void draw(int startIndex, int endIndex) { //TODO invalidation range is unimplemented...
@@ -77,7 +84,14 @@ public class MMPTable extends MMPControl {
 			//_drawPoints = new float[(getWidth() + 3) * 4]; //three extra points used by fill mode
 		}
 	}
-	
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+        _drawBitmap = Bitmap.createBitmap(w, h, conf); // this creates a MUTABLE bitmap
+        _drawCanvas = new Canvas(_drawBitmap);
+    }
+
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
         int action = event.getActionMasked();
@@ -201,6 +215,8 @@ public class MMPTable extends MMPControl {
 	}
 	
 	protected void onDraw(Canvas canvas) {
+		if (_drawCanvas == null) return;
+        _drawCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 		_path.reset();
 		canvas.getClipBounds(_clipRect);
 		int indexDrawPointA = _clipRect.left;
@@ -213,7 +229,7 @@ public class MMPTable extends MMPControl {
 		  */
 		this.paint.setStyle(Paint.Style.FILL);
 		this.paint.setColor(this.color);
-		canvas.drawRect(_myRectF, this.paint);
+        _drawCanvas.drawRect(_myRectF, this.paint);
 		
 		
 	   	this.paint.setStyle(Paint.Style.STROKE);
@@ -243,7 +259,7 @@ public class MMPTable extends MMPControl {
 		    }
 	    }
 	    // draw line
-	    canvas.drawPath(_path, this.paint);
+        _drawCanvas.drawPath(_path, this.paint);
 	    // ALSO draw fill on fill mode...
 	    if (displayMode == 1) {// fill
 	    	this.paint.setStyle(Paint.Style.FILL);
@@ -253,17 +269,19 @@ public class MMPTable extends MMPControl {
 	    	_path.lineTo(lastIndex, yPointOfTableZero);
 	    	_path.lineTo(0, yPointOfTableZero);
 	    	_path.close();
-	    	canvas.drawPath(_path, this.paint);
+	    	_drawCanvas.drawPath(_path, this.paint);
 	    }
-	    
-	    
+
+        canvas.drawBitmap(_drawBitmap,0,0,paint);
+
 	    //selection
 	    if (mode == 0) {
 	    	this.paint.setStyle(Paint.Style.FILL);
 			this.paint.setColor(selectionColor);
-			canvas.drawRect(Math.min(_touchDownPointX, _dragPointX), 
+            // drawRect with the _drawCanvas wasn't rending correctly...was drawing faded rect over whole thing...?
+            canvas.drawRect(Math.min(_touchDownPointX, _dragPointX),
 					0, 
-					Math.max(_touchDownPointX, _dragPointX), 
+					Math.max(_touchDownPointX, _dragPointX),
 					getHeight(), 
 					this.paint);
 	    }

@@ -194,8 +194,8 @@ extern void pique_setup(void);
   }
 
 
-  //access to PD externals not normally part of libPD
-  expr_setup();
+  //access to PD externals not normally part of libPD, now done in libpd automatically via #ifdef LIBPD_EXTRA
+  /*expr_setup();
   bonk_tilde_setup();
   choice_setup();
   fiddle_tilde_setup();
@@ -203,6 +203,7 @@ extern void pique_setup(void);
   lrshift_tilde_setup();
   sigmund_tilde_setup();
   pique_setup();
+  bob_tilde_setup();*/
 
 
   //start device motion detection
@@ -221,10 +222,6 @@ extern void pique_setup(void);
 
     [motionManager startDeviceMotionUpdatesToQueue:motionQueue withHandler:^ (CMDeviceMotion *devMotion, NSError *error){
       CMAttitude *currentAttitude = devMotion.attitude;
-      /*float xRotation = currentAttitude.roll*180/M_PI;
-       float yRotation = currentAttitude.pitch*180/M_PI;
-       float zRotation = currentAttitude.yaw*180/M_PI;
-       printf("\n %.2f, %.2f %.2f", xRotation, yRotation, zRotation);*/
       NSArray* motionArray=[NSArray arrayWithObjects:@"/motion", [NSNumber numberWithFloat:currentAttitude.roll],[NSNumber numberWithFloat:currentAttitude.pitch], [NSNumber numberWithFloat:currentAttitude.yaw], nil];
 
       [PdBase sendList:motionArray toReceiver:@"fromSystem"];
@@ -370,9 +367,10 @@ extern void pique_setup(void);
 
   //midi setup
   midi.delegate=self;
-  if([midi.sources count]>0){
+  /*if([midi.sources count]>0){
     [self setMidiSourceIndex:0];//connect to first device in MIDI source list
-  }
+  }*/
+  [self reloadMidiSources];
   if([midi.destinations count]>0){
     [self setMidiDestinationIndex:0];//connect to first device in MIDI source list
   }
@@ -1605,12 +1603,19 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   return YES;
 }
 
--(void)setMidiSourceIndex:(int)inIndex{
+/*-(void)setMidiSourceIndex:(int)inIndex{
   currMidiSourceIndex=inIndex;
   [currMidiSource removeDelegate:self];
   currMidiSource = [midi.sources objectAtIndex:inIndex];
   [currMidiSource addDelegate:self];
   NSLog(@"set MidiSourceIndex to %d, %@", inIndex, currMidiSource.name);
+}*/
+
+- (void)reloadMidiSources {
+  for (PGMidiSource *source in midi.sources) {
+    [source addDelegate:self];
+    NSLog(@"add MidiSourceIndex %@", source.name);
+  }
 }
 
 -(void)setMidiDestinationIndex:(int)inIndex{
@@ -1625,11 +1630,12 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 {
   //printf("\nmidi source added");
   [settingsVC reloadMidiSources];
-
+  [self reloadMidiSources];
 }
 
 - (void) midi:(PGMidi*)midi sourceRemoved:(PGMidiSource *)source{
   [settingsVC reloadMidiSources];
+  [self reloadMidiSources];
 }
 
 
@@ -1671,7 +1677,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 #define MyMIDIPacketNext(pkt)	((MIDIPacket *)&(pkt)->data[(pkt)->length])
 #endif
 
-- (void) midiSource:(PGMidiSource*)midi midiReceived:(const MIDIPacketList *)packetList{
+- (void) midiSource:(PGMidiSource*)midiSource midiReceived:(const MIDIPacketList *)packetList{
 
   const MIDIPacket *packet = &packetList->packet[0];
 
@@ -1683,7 +1689,13 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     for(int i=0;i<packet->length;i++){//step throguh each byte, i
       if(((packet->data[i] >>7) & 0x01) ==1){//if a newstatus byte
         //send existing
-        if(statusByte!=nil)[self performSelectorOnMainThread:@selector(parseMessageData:) withObject:[NSData dataWithBytes:statusByte length:messageLength] waitUntilDone:NO];
+        if(statusByte!=nil) {
+          //[self performSelectorOnMainThread:@selector(parseMessageData:) withObject:[NSData dataWithBytes:statusByte length:messageLength] waitUntilDone:NO];
+          dispatch_async(dispatch_get_main_queue(), ^{
+            [self parseMessageData:[NSData dataWithBytes:statusByte length:messageLength]
+                        midiSource:midiSource ];
+          });
+        }
         messageLength=0;
         //now point to new start
         statusByte=&packet->data[i];
@@ -1691,7 +1703,11 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
       messageLength++;
     }
     //send what is left
-    [self performSelectorOnMainThread:@selector(parseMessageData:) withObject:[NSData dataWithBytes:statusByte length:messageLength] waitUntilDone:NO];
+    //[self performSelectorOnMainThread:@selector(parseMessageData:) withObject:[NSData dataWithBytes:statusByte length:messageLength] waitUntilDone:NO];
+    dispatch_async(dispatch_get_main_queue(), ^{
+      [self parseMessageData:[NSData dataWithBytes:statusByte length:messageLength]
+                  midiSource:midiSource ];
+    });
 
     packet = MyMIDIPacketNext(packet);
   }
@@ -1699,15 +1715,17 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 }
 
 //take messageData, derive the MIDI message type, and send it into PD to be picked up by PD's midi objects
--(void)parseMessageData:(NSData*)messageData{//2 or 3 bytes
-
+//-(void)parseMessageData:(NSData*)messageData{//2 or 3 bytes
+- (void)parseMessageData:(NSData *)messageData midiSource:(PGMidiSource*)midiSource {
 
   Byte* bytePtr = ((Byte*)([messageData bytes]));
   char type = ( bytePtr[0] >> 4) & 0x07 ;//remove leading 1 bit 0-7
   char channel = (bytePtr[0] & 0x0F);
 
+  int midiSourceIndex = [midi.sources indexOfObject:midiSource];
+
   for(int i=0;i<[messageData length];i++)
-    [PdBase sendMidiByte:currMidiSourceIndex byte:(int)bytePtr[i]];
+    [PdBase sendMidiByte:midiSourceIndex byte:(int)bytePtr[i]];
 
 
   switch (type) {

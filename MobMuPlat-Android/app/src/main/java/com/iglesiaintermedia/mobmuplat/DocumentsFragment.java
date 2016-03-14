@@ -4,6 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import android.app.Activity;
+import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -46,9 +51,14 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 		
 		
 		_listView = (ListView)rootView.findViewById(R.id.listView1);
-		_isListFiltered = true;
 		_filenamesList = new ArrayList<String>();
+
+        _isListFiltered = true;
+
+        SharedPreferences sp = getActivity().getPreferences(Activity.MODE_PRIVATE);
+        _isListFiltered = !sp.getBoolean("showAllFiles", false);
 		refreshFileList();
+        refreshShowFilesButton();
 		
 	    _adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_documents, R.id.list_item_textView, _filenamesList) {
 	    	@Override
@@ -105,7 +115,7 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 	}
 	
 	private boolean isOpenable(String filename) {
-		String suffix = filename.substring(filename.lastIndexOf(".")+1);
+		String suffix = filename.substring(filename.lastIndexOf(".") + 1);
 		if (suffix.equalsIgnoreCase("mmp") || suffix.equalsIgnoreCase("pd")) return true;
 		else return false;
 	}
@@ -135,10 +145,16 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 	public void onClick(View v) {
 		if (v == _showAllFilesButton) {
 			_isListFiltered = !_isListFiltered;
-			_showAllFilesButton.setText(_isListFiltered ? "Show all files" : "Show only .mmp files");
+			_showAllFilesButton.setText(_isListFiltered ? "Show all files" : "Showing all files");
 			refreshFileList();
 			_adapter.notifyDataSetChanged();
-		}else if (v==_infoButton) {
+            refreshShowFilesButton();
+			// save to preferences
+            SharedPreferences settings = getActivity().getPreferences(Activity.MODE_PRIVATE);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean("showAllFiles", !_isListFiltered);
+            editor.commit();
+		} else if (v==_infoButton) {
 			new AlertDialog.Builder(getActivity())
 		    .setTitle("Getting files in and out of MobMuPlat")
 		    .setMessage("MobMuPlat files are stored in \n"+MainActivity.getDocumentsFolderPath()+"\n(Some file system apps may also show this as /sdcard/MobMuPlat).\nYou can use a file system app to manually copy files in and out of that folder.\n\nMobMuPlat will also automatically import .mmp, .pd, and .zip files, so just tap on those files from any other application (email, web, Dropbox, Google Drive, etc), and MobMuPlat will copy the file(s) into this folder (and extract all files from a .zip).")
@@ -147,6 +163,29 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 		     .show();
 		}
 	}
+
+    private void refreshShowFilesButton() {
+        //Drawable background = getResources().getDrawable(android.R.drawable.btn_default);
+		Drawable background = _showAllFilesButton.getBackground();
+		background.mutate();
+        if (!_isListFiltered) {
+            background.setColorFilter(0x55FFFFFF, PorterDuff.Mode.ADD);
+        } else {
+            background.setColorFilter(0x00000000, PorterDuff.Mode.ADD); //setting to null wasn't working on some devices.
+        }
+        if ( Build.VERSION.SDK_INT >= 16) {
+            _showAllFilesButton.setBackground(background);
+        } else {
+            // api 14,15
+            _showAllFilesButton.setBackgroundDrawable(background);
+        }
+		// need to always set these for some reason...
+        //_infoButton.getBackground().setColorFilter(null);
+    }
+
+    private void refreshAutoLoadButton() {
+        //DEI
+    }
 	
 	private void refreshFileList() {
 		ArrayList<String> files = getFilenames();

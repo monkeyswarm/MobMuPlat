@@ -17,17 +17,13 @@
 			     android:layout_height="5dp"
 			     android:visibility="gone"
 			     android:background="#00000000"/>
-    	     <ImageButton
+    	     <com.iglesiaintermedia.mobmuplat.MMPMenuButton
     	         android:id="@+id/button1"
-    	         android:layout_width="62dp"
-    	         android:layout_height="62dp"
+    	         android:layout_width="45dp"
+    	         android:layout_height="45dp"
     	         android:background="?android:selectableItemBackground"
-    	         android:paddingBottom="18dp"
-    	         android:paddingLeft="8dp"
-    	         android:paddingRight="18dp"
-    	         android:paddingTop="8dp"
-    	         android:scaleType="fitStart"
-    	         android:src="@drawable/infoicon_100x100" 
+				 android:layout_marginLeft="5dp"
+				 android:layout_marginTop="5dp"
 				 android:visibility="gone"/>
     	     <!-- to avoid loading jank, is shown after patch load -->
 
