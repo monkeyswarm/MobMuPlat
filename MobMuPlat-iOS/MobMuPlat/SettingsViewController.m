@@ -208,14 +208,6 @@ static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
   _midiDestinationTableView.delegate = self;
   _midiDestinationTableView.dataSource = self;
 
-  NSIndexPath *topIndexPath = [NSIndexPath indexPathForRow:0 inSection: 0];
-  if( [[[self.audioDelegate midi] sources] count] >0 )
-    [_midiSourceTableView selectRowAtIndexPath:topIndexPath animated:NO scrollPosition:UITableViewScrollPositionTop];
-  if( [[[self.audioDelegate midi] destinations] count] >0 )
-    [_midiDestinationTableView selectRowAtIndexPath:topIndexPath animated:NO scrollPosition:UITableViewScrollPositionTop];
-
-  //[_audioMidiScrollView setContentSize:_audioMidiContentView.frame.size];
-
   int actualTicks = [self.audioDelegate actualTicksPerBuffer];
   _tickSeg.selectedSegmentIndex = (int)log2(actualTicks);
   [_tickSeg addTarget:self action:@selector(tickSegChanged:) forControlEvents:UIControlEventValueChanged];
@@ -883,10 +875,31 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
   }
 }
 
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+  if (tableView==_midiSourceTableView) {
+    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.accessoryType = UITableViewCellAccessoryNone;
 
+    NSUInteger index = indexPath.row;
+    NSArray *sources = [[self.audioDelegate midi] sources];
+    if (index >= [sources count]) {
+      return; //error
+    }
+    [self.audioDelegate disconnectMidiSource:sources[index]];
+  } else if (tableView==_midiDestinationTableView) {
+    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.accessoryType = UITableViewCellAccessoryNone;
+
+    NSUInteger index = indexPath.row;
+    NSArray *destinations = [[self.audioDelegate midi] destinations];
+    if (index >= [destinations count]) {
+      return; //error
+    }
+    [self.audioDelegate disconnectMidiDestination:destinations[index]];
+  }
+}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-
   if(tableView==_documentsTableView){
     UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
 
@@ -901,15 +914,28 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 
     //done
     [aiv performSelector:@selector(stopAnimating) withObject:nil afterDelay:0];//performSelector: puts method call on next run loop
+  } else if (tableView==_midiSourceTableView){
 
+    NSUInteger index = indexPath.row;
+    NSArray *sources = [[self.audioDelegate midi] sources];
+    if (index >= [sources count]) {
+      return; //error
+    }
 
-  }
-
-  else if (tableView==_midiSourceTableView){
-    //[self.audioDelegate setMidiSourceIndex:[indexPath indexAtPosition:1] ];
+    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    [self.audioDelegate connectMidiSource:sources[index]];
   }
   else if (tableView==_midiDestinationTableView){
-    [self.audioDelegate setMidiDestinationIndex:[indexPath indexAtPosition:1] ];
+    NSUInteger index = indexPath.row;
+    NSArray *destinations = [[self.audioDelegate midi] destinations];
+    if (index >= [destinations count]) {
+      return; //error
+    }
+    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    [self.audioDelegate connectMidiDestination:destinations[index]];
+    
   }
   /*else if (tableView==_LANdiniUserTableView){
    [self.LANdiniDelegate ]
@@ -942,16 +968,20 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 }
 
 - (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
-  //if we are looking at MMP files only, then everything is highlightable.
-  if(!_mmpOrAll)return YES;
+  if(tableView == _documentsTableView) {
+    //if we are looking at MMP files only, then everything is highlightable.
+    if(!_mmpOrAll)return YES;
 
-  UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-  //todo centralize this repeated logic
-  NSString* suffix = [[cell.textLabel.text componentsSeparatedByString: @"."] lastObject];
-  if([suffix isEqualToString:@"mmp"] || [suffix isEqualToString:@"zip"] || [suffix isEqualToString:@"pd"]){
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    //todo centralize this repeated logic
+    NSString* suffix = [[cell.textLabel.text componentsSeparatedByString: @"."] lastObject];
+    if([suffix isEqualToString:@"mmp"] || [suffix isEqualToString:@"zip"] || [suffix isEqualToString:@"pd"]){
+      return YES;
+    }
+    else return NO;
+  } else { // other tables
     return YES;
   }
-  else return NO;
 }
 
 
@@ -986,11 +1016,13 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 
     if(cell==nil){
       cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:midiTableCellIdentifier] ;
-
+      cell.selectionStyle = UITableViewCellSelectionStyleNone;
       if (hardwareCanvasType==canvasTypeWideTablet)cell.textLabel.font=[UIFont systemFontOfSize:24];
       else cell.textLabel.font=[UIFont systemFontOfSize:12];
     }
     [cell textLabel].text=currMidiSourceName;
+    cell.accessoryType = [self.audioDelegate isConnectedToConnection:currSource] ?
+       UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
     return cell;
   }
 
@@ -1001,11 +1033,13 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 
     if(cell==nil){
       cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:midiTableCellIdentifier] ;
-
+      cell.selectionStyle = UITableViewCellSelectionStyleNone;
       if (hardwareCanvasType==canvasTypeWideTablet)cell.textLabel.font=[UIFont systemFontOfSize:24];
       else cell.textLabel.font=[UIFont systemFontOfSize:12];
     }
     [cell textLabel].text=currMidiDestName;
+    cell.accessoryType = [self.audioDelegate isConnectedToConnection:currDestination] ?
+       UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
     return cell;
 
   }

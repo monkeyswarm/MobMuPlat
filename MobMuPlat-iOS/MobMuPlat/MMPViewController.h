@@ -47,10 +47,6 @@
     
     //midi
     PGMidi *midi;
-    //PGMidiSource *currMidiSource;
-    PGMidiDestination *currMidiDestination;
-    //int currMidiSourceIndex;
-    int currMidiDestinationIndex;
 	
   BOOL mixingEnabled;
     BOOL isLandscape;

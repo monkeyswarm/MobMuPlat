@@ -1,0 +1,14 @@
+#N canvas 15 38 450 300 10;
+#X obj 48 22 loadbang;
+#X obj 50 101 until;
+#X msg 48 78 100000;
+#X obj 48 129 int;
+#X obj 74 129 + 1;
+#X msg 97 78 0;
+#X obj 48 156 print;
+#X connect 0 0 2 0;
+#X connect 1 0 3 0;
+#X connect 2 0 1 0;
+#X connect 3 0 4 0;
+#X connect 3 0 6 0;
+#X connect 4 0 3 1;

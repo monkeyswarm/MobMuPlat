@@ -74,6 +74,10 @@ extern void pique_setup(void);
 
   //
   BOOL _flipped;
+
+  //
+  NSMutableArray *_connectedMidiSources;
+  NSMutableArray *_connectedMidiDestinations;
 }
 
 @synthesize audioController, settingsVC;
@@ -158,6 +162,8 @@ extern void pique_setup(void);
   [midi setVirtualEndpointName:@"MobMuPlat"];
   [midi setVirtualSourceEnabled:YES];
   //[midi.virtualSourceDestination]
+  _connectedMidiSources = [NSMutableArray array];
+  _connectedMidiDestinations = [NSMutableArray array];
 
   // If iOS 5, then use non-auto-layout xib files.
   if (SYSTEM_VERSION_LESS_THAN(@"6.0")) {
@@ -367,12 +373,11 @@ extern void pique_setup(void);
 
   //midi setup
   midi.delegate=self;
-  /*if([midi.sources count]>0){
-    [self setMidiSourceIndex:0];//connect to first device in MIDI source list
-  }*/
-  [self reloadMidiSources];
+  if([midi.sources count]>0){
+    [self connectMidiSource:midi.sources[0]];//connect to first device in MIDI source list
+  }
   if([midi.destinations count]>0){
-    [self setMidiDestinationIndex:0];//connect to first device in MIDI source list
+    [self connectMidiDestination:midi.destinations[0]];//connect to first device in MIDI dest list
   }
 
   //delegate for file loading, etc
@@ -1603,26 +1608,27 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   return YES;
 }
 
-/*-(void)setMidiSourceIndex:(int)inIndex{
-  currMidiSourceIndex=inIndex;
-  [currMidiSource removeDelegate:self];
-  currMidiSource = [midi.sources objectAtIndex:inIndex];
-  [currMidiSource addDelegate:self];
-  NSLog(@"set MidiSourceIndex to %d, %@", inIndex, currMidiSource.name);
-}*/
-
-- (void)reloadMidiSources {
-  for (PGMidiSource *source in midi.sources) {
-    [source addDelegate:self];
-    NSLog(@"add MidiSourceIndex %@", source.name);
-  }
+- (void)connectMidiSource:(PGMidiSource *)source {
+  [_connectedMidiSources addObject:source];
+  [source addDelegate:self];
 }
 
--(void)setMidiDestinationIndex:(int)inIndex{
-  currMidiDestinationIndex = inIndex;
-  //[currMidiDestination]
-  currMidiDestination=[midi.destinations objectAtIndex:inIndex];
-  NSLog(@"set MidiDestinationIndex to %d, %@", inIndex, currMidiDestination.name);
+- (void)disconnectMidiSource:(PGMidiSource *)source {
+  [source removeDelegate:self];
+  [_connectedMidiSources removeObject:source];
+}
+
+- (void)connectMidiDestination:(PGMidiDestination *)destination {
+  [_connectedMidiDestinations addObject:destination];
+}
+
+- (void)disconnectMidiDestination:(PGMidiDestination *)destination {
+  [_connectedMidiDestinations removeObject:destination];
+}
+
+- (BOOL)isConnectedToConnection:(PGMidiConnection *)connection {
+  return [_connectedMidiDestinations containsObject:connection] ||
+         [_connectedMidiSources containsObject:connection];
 }
 
 //==== pgmidi delegate methods
@@ -1630,12 +1636,14 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 {
   //printf("\nmidi source added");
   [settingsVC reloadMidiSources];
-  [self reloadMidiSources];
 }
 
 - (void) midi:(PGMidi*)midi sourceRemoved:(PGMidiSource *)source{
+  // remove if connected
+  [source removeDelegate:self];
+  [_connectedMidiSources removeObject:source];
+
   [settingsVC reloadMidiSources];
-  [self reloadMidiSources];
 }
 
 
@@ -1645,6 +1653,9 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 }
 
 - (void) midi:(PGMidi*)midi destinationRemoved:(PGMidiDestination *)destination{
+  // remove if connected
+  [_connectedMidiDestinations removeObject:destination];
+
   //NSLog(@"removed %@", destination.name);
   [settingsVC reloadMidiSources];
 }
@@ -1767,37 +1778,52 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
 - (void)receiveNoteOn:(int)pitch withVelocity:(int)velocity forChannel:(int)channel {
   const UInt8 bytes[]  = { 0x90+channel, pitch, velocity };
-  [currMidiDestination sendBytes:bytes size:sizeof(bytes)];
+  //[currMidiDestination sendBytes:bytes size:sizeof(bytes)];
+  [self sendToMidiDestinations:bytes size:sizeof(bytes)];
 }
 
 - (void)receiveControlChange:(int)value forController:(int)controller forChannel:(int)channel {
   const UInt8 bytes[]  = { 0xB0+channel, controller, value };
-  [currMidiDestination sendBytes:bytes size:sizeof(bytes)];
+  //[currMidiDestination sendBytes:bytes size:sizeof(bytes)];
+  [self sendToMidiDestinations:bytes size:sizeof(bytes)];
 }
 
 - (void)receiveProgramChange:(int)value forChannel:(int)channel {
   const UInt8 bytes[]  = { 0xC0+channel, value };
-  [currMidiDestination sendBytes:bytes size:sizeof(bytes)];
+  //[currMidiDestination sendBytes:bytes size:sizeof(bytes)];
+  [self sendToMidiDestinations:bytes size:sizeof(bytes)];
 }
 
 - (void)receivePitchBend:(int)value forChannel:(int)channel {
   const UInt8 bytes[]  = { 0xE0+channel, (value-8192)&0x7F, ((value-8192)>>7)&0x7F };
-  [currMidiDestination sendBytes:bytes size:sizeof(bytes)];
+  //[currMidiDestination sendBytes:bytes size:sizeof(bytes)];
+  [self sendToMidiDestinations:bytes size:sizeof(bytes)];
 }
 
 - (void)receiveAftertouch:(int)value forChannel:(int)channel {
   const UInt8 bytes[]  = { 0xD0+channel, value };
-  [currMidiDestination sendBytes:bytes size:sizeof(bytes)];
+  //[currMidiDestination sendBytes:bytes size:sizeof(bytes)];
+  [self sendToMidiDestinations:bytes size:sizeof(bytes)];
 }
 
 - (void)receivePolyAftertouch:(int)value forPitch:(int)pitch forChannel:(int)channel {
   const UInt8 bytes[]  = { 0xA0+channel, pitch, value };
-  [currMidiDestination sendBytes:bytes size:sizeof(bytes)];
+  //[currMidiDestination sendBytes:bytes size:sizeof(bytes)];
+  [self sendToMidiDestinations:bytes size:sizeof(bytes)];
 }
 
 - (void)receiveMidiByte:(int)byte forPort: (int)port {
-  const UInt8 shortByte = (UInt8)byte;
-  [currMidiDestination sendBytes:&shortByte size:1];
+  //const UInt8 shortByte = (UInt8)byte;
+  const UInt8 bytes[]  = { byte };
+  //[currMidiDestination sendBytes:bytes size:sizeof(bytes)];
+  [self sendToMidiDestinations:bytes size:sizeof(bytes)];
+}
+
+// Send to all connected destinations.
+- (void)sendToMidiDestinations:(const UInt8*)bytes size:(UInt32)size {
+  for (PGMidiDestination *destination in _connectedMidiDestinations) {
+    [destination sendBytes:bytes size:size];
+  }
 }
 
 ///GPS

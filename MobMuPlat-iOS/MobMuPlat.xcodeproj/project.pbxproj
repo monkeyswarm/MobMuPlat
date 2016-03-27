@@ -1978,8 +1978,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = MobMuPlat/MobMuPlat.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer: daniel Iglesia (6Y3ENEJPL8)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: daniel Iglesia (6Y3ENEJPL8)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -2006,7 +2006,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.iglesiaintermedia.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "e7aeab74-5f1b-4f08-b3cc-60a75dba3bcf";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../libpd/** $(SRCROOT)/../PdParty/src/** $(SRCROOT)/../PdParty/libs";
 				VALID_ARCHS = "armv7 armv7s arm64";
@@ -2021,8 +2021,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = MobMuPlat/MobMuPlat.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer: daniel Iglesia (6Y3ENEJPL8)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: daniel Iglesia (6Y3ENEJPL8)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_BITCODE = NO;
 				GCC_INPUT_FILETYPE = automatic;
@@ -2046,7 +2046,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.iglesiaintermedia.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "e7aeab74-5f1b-4f08-b3cc-60a75dba3bcf";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../libpd/** $(SRCROOT)/../PdParty/src/** $(SRCROOT)/../PdParty/libs";
 				VALID_ARCHS = "armv7 armv7s arm64";

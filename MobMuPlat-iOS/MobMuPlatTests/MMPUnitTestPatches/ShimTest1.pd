@@ -1,0 +1,6 @@
+#N canvas 0 22 450 300 10;
+#X floatatom 19 54 5 0 0 0 - - -, f 5;
+#X obj 19 21 receive floatatomExternalReceive;
+#X obj 19 80 send floatatomExternalSend;
+#X connect 0 0 2 0;
+#X connect 1 0 0 0;

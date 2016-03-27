@@ -133,8 +133,15 @@ typedef enum{
 -(int)setRate:(int)inRate;
 -(int)sampleRate;
 -(PGMidi*) midi;
-//-(void)setMidiSourceIndex:(int)index;
--(void)setMidiDestinationIndex:(int)index;
+
+- (void)connectMidiSource:(PGMidiSource *)source;
+- (void)disconnectMidiSource:(PGMidiSource *)source;
+- (void)connectMidiDestination:(PGMidiDestination *)destination;
+- (void)disconnectMidiDestination:(PGMidiDestination *)destination;
+
+// Whether we are connected to a source or destination.
+- (BOOL)isConnectedToConnection:(PGMidiConnection *)connection;
+
 -(int)setChannelCount:(int)newChannelCount;
 - (void)setAudioInputEnabled:(BOOL)enabled; //for mic input vs vibration
 -(BOOL)isAudioBusConnected;
