@@ -8,8 +8,8 @@ android {
         applicationId "com.iglesiaintermedia.mobmuplat"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 15
-        versionName "0.20"
+        versionCode 16
+        versionName "0.25"
     }
     buildTypes {
         release {
@@ -25,7 +25,10 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.android.support:design:22.2.1'
-    compile files('libs/gson-2.2.4.jar')
+    compile files('libs/gson-2.2.4.jar') //necc?
     compile 'org.puredata.android:pd-core:1.0.1'
+    compile 'com.google.android.support:wearable:1.3.0'
+    compile 'com.google.android.gms:play-services-wearable:8.4.0'
+    wearApp project(':mobmuplatandroidwear')
 
 }

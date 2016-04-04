@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.support.v4.view.GestureDetectorCompat;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.HorizontalScrollView;
 
 public class PagingHorizontalScrollView extends HorizontalScrollView  {
@@ -79,13 +78,5 @@ public class PagingHorizontalScrollView extends HorizontalScrollView  {
         });
 		if(pagingDelegate!=null)pagingDelegate.onPage(pageIndex);
 	}
-
-	//public void setScrollable(final boolean scrollable) {
-        /*setOnTouchListener(scrollable ? null : new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });*/
-    //}
+	
 }

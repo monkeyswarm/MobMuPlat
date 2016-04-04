@@ -2,92 +2,112 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.iglesiaintermedia.mobmuplat"
     android:versionCode="15"
-    android:versionName="0.20" >
+    android:versionName="0.20">
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="22" />
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET" /> 
-    
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-	<uses-permission android:name="android.permission.VIBRATE"/>
-	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-	<uses-permission android:name="android.permission.WAKE_LOCK"/>
-    
-	<uses-feature android:name="android.hardware.usb.host" android:required="false"/>
-	<uses-permission android:name="android.permission.USB_PERMISSION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <uses-feature android:name="android.hardware.camera" android:required="false"/>
-    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
-    
+    <uses-feature
+        android:name="android.hardware.usb.host"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.USB_PERMISSION" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
 
     <uses-permission
         android:name="android.permission.FLASHLIGHT"
         android:permissionGroup="android.permission-group.HARDWARE_CONTROLS"
         android:protectionLevel="normal" />
 
-    <uses-sdk
-        android:minSdkVersion="14"
-        android:targetSdkVersion="22" />
-
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
-            android:name="com.iglesiaintermedia.mobmuplat.MainActivity"
+            android:name=".MainActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:label="@string/app_name"
-            android:screenOrientation="portrait" 
-            android:launchMode="singleTask" >
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter> <!--by file name -->
-   				 <action android:name="android.intent.action.VIEW" />
-    			<category android:name="android.intent.category.DEFAULT" />
-    			<category android:name="android.intent.category.BROWSABLE" />
-    			<data android:scheme="file" />
-    			<data android:host="*" />
-    			<data android:mimeType="*/*" /><!-- todo check! def necessary, but more specific "text/plain" not working!-->
-    			<data android:pathPattern=".*\\.mmp" />
-    			<data android:pathPattern=".*\\.pd" />
-    			<data android:pathPattern=".*\\.zip" />
-  			</intent-filter>
-  			
-  			<intent-filter> <!-- by mimetype -->
-   				 <action android:name="android.intent.action.VIEW" />
-    			<category android:name="android.intent.category.DEFAULT" />
-    			<category android:name="android.intent.category.BROWSABLE" />
-    			<data android:mimeType="text/plain" />
-    			<data android:mimeType="application/zip" />
-  			</intent-filter>
-  			
-  			
-        	
-  			<intent-filter> <!-- Intent filter for open ZIP files from email -->
-            	<data android:scheme="content" />
-            	<action android:name="android.intent.action.VIEW" />
-            	<category android:name="android.intent.category.DEFAULT" />
-            	<category android:name="android.intent.category.BROWSABLE" />
-            	<data android:mimeType="text/plain" />
-            	<data android:mimeType="application/zip" />
-        	</intent-filter>
-  			
-  			<intent-filter> <!-- Intent filter for open files from drive/email,still fubar -->
-            	<action android:name="android.intent.action.VIEW" />
-            	<category android:name="android.intent.category.DEFAULT" />
-            	 <data android:scheme="content" android:mimeType="*/*" android:host="*" android:pathPattern=".*\\.pd"/>
-                 <data android:scheme="file" android:mimeType="*/*" android:host="*" android:pathPattern=".*\\.pd"/>
-        	</intent-filter>
-  			
-  			<!-- 
+            <intent-filter> <!-- by file name -->
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="file" />
+                <data android:host="*" />
+                <data android:mimeType="*/*" />
+                <!-- todo check! def necessary, but more specific "text/plain" not working! -->
+                <data android:pathPattern=".*\\.mmp" />
+                <data android:pathPattern=".*\\.pd" />
+                <data android:pathPattern=".*\\.zip" />
+            </intent-filter>
+            <intent-filter> <!-- by mimetype -->
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:mimeType="text/plain" />
+                <data android:mimeType="application/zip" />
+            </intent-filter>
+            <intent-filter> <!-- Intent filter for open ZIP files from email -->
+                <data android:scheme="content" />
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:mimeType="text/plain" />
+                <data android:mimeType="application/zip" />
+            </intent-filter>
+            <intent-filter> <!-- Intent filter for open files from drive/email,still fubar -->
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="*"
+                    android:mimeType="*/*"
+                    android:pathPattern=".*\\.pd"
+                    android:scheme="content" />
+                <data
+                    android:host="*"
+                    android:mimeType="*/*"
+                    android:pathPattern=".*\\.pd"
+                    android:scheme="file" />
+            </intent-filter>
+
+            <!--
   			<intent-filter>
        			 <action android:name="android.net.wifi.STATE_CHANGE" />
        			 <action android:name="android.net.wifi.supplicant.CONNECTION_CHANGE" />
@@ -97,14 +117,15 @@
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
             <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-                android:resource="@xml/accessory_filter" /> -->
+                android:resource="@xml/accessory_filter" />
+            -->
         </activity>
 
         <service android:name="org.puredata.android.service.PdService" />
-        
-        <!-- <meta-data android:name="com.google.android.gms.version" -->
-           <!--  android:value="@integer/google_play_services_version" /> -->
-		
+
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
     </application>
 
 </manifest>

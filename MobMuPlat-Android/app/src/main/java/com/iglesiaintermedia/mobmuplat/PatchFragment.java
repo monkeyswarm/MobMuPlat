@@ -3,14 +3,17 @@ package com.iglesiaintermedia.mobmuplat;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.puredata.android.utils.PdUiDispatcher;
 import org.puredata.core.PdBase;
@@ -19,6 +22,7 @@ import org.puredata.core.PdListener;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -35,11 +39,13 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -73,8 +79,6 @@ import com.iglesiaintermedia.mobmuplat.nativepdgui.MMPPdGui;
 import com.iglesiaintermedia.mobmuplat.nativepdgui.MMPPdGuiUtils;
 import com.iglesiaintermedia.mobmuplat.nativepdgui.Widget;
 
-import cx.mccormick.pddroidparty.PdParser;
-
 public class PatchFragment extends Fragment implements ControlDelegate, PagingScrollViewDelegate, PdListener{
     private String TAG = "PatchFragment";
 
@@ -95,7 +99,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
     public MainActivity _mainActivity;
 
     Map<String, ArrayList<MMPControl>> _allGUIControlMap; //control address, array of objects with that address. Allows multiple items with same address.
-    /* wear Set<String> _wearAddressSet;*/
+    Set<String> _wearAddressSet;
 
     int _bgColor;
     private Button _catchButton; // Just to catch a11y focus and allow footswitch.
@@ -104,12 +108,14 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
     PdUiDispatcher _dispatcher;
     MMPPdGui mPdGui;
 
+    public String loadedWearString; //track gui sent to wear, for main activity to resend on foreground.
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         _mainActivity = (MainActivity)getActivity();
         _allGUIControlMap = new HashMap<String,ArrayList<MMPControl>>();
-        /* wear _wearAddressSet = new HashSet<String>(); */
+        _wearAddressSet = new HashSet<String>();
         mPdGui = new MMPPdGui();
         _dispatcher = new PdUiDispatcher() {
             @Override
@@ -229,6 +235,8 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 
     private void loadSceneCommonReset() {
         //TODO check recursion of file paths.
+        loadedWearString = null;
+        _wearAddressSet.clear();
         _allGUIControlMap.clear();
         scrollRelativeLayout.removeAllViews();
 
@@ -334,8 +342,6 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 
     public void loadSceneFromJSON(String inString){
         loadSceneCommonReset();
-
-        /* wear _wearAddressSet.clear();*/
         if (inString.isEmpty()) return;
 
         try {
@@ -460,13 +466,12 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
             }
 
             if(topDict.get("port")!=null)
-                _port=topDict.get("port").getAsInt();
-            //TODO SET PORT IN NETWORK CONTROLLER
+                _port=topDict.get("port").getAsInt(); //DEPRECATED, not in editor anymore
+            //TODO SET PORT IN NETWORK CONTROLLER...meh
             if(topDict.get("version")!=null)
                 _version=topDict.get("version").getAsFloat();
 
             JsonArray controlDictArray;//array of dictionaries, one for each gui element
-            /* wear
             // WEAR GUI
             if (topDict.get("wearGui")!=null) {
                 JsonArray pageGuiArray = topDict.get("wearGui").getAsJsonArray();
@@ -478,18 +483,20 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
                 }
                 wearDict.add("wearGui", pageGuiArray);
                 String jsonString = wearDict.toString();
-                _mainActivity.sendWearMessage("/loadGUI", jsonString.getBytes(Charset.forName("UTF-8")));
+                _mainActivity.sendWearMessage("/loadGUI", jsonString);
+                // track the wear dict
+                loadedWearString = jsonString;
 
                 // iterate through wear pages and get addresses
                 for(int i=0;i<pageGuiArray.size();i++){
                     JsonObject pageDict = pageGuiArray.get(i).getAsJsonObject();//page-level dict
                     if (pageDict.get("pageGui")==null)continue;
                     JsonObject pageGuiDict = pageDict.get("pageGui").getAsJsonObject();
-                    if(pageGuiDict.get("address")==null)continue;// if doesn't have an address, skip out of loop
+                    if(pageGuiDict.get("address")==null)continue;// if doesn't have an address, skip
                     String address = pageGuiDict.get("address").getAsString();
                     _wearAddressSet.add(address);
                 }
-            }*/
+            }// end wear
 
             // MAIN GUI
             if(topDict.get("gui")!=null){
@@ -756,12 +763,11 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
                 }
             }
             // If wear has the address, send it out.
-                /* wear if (_wearAddressSet.contains(addressObj)) {
-                    Object argsNoAddress[] = Arrays.copyOfRange(args, 1, args.length);
-                    String message = TextUtils.join(" ",argsNoAddress); //rest is turned into list, delimited by space.
-                    byte[] data = message.getBytes(Charset.forName("UTF-8"));
-                    _mainActivity.sendWearMessage((String)addressObj, data);
-                }*/
+            if (_wearAddressSet.contains(addressObj)) {
+                Object argsNoAddress[] = Arrays.copyOfRange(args, 1, args.length);
+                String message = TextUtils.join(" ",argsNoAddress); //rest is turned into list, delimited by space.
+                _mainActivity.sendWearMessage((String)addressObj, message);
+            }
         } else if (source.equals("toSystem")) {
             if (args.length==0) return;
 
@@ -826,10 +832,102 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
                 if (ipAddress==null)ipAddress = "none";
                 Object[] msgArray = new Object[]{"/ipAddress", ipAddress};
                 PdBase.sendList("fromSystem", msgArray);
+            } else if (args.length > 1 && args[0].equals("/textDialog") && (args[1] instanceof String)) {
+                String tag = (String)args[1];
+                //String title = Arrays.copyOfRange(args,2,args.length-1).toString();
+                Object[] titleArray = Arrays.copyOfRange(args, 2, args.length);
+                StringBuilder builder = new StringBuilder();
+                for(Object s : titleArray) {
+                    builder.append(s);
+                    builder.append(" ");
+                }
+                showTextDialog(tag, builder.toString());
+            } else if (args.length > 1 && args[0].equals("/confirmationDialog") && (args[1] instanceof String)) {
+                String tag = (String)args[1];
+                //String title = Arrays.copyOfRange(args,2,args.length-1).toString();
+                Object[] titleArray = Arrays.copyOfRange(args, 2, args.length);
+                StringBuilder builder = new StringBuilder();
+                for(Object s : titleArray) {
+                    builder.append(s);
+                    builder.append(" ");
+                }
+                showConfirmationDialog(tag, builder.toString());
             }
         }
     }
 
+    private void showConfirmationDialog(String tag, String title) {
+        Context context = _mainActivity;
+        final String finalTag = tag;
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                context);
+
+        // set title
+        alertDialogBuilder.setTitle(title);
+
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Object[] msgArray = new Object[]{"/confirmationDialog", finalTag, Integer.valueOf(1)};
+                        PdBase.sendList("fromSystem", msgArray);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Object[] msgArray = new Object[]{"/confirmationDialog", finalTag, Integer.valueOf(0)};
+                        PdBase.sendList("fromSystem", msgArray);
+                        dialog.cancel();
+                    }
+                });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+    }
+
+    private void showTextDialog(String tag, String title) {
+        Context context = _mainActivity;
+        final String finalTag = tag;
+        // get prompts.xml view
+        LayoutInflater li = LayoutInflater.from(context);
+        View promptsView = li.inflate(R.layout.text_input_dialog, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                context);
+
+
+        // set prompts.xml to alertdialog builder
+        alertDialogBuilder.setView(promptsView);
+        TextView titleView = (TextView) promptsView.findViewById(R.id.textView1);
+        titleView.setText(title);
+
+        final EditText userInput = (EditText) promptsView
+                .findViewById(R.id.editTextDialogUserInput);
+
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                Object[] msgArray = new Object[]{"/textDialog", finalTag, userInput.getText().toString()};
+                                PdBase.sendList("fromSystem", msgArray);
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        alertDialog.show();
+    }
 
     @Override
     public void receiveMessage(String source, String symbol, Object... args) {

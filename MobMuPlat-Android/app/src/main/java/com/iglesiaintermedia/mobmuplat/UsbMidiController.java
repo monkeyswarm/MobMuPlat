@@ -40,9 +40,6 @@ import com.noisepages.nettoyeur.usb.util.UsbDeviceSelector;
 public class UsbMidiController extends Observable{
 
     private Activity _activity;
-
-    //private UsbMidiDevice midiDevice;
-    //private Set<UsbMidiDevice> midiDeviceSet;
     private List<UsbMidiDevice> devices;
     private List<UsbMidiDevice> deviceRequestQueue;
 
@@ -51,14 +48,10 @@ public class UsbMidiController extends Observable{
     public List<String>midiInputStringList;
     public List<String>midiOutputStringList;
 
-    //private UsbMidiDevice openMidiDevice = null;
-    //private UsbMidiOutput midiOutput;
-    private UsbMidiInput currMidiInput;
-    //private int currInputIndex = -1;
-    private int currOutputIndex = -1;
+    private Set<UsbMidiInput>_connectedMidiInputSet;
+    private Set<UsbMidiOutput>_connectedMidiOutputSet;
 
     private MidiReceiver midiOutReceiver = null;
-    //private PdToMidiAdapter pdToMidiAdapter;
 
     //ovveride to avoid block useage on output...things would hang
     private class DEIPdToMidiAdapter extends PdToMidiAdapter {
@@ -89,7 +82,8 @@ public class UsbMidiController extends Observable{
         midiOutputList = new ArrayList<UsbMidiOutput>();
         midiInputStringList = new ArrayList<String>();
         midiOutputStringList = new ArrayList<String>();
-
+        _connectedMidiInputSet = new HashSet<UsbMidiInput>();
+        _connectedMidiOutputSet = new HashSet<UsbMidiOutput>();
 
 
         UsbMidiDevice.installBroadcastHandler(_activity, new UsbBroadcastHandler() {
@@ -97,7 +91,7 @@ public class UsbMidiController extends Observable{
             @Override
             public void onPermissionGranted(UsbDevice device) {
                 // find it
-
+                //ConsoleLogController.getInstance().append("\npermission granted "+device.toString());
                 UsbMidiDevice midiDevice = findUsbMidiDeviceMatching(device);
                 if (midiDevice == null) {
                     requestNextDevice();
@@ -118,18 +112,28 @@ public class UsbMidiController extends Observable{
 		        midiInputStringList.clear();
 		        midiOutputStringList.clear();*/
 
+                String name="";
+                if (android.os.Build.VERSION.SDK_INT >= 21) {
+                    name = device.getProductName();
+                }
                 for (int i = 0; i < midiDevice.getInterfaces().size(); ++i) {
                     for (int j = 0; j < midiDevice.getInterfaces().get(i).getOutputs().size(); ++j) {
                         midiOutputList.add(midiDevice.getInterfaces().get(i).getOutputs().get(j));//("Interface " + i + ", Output " + j);
-                        midiOutputStringList.add("Interface " + i + ", Output " + j);
+                        midiOutputStringList.add(""+name+": Interface " + i + ", Output " + j);
                     }
                     for (int j = 0; j < midiDevice.getInterfaces().get(i).getInputs().size(); ++j) {
+                        //ConsoleLogController.getInstance().append("\nfind input "+midiDevice.getInterfaces().get(i).getInputs().get(j));
                         midiInputList.add(midiDevice.getInterfaces().get(i).getInputs().get(j));
-                        midiInputStringList.add("Interface " + i + ", Input " + j);
+                        midiInputStringList.add(""+name+": Interface " + i + ", Input " + j);
                     }
                 }
-                if(midiInputList.size()>0)refreshInputConnections();//connectInputAtIndex(0);
-                if(midiOutputList.size()>0)connectOutputAtIndex(0);
+                //Connect first item
+                if(midiInputList.size()>0) {
+                    connectMidiInput(midiInputList.get(0));
+                }
+                if(midiOutputList.size()>0) {
+                    connectMidiOutput(midiOutputList.get(0));
+                }
                 //listener notification that devices were authorized...
                 setChanged();
                 notifyObservers();
@@ -171,6 +175,14 @@ public class UsbMidiController extends Observable{
         });
     }
 
+    public boolean isConnectedToInput(UsbMidiInput input) {
+        return _connectedMidiInputSet.contains(input);
+    }
+
+    public boolean isConnectedToOutput(UsbMidiOutput output) {
+        return _connectedMidiOutputSet.contains(output);
+    }
+
     private UsbMidiDevice findUsbMidiDeviceMatching(UsbDevice usbDevice) {
         UsbMidiDevice midiDevice = null;
         if (devices != null) {
@@ -184,6 +196,7 @@ public class UsbMidiController extends Observable{
     }
 
     private void requestNextDevice() {
+        //ConsoleLogController.getInstance().append("\nrequesting device");
         if (deviceRequestQueue.size() > 0) {
             deviceRequestQueue.get(0).requestPermission(_activity);
             deviceRequestQueue.remove(0);
@@ -204,13 +217,16 @@ public class UsbMidiController extends Observable{
         midiInputList.clear();
         midiInputStringList.clear();
         midiOutputStringList.clear();
+        _connectedMidiInputSet.clear();
+        _connectedMidiOutputSet.clear();
     }
 
 
     public void refreshDevices() {//TODO does this matter activity vs application context??? //return count found
-
         clearLists();
         devices = UsbMidiDevice.getMidiDevices(_activity);
+        //ConsoleLogController.getInstance().append("\ncontroller refresh devices: "+devices); //DEI
+
         int deviceCount = devices.size();
         toast("Found "+deviceCount+" MIDI device(s)");
         
@@ -316,74 +332,49 @@ public class UsbMidiController extends Observable{
             }
         });
     }
-	 
-	 /*public int getCurrInputIndex() {
-		 return currInputIndex;
-	 }*/
 
-    public int getCurrOutputIndex() {
-        return currOutputIndex;
-    }
 
-    public void connectOutputAtIndex(int index) {
-        if (midiOutputList.size()>index) {
-            UsbMidiOutput midiOutput = midiOutputList.get(index);
-            try {
-                midiOutReceiver = midiOutput.getMidiOut();
-                DEIPdToMidiAdapter pdToMidiAdapter = new DEIPdToMidiAdapter(midiOutReceiver); //receive from pd, out to midi
-                PdBase.setMidiReceiver(pdToMidiAdapter);
-                currOutputIndex = index;
-            } catch (DeviceNotConnectedException e) {
-                toast("MIDI device has been disconnected");
-                currOutputIndex = -1;
-            } catch (InterfaceNotAvailableException e) {
-                toast("MIDI interface is unavailable");
-                currOutputIndex = -1;
-            }
-        } else {
-            toast("Selection out of bounds...try refreshing midi devices.");
+    public void connectMidiInput(UsbMidiInput input) {
+        if (input == null) return;
+        try {
+            input.start(); // exceptions from here
+            input.setReceiver(receiver);
+            _connectedMidiInputSet.add(input);
+        } catch (DeviceNotConnectedException e) {
+            toast("MIDI device has been disconnected");
+        } catch (InterfaceNotAvailableException e) {
+            toast("MIDI interface is unavailable");
         }
     }
 
-    public void refreshInputConnections() {
-        for(UsbMidiInput midiInput : midiInputList) {
-            midiInput.setReceiver(receiver);
-            try {
-                midiInput.start();
-            } catch (DeviceNotConnectedException e) {
-                toast("MIDI device has been disconnected");
+    public void disconnectMidiInput(UsbMidiInput input) {
+        if (input == null) return;
+        input.stop();
+        input.setReceiver(null);
+        _connectedMidiInputSet.remove(input);
+    }
 
-            } catch (InterfaceNotAvailableException e) {
-                toast("MIDI interface is unavailable");
-            }
+    // TODO PdBase only has one midi receiver at a time...once multiple output is properly supported,
+    // will have to set a new receiver with multi output routing
+    public void connectMidiOutput(UsbMidiOutput output) {
+        if (output == null) return;
+        try {
+            midiOutReceiver = output.getMidiOut();
+            DEIPdToMidiAdapter pdToMidiAdapter = new DEIPdToMidiAdapter(midiOutReceiver); //receive from pd, out to midi
+            PdBase.setMidiReceiver(pdToMidiAdapter);
+            _connectedMidiOutputSet.add(output);
+        } catch (DeviceNotConnectedException e) {
+            toast("MIDI device has been disconnected");
+        } catch (InterfaceNotAvailableException e) {
+            toast("MIDI interface is unavailable");
         }
     }
 
-	 /*public void connectInputAtIndex(int index) {
-		 if(currMidiInput != null) {
-			 currMidiInput.setReceiver(null);
-			 currMidiInput = null;
-		 }
-		 if (midiInputList.size()>index) {
-			 UsbMidiInput midiInput = midiInputList.get(index);
-		        midiInput.setReceiver(receiver);
-	            try {
-	            	midiInput.start();
-	            	currInputIndex = index;
-	            	currMidiInput = midiInput;
-	            } catch (DeviceNotConnectedException e) {
-	            	toast("MIDI device has been disconnected");
-	            	currInputIndex = -1;
-	              //return;
-	            } catch (InterfaceNotAvailableException e) {
-	            	toast("MIDI interface is unavailable");
-	            	currInputIndex = -1;
-	            	//return;
-	            }
-		 } else {
-			toast("Selection out of bounds...try re-detecting midi device."); 
-		 }
-	 }*/
+    public void disconnectMidiOutput(UsbMidiOutput output) {
+        if (output == null) return;
+        PdBase.setMidiReceiver(null);
+        _connectedMidiOutputSet.remove(output);
+    }
 
     public void close() {
         UsbMidiDevice.uninstallBroadcastHandler(_activity);

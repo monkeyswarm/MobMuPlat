@@ -76,7 +76,7 @@ extern void pique_setup(void);
   BOOL _flipped;
 
   //
-  NSMutableArray *_connectedMidiSources;
+  NSMutableArray *_connectedMidiSources; //TODO Set.
   NSMutableArray *_connectedMidiDestinations;
 }
 
@@ -1701,11 +1701,13 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
       if(((packet->data[i] >>7) & 0x01) ==1){//if a newstatus byte
         //send existing
         if(statusByte!=nil) {
-          //[self performSelectorOnMainThread:@selector(parseMessageData:) withObject:[NSData dataWithBytes:statusByte length:messageLength] waitUntilDone:NO];
-          dispatch_async(dispatch_get_main_queue(), ^{
+          [self performSelectorOnMainThread:@selector(parseMessageDataTuple:)
+                                 withObject:@[ midiSource, [NSData dataWithBytes:statusByte length:messageLength] ]
+                              waitUntilDone:NO];
+          /*dispatch_async(dispatch_get_main_queue(), ^{
             [self parseMessageData:[NSData dataWithBytes:statusByte length:messageLength]
                         midiSource:midiSource ];
-          });
+          });*/
         }
         messageLength=0;
         //now point to new start
@@ -1714,11 +1716,13 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
       messageLength++;
     }
     //send what is left
-    //[self performSelectorOnMainThread:@selector(parseMessageData:) withObject:[NSData dataWithBytes:statusByte length:messageLength] waitUntilDone:NO];
-    dispatch_async(dispatch_get_main_queue(), ^{
+    [self performSelectorOnMainThread:@selector(parseMessageDataTuple:)
+                           withObject:@[ midiSource, [NSData dataWithBytes:statusByte length:messageLength] ]
+                        waitUntilDone:NO];
+    /*dispatch_async(dispatch_get_main_queue(), ^{
       [self parseMessageData:[NSData dataWithBytes:statusByte length:messageLength]
                   midiSource:midiSource ];
-    });
+    });*/
 
     packet = MyMIDIPacketNext(packet);
   }
@@ -1727,17 +1731,21 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
 //take messageData, derive the MIDI message type, and send it into PD to be picked up by PD's midi objects
 //-(void)parseMessageData:(NSData*)messageData{//2 or 3 bytes
-- (void)parseMessageData:(NSData *)messageData midiSource:(PGMidiSource*)midiSource {
+//- (void)parseMessageData:(NSData *)messageData midiSource:(PGMidiSource*)midiSource {
+- (void)parseMessageDataTuple:(NSArray *)sourceAndDataTuple {
+  PGMidiSource *midiSource = sourceAndDataTuple[0];
+  NSData *messageData = sourceAndDataTuple[1];
 
   Byte* bytePtr = ((Byte*)([messageData bytes]));
   char type = ( bytePtr[0] >> 4) & 0x07 ;//remove leading 1 bit 0-7
   char channel = (bytePtr[0] & 0x0F);
 
-  int midiSourceIndex = [midi.sources indexOfObject:midiSource];
-
-  for(int i=0;i<[messageData length];i++)
-    [PdBase sendMidiByte:midiSourceIndex byte:(int)bytePtr[i]];
-
+  NSUInteger midiSourceIndex = [midi.sources indexOfObject:midiSource];
+  if (midiSourceIndex != NSNotFound) {
+    for(int i=0;i<[messageData length];i++) {
+      [PdBase sendMidiByte:(int)midiSourceIndex byte:(int)bytePtr[i]];
+    }
+  }
 
   switch (type) {
     case 0://noteoff
