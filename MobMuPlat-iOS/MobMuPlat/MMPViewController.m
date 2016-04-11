@@ -56,6 +56,8 @@
 #import "MMPGui.h"
 #import "PdParser.h"
 
+#import "UIAlertView+MMPBlocks.h"
+
 extern void expr_setup(void);
 extern void bonk_tilde_setup(void);
 extern void choice_setup(void);
@@ -1360,7 +1362,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 //PureData has sent out a message from the patch (from a receive object, we look for messages from "toNetwork","toGUI","toSystem")
 - (void)receiveList:(NSArray *)list fromSource:(NSString *)source{
   //NSLog(@"rec: %@", list);
-  if([list count]==0){
+  if([list count]==0){ //guarantee at least one item in array.
     NSLog(@"got zero args from %@", source);
     return;//protect against bad elements that got dropped from array...
   }
@@ -1424,7 +1426,9 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
       }
     }
     //camera flash
-    if([[list objectAtIndex:0] isEqualToString:@"/flash"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+    if([list count] == 2 &&
+       [[list objectAtIndex:0] isEqualToString:@"/flash"] &&
+       [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]) {
       float val = [[list objectAtIndex:1] floatValue];
       if ([avCaptureDevice hasTorch]) {
         [avCaptureDevice lockForConfiguration:nil];
@@ -1433,7 +1437,9 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
         [avCaptureDevice unlockForConfiguration];
       }
     }
-    else if([[list objectAtIndex:0] isEqualToString:@"/setAccelFrequency"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+    else if([list count] == 2 &&
+            [[list objectAtIndex:0] isEqualToString:@"/setAccelFrequency"] &&
+            [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
       float val = [[list objectAtIndex:1] floatValue];
       if(val<0.01)val=0.01;//clip
       if(val>100)val=100;
@@ -1444,7 +1450,9 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
       NSArray* msgArray=[NSArray arrayWithObjects:@"/accelFrequency", [NSNumber numberWithFloat:motionManager.accelerometerUpdateInterval], nil];
       [PdBase sendList:msgArray toReceiver:@"fromSystem"];
     }
-    else if([[list objectAtIndex:0] isEqualToString:@"/setGyroFrequency"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+    else if([list count] == 2 &&
+            [[list objectAtIndex:0] isEqualToString:@"/setGyroFrequency"] &&
+            [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]) {
       float val = [[list objectAtIndex:1] floatValue];
       if(val<0.01)val=0.01;//clip
       if(val>100)val=100;
@@ -1455,7 +1463,9 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
       NSArray* msgArray=[NSArray arrayWithObjects:@"/gyroFrequency", [NSNumber numberWithFloat:motionManager.gyroUpdateInterval], nil];
       [PdBase sendList:msgArray toReceiver:@"fromSystem"];
     }
-    else if([[list objectAtIndex:0] isEqualToString:@"/setMotionFrequency"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+    else if([list count] == 2 &&
+            [[list objectAtIndex:0] isEqualToString:@"/setMotionFrequency"] &&
+            [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]) {
       float val = [[list objectAtIndex:1] floatValue];
       if(val<0.01)val=0.01;//clip
       if(val>100)val=100;
@@ -1467,51 +1477,48 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
       [PdBase sendList:msgArray toReceiver:@"fromSystem"];
     }
     //GPS
-    else if([[list objectAtIndex:0] isEqualToString:@"/enableLocation"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+    else if([list count] == 2 &&
+            [[list objectAtIndex:0] isEqualToString:@"/enableLocation"] &&
+            [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]) {
       float val = [[list objectAtIndex:1] floatValue];
-      //printf("\nenable location %.2f", val );
-      if(val>0){
+      if(val > 0) {
         if ([locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
           [locationManager performSelector:@selector(requestWhenInUseAuthorization)];
         }
         [locationManager startUpdatingLocation];
         [locationManager startUpdatingHeading];
       }
-      else{
+      else {
         [locationManager stopUpdatingLocation ];
         [locationManager stopUpdatingHeading];
       }
     }
-    else if([[list objectAtIndex:0] isEqualToString:@"/setDistanceFilter"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+    else if([list count] == 2 &&
+            [[list objectAtIndex:0] isEqualToString:@"/setDistanceFilter"] &&
+            [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]) {
       float val = [[list objectAtIndex:1] floatValue];
-      //printf("\ndistance filter %.2f", val );
-      if(val>0)[locationManager setDistanceFilter:val];
+      if(val > 0) {
+        [locationManager setDistanceFilter:val];
+      }
       else [locationManager setDistanceFilter:kCLDistanceFilterNone];
     }
     else if([[list objectAtIndex:0] isEqualToString:@"/getDistanceFilter"]){
       NSArray* msgArray=[NSArray arrayWithObjects:@"/distanceFilter", [NSNumber numberWithFloat:locationManager.distanceFilter], nil];
       [PdBase sendList:msgArray toReceiver:@"fromSystem"];
     }
-    /*else if([[list objectAtIndex:0] isEqualToString:@"/getMotionFrequency"]){
-     NSArray* msgArray=[NSArray arrayWithObjects:@"/motionFrequency", [NSNumber numberWithFloat:self.motionFrequency], nil];
-     [PdBase sendList:msgArray toReceiver:@"fromSystem"];
-     }*/
-    /*else if([[list objectAtIndex:0] isEqualToString:@"/enableLANdini"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
-     float val = [[list objectAtIndex:1] floatValue];
-     if(val>0)[llm restartOSC];
-     else [llm stopOSC];
-     }*/
     //Reachability
     else if([[list objectAtIndex:0] isEqualToString:@"/getReachability"]){
       NSArray* msgArray=[NSArray arrayWithObjects:@"/reachability", [NSNumber numberWithFloat:[reach isReachable]? 1.0f : 0.0f ], [MMPViewController fetchSSIDInfo], nil];
       [PdBase sendList:msgArray toReceiver:@"fromSystem"];
     }
-    else if([[list objectAtIndex:0] isEqualToString:@"/setPage"] && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+    else if([list count] == 2 &&
+            [[list objectAtIndex:0] isEqualToString:@"/setPage"] &&
+            [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]) {
       int page = [[list objectAtIndex:1] intValue];
-      if(page<0)page=0; if (page>pageCount-1)page=pageCount-1;
-      //NSLog(@"setting page %d width %2f", page, scrollView.frame.size.width);
-      // WHY DOES THIS BOUNCE US SOMEWHERE ELSE??? could have just been touch
-      //[scrollView setContentOffset:CGPointMake(page * scrollView.frame.size.width, 0) animated:YES];
+      // clip
+      if(page < 0)page=0;
+      if (page > pageCount-1)page=pageCount-1;
+
       [scrollView zoomToRect:CGRectMake(page * scrollView.frame.size.width, 0, scrollView.frame.size.width, scrollView.frame.size.height) animated:YES];
     } else if ([[list objectAtIndex:0] isEqualToString:@"/getTime"] ){
       NSDate *now = [NSDate date];
@@ -1537,16 +1544,38 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
       }
       NSArray *msgArray = [NSArray arrayWithObjects:@"/ipAddress", ipAddress, nil];
       [PdBase sendList:msgArray toReceiver:@"fromSystem"];
+    } else if ([list count] >= 2 &&
+               [list[0] isEqualToString:@"/textDialog"] &&
+               [list[1] isKindOfClass:[NSString class]]) {
+      NSString *tag = list[1];
+      NSString *title =
+          [[list subarrayWithRange:NSMakeRange(2,[list count]-2)] componentsJoinedByString:@" "];
+      [self showTextDialogWithTag:tag title:title];
+    } else if ([[list objectAtIndex:0] isEqualToString:@"/confirmationDialog"]) {
+
     }
   }
 }
 
+- (void)showTextDialogWithTag:(NSString *)tag title:(NSString *)title {
+  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                   message:title
+                                                  delegate:self
+                                         cancelButtonTitle:@"Cancel"
+                                         otherButtonTitles:@"Ok", nil];
+  alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+  // Use MMP category to capture the tag with the alert.
+  [alert showWithCompletion:^(UIAlertView *alertView, NSInteger buttonIndex) {
+    if (buttonIndex == 1 && [alertView textFieldAtIndex:0]) {
+      NSArray* msgArray = @[ @"/textDialog", tag, [[alertView textFieldAtIndex:0] text] ];
+      [PdBase sendList:msgArray toReceiver:@"fromSystem"];
+    }
+  }];
+}
 
-- (void)receivePrint:(NSString *)message
-{
+
+- (void)receivePrint:(NSString *)message {
   [settingsVC consolePrint:message];
-  //TEMP
-  //NSLog(message);
 }
 
 //receive OSC message from network, format into message to send into PureData patch
@@ -1583,7 +1612,6 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
         [msgArray addObject:[val stringValue]];
       }
     }
-
   }
 
   [PdBase sendList:msgArray toReceiver:@"fromNetwork"];

@@ -1,0 +1,33 @@
+{"backgroundColor":[0.4,0.4,0.4,1],
+"wearGui":[
+	{"title":"< Drag here >",
+	 "pageGui":{
+	 	"address":"\/wearLabel",
+	 	"highlightColor":[1,0,0,1],
+	 	"color":[1,1,1,1],
+	 	"class":"MMPLabel",
+		"text":"Welcome to MobMuPlat!",
+		"textSize":42
+	 	}
+	 },
+	 {"title":"MobMuPlat on a watch!",
+	 "pageGui":{
+	 	"address":"\/wearMultiSlider",
+	 	"highlightColor":[1,0,0,1],
+	 	"color":[0.815,0.463,0.2,1],
+	 	"class":"MMPMultiSlider",
+	 	"range":2
+	 	}
+	  },
+	  {"title":"MobMuPlat on a watch!",
+	 "pageGui":{
+	 	"address":"\/wearLabel2",
+	 	"highlightColor":[1,1,1,1],
+	 	"color":[1,1,1,1],
+	 	"class":"MMPLabel",
+		"text":"Open the \"WatchDemo\" example for more info.",
+		"textSize":26
+	 	}
+	  }
+	]
+}

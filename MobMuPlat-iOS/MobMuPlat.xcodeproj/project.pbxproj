@@ -97,6 +97,7 @@
 		F903D0631C57D34A001A4844 /* LoadbangTest.pd in Resources */ = {isa = PBXBuildFile; fileRef = F903D0621C57D34A001A4844 /* LoadbangTest.pd */; };
 		F903D1561C582C4F001A4844 /* MMPPdArrayWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = F903D1551C582C4F001A4844 /* MMPPdArrayWidget.m */; };
 		F911D9741C14BB84005F9C01 /* MMPPdDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = F911D9731C14BB84005F9C01 /* MMPPdDispatcher.m */; };
+		F9122E031CB4811B005A3C07 /* UIAlertView+MMPBlocks.m in Sources */ = {isa = PBXBuildFile; fileRef = F9122E021CB4811B005A3C07 /* UIAlertView+MMPBlocks.m */; };
 		F91CB9B51C169F5C0088C445 /* MMPExamples-NativeGUI.pd in Resources */ = {isa = PBXBuildFile; fileRef = F91CB9B41C169F5C0088C445 /* MMPExamples-NativeGUI.pd */; };
 		F91CB9BB1C16AEBE0088C445 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F91CB9B81C16AEBE0088C445 /* Default-568h@2x.png */; };
 		F91CB9BC1C16AEBE0088C445 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = F91CB9B91C16AEBE0088C445 /* Default.png */; };
@@ -431,6 +432,8 @@
 		F903D1551C582C4F001A4844 /* MMPPdArrayWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMPPdArrayWidget.m; sourceTree = "<group>"; };
 		F911D9721C14BB84005F9C01 /* MMPPdDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMPPdDispatcher.h; sourceTree = "<group>"; };
 		F911D9731C14BB84005F9C01 /* MMPPdDispatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMPPdDispatcher.m; sourceTree = "<group>"; };
+		F9122E011CB4811B005A3C07 /* UIAlertView+MMPBlocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+MMPBlocks.h"; sourceTree = "<group>"; };
+		F9122E021CB4811B005A3C07 /* UIAlertView+MMPBlocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+MMPBlocks.m"; sourceTree = "<group>"; };
 		F91CB9B41C169F5C0088C445 /* MMPExamples-NativeGUI.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "MMPExamples-NativeGUI.pd"; sourceTree = "<group>"; };
 		F91CB9B81C16AEBE0088C445 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "Images.xcassets/LaunchImage.launchimage/Default-568h@2x.png"; sourceTree = "<group>"; };
 		F91CB9B91C16AEBE0088C445 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Default.png; path = Images.xcassets/LaunchImage.launchimage/Default.png; sourceTree = "<group>"; };
@@ -853,6 +856,7 @@
 		DC233DB21655EDF500AC01C5 /* MobMuPlat */ = {
 			isa = PBXGroup;
 			children = (
+				F9122DFF1CB48104005A3C07 /* Utils */,
 				F92AF78E1C0D282300EED3BB /* PdGui */,
 				F97D45B619A54D0300874EAA /* MobMuPlat.entitlements */,
 				DCEF4F21188ECC7A00D6EE54 /* settings */,
@@ -1068,6 +1072,15 @@
 				DCA9B9431733103B000E59DD /* zip.h */,
 			);
 			name = minizip;
+			sourceTree = "<group>";
+		};
+		F9122DFF1CB48104005A3C07 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				F9122E011CB4811B005A3C07 /* UIAlertView+MMPBlocks.h */,
+				F9122E021CB4811B005A3C07 /* UIAlertView+MMPBlocks.m */,
+			);
+			name = Utils;
 			sourceTree = "<group>";
 		};
 		F9295DF019BD19C6008691CB /* Shared */ = {
@@ -1813,6 +1826,7 @@
 				F92AF7751C0C23E600EED3BB /* Util.m in Sources */,
 				F94FB0391A6F709E004EEF76 /* bonk~.c in Sources */,
 				DC6A9FF71878F88900A7585A /* MAZeroingWeakRef.m in Sources */,
+				F9122E031CB4811B005A3C07 /* UIAlertView+MMPBlocks.m in Sources */,
 				F92AF7711C0C202F00EED3BB /* DDTTYLogger.m in Sources */,
 				DCA9B92D17330F90000E59DD /* OSCManager.m in Sources */,
 				F92AF7811C0C240500EED3BB /* Symbol.m in Sources */,
