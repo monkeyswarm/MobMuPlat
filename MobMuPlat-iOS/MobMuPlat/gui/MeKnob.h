@@ -25,7 +25,7 @@
 @property (nonatomic)int range;
 @property (retain,nonatomic) UIColor* indicatorColor;
 
-
+- (void)setLegacyRange:(int)range;
 
 
 @end

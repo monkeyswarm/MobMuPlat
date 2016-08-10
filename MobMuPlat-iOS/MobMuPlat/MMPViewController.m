@@ -58,14 +58,14 @@
 
 #import "UIAlertView+MMPBlocks.h"
 
-extern void expr_setup(void);
+/*extern void expr_setup(void);
 extern void bonk_tilde_setup(void);
 extern void choice_setup(void);
 extern void fiddle_tilde_setup(void);
 extern void loop_tilde_setup(void);
 extern void lrshift_tilde_setup(void);
 extern void sigmund_tilde_setup(void);
-extern void pique_setup(void);
+extern void pique_setup(void);*/
 
 @implementation MMPViewController {
   NSMutableArray *_keyCommandsArray;
@@ -868,6 +868,12 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
                            includingPropertiesForKeys:@[NSURLIsDirectoryKey]
                                               options:NSDirectoryEnumerationSkipsHiddenFiles
                                          errorHandler:nil];
+  // Add bundle folder reference that has the "extra"s abstractions
+  //NSArray *pds = [[NSBundle mainBundle] pathsForResourcesOfType:@"pd" inDirectory:@"extra"];
+  //NSString *string = [[NSBundle mainBundle] pathForResource:@"rev1~" ofType:@"pd"];
+  NSString *extrasDir = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"extra"];
+  [PdBase addToSearchPath:extrasDir];
+  //NSLog(@"pngs in my dir:%@", pds);
 
   NSURL *fileURL;
   NSNumber *isDirectory;
@@ -943,6 +949,8 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   //type of canvas for device
   //canvasType hardwareCanvasType = [ViewController getCanvasType];
 
+  // spec version, incremented on breaking changes. current version is 2, lower versions have old slider range behavior.
+  NSUInteger version = [[sceneDict objectForKey:@"version"] unsignedIntegerValue];
   //type of canvas used in the _editor_ to make the interface. If it doesn't match the above hardwareCnvasType, then we will be scaling to fit
   canvasType editorCanvasType = canvasTypeWidePhone;
   // include deprecated strings
@@ -1119,12 +1127,29 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
       if([currDict objectForKey:@"isHorizontal"] ){
         if( [[currDict objectForKey:@"isHorizontal"] boolValue]==YES )[(MeSlider*)currObject setHorizontal];
       }
-      if([currDict objectForKey:@"range"])  [(MeSlider*)currObject setRange:[[currDict objectForKey:@"range"] intValue]];
+
+      if([currDict objectForKey:@"range"]) {
+        int range = [[currDict objectForKey:@"range"] intValue];
+        if (version < 2) {
+          // handle old style of slider ranges.
+          [((MeSlider*)currObject) setLegacyRange:range];
+        } else {
+          [(MeSlider*)currObject setRange:range];
+        }
+      }
 
     }
     else if([newObjectClass isEqualToString:@"MMPKnob"]){
       currObject=[[MeKnob alloc]initWithFrame:frame];// alloc] init];
-      if([currDict objectForKey:@"range"])  [(MeKnob*)currObject setRange:[[currDict objectForKey:@"range"] intValue]];
+      if([currDict objectForKey:@"range"]) {
+        int range = [[currDict objectForKey:@"range"] intValue];
+        if (version < 2) {
+          // handle old style of knob ranges.
+          [((MeKnob*)currObject) setLegacyRange:range];
+        } else {
+          [(MeKnob*)currObject setRange:range];
+        }
+      }
       UIColor* indicatorColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:1];
       if([currDict objectForKey:@"indicatorColor"]){
         indicatorColor = [MeControl colorFromRGBAArray:[currDict objectForKey:@"indicatorColor"]];
@@ -1285,7 +1310,6 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
                           cancelButtonTitle:@"OK"
                           otherButtonTitles:nil];
     [alert show];
-    return NO;
   }
 
   return YES;
@@ -1551,8 +1575,13 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
       NSString *title =
           [[list subarrayWithRange:NSMakeRange(2,[list count]-2)] componentsJoinedByString:@" "];
       [self showTextDialogWithTag:tag title:title];
-    } else if ([[list objectAtIndex:0] isEqualToString:@"/confirmationDialog"]) {
-
+    } else if ([list count] >= 2 &&
+               [list[0] isEqualToString:@"/confirmationDialog"] &&
+               [list[1] isKindOfClass:[NSString class]]) {
+      NSString *tag = list[1];
+      NSString *title =
+          [[list subarrayWithRange:NSMakeRange(2,[list count]-2)] componentsJoinedByString:@" "];
+      [self showConfirmationDialogWithTag:tag title:title];
     }
   }
 }
@@ -1573,6 +1602,18 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   }];
 }
 
+- (void)showConfirmationDialogWithTag:(NSString *)tag title:(NSString *)title {
+  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                  message:title
+                                                 delegate:self
+                                        cancelButtonTitle:@"Cancel"
+                                        otherButtonTitles:@"Ok", nil];
+  // Use MMP category to capture the tag with the alert.
+  [alert showWithCompletion:^(UIAlertView *alertView, NSInteger buttonIndex) {
+    NSArray* msgArray = @[ @"/confirmationDialog", tag, @(buttonIndex) ];
+    [PdBase sendList:msgArray toReceiver:@"fromSystem"];
+  }];
+}
 
 - (void)receivePrint:(NSString *)message {
   [settingsVC consolePrint:message];

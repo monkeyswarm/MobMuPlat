@@ -32,7 +32,7 @@
     thumbView.layer.cornerRadius=5;
     thumbView.userInteractionEnabled=NO;
     [self addSubview:thumbView];
-    [self setRange:2];
+    [self setRange:1];
     //[self setColor:[UIColor whiteColor]];
 
     return self;
@@ -56,9 +56,15 @@
     thumbView.frame = newFrame;
 }
 
+- (void)setLegacyRange:(int)range {
+  // old mode, default range is 2, which is range 0 to 1 float. translate that to new range of "1".
+  if (range == 2) range = 1;
+  [self setRange:range];
+}
+
 -(void)setRange:(int)inRange{
-    _range=inRange;
-    if(_range>2){
+     _range=inRange;
+    if(_range>1){
         tickViewArray = [[NSMutableArray alloc]initWithCapacity:_range];
         
         for(int i=0;i<_range;i++){
@@ -85,31 +91,36 @@
 }
 
 -(void)sendValue{
-    if(_range>2)
+    if(_range>1)
         [self.controlDelegate sendGUIMessageArray:[NSArray arrayWithObjects:self.address, [NSNumber numberWithInt:_value], nil]];
     else [self.controlDelegate sendGUIMessageArray:[NSArray arrayWithObjects:self.address, [NSNumber numberWithFloat:_value], nil]];
 }
 
 -(void)updateThumb{
     CGRect newFrame;
-    
+  NSUInteger effectiveRange = _range == 1 ? 1 : _range -1 ; // range == 1 handled differently
+
     if(!isHorizontal)
-        newFrame = CGRectMake( 0, (1.0-(_value/(_range-1)))*(self.frame.size.height-(SLIDER_TROUGH_TOPINSET*2)), self.frame.size.width, SLIDER_THUMB_HEIGHT );
-    else  newFrame = CGRectMake( (_value/(_range-1))*(self.frame.size.width-(SLIDER_TROUGH_TOPINSET*2)),0, SLIDER_THUMB_HEIGHT, self.frame.size.height  );
+        newFrame = CGRectMake( 0, (1.0-(_value/effectiveRange))*(self.frame.size.height-(SLIDER_TROUGH_TOPINSET*2)), self.frame.size.width, SLIDER_THUMB_HEIGHT );
+    else  newFrame = CGRectMake( (_value/effectiveRange)*(self.frame.size.width-(SLIDER_TROUGH_TOPINSET*2)),0, SLIDER_THUMB_HEIGHT, self.frame.size.height  );
     
 	thumbView.frame=newFrame;
 }
 
--(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{ //clean up range=1 vs range !-1
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
 	
     CGPoint point = [[touches anyObject] locationInView:self];
 	float tempFloatValue;
     if(!isHorizontal) tempFloatValue=1.0-(float)((point.y-SLIDER_TROUGH_TOPINSET)/(self.frame.size.height-(SLIDER_TROUGH_TOPINSET*2)));//0-1
     else tempFloatValue=(float)((point.x-SLIDER_TROUGH_TOPINSET)/(self.frame.size.width-(SLIDER_TROUGH_TOPINSET*2)));//0-1
     
-    if(_range==2 && tempFloatValue<=_range-1 && tempFloatValue>=0  && tempFloatValue!=_value){[self setValue: tempFloatValue ]; [self sendValue];}
+    if(_range==1 && tempFloatValue<=1 && tempFloatValue>=0  && tempFloatValue!=_value){
+      [self setValue: tempFloatValue];
+      [self sendValue];
+      return;
+    }
 	float tempValue = (float)(int)((tempFloatValue*(_range-1))+.5);//round to 0-4
-	if(_range>2 && tempValue<=_range-1 && tempValue>=0  && tempValue!=_value){[self setValue: tempValue ]; [self sendValue];}
+	if(_range>1 && tempValue<=_range-1 && tempValue>=0  && tempValue!=_value){[self setValue: tempValue ]; [self sendValue];}
     
     thumbView.backgroundColor=self.highlightColor;
 	troughView.backgroundColor=self.highlightColor;
@@ -122,9 +133,16 @@
     if(!isHorizontal)tempFloatValue=1.0-(float)((point.y-SLIDER_TROUGH_TOPINSET)/(self.frame.size.height-(SLIDER_TROUGH_TOPINSET*2)));
     else tempFloatValue=(float)((point.x-SLIDER_TROUGH_TOPINSET)/(self.frame.size.width-(SLIDER_TROUGH_TOPINSET*2)));
         
-	if(_range==2 && tempFloatValue<=_range-1 && tempFloatValue>=0 && tempFloatValue!=_value){ [self setValue: tempFloatValue ]; [self sendValue];}
-    float tempValue = (float)(int)((tempFloatValue*(_range-1))+.5);
-	if(_range>2 && tempValue<=_range-1 && tempValue>=0 && tempValue!=_value){ [self setValue: tempValue ]; [self sendValue];}
+	if(_range==1 && tempFloatValue<=1 && tempFloatValue>=0 && tempFloatValue!=_value){
+    [self setValue: tempFloatValue ];
+    [self sendValue];
+    return;}
+
+  float tempValue = (float)(int)((tempFloatValue*(_range-1))+.5);
+	if(_range>1 && tempValue<=_range-1 && tempValue>=0 && tempValue!=_value){
+    [self setValue: tempValue ];
+    [self sendValue];
+  }
 	
 }
 

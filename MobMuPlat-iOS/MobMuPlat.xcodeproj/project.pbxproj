@@ -209,16 +209,6 @@
 		F93FC07C1C4E067F0059E39F /* MMPGui.m in Sources */ = {isa = PBXBuildFile; fileRef = F93FC07A1C4E067F0059E39F /* MMPGui.m */; };
 		F93FC0801C4E0E0E0059E39F /* MMPPdBang.m in Sources */ = {isa = PBXBuildFile; fileRef = F93FC07F1C4E0E0E0059E39F /* MMPPdBang.m */; };
 		F93FC0811C4E0E0E0059E39F /* MMPPdBang.m in Sources */ = {isa = PBXBuildFile; fileRef = F93FC07F1C4E0E0E0059E39F /* MMPPdBang.m */; };
-		F94FB0341A6F709E004EEF76 /* fiddle~.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB0281A6F709E004EEF76 /* fiddle~.c */; };
-		F94FB0351A6F709E004EEF76 /* loop~.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB0291A6F709E004EEF76 /* loop~.c */; };
-		F94FB0361A6F709E004EEF76 /* lrshift~.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB02A1A6F709E004EEF76 /* lrshift~.c */; };
-		F94FB0371A6F709E004EEF76 /* pique.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB02B1A6F709E004EEF76 /* pique.c */; };
-		F94FB0381A6F709E004EEF76 /* sigmund~.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB02C1A6F709E004EEF76 /* sigmund~.c */; };
-		F94FB0391A6F709E004EEF76 /* bonk~.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB02D1A6F709E004EEF76 /* bonk~.c */; };
-		F94FB03A1A6F709E004EEF76 /* choice.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB02E1A6F709E004EEF76 /* choice.c */; };
-		F94FB03B1A6F709E004EEF76 /* vexp_fun.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB02F1A6F709E004EEF76 /* vexp_fun.c */; };
-		F94FB03C1A6F709E004EEF76 /* vexp_if.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB0301A6F709E004EEF76 /* vexp_if.c */; };
-		F94FB03D1A6F709E004EEF76 /* vexp.c in Sources */ = {isa = PBXBuildFile; fileRef = F94FB0311A6F709E004EEF76 /* vexp.c */; };
 		F94FB53918F596AB003BFB18 /* MenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F94FB53818F596AB003BFB18 /* MenuViewController.m */; };
 		F954C5721C5A807800CDD26D /* MMPPdComment.m in Sources */ = {isa = PBXBuildFile; fileRef = F954C5711C5A807800CDD26D /* MMPPdComment.m */; };
 		F95701BB1C5D5B8700D9A4C6 /* MMPPdGuiTest1.pd in Resources */ = {isa = PBXBuildFile; fileRef = F95701BA1C5D5B8700D9A4C6 /* MMPPdGuiTest1.pd */; };
@@ -238,6 +228,7 @@
 		F9AB5FF61C503018007F6A21 /* MMPPdToggle.m in Sources */ = {isa = PBXBuildFile; fileRef = F9AB5FF01C503018007F6A21 /* MMPPdToggle.m */; };
 		F9B6E7AA1C0641E00036FB66 /* PingAndConnectManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B6E7A91C0641E00036FB66 /* PingAndConnectManager.m */; };
 		F9B6E7AD1C069CEA0036FB66 /* MMPNetworkingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B6E7AC1C069CEA0036FB66 /* MMPNetworkingUtils.m */; };
+		F9C670C91D184E2A00FEBBDE /* extra in Resources */ = {isa = PBXBuildFile; fileRef = F9C670C81D184E2A00FEBBDE /* extra */; };
 		F9DE7DC018F49D62007B9E45 /* MeMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = F9DE7DBF18F49D62007B9E45 /* MeMenu.m */; };
 		F9FC179B1A85735A00152392 /* MMPExamples-InterAppOSC.mmp in Resources */ = {isa = PBXBuildFile; fileRef = F9FC17991A85735A00152392 /* MMPExamples-InterAppOSC.mmp */; };
 		F9FC179C1A85735A00152392 /* MMPExamples-InterAppOSC.pd in Resources */ = {isa = PBXBuildFile; fileRef = F9FC179A1A85735A00152392 /* MMPExamples-InterAppOSC.pd */; };
@@ -650,17 +641,6 @@
 		F93FC07A1C4E067F0059E39F /* MMPGui.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPGui.m; path = PdGui/MMPGui.m; sourceTree = "<group>"; };
 		F93FC07E1C4E0E0E0059E39F /* MMPPdBang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMPPdBang.h; path = PdGui/PdPartySubclasses/MMPPdBang.h; sourceTree = "<group>"; };
 		F93FC07F1C4E0E0E0059E39F /* MMPPdBang.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPPdBang.m; path = PdGui/PdPartySubclasses/MMPPdBang.m; sourceTree = "<group>"; };
-		F94FB0281A6F709E004EEF76 /* fiddle~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "fiddle~.c"; path = "pure-data/extra/fiddle~/fiddle~.c"; sourceTree = "<group>"; };
-		F94FB0291A6F709E004EEF76 /* loop~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "loop~.c"; path = "pure-data/extra/loop~/loop~.c"; sourceTree = "<group>"; };
-		F94FB02A1A6F709E004EEF76 /* lrshift~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "lrshift~.c"; path = "pure-data/extra/lrshift~/lrshift~.c"; sourceTree = "<group>"; };
-		F94FB02B1A6F709E004EEF76 /* pique.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pique.c; path = "pure-data/extra/pique/pique.c"; sourceTree = "<group>"; };
-		F94FB02C1A6F709E004EEF76 /* sigmund~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "sigmund~.c"; path = "pure-data/extra/sigmund~/sigmund~.c"; sourceTree = "<group>"; };
-		F94FB02D1A6F709E004EEF76 /* bonk~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "bonk~.c"; path = "pure-data/extra/bonk~/bonk~.c"; sourceTree = "<group>"; };
-		F94FB02E1A6F709E004EEF76 /* choice.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = choice.c; path = "pure-data/extra/choice/choice.c"; sourceTree = "<group>"; };
-		F94FB02F1A6F709E004EEF76 /* vexp_fun.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vexp_fun.c; path = "pure-data/extra/expr~/vexp_fun.c"; sourceTree = "<group>"; };
-		F94FB0301A6F709E004EEF76 /* vexp_if.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vexp_if.c; path = "pure-data/extra/expr~/vexp_if.c"; sourceTree = "<group>"; };
-		F94FB0311A6F709E004EEF76 /* vexp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vexp.c; path = "pure-data/extra/expr~/vexp.c"; sourceTree = "<group>"; };
-		F94FB0321A6F709E004EEF76 /* vexp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vexp.h; path = "pure-data/extra/expr~/vexp.h"; sourceTree = "<group>"; };
 		F94FB53718F596AB003BFB18 /* MenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuViewController.h; path = gui/MenuViewController.h; sourceTree = "<group>"; };
 		F94FB53818F596AB003BFB18 /* MenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MenuViewController.m; path = gui/MenuViewController.m; sourceTree = "<group>"; };
 		F954C5701C5A807800CDD26D /* MMPPdComment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMPPdComment.h; sourceTree = "<group>"; };
@@ -695,6 +675,7 @@
 		F9B6E7A91C0641E00036FB66 /* PingAndConnectManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PingAndConnectManager.m; path = LANdini/PingAndConnectManager.m; sourceTree = "<group>"; };
 		F9B6E7AB1C069CEA0036FB66 /* MMPNetworkingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMPNetworkingUtils.h; path = LANdini/MMPNetworkingUtils.h; sourceTree = "<group>"; };
 		F9B6E7AC1C069CEA0036FB66 /* MMPNetworkingUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPNetworkingUtils.m; path = LANdini/MMPNetworkingUtils.m; sourceTree = "<group>"; };
+		F9C670C81D184E2A00FEBBDE /* extra */ = {isa = PBXFileReference; lastKnownFileType = folder; name = extra; path = "../libpd/pure-data/extra"; sourceTree = "<group>"; };
 		F9DE7DBE18F49D62007B9E45 /* MeMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeMenu.h; path = gui/MeMenu.h; sourceTree = "<group>"; };
 		F9DE7DBF18F49D62007B9E45 /* MeMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeMenu.m; path = gui/MeMenu.m; sourceTree = "<group>"; };
 		F9FC17991A85735A00152392 /* MMPExamples-InterAppOSC.mmp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "MMPExamples-InterAppOSC.mmp"; sourceTree = "<group>"; };
@@ -803,7 +784,7 @@
 		DC233D9D1655EDF500AC01C5 = {
 			isa = PBXGroup;
 			children = (
-				F94FB0331A6F709E004EEF76 /* externals */,
+				F9C670C81D184E2A00FEBBDE /* extra */,
 				F975608C1A6E235B005CCE8E /* libpd.xcodeproj */,
 				F9295DF019BD19C6008691CB /* Shared */,
 				F97D45A919A5453C00874EAA /* Audiobus */,
@@ -1488,25 +1469,6 @@
 			name = PdPartySubclasses;
 			sourceTree = "<group>";
 		};
-		F94FB0331A6F709E004EEF76 /* externals */ = {
-			isa = PBXGroup;
-			children = (
-				F94FB0281A6F709E004EEF76 /* fiddle~.c */,
-				F94FB0291A6F709E004EEF76 /* loop~.c */,
-				F94FB02A1A6F709E004EEF76 /* lrshift~.c */,
-				F94FB02B1A6F709E004EEF76 /* pique.c */,
-				F94FB02C1A6F709E004EEF76 /* sigmund~.c */,
-				F94FB02D1A6F709E004EEF76 /* bonk~.c */,
-				F94FB02E1A6F709E004EEF76 /* choice.c */,
-				F94FB02F1A6F709E004EEF76 /* vexp_fun.c */,
-				F94FB0301A6F709E004EEF76 /* vexp_if.c */,
-				F94FB0311A6F709E004EEF76 /* vexp.c */,
-				F94FB0321A6F709E004EEF76 /* vexp.h */,
-			);
-			name = externals;
-			path = ../libpd;
-			sourceTree = "<group>";
-		};
 		F975608D1A6E235B005CCE8E /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1720,6 +1682,7 @@
 				DC5957331733805000CEBECC /* title_resistor_13x40.png in Resources */,
 				F9295E7219BD19C6008691CB /* Welcome-ip5.mmp in Resources */,
 				DC5957341733805000CEBECC /* title_resistor_40x13.png in Resources */,
+				F9C670C91D184E2A00FEBBDE /* extra in Resources */,
 				F9295E7419BD19C6008691CB /* Welcome.mmp in Resources */,
 				DC5957351733805000CEBECC /* title_ring_67x110.png in Resources */,
 				F9295E6719BD19C6008691CB /* MMPTutorial4-Networking.mmp in Resources */,
@@ -1778,7 +1741,6 @@
 			files = (
 				F9AB5FF51C503018007F6A21 /* MMPPdSymbol.m in Sources */,
 				F92AF7701C0C202C00EED3BB /* DDLog.m in Sources */,
-				F94FB03C1A6F709E004EEF76 /* vexp_if.c in Sources */,
 				DC233DB91655EDF500AC01C5 /* main.m in Sources */,
 				DC233DBD1655EDF500AC01C5 /* AppDelegate.m in Sources */,
 				DC233DC61655EDF500AC01C5 /* MMPViewController.m in Sources */,
@@ -1786,7 +1748,6 @@
 				DC03516A16AA67E600708C0D /* AlertHelper.m in Sources */,
 				F9295DE319BD1980008691CB /* MeMultiTouch.m in Sources */,
 				F92AF7801C0C240500EED3BB /* Number.m in Sources */,
-				F94FB03B1A6F709E004EEF76 /* vexp_fun.c in Sources */,
 				DC035A1D16D96FC600F4FA62 /* SplashViewController.m in Sources */,
 				DC5A5ADB1882572300FC97D5 /* OSCQueryReply.m in Sources */,
 				F92AF78A1C0CABED00EED3BB /* MMPMenuButton.m in Sources */,
@@ -1794,7 +1755,6 @@
 				F94FB53918F596AB003BFB18 /* MenuViewController.m in Sources */,
 				F9DE7DC018F49D62007B9E45 /* MeMenu.m in Sources */,
 				DC178CE61880FD9F00DD4BF8 /* LANdiniUser.m in Sources */,
-				F94FB0381A6F709E004EEF76 /* sigmund~.c in Sources */,
 				90DFFB2B187DF85B00DD2149 /* MeLCD.m in Sources */,
 				DC5A5AD21882565500FC97D5 /* MeUnknown.m in Sources */,
 				DC5A5AD8188256E400FC97D5 /* VVAssertionHandler.m in Sources */,
@@ -1824,7 +1784,6 @@
 				DC13B957188E053200647115 /* Reachability.m in Sources */,
 				F911D9741C14BB84005F9C01 /* MMPPdDispatcher.m in Sources */,
 				F92AF7751C0C23E600EED3BB /* Util.m in Sources */,
-				F94FB0391A6F709E004EEF76 /* bonk~.c in Sources */,
 				DC6A9FF71878F88900A7585A /* MAZeroingWeakRef.m in Sources */,
 				F9122E031CB4811B005A3C07 /* UIAlertView+MMPBlocks.m in Sources */,
 				F92AF7711C0C202F00EED3BB /* DDTTYLogger.m in Sources */,
@@ -1834,7 +1793,6 @@
 				F93FC06D1C4E02EB0059E39F /* Number2.m in Sources */,
 				F93FC0731C4E043D0059E39F /* TextViewLogger.m in Sources */,
 				DCA9B92E17330F90000E59DD /* OSCMessage.m in Sources */,
-				F94FB0351A6F709E004EEF76 /* loop~.c in Sources */,
 				DCA9B92F17330F90000E59DD /* OSCNode.m in Sources */,
 				F9967C3718F8C54D008E3828 /* MenuNavigationController.m in Sources */,
 				F9AB5FF31C503018007F6A21 /* MMPPdRadio.m in Sources */,
@@ -1848,10 +1806,8 @@
 				DCA9B93417330F90000E59DD /* OSCValue.m in Sources */,
 				DCA9B93517330F90000E59DD /* OSCZeroConfDomain.m in Sources */,
 				DCA9B93617330F90000E59DD /* OSCZeroConfManager.m in Sources */,
-				F94FB0341A6F709E004EEF76 /* fiddle~.c in Sources */,
 				DCA9B93A17331028000E59DD /* ZipArchive.mm in Sources */,
 				DCA9B9441733103B000E59DD /* ioapi.c in Sources */,
-				F94FB03A1A6F709E004EEF76 /* choice.c in Sources */,
 				DCA9B9451733103B000E59DD /* mztools.c in Sources */,
 				F92AF7781C0C23F200EED3BB /* IEMWidget.m in Sources */,
 				DCA9B9461733103B000E59DD /* unzip.c in Sources */,
@@ -1860,7 +1816,6 @@
 				DC59570A1733800500CEBECC /* MeButton.m in Sources */,
 				DC59570B1733800500CEBECC /* MeControl.m in Sources */,
 				F954C5721C5A807800CDD26D /* MMPPdComment.m in Sources */,
-				F94FB0371A6F709E004EEF76 /* pique.c in Sources */,
 				F95C52021909B1230074E0A6 /* MeTable.m in Sources */,
 				F92AF8351C0D6F7400EED3BB /* MMPPdMessageBox.m in Sources */,
 				DC59570C1733800500CEBECC /* MeGrid.m in Sources */,
@@ -1868,14 +1823,12 @@
 				DC59570D1733800500CEBECC /* MeKnob.m in Sources */,
 				F9B6E7AD1C069CEA0036FB66 /* MMPNetworkingUtils.m in Sources */,
 				F975609A1A6EAC5F005CCE8E /* MobMuPlatUtil.m in Sources */,
-				F94FB0361A6F709E004EEF76 /* lrshift~.c in Sources */,
 				F9AB5FF11C503018007F6A21 /* MMPPdNumber.m in Sources */,
 				F903D1561C582C4F001A4844 /* MMPPdArrayWidget.m in Sources */,
 				DC59570E1733800500CEBECC /* MeLabel.m in Sources */,
 				F92AF7761C0C23EC00EED3BB /* Bang.m in Sources */,
 				DC59570F1733800500CEBECC /* MeMultiSlider.m in Sources */,
 				DC5957101733800500CEBECC /* MePanel.m in Sources */,
-				F94FB03D1A6F709E004EEF76 /* vexp.c in Sources */,
 				DC5957111733800500CEBECC /* MeSlider.m in Sources */,
 				DC5957121733800500CEBECC /* MeToggle.m in Sources */,
 				F93FC0771C4E06610059E39F /* Gui.m in Sources */,

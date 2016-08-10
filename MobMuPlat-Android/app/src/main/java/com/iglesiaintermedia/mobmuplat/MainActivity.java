@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -361,15 +362,43 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         public Handler mHandler;
         public void run() {	 
             Looper.prepare();
-           mHandler = new Handler();
+           mHandler = new Handler(){
+               @Override
+               public void handleMessage(Message msg) {
+                   Bundle u = msg.getData();
+                   //Log.i(TAG, "received a msg to worker thread: " + u.getString("path"));
+                   String path = u.getString("path");
+                   String message = u.getString("message");
+                   if (path == null || message == null) return;;
+                   //
+                   NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
+                   for (Node node : nodes.getNodes()) {
+                       MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), path, message.getBytes()).await();
+                       if (result.getStatus().isSuccess()) {
+                           //Log.v("myTag", "Message: {" + message + "} sent to: " + node.getDisplayName());
+                       } else {
+                           // Log an error
+                           //Log.v("myTag", "ERROR: failed to send Message");
+                       }
+                   }
+               }
+           };
             Looper.loop();
         }
     }
 
     public void sendWearMessage(String inPath, String message) {
-        new SendToDataLayerThread(inPath, message).start();
+        //new SendToDataLayerThread(inPath, message).start();
+        Handler workerHandler = wt.mHandler;
+        // obtain a msg object from global msg pool
+        Message m = workerHandler.obtainMessage();
+        Bundle b = m.getData();
+        b.putString("path", inPath);
+        b.putString("message", message);
+        workerHandler.sendMessage(m);
     }
 
+    /*
     class SendToDataLayerThread extends Thread {
         String path;
         String message;
@@ -392,7 +421,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 }
             }
         }
-    }
+    }*/
     //===end wear
     
 	@Override

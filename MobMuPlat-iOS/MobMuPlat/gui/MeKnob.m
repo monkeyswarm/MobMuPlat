@@ -43,7 +43,7 @@
 		indicatorView.userInteractionEnabled=NO;
 		
         [self addSubview:indicatorView];
-        [self setRange:2];
+        [self setRange:1];
 		[self updateIndicator];//rotates indicator to zero
         [self setColor:self.color];
     }
@@ -56,15 +56,25 @@
     if(tickViewArray)for (UIView* tick in tickViewArray)tick.backgroundColor=inColor;
 }
 
+- (void)setLegacyRange:(int)range {
+  // old mode, default range is 2, which is range 0 to 1 float. translate that to new range of "1".
+  if (range == 2) range = 1;
+  [self setRange:range];
+}
+
 -(void)setRange:(int)inRange{
     _range=inRange;
-    tickViewArray = [[NSMutableArray alloc]initWithCapacity:_range];
-    
-    if(_range>1){
-        
-    for(int i=0;i<_range;i++){
+
+  // clear ticks.
+  for (UIView *tick in tickViewArray) {
+    [tick removeFromSuperview];
+  }
+
+    NSUInteger effectiveRange = _range == 1 ? 2 : _range;
+    tickViewArray = [[NSMutableArray alloc]initWithCapacity:effectiveRange];
+    for(int i=0;i<effectiveRange;i++){
         UIView* dot = [[UIView alloc]init];
-        float angle= (float)i/(_range-1)* (M_PI*2-ROTATION_PAD_RAD*2)+ROTATION_PAD_RAD+M_PI*.5;
+        float angle= (float)i/(effectiveRange-1)* (M_PI*2-ROTATION_PAD_RAD*2)+ROTATION_PAD_RAD+M_PI*.5;
         float xPos=(dim/2+EXTRA_RADIUS+TICK_DIM/2)*cos(angle);
         float yPos=(dim/2+EXTRA_RADIUS+TICK_DIM/2)*sin(angle);
         dot.backgroundColor=[self color];
@@ -73,7 +83,6 @@
         dot.userInteractionEnabled=NO;
         [self addSubview:dot];
         [tickViewArray addObject:dot];
-    }
     }
 }
 
@@ -86,7 +95,7 @@
 }
 
 -(void)sendValue{
-    if(_range>2)
+    if(_range>1)
         [self.controlDelegate sendGUIMessageArray:[NSArray arrayWithObjects:self.address, [NSNumber numberWithInt:_value], nil]];
     else [self.controlDelegate sendGUIMessageArray:[NSArray arrayWithObjects:self.address, [NSNumber numberWithFloat:_value], nil]];
 }
@@ -99,11 +108,11 @@
 
 -(void)updateIndicator{
     float newRad;
-    if(_range==2)
+    if(_range==1)
          newRad= _value*(M_PI*2-ROTATION_PAD_RAD*2)+ROTATION_PAD_RAD+M_PI*.5;
-    else if (_range>2)
+    else if (_range>1)
          newRad= (_value/(_range-1))*(M_PI*2-ROTATION_PAD_RAD*2)+ROTATION_PAD_RAD+M_PI*.5;
-    else return;//should not get here, range < 2
+    else return;//should not get here, range < 1
     CGPoint newCenter = CGPointMake(cos(newRad)*indicatorDim/2+centerPoint.x, sin(newRad)*indicatorDim/2+centerPoint.y);
 	indicatorView.center=newCenter;
 	indicatorView.transform=CGAffineTransformMakeRotation(newRad-M_PI/2);
@@ -126,13 +135,13 @@
 	double updatedTheta = fmod( theta+M_PI/2+M_PI , (M_PI*2) );
     
     //continuous
-    if(_range==2){
+    if(_range==1){
         if(updatedTheta<ROTATION_PAD_RAD){[self setValue:0]; [self sendValue];}
         else if(updatedTheta>(M_PI*2-ROTATION_PAD_RAD)) {[self setValue:1]; [self sendValue];}
         else{ [self setValue:(updatedTheta-ROTATION_PAD_RAD)/(M_PI*2-2*ROTATION_PAD_RAD) ]; [self sendValue];}
     }
     //segmented, snap to tick
-    else if (_range>2){
+    else if (_range>1){
         if(updatedTheta<ROTATION_PAD_RAD){[self setValue:0]; [self sendValue];}
         else if(updatedTheta>(M_PI*2-ROTATION_PAD_RAD)){ [self setValue:_range-1]; [self sendValue];}
         else{

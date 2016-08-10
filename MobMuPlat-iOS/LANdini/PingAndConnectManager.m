@@ -94,8 +94,8 @@
 
     _ipToUserMap = [[NSMutableDictionary alloc] init];
 
-    _dropUserInterval = 2.0;
-    _checkUserInterval = .3;
+    _dropUserInterval = 8.0;
+    _checkUserInterval = 2.0;
     _broadcastInterval = 1.0;
 
     _toLocalPort = 50505;

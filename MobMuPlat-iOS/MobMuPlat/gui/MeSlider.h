@@ -26,5 +26,6 @@
 @property(nonatomic) float value; //TODO hide?
 
 -(void)setHorizontal;
+- (void)setLegacyRange:(int)range;
 
 @end
