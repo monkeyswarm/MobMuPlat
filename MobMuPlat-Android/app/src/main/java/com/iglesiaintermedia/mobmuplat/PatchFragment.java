@@ -81,7 +81,7 @@ import com.iglesiaintermedia.mobmuplat.nativepdgui.Widget;
 
 public class PatchFragment extends Fragment implements ControlDelegate, PagingScrollViewDelegate, PdListener{
     private String TAG = "PatchFragment";
-
+    private static int VERSION = 2; // Spec version, incremented on breaking changes. 2 = new "range" spec for sliders+knobs. Only used if MMP JSON doesn't have version tag, which it should.
     public PagingHorizontalScrollView scrollContainer;
     public RelativeLayout scrollRelativeLayout; //content view of the scroll view.
 
@@ -93,8 +93,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 
     int _pageCount;
     int _startPageIndex;
-    int _port;
-    float _version;
+    int _version = VERSION;
 
     public MainActivity _mainActivity;
 
@@ -465,11 +464,11 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 
             }
 
-            if(topDict.get("port")!=null)
-                _port=topDict.get("port").getAsInt(); //DEPRECATED, not in editor anymore
-            //TODO SET PORT IN NETWORK CONTROLLER...meh
-            if(topDict.get("version")!=null)
-                _version=topDict.get("version").getAsFloat();
+            int version = VERSION;
+            if(topDict.get("version")!=null) { // check for older versions.
+                version = topDict.get("version").getAsInt();
+                _version = version;
+            }
 
             JsonArray controlDictArray;//array of dictionaries, one for each gui element
             // WEAR GUI
@@ -555,8 +554,14 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 
                         if(guiDict.get("isHorizontal")!=null)
                             ((MMPSlider)control).setIsHorizontal( guiDict.get("isHorizontal").getAsBoolean() );
-                        if(guiDict.get("range")!=null)
-                            ((MMPSlider)control).setRange( guiDict.get("range").getAsInt()  );
+                        if(guiDict.get("range")!=null) {
+                            int range = guiDict.get("range").getAsInt();
+                            if (version < 2) {
+                                ((MMPSlider)control).setLegacyRange(range);
+                            } else {
+                                ((MMPSlider)control).setRange(range);
+                            }
+                        }
                     }
                     else if(classString.equals("MMPKnob")){
                         control = new MMPKnob(getActivity(), screenRatio);
@@ -566,8 +571,14 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
                         }
                         ((MMPKnob)control).indicatorColor = indicatorColor;
 
-                        if(guiDict.get("range")!=null)
-                            ((MMPKnob)control).setRange( guiDict.get("range").getAsInt()  );
+                        if(guiDict.get("range")!=null) {
+                            int range = guiDict.get("range").getAsInt();
+                            if (version < 2) {
+                                ((MMPKnob) control).setLegacyRange(range);
+                            } else {
+                                ((MMPKnob) control).setRange(range);
+                            }
+                        }
                     }
                     else if(classString.equals("MMPButton")){
                         control = new MMPButton(getActivity(), screenRatio);

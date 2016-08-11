@@ -16,7 +16,7 @@ import android.view.View;
 public class MMPSlider extends MMPControl{
 	
     private float value;//0-1
-    public int range=2;
+    private int range=1;
 	public boolean isHorizontal;
 	
 	final static int SLIDER_TROUGH_WIDTH=10;
@@ -40,7 +40,13 @@ public class MMPSlider extends MMPControl{
     public void setRange(int inRange){
     	range = inRange;
     }
-    
+
+    public void setLegacyRange(int inRange) {
+        // Old spec was default range 2 = 0 to 1. Now, that is range of 1.
+        if (inRange ==2) inRange = 1;
+        setRange(inRange);
+    }
+
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
     	if (changed == true) {
     		if (!isHorizontal) {
@@ -77,12 +83,12 @@ public class MMPSlider extends MMPControl{
 	        if(!isHorizontal) tempFloatValue=1.0f-(((float)event.getY()-SLIDER_TROUGH_TOPINSET)/(getHeight()-(SLIDER_TROUGH_TOPINSET*2)));//0-1
 	        else tempFloatValue=(((float)event.getX()-SLIDER_TROUGH_TOPINSET)/(getWidth()-(SLIDER_TROUGH_TOPINSET*2)));//0-1
 	        
-	        if(range==2 && tempFloatValue<=1 && tempFloatValue>=0  && tempFloatValue!=value){
+	        if(range==1 && tempFloatValue<=1 && tempFloatValue>=0  && tempFloatValue!=value){
 	            setValue(tempFloatValue);
 	            sendValue();
 	        }
 	        float tempValue = (float)(int)((tempFloatValue*(range-1))+.5);//round to 0-(range-1)
-	        if(range>2 && tempValue<=range-1 && tempValue>=0  && tempValue!=value){
+	        if(range>1 && tempValue<=range-1 && tempValue>=0  && tempValue!=value){
 	        	setValue(tempValue);
 		        sendValue();
 	        }
@@ -106,7 +112,7 @@ public class MMPSlider extends MMPControl{
       canvas.drawRoundRect(_touchRect,5*this.screenRatio,5*this.screenRatio,paint);
       int width = getWidth();
       int height = getHeight();
-      if (range > 2) {
+      if (range > 1) {
     	  for(int i=0; i<=range;i++){
     		  if (!isHorizontal){
     			  float left = width/4;
@@ -123,7 +129,7 @@ public class MMPSlider extends MMPControl{
     
     private void setValue(float inVal) {
     	//Log.i("MobMuPlat", this.address+" setval "+newVal);
-    	if(range==2){//clip 0.-1.
+    	if(range==1){//clip 0.-1.
 	        if(inVal>1)inVal=1;
 	        if(inVal<0)inVal=0;
 	    }
@@ -137,21 +143,14 @@ public class MMPSlider extends MMPControl{
     	updateThumb();
     }
     private void updateThumb(){
+        int effectiveRange = range == 1 ? 1 : range - 1;
     	 if(!isHorizontal) {
-    		 int top = (int)((1.0-(value/(range-1)))*(getHeight()-(SLIDER_TROUGH_TOPINSET*this.screenRatio*2)));
+    		 int top = (int)((1.0-(value/effectiveRange))*(getHeight()-(SLIDER_TROUGH_TOPINSET*this.screenRatio*2)));
     		 _touchRect.set(0, top, getWidth(), top+SLIDER_THUMB_HEIGHT*this.screenRatio );
     	 } else {
-    		 int left = (int)((value/(range-1))*(getWidth()-(SLIDER_TROUGH_TOPINSET*this.screenRatio*2)));
+    		 int left = (int)((value/effectiveRange)*(getWidth()-(SLIDER_TROUGH_TOPINSET*this.screenRatio*2)));
     		 _touchRect.set(left, 0, left+SLIDER_THUMB_HEIGHT*this.screenRatio, getHeight() );
     	 }
- 	   
-    	/*if(!isHorizontal) {
-    		float newY = (1.0f-val)*getHeight();
-    		touchRect.set(0,newY-10, getWidth(), newY+10);
-    	} else {
-    		float newX = val*getWidth();
-    		touchRect.set(newX-10, 0, newX+10, getHeight());
-    	}*/
         invalidate();
     }
     

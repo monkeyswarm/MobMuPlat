@@ -28,11 +28,10 @@ public class MMPKnob extends MMPControl{
 	private float _indicatorRadius;
 	private float _indicatorWidth;
 	private boolean _highlight;
-	private float _tickCenters[][];
 
 	public MMPKnob(Context context, float screenRatio) {
 		super(context, screenRatio);
-		setRange(2);//create _tickCenters[][]
+		setRange(1);
 		_myRectF = new RectF();
 		indicatorColor = Color.WHITE;
 	}
@@ -44,31 +43,22 @@ public class MMPKnob extends MMPControl{
 			_radius = newDim/2 - ((EXTRA_RADIUS+TICK_DIM)*this.screenRatio);
 			_indicatorRadius = _radius+2*this.screenRatio;
 			_indicatorWidth = _radius/4;
-
-			//layout tick positions, assume that setRange has already been called
-			for(int i = 0 ; i < _range ; i++){
-				float angle= (float)((float)i/(_range-1)* (Math.PI*2-ROTATION_PAD_RAD*2)+ROTATION_PAD_RAD+Math.PI/2);
-				float xPos=(float) ( (_radius+(EXTRA_RADIUS+TICK_DIM/2)*this.screenRatio)*Math.cos(angle) );
-				float yPos=(float) ( (_radius+(EXTRA_RADIUS+TICK_DIM/2)*this.screenRatio)*Math.sin(angle) );
-				_tickCenters[i][0] = xPos;
-				_tickCenters[i][1] = yPos;
-				//Log.i("KNOB", "tick center "+i+":"+_tickCenters[i][0]+" "+_tickCenters[i][1]);
-			}
 		}
 	}
 	
 	public void setRange(int newRange){
 		_range = newRange;
-		_tickCenters = new float[_range][2];
-		
-		/*if (_value>=_range)_value = _range-1;
-		invalidate();*/
 	}
-	
+
+    public void setLegacyRange(int newRange) {
+        // Old spec was default range 2 = 0 to 1. Now, that is range of 1.
+        if (newRange ==2) newRange = 1;
+        setRange(newRange);
+    }
 	
 	private void setValue(float inVal){
 		if(inVal!=_value){
-			if(_range==2){//clip 0.-1.
+			if(_range==1){//clip 0.-1.
 		        if(inVal>1)inVal=1;
 		        if(inVal<0)inVal=0;
 		    }
@@ -99,13 +89,13 @@ public class MMPKnob extends MMPControl{
 	        
 	        double updatedTheta = (theta-Math.PI/2+(Math.PI*2)) % (Math.PI*2) ;//theta (0 to 2pi) =0 at 6pm going positive clockwise
 	        //Log.i("KNOB", "theta "+theta+" update "+updatedTheta);
-	        if(_range==2){
+	        if(_range==1){
 	            if(updatedTheta<ROTATION_PAD_RAD)setValue(0);
 	            else if(updatedTheta>(Math.PI*2-ROTATION_PAD_RAD)) setValue(1);
 	            else  setValue( (float)( (updatedTheta-ROTATION_PAD_RAD)/(Math.PI*2-2*ROTATION_PAD_RAD) ));
 	        
 	        }
-	        else if (_range>2){
+	        else if (_range>1){
 	            if(updatedTheta<ROTATION_PAD_RAD)setValue(0);
 	            else if(updatedTheta>(Math.PI*2-ROTATION_PAD_RAD)) setValue(_range-1);
 	            else setValue( (float) (  (int)((updatedTheta-ROTATION_PAD_RAD)/(Math.PI*2-2*ROTATION_PAD_RAD)*(_range-1)+.5)  ) );//round to nearest tick!
@@ -128,9 +118,14 @@ public class MMPKnob extends MMPControl{
 	protected void onDraw(Canvas canvas) {
 		this.paint.setStyle(Paint.Style.FILL);
 		this.paint.setColor(this.color);
-		
-		for(int i = 0 ; i < _range ; i++){
-	    	canvas.drawCircle(_myRectF.centerX()+_tickCenters[i][0], _myRectF.centerY()+_tickCenters[i][1], TICK_DIM/2*this.screenRatio, this.paint);
+
+        int effectiveRange = _range == 1 ? 2 : _range; // number of ticks
+        //layout tick positions, assume that setRange has already been called.
+        for(int i = 0 ; i < effectiveRange ; i++){
+            float angle= (float)((float)i/(effectiveRange-1)* (Math.PI*2-ROTATION_PAD_RAD*2)+ROTATION_PAD_RAD+Math.PI/2);
+            float xPos=(float) ( (_radius+(EXTRA_RADIUS+TICK_DIM/2)*this.screenRatio)*Math.cos(angle) );
+            float yPos=(float) ( (_radius+(EXTRA_RADIUS+TICK_DIM/2)*this.screenRatio)*Math.sin(angle) );
+	    	canvas.drawCircle(_myRectF.centerX()+xPos, _myRectF.centerY()+yPos, TICK_DIM/2*this.screenRatio, this.paint);
 	    }
 		
 		//body	
@@ -143,10 +138,10 @@ public class MMPKnob extends MMPControl{
 		this.paint.setStrokeWidth(_indicatorWidth);
 		//value to radius
 		double newRad=0;//TODO move
-		if(_range==2) {
+		if(_range==1) {
 	        newRad=_value*(Math.PI*2-ROTATION_PAD_RAD*2)+ROTATION_PAD_RAD;
 		}
-		 else if (_range>2) {
+		 else if (_range>1) {
 		     newRad=(_value/(_range-1))*(Math.PI*2-ROTATION_PAD_RAD*2)+ROTATION_PAD_RAD;
 		 }
 		newRad += Math.PI/2;//quarter turn clockwise to align with bottom (6 o'clock) instead of 3 o'clock
