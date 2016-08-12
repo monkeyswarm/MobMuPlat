@@ -18,19 +18,6 @@ import com.iglesiaintermedia.LANdini.LANdiniUser;
 import com.iglesiaintermedia.LANdini.UserStateDelegate;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 //import android.app.Fragment;
 import android.support.v4.app.Fragment;
 import android.app.AlertDialog;
@@ -58,7 +45,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 public class NetworkFragment extends Fragment implements SegmentedControlListener, Observer{
-
 	private MultiDirectFragment _multidirectFragment;
 	private PingAndConnectFragment _pingAndConnectFragment;
 	private LandiniFragment _landiniFragment;
@@ -105,11 +91,30 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 		_seg.setSeethroughColor(Color.parseColor("#74CEFF"));
 		_seg.segmentedControlListener = this;
 		
-		
-		//TODO based on if landini is enabled....
+
+        // Set initial fragment based on value stored in network controller.
 		if (savedInstanceState == null) {
-			getChildFragmentManager().beginTransaction()
-					.add(R.id.container, _multidirectFragment).commit();
+            Fragment fragment = null;
+            NetworkController.NetworkSubfragmentType networkSubfragmentType =
+                    _networkController.networkSubfragmentType;
+            switch (networkSubfragmentType) {
+                case MULTICAST_AND_DIRECT:
+                    fragment = _multidirectFragment;
+                    _seg.setSelectedIndex(0);
+                    break;
+                case PING_AND_CONNECT:
+                     fragment = _pingAndConnectFragment;
+                    _seg.setSelectedIndex(1);
+                    break;
+                case LANDINI:
+                    fragment = _landiniFragment;
+                    _seg.setSelectedIndex(2);
+                    break;
+            }
+            if(fragment != null) {
+                getChildFragmentManager().beginTransaction()
+                        .add(R.id.container, fragment).commit();
+            }
 		}
 		
 		return rootView;
@@ -119,12 +124,15 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 		if (sectionIndex == 0) {
 			getChildFragmentManager().beginTransaction()
 				.replace(R.id.container, _multidirectFragment).commit();
+            _networkController.networkSubfragmentType = NetworkController.NetworkSubfragmentType.MULTICAST_AND_DIRECT;
 		} else if (sectionIndex == 1) { //Ping & Connect
 			getChildFragmentManager().beginTransaction()
 				.replace(R.id.container, _pingAndConnectFragment).commit();
+            _networkController.networkSubfragmentType = NetworkController.NetworkSubfragmentType.PING_AND_CONNECT;
 		} else if (sectionIndex == 2) { //LANdini
 			getChildFragmentManager().beginTransaction()
-			.replace(R.id.container, _landiniFragment).commit();
+			    .replace(R.id.container, _landiniFragment).commit();
+            _networkController.networkSubfragmentType = NetworkController.NetworkSubfragmentType.LANDINI;
 		}
 	}
 	
@@ -325,10 +333,8 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_pingandconnect,
 					container, false);
-			//rootView.setBackgroundColor(Color.MAGENTA);
-			
+
 			_networkController = ((MainActivity)getActivity()).networkController;
-			//_networkTimeTextView = (TextView)rootView.findViewById(R.id.textView2);
 			_listView = (ListView)rootView.findViewById(R.id.listView1);
 			_adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, _userNamesList) ;
 			_listView.setAdapter(_adapter);
@@ -340,7 +346,7 @@ public class NetworkFragment extends Fragment implements SegmentedControlListene
 					   _networkController.pingAndConnectManager.setEnabled(isChecked);
 				   }
 			});
-			
+
 			Spinner spinner = (Spinner) rootView.findViewById(R.id.playernumber_spinner);
 			// Create an ArrayAdapter using the string array and a default spinner layout
 			String[] spinnerStrings = new String[]{"server","none","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"};

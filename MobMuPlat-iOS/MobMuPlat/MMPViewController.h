@@ -86,8 +86,8 @@
 +(NSString*)fetchSSIDInfo;
 +(canvasType)getCanvasType;
 
-@property BOOL backgroundAudioEnabled;
-@property BOOL isPortsConnected;
+@property BOOL backgroundAudioAndNetworkEnabled; //clean up
+@property BOOL isPortsConnected; //clean up
 @property (retain) PdAudioController* audioController;
 @property (retain) SettingsViewController* settingsVC;
 @property (copy, nonatomic) NSString *outputIpAddress;
@@ -95,8 +95,12 @@
 @property (nonatomic) int outputPortNumber;
 
 //audio bus - make private
-@property (strong, nonatomic) ABAudiobusController *audiobusController;
+@property (strong, nonatomic) ABAudiobusController *audiobusController; //clean up
 @property (assign,nonatomic)NSInteger ticks;
+
+// called from app delegate
+- (void)applicationWillResignActive;
+- (void)applicationDidBecomeActive;
 
 //testing
 - (BOOL)loadScenePatchOnlyFromBundle:(NSBundle *)bundle filename:(NSString *)filename;

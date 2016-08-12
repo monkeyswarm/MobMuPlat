@@ -257,7 +257,6 @@ static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
   _pingAndConnectUserTableView.dataSource = self;
   [_pingAndConnectPlayerNumberSeg addTarget:self action:@selector(pingAndConnectPlayerNumberSegChanged:) forControlEvents:UIControlEventValueChanged];
 
-
   //
   _documentView.layer.cornerRadius = cornerRadius;
   _consoleView.layer.cornerRadius = cornerRadius;
@@ -446,12 +445,12 @@ static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
     NSString* inputString = @"input:(none)";
     if([[asrd inputs] count] > 0 ){
       AVAudioSessionPortDescription* aspd = [[asrd inputs] objectAtIndex:0];
-      inputString = [NSString stringWithFormat:@"input:%@ channels:%d", aspd.portName, [[AVAudioSession sharedInstance] inputNumberOfChannels] ];
+      inputString = [NSString stringWithFormat:@"input:%@ channels:%ld", aspd.portName, (long)[[AVAudioSession sharedInstance] inputNumberOfChannels] ];
     }
     NSString* outputString = @"output:(none)";
     if([[asrd outputs] count] > 0 ){
       AVAudioSessionPortDescription* aspd = [[asrd outputs] objectAtIndex:0];
-      outputString = [NSString stringWithFormat:@"output:%@ channels:%d", aspd.portName, [[AVAudioSession sharedInstance] outputNumberOfChannels] ];
+      outputString = [NSString stringWithFormat:@"output:%@ channels:%ld", aspd.portName, (long)[[AVAudioSession sharedInstance] outputNumberOfChannels] ];
     }
     _audioRouteLabel.text = [NSString stringWithFormat:@"%@\n%@", inputString, outputString];
     //[self consolePrint:[NSString stringWithFormat:@"%@\n%@", inputString, outputString] ];
@@ -479,7 +478,7 @@ static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
 }
 
 -(void)refreshAudioEnableButton{
-  if(self.audioDelegate.backgroundAudioEnabled){
+  if(self.audioDelegate.backgroundAudioAndNetworkEnabled){
     [_audioEnableButton setTitle:@"enabled" forState:UIControlStateNormal];
     [_audioEnableButton setBackgroundColor:[UIColor whiteColor]];
     [_audioEnableButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
@@ -493,7 +492,7 @@ static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
 }
 
 -(void)audioEnableButtonHit{
-  self.audioDelegate.backgroundAudioEnabled=!self.audioDelegate.backgroundAudioEnabled;
+  self.audioDelegate.backgroundAudioAndNetworkEnabled=!self.audioDelegate.backgroundAudioAndNetworkEnabled;
   [self refreshAudioEnableButton];
 }
 
@@ -514,9 +513,9 @@ BOOL LANdiniSwitchBool;
 -(void)LANdiniSwitchHit:(UISwitch*)sender{
   if(LANdiniSwitchBool!=_LANdiniEnableSwitch.on){
     LANdiniSwitchBool=_LANdiniEnableSwitch.on;
-    if([self.LANdiniDelegate respondsToSelector:@selector(enableLANdini:)]){
-      [self.LANdiniDelegate enableLANdini:[sender isOn]];
-    }
+    //if([self.LANdiniDelegate respondsToSelector:@selector(enableLANdini:)]){
+      self.LANdiniDelegate.LANdiniEnabled = [sender isOn];
+    //}
 
     if([sender isOn]){
       _networkTimer = [NSTimer scheduledTimerWithTimeInterval:.25 target:self selector:@selector(networkTime:) userInfo:nil repeats:YES];
@@ -530,7 +529,7 @@ BOOL LANdiniSwitchBool;
 }
 
 - (void)pingAndConnectSwitchHit:(UISwitch*)sender {
-  [self.pingAndConnectDelegate enablePingAndConnect:[sender isOn]];
+  self.pingAndConnectDelegate.pingAndConnectEnabled = [sender isOn];
 }
 
 - (void)pingAndConnectPlayerNumberSegChanged:(UISegmentedControl *)sender {

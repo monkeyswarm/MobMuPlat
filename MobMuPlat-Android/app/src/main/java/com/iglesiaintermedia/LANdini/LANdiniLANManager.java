@@ -42,6 +42,7 @@ public class LANdiniLANManager {
     private final float _pingInterval = .33f;
     private final float _syncRequestInterval = .33f;
     private List<LANdiniUser> _userList;
+    private boolean _connected; //whether OSC ports are connected or disconnected
     
     private int _toLocalPort = 50505;
     private int _fromLocalPort = 50506;
@@ -214,10 +215,19 @@ public class LANdiniLANManager {
     	_startTimeMillis = System.currentTimeMillis();
     	_syncServerName = "noSyncServer";
     	_parentNetworkController = nc;
-    	
-        //TODO get app FG/BG calls...link to main activity? no, just implement onPause/Resume and get called
     }
-    
+
+	// While IN BG CONTROL
+	public void stop() { //only called if app-in-background switch is off
+		disconnectOSC();
+	}
+
+	public void maybeRestart() {
+		if(_enabled && !_connected) {
+			connectOSC();
+		}
+	}
+
     public void sendMsgToApp(List<Object> msgList) /*throws IOException*/ {
         OSCMessage  msg = NetworkController.OSCMessageFromList(msgList);
         //new SendTargetOSCTask().execute(msg); no more localhost, send direct
@@ -302,7 +312,8 @@ public class LANdiniLANManager {
         //need to set above to nil? yes, will prevent sending messages on closed ports.
         }
         _syncServerName = "noSyncServer";
-        
+
+        _connected = false;
         //CHECK IF THIS STILL HAPPENS
         //if backgrounded when looking for LAN, then that timer keeps firing and overlaps with its recreation to init the LAN twice, adding "me" twice
         //this attempts to prevent that
@@ -1034,6 +1045,7 @@ public class LANdiniLANManager {
         @Override
         protected void onPostExecute(Void value) {
         	if(VERBOSE)Log.i("NETWORK", "completed connection task");
+            _connected = true;
         }
 	}
     

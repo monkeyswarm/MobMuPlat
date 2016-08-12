@@ -105,10 +105,6 @@
     [_oscManager setDelegate:self];
 
     _startDate = [NSDate date];
-
-    //not called on startup
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterFG:) name:UIApplicationWillEnterForegroundNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterBG:) name:UIApplicationWillResignActiveNotification object:nil];
   }
   return self;
 }
@@ -144,18 +140,6 @@
 - (void)setPlayerNumber:(NSInteger)playerNumber {
   _myPlayerNumber = playerNumber;
   [self updatePingAndConnectUserState];
-}
-
--(void)willEnterFG:(NSNotification*)notif{
-  if(_enabled){
-    [self connectOSC];
-  }
-}
-
--(void)willEnterBG:(NSNotification*)notif{
-  if(_enabled){
-    [self disconnectOSC];
-  }
 }
 
 - (void)updatePingAndConnectUserState {

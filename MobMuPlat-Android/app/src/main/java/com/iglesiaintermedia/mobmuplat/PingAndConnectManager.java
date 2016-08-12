@@ -42,6 +42,7 @@ public class PingAndConnectManager {
     public PingAndConnectUserStateDelegate userStateDelegate; //todo naming\
     private PingAndConnectUser _meUser;
     private int _myPlayerNumber;
+    private boolean _connected;
     
     // bookkeeping. key: ip address string.
     private Map<String, PingAndConnectUser> _ipToUserMap;
@@ -92,7 +93,8 @@ public class PingAndConnectManager {
         }
        };
        
-    private LANdiniTimer _broadcastTimer = new LANdiniTimer((int)(_broadcastInterval * 1000), new LANdiniTimerListener() {
+    private LANdiniTimer _broadcastTimer =
+            new LANdiniTimer((int)(_broadcastInterval * 1000), new LANdiniTimerListener() {
    		@Override
    		public void onTimerFire() {
    			if(_ipaddress!=null) {
@@ -150,7 +152,18 @@ public class PingAndConnectManager {
 	public boolean isEnabled() {
 		return _enabled;
 	}
-	
+
+    // While IN BG CONTROL
+    public void stop() { //only called if app-in-background switch is off
+        disconnectOSC();
+    }
+
+    public void maybeRestart() {
+        if(_enabled && !_connected) {
+            connectOSC();
+        }
+    }
+
 	public void setPlayerNumber(int playerNumber) {
 		_myPlayerNumber = playerNumber;
 		updateUserState();
@@ -379,9 +392,7 @@ public class PingAndConnectManager {
 	    }
 
 	    private void disconnectOSC() {
-	        //NSLog(@"disconnectOSC llm %p", self);
-	        
-	    	_broadcastTimer.stopRepeatingTask();
+	        _broadcastTimer.stopRepeatingTask();
 	    	_dropUserTimer.stopRepeatingTask();
 	    	
 	    	for(PingAndConnectUser user : _ipToUserMap.values()) {
@@ -419,6 +430,8 @@ public class PingAndConnectManager {
 	        	_broadcastAppPortOut = null;
 	        //need to set above to nil? yes, will prevent sending messages on closed ports.
 	        }
+
+          _connected = false;
 	    }
 	
 	    private class SetupOSCTask extends AsyncTask<Void, Void, Void> {
@@ -449,6 +462,7 @@ public class PingAndConnectManager {
 	        @Override
 	        protected void onPostExecute(Void value) {
 	        	if(VERBOSE)Log.i("NETWORK", "completed connection task");
+                _connected = true;
 	        }
 		}
 	    

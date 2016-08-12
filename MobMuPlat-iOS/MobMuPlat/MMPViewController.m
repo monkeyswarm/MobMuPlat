@@ -58,15 +58,6 @@
 
 #import "UIAlertView+MMPBlocks.h"
 
-/*extern void expr_setup(void);
-extern void bonk_tilde_setup(void);
-extern void choice_setup(void);
-extern void fiddle_tilde_setup(void);
-extern void loop_tilde_setup(void);
-extern void lrshift_tilde_setup(void);
-extern void sigmund_tilde_setup(void);
-extern void pique_setup(void);*/
-
 @implementation MMPViewController {
   NSMutableArray *_keyCommandsArray;
   MMPGui *_pdGui; //keep strong around for widgets to use (weakly).
@@ -82,7 +73,9 @@ extern void pique_setup(void);*/
   NSMutableArray *_connectedMidiDestinations;
 }
 
-@synthesize audioController, settingsVC;
+@synthesize audioController = _audioController, settingsVC,
+pingAndConnectEnabled = _pingAndConnectEnabled,
+LANdiniEnabled = _LANdiniEnabled;
 
 - (NSArray *)keyCommands {
   if (!_keyCommandsArray) {
@@ -191,28 +184,19 @@ extern void pique_setup(void);*/
 
   //libPD setup
 
-  audioController = [[PdAudioController alloc] initWithAudioUnit:[[MobMuPlatPdAudioUnit alloc] init]] ;
-  [audioController configurePlaybackWithSampleRate:samplingRate numberChannels:channelCount inputEnabled:YES mixingEnabled:mixingEnabled];
-  [audioController configureTicksPerBuffer:ticksPerBuffer];
+  _audioController =
+      [[PdAudioController alloc] initWithAudioUnit:[[MobMuPlatPdAudioUnit alloc] init]] ;
+  [_audioController configurePlaybackWithSampleRate:samplingRate
+                                     numberChannels:channelCount
+                                       inputEnabled:YES
+                                      mixingEnabled:mixingEnabled];
+  [_audioController configureTicksPerBuffer:ticksPerBuffer];
   //[audioController print];
 
   if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") && audioBusEnabled) {
     // do stuff for iOS 7 and newer
     [self setupAudioBus];
   }
-
-
-  //access to PD externals not normally part of libPD, now done in libpd automatically via #ifdef LIBPD_EXTRA
-  /*expr_setup();
-  bonk_tilde_setup();
-  choice_setup();
-  fiddle_tilde_setup();
-  loop_tilde_setup();
-  lrshift_tilde_setup();
-  sigmund_tilde_setup();
-  pique_setup();
-  bob_tilde_setup();*/
-
 
   //start device motion detection
   motionManager = [[CMMotionManager alloc] init];
@@ -259,7 +243,6 @@ extern void pique_setup(void);*/
   locationManager = [[CLLocationManager alloc] init] ;
   locationManager.delegate = self;
   [locationManager setDistanceFilter:1.0];
-  //[locationManager startUpdatingLocation ];
 
   //landini
   llm = [[LANdiniLANManager alloc] init];
@@ -285,18 +268,12 @@ extern void pique_setup(void);*/
   // set self as PdRecieverDelegate to recieve messages from Libpd
   [PdBase setMidiDelegate:self];
 
-  // handled in load scene common reset.
-  /*[PdBase subscribe:@"toGUI"];
-  [PdBase subscribe:@"toNetwork"];
-  [PdBase subscribe:@"toSystem"];*/
-
   _pdGui = [[MMPGui alloc] init];
   _mmpPdDispatcher = [[MMPPdDispatcher alloc] init];
   [Widget setDispatcher:_mmpPdDispatcher];
   [PdBase setDelegate:_mmpPdDispatcher];
 
   _mmpPdDispatcher.printDelegate = self;
-  //
 
   //copy bundle stuff if not there, i.e. first time we are running it on a new version #
 
@@ -393,7 +370,7 @@ extern void pique_setup(void);*/
   navigationController.navigationBar.barStyle = UIBarStyleBlack;
   navigationController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
 
-  [audioController setActive:YES];
+  [_audioController setActive:YES];
 
   _flipped = [[NSUserDefaults standardUserDefaults] boolForKey:@"MMPFlipInterface"]; //grab from defaults. TODO interact with settignsVC.
 
@@ -599,8 +576,8 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 }
 
 -(int)setTicksPerBuffer:(int)newTick{ //return actual value
-  [audioController configureTicksPerBuffer:newTick];
-  return [audioController ticksPerBuffer];
+  [_audioController configureTicksPerBuffer:newTick];
+  return [_audioController ticksPerBuffer];
 }
 
 -(int)setRate:(int)inRate{//return actual value
@@ -624,7 +601,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
 -(int)actualTicksPerBuffer{
   //NSLog(@"actual ticks is %d",[audioController ticksPerBuffer] );
-  return [audioController ticksPerBuffer];
+  return [_audioController ticksPerBuffer];
 }
 
 -(PGMidi*) midi{
@@ -1317,12 +1294,17 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
 
 - (void)setAudioInputEnabled:(BOOL)enabled {
-  if(enabled)
-    [audioController configurePlaybackWithSampleRate:samplingRate numberChannels:channelCount inputEnabled:YES mixingEnabled:mixingEnabled];
-
-  else
-    [audioController configurePlaybackWithSampleRate:samplingRate numberChannels:channelCount inputEnabled:NO mixingEnabled:mixingEnabled];
-
+  if(enabled) {
+    [_audioController configurePlaybackWithSampleRate:samplingRate
+                                       numberChannels:channelCount
+                                         inputEnabled:YES
+                                        mixingEnabled:mixingEnabled];
+  } else {
+    [_audioController configurePlaybackWithSampleRate:samplingRate
+                                       numberChannels:channelCount
+                                         inputEnabled:NO
+                                        mixingEnabled:mixingEnabled];
+  }
 }
 
 #pragma mark scrollview delegate
@@ -2032,18 +2014,55 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   return reach;
 }
 
--(void)enableLANdini:(BOOL)enabled{
-  [llm setEnabled:enabled];
+-(void)setLANdiniEnabled:(BOOL)LANdiniEnabled {
+  _LANdiniEnabled = LANdiniEnabled;
+  [llm setEnabled:LANdiniEnabled];
 }
 
 #pragma mark PingAndConnect delegate from settings
 
--(void)enablePingAndConnect:(BOOL)enabled {
-  [pacm setEnabled:enabled];
+-(void)setPingAndConnectEnabled:(BOOL)pingAndConnectEnabled {
+  _pingAndConnectEnabled = pingAndConnectEnabled;
+  [pacm setEnabled:pingAndConnectEnabled];
 }
 
 -(void)setPingAndConnectPlayerNumber:(NSInteger)playerNumber {
   [pacm setPlayerNumber:playerNumber];
+}
+
+#pragma mark - from AppDelegate
+
+- (void)applicationWillResignActive {
+  // audio & OSC
+  if(!_backgroundAudioAndNetworkEnabled &&
+     !_audiobusController.connected &&
+     !_audiobusController.audiobusAppRunning) {
+
+    _audioController.active = NO;//shut down audio processing
+    [self disconnectPorts];//disconnect OSC ports on resign, to avoid conflicts
+  }
+  // networking
+  if (!_backgroundAudioAndNetworkEnabled) {
+    pacm.enabled = NO;
+    llm.enabled = NO;
+  }
+}
+
+- (void)applicationDidBecomeActive {
+  // audio & OSC
+  if(!_audioController.isActive) {
+    _audioController.active = YES;
+  }
+  if (!self.isPortsConnected){
+    [self connectPorts];
+  }
+  // networking
+  if (_pingAndConnectEnabled && !pacm.enabled) {
+    pacm.enabled = YES;
+  }
+  if (_LANdiniEnabled && !llm.enabled) {
+    llm.enabled = YES;
+  }
 }
 
 @end

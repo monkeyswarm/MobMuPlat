@@ -95,7 +95,7 @@ public class AudioMidiFragment extends Fragment implements Observer, SegmentedCo
 		_backgroundAudioSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			   @Override
 			   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				   ((MainActivity)getActivity()).setBackgroundAudioEnabled(isChecked);
+				   ((MainActivity)getActivity()).setBackgroundAudioAndNetworkEnabled(isChecked);
 			   }
 		});
 		

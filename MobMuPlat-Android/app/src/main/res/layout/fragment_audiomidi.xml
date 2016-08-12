@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:text="Audio runs while app is in background" />
+        android:text="App runs while in background" />
     
     <TextView
         android:id="@+id/textView2"

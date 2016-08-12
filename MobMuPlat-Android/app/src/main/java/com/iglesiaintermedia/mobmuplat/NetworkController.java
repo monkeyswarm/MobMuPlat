@@ -35,7 +35,10 @@ import com.illposed.osc.OSCPortIn;
 import com.illposed.osc.OSCPortOut;
 
 public class NetworkController extends Observable{
-
+	public enum NetworkSubfragmentType {
+		MULTICAST_AND_DIRECT, PING_AND_CONNECT, LANDINI
+	}
+	public NetworkSubfragmentType networkSubfragmentType = NetworkSubfragmentType.MULTICAST_AND_DIRECT;
 	//	private static NetworkController mInstance = null;
 	public MainActivity delegate; //TODO make interface?
 	private OSCPortIn receiver;
@@ -101,6 +104,15 @@ public class NetworkController extends Observable{
 		pingAndConnectManager = new PingAndConnectManager(this);
 		
 	}
+
+    public void stop() { // only called if app-in-background switch is off
+        pingAndConnectManager.stop();
+        landiniManager.stop();
+    }
+    public void maybeRestart() { // called every re-foreground
+        pingAndConnectManager.maybeRestart();
+        landiniManager.maybeRestart();
+    }
 
 	private void setupOSC() {
 		/*outputPortNumber = 54321;

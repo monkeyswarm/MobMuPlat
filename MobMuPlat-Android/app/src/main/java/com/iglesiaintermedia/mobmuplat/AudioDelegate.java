@@ -9,6 +9,6 @@ public interface AudioDelegate {
 	//public float getBufferSizeMS();
 	//public int setSampleRate(int newSampleRate); //returns actual rate
 	public int getSampleRate();
-	public void setBackgroundAudioEnabled(boolean backgroundAudioEnabled); 
+	public void setBackgroundAudioAndNetworkEnabled(boolean backgroundAudioAndNetworkEnabled);
 	
 }

@@ -150,7 +150,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 	public FlashlightController flashlightController;
 	private BroadcastReceiver _bc;
-	boolean _stopAudioWhilePaused = true; 
+	private boolean _backgroundAudioAndNetworkEnabled;
 
 	private LocationManager locationManagerA, locationManagerB;
 
@@ -511,9 +511,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 	@Override
 	protected void onStop() {
-
-		if(_stopAudioWhilePaused) {
+		if(!_backgroundAudioAndNetworkEnabled) {
 			stopAudio();
+      networkController.stop();
 		}
 		flashlightController.stopCamera();
     if (null != mGoogleApiClient && mGoogleApiClient.isConnected()) {
@@ -525,6 +525,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	@Override
 	protected void onRestart() {
 		super.onRestart();
+    networkController.maybeRestart();
 		if(pdService!=null && !pdService.isRunning()) {
 			pdService.startAudio();
 		}
@@ -1204,8 +1205,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	}
 
 	@Override
-	public void setBackgroundAudioEnabled(boolean backgroundAudioEnabled) {
-		_stopAudioWhilePaused = !backgroundAudioEnabled;
+	public void setBackgroundAudioAndNetworkEnabled(boolean backgroundAudioAndNetworkEnabled) {
+		_backgroundAudioAndNetworkEnabled = backgroundAudioAndNetworkEnabled;
 	}
 	
 	private class UnzipTask extends AsyncTask<Void, Void, Boolean> {

@@ -45,4 +45,8 @@ public class LANdiniTimer {
 	    mHandler.removeCallbacks(mStatusChecker);
 	    mRunning = false;
 	  }
+
+    public boolean isRunning() {
+        return mRunning;
+    }
 }

@@ -128,17 +128,10 @@
 
 }
 
-- (void)applicationWillResignActive:(UIApplication *)application
-{
+- (void)applicationWillResignActive:(UIApplication *)application {
 
-    
-  if(![self.viewController backgroundAudioEnabled] &&
-     !self.viewController.audiobusController.connected &&
-     !self.viewController.audiobusController.audiobusAppRunning) {
+  [self.viewController applicationWillResignActive];
 
-    [[self.viewController audioController] setActive:NO];//shut down audio processing
-    [self.viewController disconnectPorts];//disconnect OSC ports on resign, to avoid conflicts
-  }
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
@@ -146,22 +139,11 @@
     [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
 }
 
-- (void)applicationWillEnterForeground:(UIApplication *)application
-{
- // Leaving them on all the time...
- //   [self.viewController connectPorts];//reconnect OSC ports
-}
-
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
-    //if(![self.viewController backgroundAudioEnabled])//if we shut off audio on resign, restart it
-  if(![[self.viewController audioController] isActive]) {
-      [[self.viewController audioController] setActive:YES];
-  }
-  if (![self.viewController isPortsConnected]){
-    [self.viewController connectPorts];
-  }
+  [self.viewController applicationDidBecomeActive];
+  
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

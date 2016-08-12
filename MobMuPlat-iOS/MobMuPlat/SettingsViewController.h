@@ -101,7 +101,6 @@ typedef enum{
 @property (nonatomic, strong) IBOutlet UITableView* pingAndConnectUserTableView;
 
 
-
 @property (nonatomic, weak) id <SettingsViewControllerDelegate> delegate;
 @property (nonatomic, weak) id <AudioSettingsDelegate> audioDelegate;
 @property (nonatomic, weak) id <LANdiniDelegate> LANdiniDelegate;
@@ -145,18 +144,20 @@ typedef enum{
 -(int)setChannelCount:(int)newChannelCount;
 - (void)setAudioInputEnabled:(BOOL)enabled; //for mic input vs vibration
 -(BOOL)isAudioBusConnected;
-@property BOOL backgroundAudioEnabled;
+@property BOOL backgroundAudioAndNetworkEnabled;
 
 @end
 
+
 @protocol LANdiniDelegate <NSObject>
+@property(nonatomic) BOOL LANdiniEnabled;
 -(float)getLANdiniTime;
--(void)enableLANdini:(BOOL)enable;
 -(Reachability*)getReachability; //move
 @end
 
+
 @protocol PingAndConnectDelegate <NSObject>
--(void)enablePingAndConnect:(BOOL)enable;
+@property(nonatomic) BOOL pingAndConnectEnabled;
 -(void)setPingAndConnectPlayerNumber:(NSInteger)playerNumber;
 @end
 
