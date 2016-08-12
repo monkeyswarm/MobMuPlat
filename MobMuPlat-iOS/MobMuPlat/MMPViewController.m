@@ -2032,7 +2032,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
 #pragma mark - from AppDelegate
 
-- (void)applicationWillResignActive {
+- (void)applicationWillResignActive { //todo: this is hit even when showing lower drawer...maybe to didEnterBackground.
   // audio & OSC
   if(!_backgroundAudioAndNetworkEnabled &&
      !_audiobusController.connected &&

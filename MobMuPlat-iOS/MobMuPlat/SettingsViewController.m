@@ -25,6 +25,7 @@
   NSArray *_pingAndConnectUserArray;
   NSTimer* _networkTimer;
   NSString* _LANdiniSyncServerName;
+  NSTimer *_updateNetworkLabelTimer;
 }
 @end
 
@@ -83,9 +84,9 @@ static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
 - (void)viewDidLoad{
   [super viewDidLoad];
 
-  [[NSNotificationCenter defaultCenter] addObserver:self
+  /*[[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(checkReach)
-                                               name:UIApplicationDidBecomeActiveNotification object:nil];
+                                               name:UIApplicationDidBecomeActiveNotification object:nil];*/
 
   //ios 7 don't have it go under the nav bar
   if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
@@ -410,14 +411,27 @@ static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
 
 -(void)viewDidAppear:(BOOL)animated{
   [super viewDidAppear:animated];
-  [self checkReach];
   _outputPortNumberTextField.text = [NSString stringWithFormat:@"%d",self.delegate.outputPortNumber];
   _inputPortNumberTextField.text = [NSString stringWithFormat:@"%d",self.delegate.inputPortNumber];
   _ipAddressTextField.text = self.delegate.outputIpAddress;
 
+  // start timer to check SSID name. This is because switching networks does not trigger a reachability change.
+  [self checkReach];
+  _updateNetworkLabelTimer = [NSTimer scheduledTimerWithTimeInterval:5
+                                                              target:self
+                                                            selector:@selector(checkReach)
+                                                            userInfo:nil
+                                                             repeats:YES];
 }
+
+- (void)viewDidDisappear:(BOOL)animated {
+  [super viewDidDisappear:animated];
+  [_updateNetworkLabelTimer invalidate];
+  _updateNetworkLabelTimer = nil;
+}
+
 -(void)checkReach{
-  Reachability *reach = [self.LANdiniDelegate getReachability];
+  Reachability *reach = [self.LANdiniDelegate getReachability]; //TODO move reachability object
   [self updateNetworkLabel:reach];
 }
 
@@ -1098,8 +1112,8 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 }
 
 -(void)updateNetworkLabel:(Reachability*)reach{
-  NSString* network = [MMPViewController fetchSSIDInfo];
   if ([reach isReachable]) {
+    NSString* network = [MMPViewController fetchSSIDInfo];
     [_LANdiniNetworkLabel setText:[NSString stringWithFormat:@"Wifi network enabled: %@ \nMy IP address: %@", network ? network : @"", [MMPNetworkingUtils ipAddress]]];
   } else {
     _LANdiniNetworkLabel.text = @"Wifi network disabled";
