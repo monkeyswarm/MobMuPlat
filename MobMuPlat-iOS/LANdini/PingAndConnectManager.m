@@ -126,7 +126,10 @@
   return fabs( [_startDate timeIntervalSinceNow] );
 }
 
--(void)setEnabled:(BOOL)enabled{
+-(void)setEnabled:(BOOL)enabled {
+  if (enabled == _enabled) {
+    return;
+  }
   _enabled = enabled;
 
   if(_enabled){

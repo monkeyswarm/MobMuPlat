@@ -218,6 +218,7 @@
 		F975609D1A6EADCD005CCE8E /* libpd-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F97560921A6E235B005CCE8E /* libpd-ios.a */; };
 		F97D45A819A541E000874EAA /* libAudiobus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F97D45A719A541E000874EAA /* libAudiobus.a */; };
 		F9967C3718F8C54D008E3828 /* MenuNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9967C3618F8C54D008E3828 /* MenuNavigationController.m */; };
+		F9A7C9071D60FDAA00FA4A45 /* MMPNetworkProtocolTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9A7C9061D60FDAA00FA4A45 /* MMPNetworkProtocolTests.m */; };
 		F9AB5F3E1C4EC2CC007F6A21 /* SettingsViewControllerIOS5~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = F9AB5F3C1C4EC2CC007F6A21 /* SettingsViewControllerIOS5~iphone.xib */; };
 		F9AB5F3F1C4EC2CC007F6A21 /* SettingsViewControllerIOS5~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = F9AB5F3D1C4EC2CC007F6A21 /* SettingsViewControllerIOS5~ipad.xib */; };
 		F9AB5FF11C503018007F6A21 /* MMPPdNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = F9AB5FE61C503018007F6A21 /* MMPPdNumber.m */; };
@@ -657,6 +658,7 @@
 		F97D45B619A54D0300874EAA /* MobMuPlat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = MobMuPlat.entitlements; sourceTree = "<group>"; };
 		F9967C3518F8C54D008E3828 /* MenuNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuNavigationController.h; path = gui/MenuNavigationController.h; sourceTree = "<group>"; };
 		F9967C3618F8C54D008E3828 /* MenuNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MenuNavigationController.m; path = gui/MenuNavigationController.m; sourceTree = "<group>"; };
+		F9A7C9061D60FDAA00FA4A45 /* MMPNetworkProtocolTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMPNetworkProtocolTests.m; sourceTree = "<group>"; };
 		F9AB5F3C1C4EC2CC007F6A21 /* SettingsViewControllerIOS5~iphone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "SettingsViewControllerIOS5~iphone.xib"; path = "settings/SettingsViewControllerIOS5~iphone.xib"; sourceTree = "<group>"; };
 		F9AB5F3D1C4EC2CC007F6A21 /* SettingsViewControllerIOS5~ipad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "SettingsViewControllerIOS5~ipad.xib"; path = "settings/SettingsViewControllerIOS5~ipad.xib"; sourceTree = "<group>"; };
 		F9AB5FE51C503018007F6A21 /* MMPPdNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMPPdNumber.h; path = PdGui/PdPartySubclasses/MMPPdNumber.h; sourceTree = "<group>"; };
@@ -1432,6 +1434,7 @@
 				F93FC0631C4D7AA20059E39F /* MMPUnitTestPatches */,
 				F93FC0591C4D79570059E39F /* MobMuPlatTests.m */,
 				F93FC05B1C4D79570059E39F /* Info.plist */,
+				F9A7C9061D60FDAA00FA4A45 /* MMPNetworkProtocolTests.m */,
 			);
 			path = MobMuPlatTests;
 			sourceTree = "<group>";
@@ -1841,6 +1844,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F9A7C9071D60FDAA00FA4A45 /* MMPNetworkProtocolTests.m in Sources */,
 				F93FC0811C4E0E0E0059E39F /* MMPPdBang.m in Sources */,
 				F93FC05A1C4D79570059E39F /* MobMuPlatTests.m in Sources */,
 				F93FC0781C4E06610059E39F /* Gui.m in Sources */,

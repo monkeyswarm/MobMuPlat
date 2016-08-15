@@ -108,15 +108,18 @@
         [self.logDelegate logMsgInput:msgArray];
 }
 
--(void)setEnabled:(BOOL)enabled{
-    _enabled = enabled;
-    
-    if(_enabled){
-        [self connectOSC];
-    }
-    else{
-        [self disconnectOSC];
-    }
+-(void)setEnabled:(BOOL)enabled {
+  if (enabled == _enabled) {
+    return;
+  }
+  _enabled = enabled;
+
+  if(_enabled){
+    [self connectOSC];
+  }
+  else{
+    [self disconnectOSC];
+  }
 }
 
 -(void)connectOSC{

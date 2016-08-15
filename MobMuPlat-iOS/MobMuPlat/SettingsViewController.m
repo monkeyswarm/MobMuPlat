@@ -422,6 +422,10 @@ static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
                                                             selector:@selector(checkReach)
                                                             userInfo:nil
                                                              repeats:YES];
+
+  // update network switches. TODO: needs an observer in case enabled changes state while looking at settings
+  _LANdiniEnableSwitch.on = self.LANdiniDelegate.LANdiniEnabled;
+  _pingAndConnectEnableSwitch.on = self.pingAndConnectDelegate.pingAndConnectEnabled;
 }
 
 - (void)viewDidDisappear:(BOOL)animated {

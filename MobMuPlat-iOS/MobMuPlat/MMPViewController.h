@@ -67,13 +67,15 @@
     CMMotionManager* motionManager;
     CLLocationManager *locationManager;
     
-    LANdiniLANManager* llm;
-  PingAndConnectManager *pacm;
+    //LANdiniLANManager* llm;
+  //PingAndConnectManager *pacm;
 
     Reachability* reach;
   int pageCount;
   //
   @public // exposed for testing
+  LANdiniLANManager* llm;
+  PingAndConnectManager *pacm;
   MMPPdDispatcher *_mmpPdDispatcher;
 }
 

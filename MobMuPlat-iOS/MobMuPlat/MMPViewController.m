@@ -73,9 +73,7 @@
   NSMutableArray *_connectedMidiDestinations;
 }
 
-@synthesize audioController = _audioController, settingsVC,
-pingAndConnectEnabled = _pingAndConnectEnabled,
-LANdiniEnabled = _LANdiniEnabled;
+@synthesize audioController = _audioController, settingsVC;
 
 - (NSArray *)keyCommands {
   if (!_keyCommandsArray) {
@@ -1374,13 +1372,15 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   }
   if([source isEqualToString:@"toNetwork"]){
     if ([list count]==0) return;
-    if (![[list objectAtIndex:0] isKindOfClass:[NSString class]]) {
+    NSString *address = [list objectAtIndex:0];
+    if (![address isKindOfClass:[NSString class]]) {
       NSLog(@"toNetwork first element is not string");
       return;
     }
-    //look for LANdini - this clause looks for /send, /send/GD, /send/OGD
-    // TODO protect against cases like /sendsomethingelse while in landini!!!!
-    if([[list objectAtIndex:0] rangeOfString:@"/send"].location == 0) {
+    //look for LANdini/PaC- this clause looks for /send, /send/GD, /send/OGD.
+    if([address isEqualToString:@"/send"] ||
+       [address isEqualToString:@"/send/GD"] ||
+       [address isEqualToString:@"/send/OGD"] ) {
       if (llm.enabled|| pacm.enabled ) {
         [outPortToNetworkingModules sendThisPacket:[OSCPacket createWithContent:[MMPViewController oscMessageFromList:list]]];
       }  else {
@@ -1392,22 +1392,41 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
       }
     }
     //other landini/P&C messages, keep passing to landini
-    // DEI TODO just compare strings, no location.
-    else if ([[list objectAtIndex:0] rangeOfString:@"/networkTime"].location == 0 ||
-             [[list objectAtIndex:0] rangeOfString:@"/numUsers"].location == 0 ||
-             [[list objectAtIndex:0] rangeOfString:@"/userNames"].location == 0 ||
-             [[list objectAtIndex:0] rangeOfString:@"/myName"].location == 0 ||
+    else if ([address isEqualToString:@"/networkTime"] ||
+             [address isEqualToString:@"/numUsers"] ||
+             [address isEqualToString:@"/userNames"] ||
+             [address isEqualToString:@"/myName"] ||
       //
-             [[list objectAtIndex:0] rangeOfString:@"/playerCount"].location == 0 ||
-             [[list objectAtIndex:0] rangeOfString:@"/playerNumberSet"].location == 0 ||
-             [[list objectAtIndex:0] rangeOfString:@"/playerIpList"].location == 0 ||
-             [[list objectAtIndex:0] rangeOfString:@"/myPlayerNumber"].location == 0 ) {
+             [address isEqualToString:@"/playerCount"] ||
+             [address isEqualToString:@"/playerNumberSet"] ||
+             [address isEqualToString:@"/playerIpList"] ||
+             [address isEqualToString:@"/myPlayerNumber"] ) {
 
 
       [outPortToNetworkingModules sendThisPacket:[OSCPacket createWithContent:[MMPViewController oscMessageFromList:list]]];
-    }
-    //not for landini - send out regular!
-    else{
+    } else if ([address isEqualToString:@"/landini/enable"] &&
+               [list count] >= 2 &&
+               [list[1] isKindOfClass:[NSNumber class]]) {
+      llm.enabled = [list[1] floatValue] > 0;
+    } else if ([address isEqualToString:@"/pingAndConnect/enable"] &&
+               [list count] >= 2 &&
+               [list[1] isKindOfClass:[NSNumber class]]) {
+      pacm.enabled = [list[1] floatValue] > 0;
+    } else if ([address isEqualToString:@"/landini/isEnabled"]) {
+      NSArray* msgArray = @[ @"/landini/isEnabled", [NSNumber numberWithBool:llm.enabled] ];
+      [PdBase sendList:msgArray toReceiver:@"fromNetwork"];
+    } else if ([address isEqualToString:@"/pingAndConnect/isEnabled"]) {
+      NSArray* msgArray = @[ @"/pingAndConnect/isEnabled", [NSNumber numberWithBool:pacm.enabled] ];
+      [PdBase sendList:msgArray toReceiver:@"fromNetwork"];
+    } else if ([address isEqualToString:@"/pingAndConnect/myPlayerNumber"] &&
+               [list count] >= 2) {
+      if ([list[1] isKindOfClass:[NSString class]] && [list[1] isEqualToString:@"server"]) {
+        pacm.playerNumber = -1; //server val
+      } else if ([list[1] isKindOfClass:[NSNumber class]]) {
+        // no bounds/error checking!
+        pacm.playerNumber = [list[1] integerValue];
+      }
+    } else{ //not for landini - send out regular!
       [outPort sendThisPacket:[OSCPacket createWithContent:[MMPViewController oscMessageFromList:list]]];
     }
   }
@@ -2015,15 +2034,21 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 }
 
 -(void)setLANdiniEnabled:(BOOL)LANdiniEnabled {
-  _LANdiniEnabled = LANdiniEnabled;
-  [llm setEnabled:LANdiniEnabled];
+  [llm setEnabled:LANdiniEnabled]; //TODO just expose llm as property.
+}
+
+- (BOOL)LANdiniEnabled {
+  return llm.enabled;
 }
 
 #pragma mark PingAndConnect delegate from settings
 
 -(void)setPingAndConnectEnabled:(BOOL)pingAndConnectEnabled {
-  _pingAndConnectEnabled = pingAndConnectEnabled;
-  [pacm setEnabled:pingAndConnectEnabled];
+  [pacm setEnabled:pingAndConnectEnabled]; // TODO just expost pacm as property.
+}
+
+- (BOOL)pingAndConnectEnabled {
+  return pacm.enabled;
 }
 
 -(void)setPingAndConnectPlayerNumber:(NSInteger)playerNumber {
@@ -2057,10 +2082,10 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     [self connectPorts];
   }
   // networking
-  if (_pingAndConnectEnabled && !pacm.enabled) {
+  if (settingsVC.LANdiniEnableSwitch.isOn && !pacm.enabled) {
     pacm.enabled = YES;
   }
-  if (_LANdiniEnabled && !llm.enabled) {
+  if (settingsVC.pingAndConnectEnableSwitch.isOn && !llm.enabled) {
     llm.enabled = YES;
   }
 }
