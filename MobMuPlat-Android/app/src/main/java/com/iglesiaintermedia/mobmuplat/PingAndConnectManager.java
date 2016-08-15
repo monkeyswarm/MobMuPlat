@@ -139,6 +139,9 @@ public class PingAndConnectManager {
     }
        
 	public void setEnabled(boolean enabled) {
+		if (enabled == _enabled) {
+            return;
+    }
 		_enabled = enabled;
 		
 		if(_enabled) {

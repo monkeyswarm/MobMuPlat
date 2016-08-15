@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Observable;
 
 import org.apache.http.conn.util.InetAddressUtils;
+import org.puredata.core.PdBase;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -223,7 +224,7 @@ public class NetworkController extends Observable{
 		new SendOSCTask().execute(args);
 	}
 
-	public static String getIPAddress(boolean useIPv4) { 
+	public static String getIPAddress(boolean useIPv4) {
 		try {
 			List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces()); //lots of allocaiton here :(
 			for (NetworkInterface intf : interfaces) {
@@ -231,9 +232,9 @@ public class NetworkController extends Observable{
 				for (InetAddress addr : addrs) {
 					if (!addr.isLoopbackAddress()) {
 						String sAddr = addr.getHostAddress().toUpperCase();
-						boolean isIPv4 = InetAddressUtils.isIPv4Address(sAddr); 
+						boolean isIPv4 = InetAddressUtils.isIPv4Address(sAddr);
 						if (useIPv4) {
-							if (isIPv4) 
+							if (isIPv4)
 								return sAddr;
 						} else {
 							if (!isIPv4) {
@@ -261,50 +262,77 @@ public class NetworkController extends Observable{
 		}
 	}
 
-	public void handlePDMessage(Object[] args) {
-		if (args.length == 0 )return;
-		if (!(args[0] instanceof String)) {
-			// Network message is not starting with a string.
-			Log.e("NETWORK", "Received message array does not start with a string");
-			return;
-		}
-		//
-		//look for LANdini - this clause looks for /send, /send/GD, /send/OGD
-		//String address = (String)args[0];//check for isntanceof string first
-		// TODO pass through on no landini enabled?
-		if(args[0].equals("/send") || args[0].equals("/send/GD") || args[0].equals("/send/OGD")) {
-			if (landiniManager.isEnabled()) {
-				//send directly, not through localhost!
-				OSCMessage msg = NetworkController.OSCMessageFromList(Arrays.asList(args));
-				landiniManager.oscListener.acceptMessage(null, msg);
-			} 
-			if (pingAndConnectManager.isEnabled()) { 
-				// send/X becomes /send
-				args[0] = "/send";
-				OSCMessage msg = NetworkController.OSCMessageFromList(Arrays.asList(args));
-				pingAndConnectManager.oscListener.acceptMessage(null, msg);
-			}
-			/*else {
+    public void handlePDMessage(Object[] args) {
+        if (args.length == 0 )return;
+        if (!(args[0] instanceof String)) {
+            // Network message is not starting with a string.
+            Log.e("NETWORK", "Received message array does not start with a string");
+            return;
+        }
+        String address = (String)args[0];
+
+        //look for LANdini - this clause looks for /send, /send/GD, /send/OGD
+        //String address = (String)args[0];//check for isntanceof string first
+        // TODO pass through on no landini enabled?
+        if(address.equals("/send") || address.equals("/send/GD") || address.equals("/send/OGD")) {
+            if (landiniManager.isEnabled()) {
+                //send directly, not through localhost!
+                OSCMessage msg = NetworkController.OSCMessageFromList(Arrays.asList(args));
+                landiniManager.oscListener.acceptMessage(null, msg);
+            }
+            if (pingAndConnectManager.isEnabled()) {
+                // send/X becomes /send
+                address = "/send";
+                OSCMessage msg = NetworkController.OSCMessageFromList(Arrays.asList(args));
+                pingAndConnectManager.oscListener.acceptMessage(null, msg);
+            }
+            /*else {
             //landini disabled: remake message without the first 2 landini elements and send out normal port
             if([list count]>2){
              NSArray* newList = [list subarrayWithRange:NSMakeRange(2, [list count]-2)];
              [outPort sendThisPacket:[OSCPacket createWithContent:[ViewController oscMessageFromList:newList]]];
             }
         }*/
-		} else if (args[0].equals("/networkTime") || //other landini messages, keep passing to landini
-				args[0].equals("/numUsers") ||
-				args[0].equals("/userNames") ||
-				args[0].equals("/myName")) {
+        } else if (address.equals("/networkTime") || //other landini messages, keep passing to landini
+                address.equals("/numUsers") ||
+                address.equals("/userNames") ||
+                address.equals("/myName")) {
 
-			OSCMessage msg = NetworkController.OSCMessageFromList(Arrays.asList(args));
-			landiniManager.oscListener.acceptMessage(null, msg); //DANGEROUS! responders might not be set up...
-		} else if (args[0].equals("/playerCount") || args[0].equals("/playerNumberSet") || args[0].equals("/myPlayerNumber")) {//other ping and connect messages
-			OSCMessage msg = NetworkController.OSCMessageFromList(Arrays.asList(args));
-			pingAndConnectManager.oscListener.acceptMessage(null, msg);
-		} else{ //not for landini or P&C - send out regular!
-			sendMessage(args);
-		}
-	}
+            OSCMessage msg = NetworkController.OSCMessageFromList(Arrays.asList(args));
+            landiniManager.oscListener.acceptMessage(null, msg); //DANGEROUS! responders might not be set up...
+        } else if (address.equals("/playerCount") || address.equals("/playerNumberSet") || address.equals("/myPlayerNumber")) {//other ping and connect messages
+            OSCMessage msg = NetworkController.OSCMessageFromList(Arrays.asList(args));
+            pingAndConnectManager.oscListener.acceptMessage(null, msg);
+        } else if (address.equals("/landini/enable") &&
+                args.length >= 2 &&
+                args[1] instanceof Float) { //set
+            boolean val = ((Float)args[1]).floatValue() > 0;
+            landiniManager.setEnabled(val);
+        } else if (address.equals("/pingAndConnect/enable") &&
+                args.length >= 2 &&
+                args[1] instanceof Float) { //set
+            boolean val = ((Float)args[1]).floatValue() > 0;
+            pingAndConnectManager.setEnabled(val);
+        } else if (address.equals("/landini/isEnabled")) { //get
+            int val = landiniManager.isEnabled() ? 1 : 0;
+            Object[] msgArray = new Object[]{"/landini/isEnabled", Float.valueOf(val)};
+            PdBase.sendList("fromNetwork", msgArray);
+        } else if (address.equals("/pingAndConnect/isEnabled")) { //get
+            int val = pingAndConnectManager.isEnabled() ? 1 : 0;
+            Object[] msgArray = new Object[]{"/pingAndConnect/isEnabled", Float.valueOf(val)};
+            PdBase.sendList("fromNetwork", msgArray);
+        } else if (address.equals("/pingAndConnect/myPlayerNumber") && args.length >= 2) {
+            if ((args[1] instanceof String) && args[1].equals("server")) {
+                pingAndConnectManager.setPlayerNumber(-1); //server val
+            } else if (args[1] instanceof Float) {
+                // no bounds/error checking!
+                int val = ((Float)args[1]).intValue();
+                pingAndConnectManager.setPlayerNumber(val);
+            }
+        } else{ //not for landini or P&C - send out regular!
+            sendMessage(args);
+        }
+    }
 
 	public void newSSIDData(){
 		setChanged();

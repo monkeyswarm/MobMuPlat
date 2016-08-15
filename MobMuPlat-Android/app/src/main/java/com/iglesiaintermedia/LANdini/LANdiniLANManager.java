@@ -235,6 +235,9 @@ public class LANdiniLANManager {
     }
 
     public void setEnabled(boolean enabled) { //HERE shut off timers
+		if (enabled == _enabled) {
+            return;
+        }
         _enabled = enabled;
         
         if(_enabled) {
