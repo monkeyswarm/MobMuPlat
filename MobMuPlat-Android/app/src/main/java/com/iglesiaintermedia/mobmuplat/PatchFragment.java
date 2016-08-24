@@ -260,6 +260,8 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 
         List<String[]>[] processedAtomLinesTuple = MMPPdGuiUtils.proccessAtomLines(originalAtomLines);
         if (processedAtomLinesTuple == null) {
+            showAlert("Could not open pd file");
+            _mainActivity.launchSettings(); //back to documents
             return;
         }
 
@@ -288,6 +290,8 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
         // derive patch layout
         if (guiAtomLines.size() == 0 || guiAtomLines.get(0).length < 6 || !guiAtomLines.get(0)[1].equals("canvas") ) {
             // ALERT! or move this check to main activity
+            showAlert("Could not open pd file");
+            _mainActivity.launchSettings(); //back to documents
             return;
         }
 

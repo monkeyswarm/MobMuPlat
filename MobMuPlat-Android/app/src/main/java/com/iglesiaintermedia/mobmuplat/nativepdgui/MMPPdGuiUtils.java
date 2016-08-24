@@ -66,6 +66,10 @@ public class MMPPdGuiUtils {
                 }
                 // find different types of UI element in the top level patch
                 else if (level == 1) {
+                    // skip empty objects
+                    if (line[1].equals("obj") && line.length < 5) {
+                        continue;
+                    }
                     String objType = line[1].equals("obj") ? line[4] : line[1];
                     if (objTypeToSendRecIndices.containsKey(objType)) {
                         // floatatom, symbolatom, bng, tgl, nbox, etc....

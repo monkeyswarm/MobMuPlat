@@ -117,7 +117,7 @@ public class MMPKnob extends MMPControl{
 	
 	protected void onDraw(Canvas canvas) {
 		this.paint.setStyle(Paint.Style.FILL);
-		this.paint.setColor(this.color);
+		this.paint.setColor(_highlight ? this.highlightColor : this.color);
 
         int effectiveRange = _range == 1 ? 2 : _range; // number of ticks
         //layout tick positions, assume that setRange has already been called.
@@ -128,8 +128,7 @@ public class MMPKnob extends MMPControl{
 	    	canvas.drawCircle(_myRectF.centerX()+xPos, _myRectF.centerY()+yPos, TICK_DIM/2*this.screenRatio, this.paint);
 	    }
 		
-		//body	
-		if(_highlight) this.paint.setColor(this.highlightColor);
+		//body
 		canvas.drawCircle(_myRectF.centerX(), _myRectF.centerY(), _radius, this.paint);
 		
 		//indicator

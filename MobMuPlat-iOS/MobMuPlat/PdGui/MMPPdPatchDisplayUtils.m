@@ -62,6 +62,10 @@
       // find different types of UI element in the top level patch
       else if(level == 1) {
         // built in pd things
+        // skip empty objects
+        if ([line[1] isEqualToString:@"obj"] && [line count] < 5) {
+          continue;
+        }
         NSString *objType = [line[1] isEqualToString:@"obj"] ? line[4] : line[1];
         if (objTypeToSendRecIndeces[objType]) {
           // floatatom, symbolatom, bng, tgl, nbox, etc....

@@ -122,7 +122,7 @@
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
    [self touchesMoved:touches withEvent:event];
 	knobView.backgroundColor=self.highlightColor;
-	
+	for (UIView* tick in tickViewArray)tick.backgroundColor=self.highlightColor;
 }
 
 -(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
@@ -153,6 +153,7 @@
 
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
 	knobView.backgroundColor=self.color;
+  for (UIView* tick in tickViewArray)tick.backgroundColor=self.color;
 }
 
 -(void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event{

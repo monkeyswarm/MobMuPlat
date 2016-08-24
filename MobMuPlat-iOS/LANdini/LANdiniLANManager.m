@@ -137,8 +137,7 @@
     [_userList removeAllObjects];
     [self receiveGetNamesRequest];
     [self receiveGetNumUsersRequest];
-    if([self.userDelegate respondsToSelector:@selector(landiniUserStateChanged:)])
-        [self.userDelegate landiniUserStateChanged:_userList];
+    [self.userDelegate landiniUserStateChanged:_userList];
     
     [_oscManager deleteAllInputs];
     [_oscManager deleteAllOutputs];
@@ -182,10 +181,7 @@
 }
 
 -(void)initLAN:(NSString*)address{
-    
-    
-    if([self.userDelegate respondsToSelector:@selector(syncServerChanged:)] )
-        [self.userDelegate syncServerChanged:_syncServerName];
+    [self.userDelegate syncServerChanged:_syncServerName];
     
     NSString* myIP = address;
     int myPort = SC_DEFAULT_PORT; // supercollider default port
@@ -202,8 +198,7 @@
     _connected = YES;
     [_userList addObject:_me];
     
-    if([self.userDelegate respondsToSelector:@selector(landiniUserStateChanged:)])
-        [self.userDelegate landiniUserStateChanged:_userList];
+    [self.userDelegate landiniUserStateChanged:_userList];
     [self receiveGetNamesRequest];
     [self receiveGetNumUsersRequest];
     
@@ -621,8 +616,7 @@
         //DEI edit not in original supercollider source:send new message to user app with names
         [self receiveGetNamesRequest];
         [self receiveGetNumUsersRequest];
-        if([self.userDelegate respondsToSelector:@selector(userStateChanged:)])
-            [self.userDelegate landiniUserStateChanged:_userList];
+        [self.userDelegate landiniUserStateChanged:_userList];
         //end DEI edit
     }
     return usr;
@@ -656,8 +650,7 @@
         //DEI edit not in original supercollider: send the user client new users list
         [self receiveGetNamesRequest];
         [self receiveGetNumUsersRequest];
-        if([self.userDelegate respondsToSelector:@selector(landiniUserStateChanged:)])
-            [self.userDelegate landiniUserStateChanged:_userList];
+        [self.userDelegate landiniUserStateChanged:_userList];
     }
     
 }
@@ -675,9 +668,7 @@
     _syncServerName = _me.name;
     _adjustmentToGetNetworkTime = 0;
     _inSync = YES;
-    
-    if([self.userDelegate respondsToSelector:@selector(syncServerChanged:)] )
-        [self.userDelegate syncServerChanged:_me.name];
+    [self.userDelegate syncServerChanged:_me.name];
 }
 
 
@@ -707,9 +698,7 @@
         user = [self userInUserListWithName:newName];
         if(user!=nil){//if found
             _syncServerName = newName;
-            
-            if([self.userDelegate respondsToSelector:@selector(syncServerChanged:)] )
-                [self.userDelegate syncServerChanged:newName];
+            [self.userDelegate syncServerChanged:newName];
         }
         
         //[self startSyncTimer];
@@ -722,8 +711,7 @@
     _inSync = NO;
     _syncServerName = @"noSyncServer";
     _smallestRtt = 1;
-    if([self.userDelegate respondsToSelector:@selector(syncServerChanged:)] )
-        [self.userDelegate syncServerChanged:_syncServerName];
+    [self.userDelegate syncServerChanged:_syncServerName];
 }
 
 //i get this when I am the time server, I should not be getting messages from me
