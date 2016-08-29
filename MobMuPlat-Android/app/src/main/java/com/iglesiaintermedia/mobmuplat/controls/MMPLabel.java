@@ -6,13 +6,21 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.RectF;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.text.Layout.Alignment;
 import android.text.StaticLayout;
 import android.widget.TextView;
 
 public class MMPLabel extends MMPControl {
+
+    /*private enum MMPHorizontalTextAlignment {
+        LEFT, CENTER, RIGHT
+    }
+
+    private enum MMPVerticalTextAlignment {
+        TOP, CENTER, BOTTOM
+    }*/
 
 	static final String DEFAULT_FONT = "HelveticaNeue";
 	static final int PAD = 5;
@@ -24,9 +32,9 @@ public class MMPLabel extends MMPControl {
 	
 	//for fonts from assets
 	Context _context;
-	
-	private StaticLayout _staticLayout;
-	
+    private Alignment _alignment;
+    private int _verticalAlignment;
+
 	public MMPLabel(Context context, float screenRatio) {
 		super(context, screenRatio);
 		_context = context;
@@ -35,25 +43,37 @@ public class MMPLabel extends MMPControl {
 		_fontName = "";
 		setTextSize(16);
 		_stringValue = "my text goes here";
-	}
-	//
-	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {//todo fix no allocation?
-		if (changed == true) {
-			_staticLayout = new StaticLayout(_stringValue, this.paint, Math.max(0,getWidth()-10),//vs right-left?
-				Alignment.ALIGN_NORMAL, 1, 1, true);
-		}
+        _alignment = Alignment.ALIGN_NORMAL;
 	}
 	
 	protected void onDraw(Canvas canvas) {
-		canvas.translate(5 * this.screenRatio, 0);
-	     _staticLayout.draw(canvas);
-	     canvas.restore();
+         StaticLayout staticLayout =
+                 new StaticLayout(_stringValue,
+                        this.paint,
+                         Math.max(0,getWidth()-(int)(10*screenRatio)),//vs right-left?
+                _alignment, 1, 1, true);
+
+        int canvasHeight = getHeight();
+        int textHeight = staticLayout.getHeight();
+        int top = 0;
+        int left = (int)(5 * this.screenRatio);
+
+        switch (_verticalAlignment) {
+            case 0:
+                break;
+            case 1:
+                top = Math.max((canvasHeight - textHeight ) / 2, 0);
+                break;
+            case 2:
+                top = Math.max(canvasHeight - textHeight , 0);
+                break;
+        }
+        canvas.translate(left, top );
+	     staticLayout.draw(canvas);
 	}
 	
 	public void setStringValue(String stringValue) {
 		_stringValue = stringValue;
-		_staticLayout = new StaticLayout(_stringValue, this.paint, Math.max(0, getWidth()-10), //can be zero
-				Alignment.ALIGN_NORMAL, 1, 1, false);
 	}
 	
 	public void setTextSize(int size){
@@ -109,7 +129,24 @@ public class MMPLabel extends MMPControl {
 		then normal/bold/italic
 		*/
 	}
-	
+
+	public void setHorizontalTextAlignment(int h) {
+        switch (h) {
+            case 0:
+                _alignment = Alignment.ALIGN_NORMAL;
+                break;
+            case 1:
+                _alignment = Alignment.ALIGN_CENTER;
+                break;
+            case 2:
+                _alignment = Alignment.ALIGN_OPPOSITE;
+        }
+    }
+
+    public void setVerticalTextAlignment(int v) {
+        _verticalAlignment = v;
+    }
+
 	public void receiveList(List<Object> messageArray){ 
 		super.receiveList(messageArray);
 		//ignore enable message
@@ -135,14 +172,16 @@ public class MMPLabel extends MMPControl {
 	    		if (item instanceof Float) {//formatting 
 	    			float val = ((Float)item).floatValue();
 	    			if (val % 1.0 == 0) { //whole number, show as no decimal
-	    				buf.append(" "+String.format("%d", (int)val));
+	    				buf.append(String.format("%d", (int)val));
 	    			} else {
-	    				buf.append(" "+String.format("%.3f", val));
+	    				buf.append(String.format("%.3f", val));
 	    			}
 	    		}
 	    		else if (item instanceof String || item instanceof Integer) {
-	    			buf.append(" "+item);
+                    buf.append(item);
+
 	    		}
+                buf.append(" ");
 	    	}
 	    	setStringValue(buf.toString());
 	    	invalidate();

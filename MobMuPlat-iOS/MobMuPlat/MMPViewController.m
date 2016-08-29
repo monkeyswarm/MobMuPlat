@@ -1137,6 +1137,12 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
       if([currDict objectForKey:@"textSize"]) [(MeLabel*)currObject setTextSize:[[currDict objectForKey:@"textSize"] intValue] ];
       if([currDict objectForKey:@"textFont"] && [currDict objectForKey:@"textFontFamily"])
         [(MeLabel*)currObject setFontFamily:[currDict objectForKey:@"textFontFamily"] fontName:[currDict objectForKey:@"textFont"] ];
+      if([currDict[@"hAlign"] isKindOfClass:[NSNumber class]]) {
+        ((MeLabel*)currObject).horizontalTextAlignment = [currDict[@"hAlign"] integerValue];
+      }
+      if([currDict[@"vAlign"] isKindOfClass:[NSNumber class]]) {
+        ((MeLabel*)currObject).verticalTextAlignment = [currDict[@"vAlign"] integerValue];
+      }
       [(MeLabel*)currObject sizeToFit];
 
     }

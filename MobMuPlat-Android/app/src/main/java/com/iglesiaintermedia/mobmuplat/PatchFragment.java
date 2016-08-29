@@ -604,6 +604,12 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
                             String familyName = guiDict.get("androidFontFamily") == null ? null : guiDict.get("androidFontFamily").getAsString();
                             ((MMPLabel)control).setFontFamilyAndName( familyName, guiDict.get("androidFont").getAsString() );
                         }
+                        if (guiDict.get("hAlign")!=null) {
+                            ((MMPLabel)control).setHorizontalTextAlignment(guiDict.get("hAlign").getAsInt());
+                        }
+                        if (guiDict.get("vAlign")!=null) {
+                            ((MMPLabel)control).setVerticalTextAlignment(guiDict.get("vAlign").getAsInt());
+                        }
                     }
                     else if(classString.equals("MMPXYSlider")){
                         control = new MMPXYSlider(getActivity(), screenRatio);

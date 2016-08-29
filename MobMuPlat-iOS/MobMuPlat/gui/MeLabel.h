@@ -8,15 +8,28 @@
 
 #import "MeControl.h"
 
-@interface MeLabel : MeControl{
-    UITextView* theLabel;
-}
+typedef NS_ENUM(NSUInteger, MMPHorizontalTextAlignment) {
+  kMMPHorizontalTextAlignmentLeft = 0,
+  kMMPHorizontalTextAlignmentCenter,
+  kMMPHorizontalTextAlignmentRight
+};
 
+typedef NS_ENUM(NSUInteger, MMPVerticalTextAlignment) {
+  kMMPVerticalTextAlignmentTop = 0,
+  kMMPVerticalTextAlignmentCenter,
+  kMMPVerticalTextAlignmentBottom
+};
+
+@interface MeLabel : MeControl{
+    UILabel* theLabel;
+}
 
 @property (nonatomic) int textSize;
 @property (nonatomic) NSString* stringValue;
 @property(nonatomic, readonly) NSString *fontName;
 @property(nonatomic, readonly) NSString *fontFamily;
+@property(nonatomic) MMPHorizontalTextAlignment horizontalTextAlignment;
+@property(nonatomic) MMPVerticalTextAlignment verticalTextAlignment;
 
 -(void)setFontFamily:(NSString *)fontFamily fontName:(NSString*)fontName;
     

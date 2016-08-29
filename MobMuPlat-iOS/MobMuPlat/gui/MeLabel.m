@@ -10,13 +10,13 @@
 #import "MobMuPlatUtil.h"
 
 #define DEFAULT_FONT @"HelveticaNeue"
-#define WIDTH_PAD 10 //ugly hack - iOS and OSX textview have slighty different padding, so offset the ios labels to more closely match
+//ugly hack - iOS and OSX textview have slighty different padding, so offset the ios labels to more closely match
 #define INSET_X 4
 #define INSET_Y -2
 
 @implementation MeLabel
 
-
+@dynamic stringValue;
 
 - (id)initWithFrame:(CGRect)frame{
     
@@ -24,14 +24,13 @@
     if (self) {
         self.address=@"/unnamedLabel";
         self.backgroundColor=[UIColor clearColor];
-        
-        theLabel = [[UITextView alloc]initWithFrame:CGRectMake(INSET_X, INSET_Y, self.frame.size.width+WIDTH_PAD, self.frame.size.height)];
+      self.clipsToBounds = YES; //keep resized label from spilling out.
+
+       theLabel = [[UILabel alloc]initWithFrame:CGRectMake(INSET_X, INSET_Y, self.frame.size.width-(INSET_X * 2), self.frame.size.height)];
         theLabel.backgroundColor=[UIColor clearColor];
-    
-        
-        [theLabel setTextColor:self.color];
+      theLabel.numberOfLines = 0;
+      [theLabel setTextColor:self.color];
         [theLabel setFont:[UIFont fontWithName:DEFAULT_FONT size:16]];
-        theLabel.contentInset = UIEdgeInsetsMake(-8,-4,0,0);
        
         //default
         _textSize=12;
@@ -39,14 +38,12 @@
         theLabel.userInteractionEnabled = NO;
         self.userInteractionEnabled=NO;
         [self addSubview: theLabel];
-       
     }
     return self;
 }
 
 -(void)setStringValue:(NSString *)stringValue{
-    _stringValue=stringValue;
-    [theLabel setText:stringValue];
+  theLabel.text = stringValue;
 }
 
 -(void)setTextSize:(int)inTextSize{
@@ -66,6 +63,47 @@
 -(void)setColor:(UIColor*)inColor{
   [super setColor:inColor];
     [theLabel setTextColor:inColor];
+}
+
+- (void)setHorizontalTextAlignment:(MMPHorizontalTextAlignment)horizontalTextAlignment {
+  _horizontalTextAlignment = horizontalTextAlignment;
+  switch (horizontalTextAlignment) {
+    case kMMPHorizontalTextAlignmentLeft:
+      theLabel.textAlignment = NSTextAlignmentLeft;
+      break;
+    case kMMPHorizontalTextAlignmentCenter:
+      theLabel.textAlignment = NSTextAlignmentCenter;
+      break;
+    case kMMPHorizontalTextAlignmentRight:
+      theLabel.textAlignment = NSTextAlignmentRight;
+      break;
+  }
+}
+
+- (void)layoutSubviews {
+  [super layoutSubviews];
+
+  CGRect rect = [theLabel.text boundingRectWithSize:CGSizeMake(self.frame.size.width - (INSET_X * 2), MAXFLOAT)
+                                            options:NSStringDrawingUsesLineFragmentOrigin
+                                         attributes:@{ NSFontAttributeName : theLabel.font }
+                                            context:nil];
+
+  CGFloat top = 0;
+  switch (_verticalTextAlignment) {
+    case kMMPVerticalTextAlignmentTop:
+      top = INSET_Y;
+      break;
+    case kMMPVerticalTextAlignmentCenter:
+      top = MAX((self.frame.size.height - rect.size.height) / 2, 0); //don't push above top
+      break;
+    case kMMPVerticalTextAlignmentBottom:
+      top = MAX(self.frame.size.height - rect.size.height, 0) ;// don't push above top //doesn't use inset_y
+  }
+
+  theLabel.frame = CGRectMake(INSET_X,
+                              top,
+                              self.frame.size.width - (INSET_X * 2),
+                              rect.size.height);
 }
 
 //receive messages from PureData (via [send toGUI]), routed from ViewController via the address to this object
@@ -105,7 +143,8 @@
             }
             [newString appendString:@" "];
         }
-        theLabel.text=newString;
+      [self setStringValue:newString];
+      [self setNeedsLayout];
     }
 }
 
