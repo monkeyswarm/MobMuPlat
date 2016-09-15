@@ -2088,10 +2088,10 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     [self connectPorts];
   }
   // networking
-  if (settingsVC.LANdiniEnableSwitch.isOn && !pacm.enabled) {
+  if (settingsVC.pingAndConnectEnableSwitch.isOn && !pacm.enabled) {
     pacm.enabled = YES;
   }
-  if (settingsVC.pingAndConnectEnableSwitch.isOn && !llm.enabled) {
+  if (settingsVC.LANdiniEnableSwitch.isOn && !llm.enabled) {
     llm.enabled = YES;
   }
 }
