@@ -149,23 +149,6 @@
                           CGRectGetWidth(self.valueLabel.frame)+ padding*2 + 1 + RIGHT_PADDING*self.gui.scaleX ,
                           CGRectGetHeight(self.valueLabel.frame)+ padding*4);
 
-  //
-  /*[self.valueLabel sizeToFit];
-
-  CGRect valueLabelFrame = self.valueLabel.frame;
-  if(valueLabelFrame.size.width < self.valueLabel.preferredMaxLayoutWidth) {
-    // make sure width matches valueWidth
-    valueLabelFrame.size.width = self.valueLabel.preferredMaxLayoutWidth;
-  }
-  valueLabelFrame.origin = CGPointMake(round(self.gui.scaleX), round(self.gui.scaleX));
-  self.valueLabel.frame = valueLabelFrame;
-
-  // bounds from value label size
-  self.frame = CGRectMake(
-                          round(self.originalFrame.origin.x * self.gui.scaleX),
-                          round(self.originalFrame.origin.y * self.gui.scaleY),
-                          round(CGRectGetWidth(self.valueLabel.frame) + (2 * self.gui.scaleX) +INDENT ),
-                          round(CGRectGetHeight(self.valueLabel.frame) + (4 * self.gui.scaleY))); //MMP was 2 * scaleX*/
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
