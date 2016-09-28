@@ -66,7 +66,7 @@ public class NetworkController extends Observable{
     	@Override
     	public void handleMessage(Message msg) {
 			//Log.d("HANDLE", String.format("Handler.handleMessage(): msg=%s", msg));
-    		delegate.receiveOSCMessage((OSCMessage)msg.obj);
+    		delegate.receiveOSCMessage((OSCMessage)msg.obj); // Passed to delegate (MainActivity)
     	}
     };
     

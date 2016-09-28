@@ -622,7 +622,12 @@ public class LANdiniLANManager {
     	String address = msg.getAddress();
     	
     	LANdiniResponder responder = _apiAndNetworkResponders.get(address);
-    	List<Object> msgList = new ArrayList<Object>();
+    	if (responder==null) { //Note that we could be getting non-landini stuff on this port, so guard here.
+            // Not a landini message, so pass to parent for default reception.
+            _parentNetworkController.oscListener.acceptMessage(null, msg);
+            return;
+        }
+		List<Object> msgList = new ArrayList<Object>();
     	msgList.add(address);  //first element in msgArray is address
     	for (Object obj : msg.getArguments()) {
     		msgList.add(obj);

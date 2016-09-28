@@ -23,7 +23,7 @@ public class ConsoleLogController extends Observable{
 	}
 
 	public void append(String s) {
-		_consoleStringBuffer.append(s);
+		_consoleStringBuffer.append("\n"+s);
 		if (_consoleStringBuffer.length()>5000) {
 			_consoleStringBuffer.delete(0, _consoleStringBuffer.length() - 5000);
 		}

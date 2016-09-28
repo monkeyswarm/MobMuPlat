@@ -100,7 +100,7 @@
     return self;
 }
 
--(void)sendMsgToApp:(NSArray*)msgArray{
+-(void)sendMsgToApp:(NSArray*)msgArray{ //TODO just use PdBase sendList
     OSCMessage* msg = [LANdiniLANManager OSCMessageFromArray:msgArray];
     [_targetAppAddr sendThisPacket:[OSCPacket createWithContent:msg]];
     
@@ -398,8 +398,7 @@
     if(selectorString==nil)//if not found, look again in apiresponders
         selectorString = [_apiResponders objectForKey:address];
     
-    if(selectorString==nil)return;//if still not found, return
-    
+  //if selector still not found, will be passed to sendMsgToApp below
     SEL aSelector = NSSelectorFromString(selectorString);
     
     NSMutableArray* msgArray = [[NSMutableArray alloc]init];//create blank message array for sending to pd
@@ -426,8 +425,12 @@
         }
         
     }
-    
+
+  if(selectorString!=nil) {
     [self performSelector:aSelector withObject:msgArray]; //has a potential memory leak warning: just don't return any retained objects with the selector, which isn't an issue since all our selectors return void
+  } else { // no landini process, just send into app
+    [self sendMsgToApp:msgArray];
+  }
 
     if([self.logDelegate respondsToSelector:@selector(logLANdiniInput:)] )
         [self.logDelegate logLANdiniInput:msgArray];

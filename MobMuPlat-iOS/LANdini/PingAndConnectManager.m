@@ -109,7 +109,7 @@
   return self;
 }
 
--(void)sendMsgToApp:(NSArray*)msgArray{
+-(void)sendMsgToApp:(NSArray*)msgArray{ //TODO just use PdBase sendList
   OSCMessage* msg = [LANdiniLANManager OSCMessageFromArray:msgArray];
   [_targetAppAddr sendThisPacket:[OSCPacket createWithContent:msg]];
 

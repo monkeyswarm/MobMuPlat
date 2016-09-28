@@ -19,14 +19,49 @@ public class ObjectBox extends AtomWidget {
         float x = Float.parseFloat(atomline[2]) * scale;
         float y = Float.parseFloat(atomline[3]) * scale;
 
-        symbolValue = TextUtils.join(" ", Arrays.copyOfRange(atomline, 4, atomline.length));
+        // parse off first 4 to get the text array
+        atomline = Arrays.copyOfRange(atomline, 4, atomline.length);
+        int overridenCharWidth = 0;
+        // try to derive the ", f N" at the end for manually resized objects. PdParser does not put comma into
+        // its own element, so we need to scan and see if any element ends with it.
+        int indexOfElementWithTrailingComma = -1;//Arrays.asList(atomline).indexOf(",");
+        for (int i=0; i<atomline.length; i++) {
+            if (atomline[i].endsWith(",")) {
+                indexOfElementWithTrailingComma = i;
+                // strip off comma from the text element
+                atomline[i] = atomline[i].substring(0,atomline[i].length()-1);
+                break;
+            }
+        }
+
+        if (indexOfElementWithTrailingComma > -1) { // found comma, parse it off and grab width
+            if (atomline.length >= indexOfElementWithTrailingComma + 3 && atomline[indexOfElementWithTrailingComma + 1].equals("f")) {
+                overridenCharWidth = Integer.parseInt(atomline[indexOfElementWithTrailingComma + 2]);
+            }
+            // slice off after comma
+            atomline = Arrays.copyOfRange(atomline, 0, indexOfElementWithTrailingComma+1);
+        }
+        symbolValue = TextUtils.join(" ", Arrays.copyOfRange(atomline, 0, atomline.length));
+
         //ignoring min/max value...
 
         // graphics setup
         Rect rect = new Rect();
         paint.setTextSize(fontSize * scale);
         paint.getTextBounds(symbolValue, 0, symbolValue.length(), rect);
-        RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + rect.width() + 4*scale), Math.round(y + (fontSize + 4)*scale));
+        float width = rect.width();
+
+        if (overridenCharWidth>0) {
+            Rect singleCharWidthRect = new Rect();
+            paint.getTextBounds("0", 0, 1, singleCharWidthRect);
+            width = singleCharWidthRect.width() * overridenCharWidth;
+        }
+
+        RectF dRect = new RectF(
+                Math.round(x),
+                Math.round(y),
+                Math.round(x + width+4*scale),
+                Math.round(y + (fontSize + 4)*scale)); //todo use fontMetrics to get height
 
         setLayoutParams(new RelativeLayout.LayoutParams((int)dRect.width(), (int)dRect.height()));
         setX(dRect.left);

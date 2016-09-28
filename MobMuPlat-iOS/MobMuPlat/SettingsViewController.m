@@ -213,7 +213,8 @@ static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
   _tickSeg.selectedSegmentIndex = (int)log2(actualTicks);
   [_tickSeg addTarget:self action:@selector(tickSegChanged:) forControlEvents:UIControlEventValueChanged];
   [_rateSeg addTarget:self action:@selector(rateSegChanged:) forControlEvents:UIControlEventValueChanged];
-  [self tickSegChanged:_tickSeg];//set label
+  [self tickSegChanged:_tickSeg];//set displayed value
+  [self rateSegChanged:_rateSeg];//set displayed value
 
   [_audioEnableButton addTarget:self action:@selector(audioEnableButtonHit ) forControlEvents:UIControlEventTouchDown];
   _audioEnableButton.layer.cornerRadius = 5;

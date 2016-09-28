@@ -26,7 +26,25 @@
                                [[line objectAtIndex:2] floatValue], [[line objectAtIndex:3] floatValue],
                                0,0); //deduce width and height...
 
-  self.valueLabel.text = [[line subarrayWithRange:NSMakeRange(4, [line count] - 4)] componentsJoinedByString:@" "];  //check size
+    // parse off first 4 to get the text array
+    line = [line subarrayWithRange:NSMakeRange(4, [line count] - 4)];
+
+    // try to derive the ", f N" at the end for manually resized objects
+    NSUInteger indexOfComma = [line indexOfObject:@","];
+    if (indexOfComma!=NSNotFound) { // found comma, parse it off and grab width
+      if([line count]>=indexOfComma+3 && [line[indexOfComma+1] isEqualToString:@"f"]) {
+        self.valueWidth = [line[indexOfComma+2] intValue]; //todo, reflow height and text for valueWidth smaller than text width
+      }
+      // slice off after comma
+      line = [line subarrayWithRange:NSMakeRange(0, indexOfComma)];
+    }
+
+    self.valueLabel.text = [line componentsJoinedByString:@" "];  //check size
+
+    if (!self.valueWidth) { // if not set above manually, set to size of text
+      self.valueWidth = MAX(self.valueLabel.text.length,3);
+    }
+
   }
   return self;
 }
@@ -58,13 +76,12 @@
   CGPathRelease(path);
 }
 
-- (void)reshape { //don't use self.valueWidth
+- (void)reshape {
 
   // value label
   self.valueLabel.font = [UIFont fontWithName:GUI_FONT_NAME size:self.gui.fontSize * self.gui.scaleX];
   CGSize charSize = [@"0" sizeWithFont:self.valueLabel.font]; // assumes monspaced font
-  self.valueLabel.preferredMaxLayoutWidth = charSize.width * MAX(self.label.text.length,3) + 1;//self.valueWidth;
-  [self.valueLabel sizeToFit];
+  self.valueLabel.preferredMaxLayoutWidth = charSize.width * self.valueWidth;
   CGRect valueLabelFrame = self.valueLabel.frame;
   if(valueLabelFrame.size.width < self.valueLabel.preferredMaxLayoutWidth) {
     // make sure width matches valueWidth
