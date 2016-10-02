@@ -71,6 +71,13 @@
   //
   NSMutableArray *_connectedMidiSources; //TODO Set.
   NSMutableArray *_connectedMidiDestinations;
+
+  //audio settings
+  int _samplingRate;
+  BOOL _mixingEnabled;
+  int _channelCount;
+  int _ticksPerBuffer;
+  BOOL _inputEnabled;
 }
 
 @synthesize audioController = _audioController, settingsVC;
@@ -130,13 +137,20 @@
 -(instancetype)initWithAudioBusEnabled:(BOOL)audioBusEnabled {
   self=[super initWithNibName:nil bundle:nil];
 
-  mixingEnabled = YES;
-
-  channelCount = 2;
-  samplingRate = 44100;
+  _mixingEnabled = YES;
+  _channelCount = 2;
+  // update after intial audio config, but setting 44100 here was weird on 6s
+  _samplingRate = [AVAudioSession sharedInstance].sampleRate ; 
+  _inputEnabled = YES;
+#if TARGET_IPHONE_SIMULATOR
+  _ticksPerBuffer = 8;  // No other value seems to work with the simulator.
+#else
+  _ticksPerBuffer=8;
+  //was 16 - trying lower for audiobus
+  //was 32 NO - means buffer is 64 blocksize * 64 ticks per buffer=4096
+#endif
 
   openPDFile=nil;
-
   allGUIControl = [[NSMutableDictionary alloc]init];
 
   _outputIpAddress = @"224.0.0.1";
@@ -165,16 +179,6 @@
     settingsVC = [[SettingsViewController alloc] initWithNibName:nil bundle:nil];
   }
 
-  int ticksPerBuffer;
-
-#if TARGET_IPHONE_SIMULATOR
-  ticksPerBuffer = 8;  // No other value seems to work with the simulator.
-#else
-  ticksPerBuffer=8;
-  //was 16 - trying lower for audiobus
-  //was 32 NO - means buffer is 64 blocksize * 64 ticks per buffer=4096
-#endif
-
   //OSC setup
   manager = [[OSCManager alloc] init];
   [manager setDelegate:self];
@@ -183,13 +187,8 @@
   //libPD setup
 
   _audioController =
-      [[PdAudioController alloc] initWithAudioUnit:[[MobMuPlatPdAudioUnit alloc] init]] ;
-  [_audioController configurePlaybackWithSampleRate:samplingRate
-                                     numberChannels:channelCount
-                                       inputEnabled:YES
-                                      mixingEnabled:mixingEnabled];
-  [_audioController configureTicksPerBuffer:ticksPerBuffer];
-  //[audioController print];
+  [[PdAudioController alloc] initWithAudioUnit:[[MobMuPlatPdAudioUnit alloc] init]] ;
+  [self updateAudioState];
 
   if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") && audioBusEnabled) {
     // do stuff for iOS 7 and newer
@@ -316,10 +315,39 @@
 
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:appFirstStartOfVersionKey];
 
+  } //end first run and copy
+
+  if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"6.0")){
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(audioRouteChange:) name:AVAudioSessionRouteChangeNotification object:nil];
   }
-  //end first run and copy
 
   return self;
+}
+
+- (void)dealloc {
+  if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"6.0")){
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVAudioSessionRouteChangeNotification object:nil];
+  }
+}
+
+- (void)updateAudioState {
+  _audioController.active = NO;
+  [_audioController configurePlaybackWithSampleRate:_samplingRate
+                                     numberChannels:_channelCount
+                                       inputEnabled:_inputEnabled
+                                      mixingEnabled:_mixingEnabled];
+  // updating rate sets TPB to 1, so attempt to reset to prev value.
+  if (_ticksPerBuffer !=_audioController.ticksPerBuffer) {
+    [_audioController configureTicksPerBuffer:_ticksPerBuffer];
+  }
+  _audioController.active = YES;
+  // set actual values
+  _samplingRate = [_audioController sampleRate];
+  _channelCount = [_audioController numberChannels];
+  _ticksPerBuffer = [_audioController ticksPerBuffer];
+  // temp
+  //[_audioController print];
+  [settingsVC updateAudioState];
 }
 
 - (void)viewDidLoad{
@@ -474,8 +502,8 @@
   [_audiobusController addReceiverPort:receiverPort];
 
   receiverPort.clientFormat = [self.audioController.audioUnit
-                               ASBDForSampleRate:samplingRate
-                               numberChannels:channelCount];
+                               ASBDForSampleRate:_samplingRate
+                               numberChannels:_channelCount];
   if ([self.audioController.audioUnit isKindOfClass:[MobMuPlatPdAudioUnit class]]) {
     MobMuPlatPdAudioUnit *mmppdAudioUnit = (MobMuPlatPdAudioUnit *)self.audioController.audioUnit;
     mmppdAudioUnit.inputPort = receiverPort; //tell PD callback to look at it
@@ -573,24 +601,23 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   return [PdBase getBlockSize];
 }
 
--(int)setTicksPerBuffer:(int)newTick{ //return actual value
+-(int)setTicksPerBuffer:(int)newTick{ //return actual value. Note doesn't call [self updateAudioState]
   [_audioController configureTicksPerBuffer:newTick];
-  return [_audioController ticksPerBuffer];
+  _ticksPerBuffer = [_audioController ticksPerBuffer];
+  [settingsVC updateAudioState]; //send back to settings VC
+  return _ticksPerBuffer;
 }
 
 -(int)setRate:(int)inRate{//return actual value
-  samplingRate=inRate;
-  [self.audioController configurePlaybackWithSampleRate:samplingRate numberChannels:channelCount inputEnabled:YES mixingEnabled:mixingEnabled];
-  // NSLog(@"sample rate set to %d", [self.audioController sampleRate]);
-
-  return [self.audioController sampleRate];
+  _samplingRate = inRate;
+  [self updateAudioState]; // updates _samplingRate to actual val
+  return _samplingRate;
 }
 
 -(int)setChannelCount:(int)newChannelCount{
-  channelCount = newChannelCount;
-  [self.audioController configurePlaybackWithSampleRate:samplingRate numberChannels:channelCount inputEnabled:YES mixingEnabled:mixingEnabled];
-
-  return [self.audioController numberChannels];
+  _channelCount = newChannelCount;
+  [self updateAudioState]; // updates _channelCount to actual val
+  return _channelCount;
 }
 
 -(int)sampleRate{
@@ -1298,17 +1325,8 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
 
 - (void)setAudioInputEnabled:(BOOL)enabled {
-  if(enabled) {
-    [_audioController configurePlaybackWithSampleRate:samplingRate
-                                       numberChannels:channelCount
-                                         inputEnabled:YES
-                                        mixingEnabled:mixingEnabled];
-  } else {
-    [_audioController configurePlaybackWithSampleRate:samplingRate
-                                       numberChannels:channelCount
-                                         inputEnabled:NO
-                                        mixingEnabled:mixingEnabled];
-  }
+  _inputEnabled = enabled;
+  [self updateAudioState];
 }
 
 #pragma mark scrollview delegate
@@ -2094,6 +2112,36 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   if (settingsVC.LANdiniEnableSwitch.isOn && !llm.enabled) {
     llm.enabled = YES;
   }
+}
+
+- (void)audioRouteChange:(NSNotification*)notif{
+
+  dispatch_async(dispatch_get_main_queue(), ^{
+    // handle case of different supported audio rates, e.g. headphones set to 44.1, switch to 6s hardware which can only do 48K
+    // TODO this clobbers intended settings, implement a per-route ledger of last preferred value.
+
+
+    int newRate =  [AVAudioSession instancesRespondToSelector:@selector(sampleRate)] ?
+                    [[AVAudioSession sharedInstance] sampleRate]: // ios 6+
+                    [[AVAudioSession sharedInstance] currentHardwareSampleRate]; // ios 5-
+    if (newRate != _samplingRate) {
+      [self setRate:newRate];
+    }
+
+
+    if ([AVAudioSession instancesRespondToSelector:@selector(outputNumberOfChannels)]) {
+      // ios >=6
+      // don't care about setting channel count to 1, just handle vals >2
+
+      if(_channelCount<=2 && [[AVAudioSession sharedInstance] outputNumberOfChannels]>2){
+        [self setChannelCount:[[AVAudioSession sharedInstance] outputNumberOfChannels] ];
+      } else if(_channelCount>2 && [[AVAudioSession sharedInstance] outputNumberOfChannels]<=2) {
+        [self setChannelCount:2];
+      }
+    }
+
+    [settingsVC updateAudioRouteLabel];
+  });
 }
 
 @end

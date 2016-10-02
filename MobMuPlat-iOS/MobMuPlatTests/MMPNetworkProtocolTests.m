@@ -26,14 +26,18 @@
     [super tearDown];
 }
 
-- (void)testExample {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
-  //UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+- (void)testLLMEnabled {
+  MMPViewController *vc = [[MMPViewController alloc] init];
+  vc->llm.enabled = YES;
+  BOOL enabled = vc->llm.enabled;
+  XCTAssertTrue(enabled);
+}
+
+- (void)testPACMEnabled {
   MMPViewController *vc = [[MMPViewController alloc] init];
   vc->pacm.enabled = YES;
   BOOL enabled = vc->pacm.enabled;
-  NSLog(@""); //TODO test state.
+  XCTAssertTrue(enabled);
 }
 
 - (void)testPerformanceExample {

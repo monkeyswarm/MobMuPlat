@@ -47,19 +47,13 @@
     
     //midi
     PGMidi *midi;
-	
-  BOOL mixingEnabled;
+
     BOOL isLandscape;
-    
-   
-    
+
     PdFile *openPDFile;
     AVCaptureDevice *avCaptureDevice;//for flash
     
-    //audio settings
-    int samplingRate;
-    BOOL inputOrMixing;
-     int channelCount;
+   
     
     UINavigationController *navigationController;
     

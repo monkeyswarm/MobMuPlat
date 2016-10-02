@@ -213,8 +213,6 @@ static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
   _tickSeg.selectedSegmentIndex = (int)log2(actualTicks);
   [_tickSeg addTarget:self action:@selector(tickSegChanged:) forControlEvents:UIControlEventValueChanged];
   [_rateSeg addTarget:self action:@selector(rateSegChanged:) forControlEvents:UIControlEventValueChanged];
-  [self tickSegChanged:_tickSeg];//set displayed value
-  [self rateSegChanged:_rateSeg];//set displayed value
 
   [_audioEnableButton addTarget:self action:@selector(audioEnableButtonHit ) forControlEvents:UIControlEventTouchDown];
   _audioEnableButton.layer.cornerRadius = 5;
@@ -222,11 +220,14 @@ static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
   _audioEnableButton.layer.borderColor = [UIColor whiteColor].CGColor;
   [_audioInputSwitch addTarget:self action:@selector(audioInputSwitchHit) forControlEvents:UIControlEventValueChanged];
 
+
+  /*
   audioRouteView =  [[MPVolumeView alloc] initWithFrame:_audioRouteContainerView.frame];
   audioRouteView.showsRouteButton = YES;
   audioRouteView.showsVolumeSlider = NO;
-//  [_audioMidiContentView addSubview:audioRouteView];
-  [audioRouteView sizeToFit];
+  [_audioMidiContentView addSubview:audioRouteView];
+  [audioRouteView sizeToFit];*/ //not working: on 8.4 pad, not showing at all (but didn't enable output routing), on phone, showing, but switching to it is garbled
+
 
   //Network
 
@@ -325,11 +326,31 @@ static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
 
   [self showLoadDoc:nil];
   [self updateAudioRouteLabel];
+  [self updateAudioState];
+
+}
+
+- (void)updateAudioState {
+  int rate = _audioDelegate.sampleRate;
+  int tickPerBuffer = _audioDelegate.actualTicksPerBuffer;
+
+  // set segmented with val
+
+    if( fmod(log2(tickPerBuffer), 1)==0){
+      int newBlockIndex = (int)log2(tickPerBuffer);
+      [_tickSeg setSelectedSegmentIndex:newBlockIndex];
+    } else {
+      [_tickSeg setSelectedSegmentIndex:UISegmentedControlNoSegment];
+    }
 
 
-  if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"6.0")){
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(audioRouteChange:) name:AVAudioSessionRouteChangeNotification object:nil];
-  }
+    [_rateSeg setSelectedSegmentIndex:UISegmentedControlNoSegment];
+    for(int i=0;i<6;i++){
+      if(rateValueArray[i]==rate) [_rateSeg setSelectedSegmentIndex:i];
+    }
+
+  int blockSize = [self.audioDelegate blockSize];
+  [_tickValueLabel setText:[NSString stringWithFormat:@"buffer size = %d ticks * block size (%d) = %d samples", tickPerBuffer, blockSize, tickPerBuffer*blockSize]];
 }
 
 - (void)ipAddressResetButtonPressed {
@@ -440,23 +461,6 @@ static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
   [self updateNetworkLabel:reach];
 }
 
-
-- (void)audioRouteChange:(NSNotification*)notif{
-
-  if(outputChannelCount<=2 && [[AVAudioSession sharedInstance] outputNumberOfChannels]>2){
-    if ([self.audioDelegate respondsToSelector:@selector(setChannelCount:)]) {
-      [self.audioDelegate setChannelCount:[[AVAudioSession sharedInstance] outputNumberOfChannels] ];
-    }
-  }
-  else if(outputChannelCount>2 && [[AVAudioSession sharedInstance] outputNumberOfChannels]<=2) {
-    if ([self.audioDelegate respondsToSelector:@selector(setChannelCount:)]) {
-      [self.audioDelegate setChannelCount:2];
-    }
-  }
-
-  [self updateAudioRouteLabel];//also prints to console
-}
-
 -(void)updateAudioRouteLabel{
   if([[AVAudioSession sharedInstance] respondsToSelector:@selector(currentRoute)]){//ios 5 doesn't find selector
 
@@ -475,13 +479,21 @@ static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
     //[self consolePrint:[NSString stringWithFormat:@"%@\n%@", inputString, outputString] ];
   }
 
-
 }
 
 -(void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
   _audioMidiScrollView.contentSize = _audioMidiContentView.frame.size;
+
+  //small screen, rate numbers get cut off unless made smaller
+  if (self.view.frame.size.width == 320) {
+    UIFont *font = [UIFont boldSystemFontOfSize:10.0f];
+    NSDictionary *attributes = [NSDictionary dictionaryWithObject:font
+                                                           forKey:NSFontAttributeName];
+    [_rateSeg setTitleTextAttributes:attributes
+                                    forState:UIControlStateNormal];
+  }
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -694,7 +706,7 @@ BOOL LANdiniSwitchBool;
 }
 
 - (void)networkSegChanged:(UISegmentedControl*)sender{
-  int index = [sender selectedSegmentIndex];
+  NSUInteger index = [sender selectedSegmentIndex];
   switch (index) {
     case 0: [_networkingSubView bringSubviewToFront: _multiDirectConnectionSubView]; break;
     case 1: [_networkingSubView bringSubviewToFront: _pingAndConnectSubView]; break;
@@ -703,44 +715,15 @@ BOOL LANdiniSwitchBool;
 }
 
 -(void)tickSegChanged:(UISegmentedControl*)sender{
-  int index = [sender selectedSegmentIndex];
+  NSUInteger index = [sender selectedSegmentIndex];
   requestedBlockCount = (int)pow(2, index);
-  int blockSize = [self.audioDelegate blockSize];
-
-
-  int actualTicks = [self.audioDelegate setTicksPerBuffer:requestedBlockCount];
-  [_tickValueLabel setText:[NSString stringWithFormat:@"request: %d * block size (%d) = %d samples \nactual: %d * block size (%d) = %d samples", requestedBlockCount, blockSize, requestedBlockCount*blockSize, actualTicks, blockSize, actualTicks*blockSize  ]];
-
-  if(actualTicks!=requestedBlockCount){
-    int actualIndex = (int)log2(actualTicks);
-    sender.selectedSegmentIndex=actualIndex;
-  }
+  [self.audioDelegate setTicksPerBuffer:requestedBlockCount]; //triggers updateAudioState
 }
 
--(void)rateSegChanged:(UISegmentedControl*)sender{
-  int index = [sender selectedSegmentIndex];
+-(void)rateSegChanged:(UISegmentedControl*)sender {
+  NSUInteger index = [sender selectedSegmentIndex];
   int newRate = rateValueArray[index];
-  int actualRate = [self.audioDelegate setRate:newRate];
-  int actualTicks = [self.audioDelegate actualTicksPerBuffer];
-  int blockSize = [self.audioDelegate blockSize];
-
-  if (requestedBlockCount!=actualTicks) {
-    actualTicks = [self.audioDelegate setTicksPerBuffer:requestedBlockCount];//redundant?
-    if( fmod(log2(actualTicks), 1)==0){
-      int newBlockIndex = (int)log2(actualTicks);
-      [_tickSeg setSelectedSegmentIndex:newBlockIndex];
-    }
-    else [_tickSeg setSelectedSegmentIndex:UISegmentedControlNoSegment];
-
-  }
-  if(newRate!=actualRate){
-    [_rateSeg setSelectedSegmentIndex:UISegmentedControlNoSegment];
-    for(int i=0;i<6;i++){
-      if(rateValueArray[i]==actualRate) [_rateSeg setSelectedSegmentIndex:i];
-    }
-  }
-
-  [_tickValueLabel setText:[NSString stringWithFormat:@"request: %d * block size (%d) = %d samples \nactual: %d * block size (%d) = %d samples", requestedBlockCount, blockSize, requestedBlockCount*blockSize, actualTicks, blockSize, actualTicks*blockSize  ]];
+  [self.audioDelegate setRate:newRate]; //triggers updateAudioState
 }
 
 
@@ -1163,10 +1146,6 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
   [[NSNotificationCenter defaultCenter] removeObserver:self
                                                   name:kReachabilityChangedNotification
                                                 object:nil];
-  if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"6.0")){
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVAudioSessionRouteChangeNotification object:nil];
-  }
-
 }
 
 - (void)didReceiveMemoryWarning

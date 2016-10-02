@@ -12,9 +12,9 @@
   "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "CF401ED9-AB42-4AF3-BBFD-ACE14E767D48",
   "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
     "6608CF3AAE53BB9E3AD17105469DAA429CF9024B" : "MobMuPlat\/PdParty\/",
-    "6F7A20C0CDB7BDCD5180DBA15CA6EBFFD435B7B5" : "MobMuPlatlibpd\/pure-data",
-    "1A0B07D1631AC7F0F17FCE76695E42D64F01958F" : "MobMuPlatlibpd",
-    "21702B533F2B785EABE84F69CE47832B96F87747" : "MobMuPlat"
+    "6F7A20C0CDB7BDCD5180DBA15CA6EBFFD435B7B5" : "MobMuPlat\/libpd\/pure-data\/",
+    "1A0B07D1631AC7F0F17FCE76695E42D64F01958F" : "MobMuPlat\/libpd\/",
+    "21702B533F2B785EABE84F69CE47832B96F87747" : "MobMuPlat\/"
   },
   "DVTSourceControlWorkspaceBlueprintNameKey" : "MobMuPlat",
   "DVTSourceControlWorkspaceBlueprintVersion" : 204,

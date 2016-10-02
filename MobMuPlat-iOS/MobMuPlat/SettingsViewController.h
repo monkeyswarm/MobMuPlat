@@ -110,6 +110,8 @@ typedef enum{
 -(void)reloadFileTable;
 -(void)consolePrint:(NSString*)message;
 -(void)reloadMidiSources;
+- (void)updateAudioRouteLabel;
+- (void)updateAudioState;
 
 @end
 
@@ -141,7 +143,7 @@ typedef enum{
 // Whether we are connected to a source or destination.
 - (BOOL)isConnectedToConnection:(PGMidiConnection *)connection;
 
--(int)setChannelCount:(int)newChannelCount;
+//-(int)setChannelCount:(int)newChannelCount;
 - (void)setAudioInputEnabled:(BOOL)enabled; //for mic input vs vibration
 -(BOOL)isAudioBusConnected;
 @property BOOL backgroundAudioAndNetworkEnabled;
