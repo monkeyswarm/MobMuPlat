@@ -3,7 +3,6 @@ package com.iglesiaintermedia.mobmuplat;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +18,6 @@ import org.puredata.android.utils.PdUiDispatcher;
 import org.puredata.core.PdBase;
 import org.puredata.core.PdListener;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -32,7 +30,6 @@ import android.os.Vibrator;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,19 +37,11 @@ import android.view.ViewTreeObserver;
 import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.RelativeLayout.LayoutParams;
 import android.support.v4.app.Fragment;
 
 import com.google.gson.JsonArray;
@@ -977,7 +966,8 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 
     @Override
     public void launchMenuFragment(MMPMenu menu) {
-        MenuFragment menuFrag = new MenuFragment(menu, _bgColor);
+        MenuFragment menuFrag = new MenuFragment();
+        menuFrag.setMenuAndColor(menu, _bgColor);
         _mainActivity.launchFragment(menuFrag, menu.titleString);
     }
 
@@ -993,137 +983,3 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
     }
 }
 
-@SuppressLint("ValidFragment")
-class MenuFragment extends Fragment{
-
-    private MMPMenu _menu;
-    private int _bgColor;
-    private ListView _listView;
-    private ArrayAdapter<String> _adapter;
-
-    //TODO clean this up so it has an empty constructor so it can be re-instantiated.
-    public MenuFragment(MMPMenu menu, int bgColor) {
-        super();
-        _menu = menu;
-        _bgColor = bgColor;
-    }
-
-    public MMPMenu getMenu() {
-        return _menu;
-    }
-
-    public void refresh() {
-        _adapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_menu, container,
-                false);
-
-        final int color = _menu.color;
-        //highlightColor = intent.getIntExtra("highlightColor", Color.RED);
-        List<String> stringList = _menu.stringList;
-
-        _listView = (ListView)rootView.findViewById(R.id.listView1);
-        FrameLayout frameLayout = (FrameLayout)rootView.findViewById(R.id.container);
-        frameLayout.setBackgroundColor(_bgColor);
-
-        _adapter = new ArrayAdapter<String>(getActivity(), R.layout.centered_text, stringList) {
-            @Override
-            public View getView(int position, View convertView,
-                                ViewGroup parent) {
-                View view =super.getView(position, convertView, parent);
-                TextView textView=(TextView) view.findViewById(android.R.id.text1);
-                textView.setTextColor(color);
-                //textView.setHighlightColor(MenuActivity.this.highlightColor);//doesn't work...
-                return view;
-            }
-        };
-        _listView.setAdapter(_adapter);
-
-        _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parentAdapter, View view, int position,long id) {
-                //TextView clickedView = (TextView) view;
-                //Toast.makeText(MenuActivity.this, "Item with id ["+id+"] - Position ["+position+"] - ["+clickedView.getText()+"]", Toast.LENGTH_SHORT).show();
-                _menu.didSelect(position);
-                getActivity().getSupportFragmentManager().popBackStack();
-            }
-        });
-
-        return rootView;
-    }
-}
-@SuppressLint("ValidFragment") //TODO make public
-class SplashFragment extends Fragment{
-
-    View rootView;
-    ImageView ringView, titleView, crossView, resistorView;
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_splash, container,
-                false);
-        ringView = (ImageView)rootView.findViewById(R.id.imageViewRing);
-        titleView = (ImageView)rootView.findViewById(R.id.imageViewTitle);
-        crossView = (ImageView)rootView.findViewById(R.id.imageViewCross);
-        resistorView = (ImageView)rootView.findViewById(R.id.imageViewResistor);
-
-        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                animate();
-            }
-        });
-
-        return rootView;
-    }
-
-
-    public void animate() {
-        // fromX, toX, fromY, toY
-        TranslateAnimation translateAnimationRing =
-                new TranslateAnimation(Animation.ABSOLUTE, rootView.getWidth() / 2 - ringView.getWidth() / 2,
-                        Animation.ABSOLUTE, rootView.getWidth() / 2 - ringView.getWidth() / 2,
-                        Animation.ABSOLUTE, -ringView.getHeight() ,
-                        Animation.ABSOLUTE, rootView.getHeight() / 2 - ringView.getHeight() / 2);
-        translateAnimationRing.setDuration(2000);
-        translateAnimationRing.setFillAfter(true);
-        translateAnimationRing.setFillEnabled(true);
-
-        TranslateAnimation translateAnimationTitle =
-                new TranslateAnimation(Animation.ABSOLUTE, rootView.getWidth() / 2 - titleView.getWidth() / 2,
-                        Animation.ABSOLUTE, rootView.getWidth() / 2 - titleView.getWidth() / 2,
-                        Animation.ABSOLUTE, rootView.getHeight() + titleView.getHeight() ,
-                        Animation.ABSOLUTE, rootView.getHeight() / 2 + ringView.getHeight() / 2 + 20 );// below ringview titleView.getHeight() / 2);
-        translateAnimationTitle.setDuration(2000);
-        translateAnimationTitle.setFillAfter(true);
-        translateAnimationTitle.setFillEnabled(true);
-
-        TranslateAnimation translateAnimationCross =
-                new TranslateAnimation(Animation.ABSOLUTE,  -crossView.getWidth(),
-                        Animation.ABSOLUTE, rootView.getWidth() / 2 - ringView.getWidth() / 6 - crossView.getWidth() / 2 ,
-                        Animation.ABSOLUTE, rootView.getHeight() / 2 - crossView.getHeight() / 2,
-                        Animation.ABSOLUTE, rootView.getHeight() / 2 - crossView.getHeight() / 2);
-        translateAnimationCross.setDuration(2000);
-        translateAnimationCross.setFillAfter(true);
-        translateAnimationCross.setFillEnabled(true);
-
-        TranslateAnimation translateAnimationResistor =
-                new TranslateAnimation(Animation.ABSOLUTE, rootView.getWidth() + resistorView.getWidth(),
-                        Animation.ABSOLUTE, rootView.getWidth() / 2 + ringView.getWidth() / 6 - resistorView.getWidth() / 2,
-                        Animation.ABSOLUTE, rootView.getHeight() / 2 - resistorView.getHeight() / 2,
-                        Animation.ABSOLUTE, rootView.getHeight() / 2 - resistorView.getHeight() / 2);
-        translateAnimationResistor.setDuration(2000);
-        translateAnimationResistor.setFillAfter(true);
-        translateAnimationResistor.setFillEnabled(true);
-
-        ringView.startAnimation(translateAnimationRing);
-        titleView.startAnimation(translateAnimationTitle);
-        crossView.startAnimation(translateAnimationCross);
-        resistorView.startAnimation(translateAnimationResistor);
-    }
-}

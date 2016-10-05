@@ -1963,7 +1963,7 @@
 				INFOPLIST_FILE = "MobMuPlat/MobMuPlat-Info.plist";
 				INSTALL_GROUP = "";
 				INSTALL_OWNER = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -2003,7 +2003,7 @@
 				INFOPLIST_FILE = "MobMuPlat/MobMuPlat-Info.plist";
 				INSTALL_GROUP = "";
 				INSTALL_OWNER = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",

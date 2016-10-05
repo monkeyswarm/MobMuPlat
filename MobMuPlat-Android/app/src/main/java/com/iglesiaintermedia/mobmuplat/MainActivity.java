@@ -582,6 +582,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 
 		String fileJSON = readMMPToString(filenameToLoad);
+		if (fileJSON == null) { //could not load/find filename...i.e. filename is stale
+			showAlert("Cannot load "+filenameToLoad+", please tap the \"show files\" button twice to refresh the file list");
+		}
+
 		boolean requestedChange = setOrientationOfMMP(fileJSON);
 
         _fileDataToLoad = fileJSON;

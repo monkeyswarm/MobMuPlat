@@ -118,11 +118,13 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1.80</string>
+	<string>1.80.2</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Allows GPS info to be sent into the PureData patch.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allow audio to be sent into the Pure Data patch.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>DejaVuSansMono.ttf</string>

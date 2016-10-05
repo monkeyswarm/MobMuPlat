@@ -593,6 +593,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
 - (void)showInfo:(id)sender {
   [self presentModalViewController:navigationController animated:YES];
+  // TODO: [self presentViewController:animated:completion:]
 }
 
 //=====audio settings delegate methods
