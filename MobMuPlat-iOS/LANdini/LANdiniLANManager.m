@@ -471,7 +471,7 @@ static const NSTimeInterval LANdiniSyncRequestInterval = 0.33;
   //version (NSNumber)
 
   //check types
-  if ([msgArray count]!=5 ||
+  if ([msgArray count] < 5  ||
      ![msgArray[0] isKindOfClass:[NSString class]] ||
      ![msgArray[1] isKindOfClass:[NSString class]] ||
      ![msgArray[2] isKindOfClass:[NSString class]] ||
@@ -585,8 +585,8 @@ static const NSTimeInterval LANdiniSyncRequestInterval = 0.33;
   //  syncServerPingName (NSString)
 
   if (msgArray.count < 9 ||
-     [msgArray[1] isKindOfClass:[NSString class]] ||
-     [msgArray[8] isKindOfClass:[NSString class]]) {
+     ![msgArray[1] isKindOfClass:[NSString class]] ||
+     ![msgArray[8] isKindOfClass:[NSString class]]) {
     return;
   }
 
@@ -716,7 +716,7 @@ static const NSTimeInterval LANdiniSyncRequestInterval = 0.33;
   // user name
   // user time
 
-  if (msgArray.count !=3 ||
+  if (msgArray.count < 3 ||
      ![msgArray[1] isKindOfClass:[NSString class]] ||
      ![msgArray[2] isKindOfClass:[NSNumber class]]) {
     return;

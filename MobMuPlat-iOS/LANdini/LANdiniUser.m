@@ -79,11 +79,11 @@
   // theirMinGD (NSNumber)
   // lastOGDID (NSNumber)
   // lastPerformedOGDID (NSNumber)
-  if (vals.count != 6 ||
-      [vals[2] isKindOfClass:[NSNumber class]] ||
-      [vals[3] isKindOfClass:[NSNumber class]] ||
-      [vals[4] isKindOfClass:[NSNumber class]] ||
-      [vals[5] isKindOfClass:[NSNumber class]]) {
+  if (vals.count < 6 ||
+      ![vals[2] isKindOfClass:[NSNumber class]] ||
+      ![vals[3] isKindOfClass:[NSNumber class]] ||
+      ![vals[4] isKindOfClass:[NSNumber class]] ||
+      ![vals[5] isKindOfClass:[NSNumber class]]) {
     return;
   }
   int lastGDIDTheySentMe = [vals[2] intValue];
