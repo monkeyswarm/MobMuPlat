@@ -241,12 +241,12 @@
   locationManager.delegate = self;
   [locationManager setDistanceFilter:1.0];
 
-  //landini
+  //landini - don't enable it yet
   llm = [[LANdiniLANManager alloc] init];
-  llm.userDelegate=settingsVC;
-  //(don't enable yet)
+  llm.userDelegate = settingsVC;
+
   //dev only
-  //llm.logDelegate=self;
+  //llm.logDelegate = self;
 
   //ping and connect
   pacm = [[PingAndConnectManager alloc] init];
