@@ -448,30 +448,47 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		if(i!=null) {
 			String action = i.getAction();
 
-			//file
+			// opening a file...action = action view.
+			// from Drive, on android L, scheme = CONTENT, has MIME type
+			// Intent { act=android.intent.action.VIEW dat=content://com.google.android.apps.docs.storage.legacy/enc=1TXBVPSUVcZyy_e6ARqL7qR2ylm6FqHkA1YENDi1tQwUeL-D typ=application/zip flg=0x10400000 cmp=com.iglesiaintermedia.mobmuplat/.MainActivity (has extras) }
+			// from dropbox, on android L, scheme = FILE, has MIME type
+			// Intent { act=android.intent.action.VIEW dat=file:///storage/emulated/0/Android/data/com.dropbox.android/files/u24124447/scratch/MobMuPlat/RealityDenied.zip typ=application/zip flg=0x10400003 cmp=com.iglesiaintermedia.mobmuplat/.MainActivity (has extras) }
+
+				// from Drive, on android N, scheme = CONTENT, has MIME type
+			// Intent { act=android.intent.action.VIEW dat=content://com.google.android.apps.docs.storage.legacy/enc=MLhhWe_CsSIACYqGLUuuXDkv8WFfFyAQ2--0kCmxAK_8RvxW typ=application/zip flg=0x10000000 cmp=com.iglesiaintermedia.mobmuplat/.MainActivity (has extras) }
+			// from dropbox, on andoird N, scheme = content, no MIME type
+			// Intent { act=android.intent.action.VIEW dat=content://com.dropbox.android.FileCache/filecache/d8b4e518-54ec-4a26-97a7-11adb2e39f90 flg=0x10000003 cmp=com.iglesiaintermedia.mobmuplat/.MainActivity (has extras) }
+
 			if (action.equals(Intent.ACTION_VIEW)){
 				Uri dataUri = i.getData();
 				if(dataUri!=null){
 					if(VERBOSE)Log.i(TAG, "receive intent data " + dataUri.toString());
-
-					if (i.getScheme().equals("content")) { //received via email attachment
+					String scheme = i.getScheme(); // e.g. "content" or "file"
+					if (scheme == null) {
+						showAlert("Cannot access attachment.");
+						return;
+					}
+					if (scheme.equals("content")) { //received via email attachment; more stuff uses this now in N
 						try {
-							InputStream attachment = getContentResolver().openInputStream(getIntent().getData()); //TODO use "i"
+							InputStream attachment = getContentResolver().openInputStream(dataUri);
 							if (attachment == null) {
 								if(VERBOSE)Log.e("onCreate", "cannot access mail attachment");
 								showAlert("Cannot access mail attachment.");
 							} else {
 								String attachmentFileName = null;
 								//try to get file name
-								Cursor c = getContentResolver().query(i.getData(), null, null, null, null);
+								Cursor c = getContentResolver().query(dataUri, null, null, null, null);
 								c.moveToFirst();
 								final int fileNameColumnId = c.getColumnIndex(
 										MediaStore.MediaColumns.DISPLAY_NAME);
 								if (fileNameColumnId >= 0) {
 									attachmentFileName = c.getString(fileNameColumnId);
-									String type = i.getType(); //mime type
-									if (type.equals("application/zip")) {
-										unpackZipInputStream(attachment, attachmentFileName); 
+									String type = i.getType(); //mime type - can be null (e.g. from dropbox on Android N)
+									String suffix = attachmentFileName.substring(attachmentFileName.lastIndexOf(".") + 1);
+									if (type!=null && type.equals("application/zip")) {
+										unpackZipInputStream(attachment, attachmentFileName);
+									} else if (type==null && suffix!=null && suffix.equals("zip")) { // try again if no type and file ends in .zip
+										unpackZipInputStream(attachment, attachmentFileName);
 									} else {
 										copyInputStream(attachment, attachmentFileName, true);
 									}
@@ -480,11 +497,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 								}
 							}
 						}catch(Exception e) {
-							showAlert("Cannot access mail attachment.");
+							showAlert("Cannot access attachment.");
 						}
-
-					} else {//"file"
-
+					} else {//scheme "file"
 						String filename = dataUri.getLastPathSegment();
 						String fullPath = dataUri.getPath();
 						int lastSlashPos = fullPath.lastIndexOf('/');
@@ -493,8 +508,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 						String suffix = filename.substring(filename.lastIndexOf('.'));
 						if (suffix.equals(".zip")) { 
 							unpackZip(parentPath, filename);
-						}
-						else {
+						} else {
 							copyUri(dataUri);
 						}
 					}
