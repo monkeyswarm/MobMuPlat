@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-
 #import "PGMidi.h"
 #import "MeSlider.h"
 #import <MediaPlayer/MediaPlayer.h>
@@ -21,15 +20,15 @@
 @protocol LANdiniDelegate;
 @protocol PingAndConnectDelegate;
 
-typedef enum{
+typedef NS_ENUM(NSUInteger, MMPDeviceCanvasType) {
     canvasTypeWidePhone = 0,
-    canvasTypeTallPhone = 1,
-    canvasTypeWideTablet = 2,
+    canvasTypeTallPhone,
+    canvasTypeWideTablet,
     canvasTypeTallTablet
-} canvasType;
+};
 
 @interface SettingsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, LANdiniUserStateDelegate, PingAndConnectUserStateDelegate, UITextFieldDelegate>{
-    canvasType hardwareCanvasType;
+    MMPDeviceCanvasType hardwareCanvasType;
     
     NSMutableArray *MMPFiles, *allFiles;
 
@@ -117,8 +116,7 @@ typedef enum{
 
 @protocol SettingsViewControllerDelegate <NSObject>
 - (void)settingsViewControllerDidFinish:(SettingsViewController *)controller;
-//- (BOOL)loadScene:(NSDictionary*)sceneDict;
--(BOOL)loadMMPSceneFromDocPath:(NSString *)docPath;
+- (BOOL)loadMMPSceneFromDocPath:(NSString *)docPath;
 - (BOOL)loadScenePatchOnlyFromDocPath:(NSString*)docPath;
 - (void)flipInterface:(BOOL)isFlipped;
 @property(copy, nonatomic) NSString *outputIpAddress;
@@ -127,7 +125,7 @@ typedef enum{
 
 @end
 
-@protocol AudioSettingsDelegate <NSObject>//audio+midi stuff stuff
+@protocol AudioSettingsDelegate <NSObject>//audio+midi stuff
 -(int)blockSize;
 -(int)setTicksPerBuffer:(int)newTick;//returns actual ticks
 -(int)actualTicksPerBuffer;

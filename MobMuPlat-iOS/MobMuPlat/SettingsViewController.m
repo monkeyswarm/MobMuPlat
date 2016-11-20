@@ -12,22 +12,24 @@
 //  -consoleView has a TextView to print out PureData console messages (including anything sent to a [print] object in the PD patch)
 
 #import "SettingsViewController.h"
-#import <QuartzCore/QuartzCore.h>
-#import "ZipArchive.h"
 
 #import <AVFoundation/AVFoundation.h>
+#import <QuartzCore/QuartzCore.h>
+
+#import "ZipArchive.h"
 
 #import "MMPNetworkingUtils.h"
 #import "MMPViewController.h"
 
 @interface SettingsViewController () {
-  NSArray* _LANdiniUserArray;
+  NSArray *_LANdiniUserArray;
   NSArray *_pingAndConnectUserArray;
-  NSTimer* _networkTimer;
-  NSString* _LANdiniSyncServerName;
+  NSTimer *_networkTimer;
+  NSString *_LANdiniSyncServerName;
   NSTimer *_updateNetworkLabelTimer;
 }
 @end
+
 
 @implementation SettingsViewController {
   BOOL _mmpOrAll, _flipped, _autoLoad;
@@ -40,8 +42,8 @@ static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
 
 
 //what kind of device am I one? iphone 3.5", iphone 4", or ipad
-+(canvasType)getCanvasType{
-  canvasType hardwareCanvasType;
++(MMPDeviceCanvasType)getCanvasType{
+  MMPDeviceCanvasType hardwareCanvasType;
   if([[UIDevice currentDevice]userInterfaceIdiom]==UIUserInterfaceIdiomPhone)
   {
     if ([[UIScreen mainScreen] bounds].size.height >= 568)hardwareCanvasType=canvasTypeTallPhone;

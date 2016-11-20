@@ -59,18 +59,15 @@
 #import "UIAlertView+MMPBlocks.h"
 
 @implementation MMPViewController {
-  NSMutableArray *_keyCommandsArray;
-  MMPGui *_pdGui; //keep strong around for widgets to use (weakly).
-  CGFloat _settingsButtonDim;
-  CGFloat _settingsButtonOffset;
-  MMPMenuButton * _settingsButton;
+  NSMutableArray *_keyCommands; // BT key commands to listen for.
+  MMPGui *_pdGui; // Keep strong reference here, for widgets to refer to weakly.
+  CGFloat _settingsButtonDim; // Width/height of settings menu button.
+  CGFloat _settingsButtonOffset; // Offset of menu button from edge of screen.
+  MMPMenuButton *_settingsButton;
 
-  //
-  BOOL _flipped;
-
-  //
-  NSMutableArray *_connectedMidiSources; //TODO Set.
-  NSMutableArray *_connectedMidiDestinations;
+  // Midi connections.
+  NSMutableArray<PGMidiSource *> *_connectedMidiSources; //TODO Use a set.
+  NSMutableArray<PGMidiDestination *> *_connectedMidiDestinations;
 
   //audio settings
   int _samplingRate;
@@ -78,31 +75,67 @@
   int _channelCount;
   int _ticksPerBuffer;
   BOOL _inputEnabled;
+
+  // key = address, value = array of objects with that address.
+  NSMutableDictionary<NSString *, NSMutableArray<MeControl *> *> *_addressToGUIObjectsDict;
+
+  // layout
+  UIScrollView *_scrollView; // MMP gui
+  UIView *_scrollInnerView;
+  UIView *_pdPatchView; //Native gui
+
+  OSCManager *_oscManager;
+  OSCInPort *_oscInPort;
+  OSCOutPort *_oscOutPort;
+
+  //LANdini and Ping&Connect
+  OSCInPort *_inPortFromNetworkingModules;
+  OSCOutPort *_outPortToNetworkingModules;
+
+  //midi
+  PGMidi *midi;
+
+  BOOL _uiIsFlipped; // Whether the UI has been inverted by the user.
+  BOOL _isLandscape;
+  int _pageCount;
+
+  PdFile *_openPDFile;
+  AVCaptureDevice *_avCaptureDevice;//for flash
+
+  UINavigationController *_navigationController;
+
+  CMMotionManager *_motionManager;
+  CLLocationManager *_locationManager;
+
+  Reachability *_reach;
 }
 
 @synthesize audioController = _audioController, settingsVC;
+@synthesize inputPortNumber = _inputPortNumber, outputPortNumber = _outputPortNumber;
+@synthesize outputIpAddress = _outputIpAddress;
 
-- (NSArray *)keyCommands {
-  if (!_keyCommandsArray) {
-    if ([[[UIDevice currentDevice] systemVersion] intValue] <7) return nil;
-    _keyCommandsArray = [NSMutableArray arrayWithObjects:
-                         [UIKeyCommand keyCommandWithInput: UIKeyInputUpArrow modifierFlags: 0 action: @selector(handleKey:)],
-                         [UIKeyCommand keyCommandWithInput: UIKeyInputDownArrow modifierFlags: 0 action: @selector(handleKey:)],
-                         [UIKeyCommand keyCommandWithInput: UIKeyInputLeftArrow modifierFlags: 0 action: @selector(handleKey:)],
-                         [UIKeyCommand keyCommandWithInput: UIKeyInputRightArrow modifierFlags: 0 action: @selector(handleKey:)],
-                         [UIKeyCommand keyCommandWithInput: UIKeyInputEscape modifierFlags: 0 action: @selector(handleKey:)],
-                         nil];
-    // add all ascii range
-    for (int charVal = 0; charVal < 128; charVal++) {
-      NSString* string = [NSString stringWithFormat:@"%c" , charVal];
-      [_keyCommandsArray addObject:[UIKeyCommand keyCommandWithInput: string modifierFlags: 0 action: @selector(handleKey:)]];
+//what kind of device am I one? iphone 3.5", iphone 4", or ipad
++ (MMPDeviceCanvasType)getCanvasType {
+  MMPDeviceCanvasType hardwareCanvasType;
+  if ([[UIDevice currentDevice]userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+    if ([[UIScreen mainScreen] bounds].size.height >= 568) {
+      hardwareCanvasType = canvasTypeTallPhone;
+    } else {
+      hardwareCanvasType = canvasTypeWidePhone; //iphone <=4
     }
+  } else {
+    hardwareCanvasType=canvasTypeWideTablet;//ipad
   }
-  return _keyCommandsArray;
+  return hardwareCanvasType;
 }
 
-- (void) handleKey: (UIKeyCommand *) keyCommand {
-  int val;
+- (NSArray *)keyCommands {
+  return _keyCommands;
+}
+
+// Send "/key XX" messages from BT into Pd.
+- (void)handleKey:(UIKeyCommand *)keyCommand {
+  int val = 0;
   if (keyCommand.input == UIKeyInputUpArrow) val = 30;
   else if (keyCommand.input == UIKeyInputDownArrow) val = 31;
   else if (keyCommand.input == UIKeyInputLeftArrow) val = 28;
@@ -114,20 +147,8 @@
     if (val >= 128) return;
   }
 
-  NSArray* msgArray=[NSArray arrayWithObjects:@"/key", [NSNumber numberWithInt:val], nil];
+  NSArray *msgArray=[NSArray arrayWithObjects:@"/key", [NSNumber numberWithInt:val], nil];
   [PdBase sendList:msgArray toReceiver:@"fromSystem"];
-}
-
-//what kind of device am I one? iphone 3.5", iphone 4", or ipad
-+(canvasType)getCanvasType{
-  canvasType hardwareCanvasType;
-  if([[UIDevice currentDevice]userInterfaceIdiom]==UIUserInterfaceIdiomPhone)
-  {
-    if ([[UIScreen mainScreen] bounds].size.height >= 568)hardwareCanvasType=canvasTypeTallPhone;
-    else hardwareCanvasType=canvasTypeWidePhone; //iphone <=4
-  }
-  else hardwareCanvasType=canvasTypeWideTablet;//ipad
-  return hardwareCanvasType;
 }
 
 -(instancetype)init {
@@ -135,40 +156,56 @@
 }
 
 -(instancetype)initWithAudioBusEnabled:(BOOL)audioBusEnabled {
-  self=[super initWithNibName:nil bundle:nil];
+  self = [super initWithNibName:nil bundle:nil];
 
+  // Setup key commands
+  if ([UIKeyCommand class]) { // iOS 7 and up.
+    _keyCommands = [NSMutableArray arrayWithObjects:
+        [UIKeyCommand keyCommandWithInput: UIKeyInputUpArrow modifierFlags:0 action: @selector(handleKey:)],
+        [UIKeyCommand keyCommandWithInput: UIKeyInputDownArrow modifierFlags:0 action: @selector(handleKey:)],
+        [UIKeyCommand keyCommandWithInput: UIKeyInputLeftArrow modifierFlags:0 action: @selector(handleKey:)],
+        [UIKeyCommand keyCommandWithInput: UIKeyInputRightArrow modifierFlags:0 action: @selector(handleKey:)],
+        [UIKeyCommand keyCommandWithInput: UIKeyInputEscape modifierFlags:0 action: @selector(handleKey:)],
+        nil];
+
+    // add all ascii range
+    for (int charVal = 0; charVal < 128; charVal++) {
+      NSString *string = [NSString stringWithFormat:@"%c" , charVal];
+      [_keyCommands addObject:
+          [UIKeyCommand keyCommandWithInput: string modifierFlags: 0 action: @selector(handleKey:)]];
+    }
+  }
+
+  // audio setup.
   _mixingEnabled = YES;
   _channelCount = 2;
-  // update after intial audio config, but setting 44100 here was weird on 6s
+  // update after intial audio config, but setting 44100 here is not supported on iphone 6s speaker.
   _samplingRate = [AVAudioSession sharedInstance].sampleRate ; 
   _inputEnabled = YES;
 #if TARGET_IPHONE_SIMULATOR
   _ticksPerBuffer = 8;  // No other value seems to work with the simulator.
 #else
-  _ticksPerBuffer=8;
-  //was 16 - trying lower for audiobus
-  //was 32 NO - means buffer is 64 blocksize * 64 ticks per buffer=4096
+  _ticksPerBuffer = 8; // Audiobus likes this value.
 #endif
 
-  openPDFile=nil;
-  allGUIControl = [[NSMutableDictionary alloc]init];
+  _openPDFile = nil;
+  _addressToGUIObjectsDict = [[NSMutableDictionary alloc]init];
 
   _outputIpAddress = @"224.0.0.1";
   _outputPortNumber = DEFAULT_OUTPUT_PORT_NUMBER;
   _inputPortNumber = DEFAULT_INPUT_PORT_NUMBER;
 
-  //for using the flash
-  avCaptureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+  // for using the flash
+  _avCaptureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
 
-  //MIDI library
-  midi=[[PGMidi alloc]init];
+  // MIDI
+  midi = [[PGMidi alloc] init];
   [midi setNetworkEnabled:YES];
   [midi setVirtualDestinationEnabled:YES];
   [midi.virtualDestinationSource addDelegate:self];
-  //out
   [midi setVirtualEndpointName:@"MobMuPlat"];
   [midi setVirtualSourceEnabled:YES];
-  //[midi.virtualSourceDestination]
+
   _connectedMidiSources = [NSMutableArray array];
   _connectedMidiDestinations = [NSMutableArray array];
 
@@ -179,15 +216,14 @@
     settingsVC = [[SettingsViewController alloc] initWithNibName:nil bundle:nil];
   }
 
-  //OSC setup
-  manager = [[OSCManager alloc] init];
-  [manager setDelegate:self];
+  // OSC setup
+  _oscManager = [[OSCManager alloc] init];
+  [_oscManager setDelegate:self];
 
-
-  //libPD setup
-
+  // libPD setup.
+  // Special audio unit that handles Audiobus.
   _audioController =
-  [[PdAudioController alloc] initWithAudioUnit:[[MobMuPlatPdAudioUnit alloc] init]] ;
+      [[PdAudioController alloc] initWithAudioUnit:[[MobMuPlatPdAudioUnit alloc] init]] ;
   [self updateAudioState];
 
   if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") && audioBusEnabled) {
@@ -195,71 +231,71 @@
     [self setupAudioBus];
   }
 
-  //start device motion detection
-  motionManager = [[CMMotionManager alloc] init];
+  // device motion/accel/gyro.
+  _motionManager = [[CMMotionManager alloc] init];
 
-  //start accelerometer
   NSOperationQueue *motionQueue = [[NSOperationQueue alloc] init];
-
-  if (motionManager.accelerometerAvailable){
-    [motionManager startAccelerometerUpdatesToQueue:motionQueue withHandler:^(CMAccelerometerData  *accelerometerData, NSError *error) {
-      [self accelerometerDidAccelerate:accelerometerData.acceleration];
-    }];
+  if (_motionManager.isAccelerometerAvailable) {
+    [_motionManager startAccelerometerUpdatesToQueue:motionQueue withHandler:
+        ^(CMAccelerometerData *accelerometerData, NSError *error) {
+          [self accelerometerDidAccelerate:accelerometerData.acceleration];
+        }];
+  } else {
+    NSLog(@"No accelerometer on device.");
   }
 
-  if (motionManager.deviceMotionAvailable){
+  if (_motionManager.isDeviceMotionAvailable) {
+    [_motionManager startDeviceMotionUpdatesToQueue:motionQueue withHandler:
+        ^(CMDeviceMotion *devMotion, NSError *error) {
+          CMAttitude *currentAttitude = devMotion.attitude;
+          NSArray *motionArray = @[ @"/motion",
+                                    @(currentAttitude.roll),
+                                    @(currentAttitude.pitch),
+                                    @(currentAttitude.yaw) ];
 
-    [motionManager startDeviceMotionUpdatesToQueue:motionQueue withHandler:^ (CMDeviceMotion *devMotion, NSError *error){
-      CMAttitude *currentAttitude = devMotion.attitude;
-      NSArray* motionArray=[NSArray arrayWithObjects:@"/motion", [NSNumber numberWithFloat:currentAttitude.roll],[NSNumber numberWithFloat:currentAttitude.pitch], [NSNumber numberWithFloat:currentAttitude.yaw], nil];
-
-      [PdBase sendList:motionArray toReceiver:@"fromSystem"];
-
-    }];
+          [PdBase sendList:motionArray toReceiver:@"fromSystem"];
+        }];
   } else {
     NSLog(@"No device motion on device.");
   }
 
-  //gyro
-  if(motionManager.gyroAvailable){
-    [motionManager startGyroUpdatesToQueue:motionQueue withHandler:^(CMGyroData *gyroData, NSError *error) {
-
-      NSArray* gyroArray=[NSArray arrayWithObjects:@"/gyro", [NSNumber numberWithFloat:gyroData.rotationRate.x],[NSNumber numberWithFloat:gyroData.rotationRate.y], [NSNumber numberWithFloat:gyroData.rotationRate.z], nil];
-
-      [PdBase sendList:gyroArray toReceiver:@"fromSystem"];
-      //printf("\n %.2f, %.2f %.2f", gyroData.rotationRate.x, gyroData.rotationRate.y, gyroData.rotationRate.z);
-
-
-    }];
+  if (_motionManager.isGyroAvailable) {
+    [_motionManager startGyroUpdatesToQueue:motionQueue withHandler:
+        ^(CMGyroData *gyroData, NSError *error) {
+          NSArray *gyroArray = @[ @"/gyro",
+                                  @(gyroData.rotationRate.x),
+                                  @(gyroData.rotationRate.y),
+                                  @(gyroData.rotationRate.z) ];
+          [PdBase sendList:gyroArray toReceiver:@"fromSystem"];
+        }];
   } else {
     NSLog(@"No gyro info on device.");
   }
 
-  //GPS location
+  // GPS location - not enabled yet.
+  _locationManager = [[CLLocationManager alloc] init] ;
+  _locationManager.delegate = self;
+  [_locationManager setDistanceFilter:1.0];
 
-  locationManager = [[CLLocationManager alloc] init] ;
-  locationManager.delegate = self;
-  [locationManager setDistanceFilter:1.0];
-
-  //landini - don't enable it yet
-  llm = [[LANdiniLANManager alloc] init];
-  llm.userDelegate = settingsVC;
+  // landini - not enabled yet
+  _llm = [[LANdiniLANManager alloc] init];
+  _llm.userDelegate = settingsVC;
 
   //dev only
-  //llm.logDelegate = self;
+  //_llm.logDelegate = self;
 
-  //ping and connect
-  pacm = [[PingAndConnectManager alloc] init];
-  pacm.userStateDelegate = settingsVC;
+  // ping and connect
+  _pacm = [[PingAndConnectManager alloc] init];
+  _pacm.userStateDelegate = settingsVC;
 
-  //reachibility
+  // reachibility
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(reachabilityChanged:)
                                                name:kReachabilityChangedNotification
                                              object:nil];
-  reach = [Reachability reachabilityForLocalWiFi];
-  reach.reachableOnWWAN = NO;
-  [reach startNotifier];
+  _reach = [Reachability reachabilityForLocalWiFi];
+  _reach.reachableOnWWAN = NO;
+  [_reach startNotifier];
 
   //PD setup
   // set self as PdRecieverDelegate to recieve messages from Libpd
@@ -272,66 +308,66 @@
 
   _mmpPdDispatcher.printDelegate = self;
 
-  //copy bundle stuff if not there, i.e. first time we are running it on a new version #
+  // Test for first run on new app version. Copy patches if so.
+  MMPDeviceCanvasType hardwareCanvasType = [MMPViewController getCanvasType];
+  NSString *bundleVersion =
+      [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
 
-  canvasType hardwareCanvasType = [MMPViewController getCanvasType];
+  NSString *appFirstStartOfVersionKey =
+      [NSString stringWithFormat:@"first_start_%@", bundleVersion];
 
-  //first run on new version
-  NSString *bundleVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+  NSNumber *alreadyStartedOnVersion =
+      [[NSUserDefaults standardUserDefaults] objectForKey:appFirstStartOfVersionKey];
 
-  NSString *appFirstStartOfVersionKey = [NSString stringWithFormat:@"first_start_%@", bundleVersion];
-
-  NSNumber *alreadyStartedOnVersion =[[NSUserDefaults standardUserDefaults] objectForKey:appFirstStartOfVersionKey];
-  //printf("\n bundle %s  already started %d", [bundleVersion cString], [alreadyStartedOnVersion boolValue]);
-
-  if(!alreadyStartedOnVersion || [alreadyStartedOnVersion boolValue] == NO) {
-    NSMutableArray* defaultPatches = [NSMutableArray array];
-    if(hardwareCanvasType==canvasTypeWidePhone ){
+  if (!alreadyStartedOnVersion || [alreadyStartedOnVersion boolValue] == NO) {
+    // New version detected.
+    NSMutableArray *defaultPatches = [NSMutableArray array];
+    if (hardwareCanvasType == canvasTypeWidePhone) {
       [defaultPatches addObjectsFromArray:@[ @"MMPTutorial0-HelloSine.mmp", @"MMPTutorial1-GUI.mmp", @"MMPTutorial2-Input.mmp", @"MMPTutorial3-Hardware.mmp", @"MMPTutorial4-Networking.mmp",@"MMPTutorial5-Files.mmp",@"MMPExamples-Vocoder.mmp", @"MMPExamples-Motion.mmp", @"MMPExamples-Sequencer.mmp", @"MMPExamples-GPS.mmp", @"MMPTutorial6-2DGraphics.mmp", @"MMPExamples-LANdini.mmp", @"MMPExamples-Arp.mmp", @"MMPExamples-TableGlitch.mmp" ]];
-    }
-    else if (hardwareCanvasType==canvasTypeTallPhone){
+    } else if (hardwareCanvasType==canvasTypeTallPhone) {
       [defaultPatches addObjectsFromArray:@[ @"MMPTutorial0-HelloSine-ip5.mmp", @"MMPTutorial1-GUI-ip5.mmp", @"MMPTutorial2-Input-ip5.mmp", @"MMPTutorial3-Hardware-ip5.mmp", @"MMPTutorial4-Networking-ip5.mmp",@"MMPTutorial5-Files-ip5.mmp", @"MMPExamples-Vocoder-ip5.mmp", @"MMPExamples-Motion-ip5.mmp", @"MMPExamples-Sequencer-ip5.mmp",@"MMPExamples-GPS-ip5.mmp", @"MMPTutorial6-2DGraphics-ip5.mmp", @"MMPExamples-LANdini-ip5.mmp", @"MMPExamples-Arp-ip5.mmp",  @"MMPExamples-TableGlitch-ip5.mmp" ]];
-    }
-    else{//pad
+    } else { //pad
       [defaultPatches addObjectsFromArray:@[ @"MMPTutorial0-HelloSine-Pad.mmp", @"MMPTutorial1-GUI-Pad.mmp", @"MMPTutorial2-Input-Pad.mmp", @"MMPTutorial3-Hardware-Pad.mmp", @"MMPTutorial4-Networking-Pad.mmp",@"MMPTutorial5-Files-Pad.mmp", @"MMPExamples-Vocoder-Pad.mmp", @"MMPExamples-Motion-Pad.mmp", @"MMPExamples-Sequencer-Pad.mmp",@"MMPExamples-GPS-Pad.mmp", @"MMPTutorial6-2DGraphics-Pad.mmp", @"MMPExamples-LANdini-Pad.mmp", @"MMPExamples-Arp-Pad.mmp",  @"MMPExamples-TableGlitch-Pad.mmp" ]];
     }
-
-    //NOTE InterAppOSC & Ping and connect, one version.
+    // Common files.
+    // NOTE InterAppOSC & Ping and connect all use one mmp version.
     [defaultPatches addObjectsFromArray: @[ @"MMPTutorial0-HelloSine.pd",@"MMPTutorial1-GUI.pd", @"MMPTutorial2-Input.pd", @"MMPTutorial3-Hardware.pd", @"MMPTutorial4-Networking.pd",@"MMPTutorial5-Files.pd",@"cats1.jpg", @"cats2.jpg",@"cats3.jpg",@"clap.wav",@"Welcome.pd",  @"MMPExamples-Vocoder.pd", @"vocod_channel.pd", @"MMPExamples-Motion.pd", @"MMPExamples-Sequencer.pd", @"MMPExamples-GPS.pd", @"MMPTutorial6-2DGraphics.pd", @"MMPExamples-LANdini.pd", @"MMPExamples-Arp.pd", @"MMPExamples-TableGlitch.pd", @"anderson1.wav", @"MMPExamples-InterAppOSC.mmp", @"MMPExamples-InterAppOSC.pd", @"MMPExamples-PingAndConnect.pd", @"MMPExamples-PingAndConnect.mmp", @"MMPExamples-NativeGUI.pd" ]];
 
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *publicDocumentsDir = [paths objectAtIndex:0];
-    NSString* bundlePath = [[NSBundle mainBundle] bundlePath];
+    NSString *bundlePath = [[NSBundle mainBundle] bundlePath];
 
-    for(NSString* patchName in defaultPatches){//copy all from default and common
-      NSString* patchDocPath = [publicDocumentsDir stringByAppendingPathComponent:patchName];
-
-      NSString* patchBundlePath = [bundlePath stringByAppendingPathComponent:patchName];
-      NSError* error = nil;
-      if([[NSFileManager defaultManager] fileExistsAtPath:patchDocPath])
+    for (NSString *patchName in defaultPatches) { //copy all from default and common into user folder
+      NSString *patchDocPath = [publicDocumentsDir stringByAppendingPathComponent:patchName];
+      NSString *patchBundlePath = [bundlePath stringByAppendingPathComponent:patchName];
+      NSError *error = nil;
+      if ([[NSFileManager defaultManager] fileExistsAtPath:patchDocPath]) {
         [[NSFileManager defaultManager] removeItemAtPath:patchDocPath error:&error];
+      }
       [[NSFileManager defaultManager] copyItemAtPath:patchBundlePath toPath:patchDocPath error:&error];
     }
 
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:appFirstStartOfVersionKey];
-
+    // update version # that we've seen.
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES]
+                                              forKey:appFirstStartOfVersionKey];
   } //end first run and copy
 
-  if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"6.0")){
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(audioRouteChange:) name:AVAudioSessionRouteChangeNotification object:nil];
+  if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"6.0")) {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(audioRouteChange:)
+                                                 name:AVAudioSessionRouteChangeNotification
+                                               object:nil];
   }
-
   return self;
 }
 
 - (void)dealloc {
-  if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"6.0")){
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVAudioSessionRouteChangeNotification object:nil];
-  }
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+// called after user changing sample rate, channel count, etc. (But not ticks per buffer).
 - (void)updateAudioState {
-  _audioController.active = NO;
+  _audioController.active = NO; //necc?
   [_audioController configurePlaybackWithSampleRate:_samplingRate
                                      numberChannels:_channelCount
                                        inputEnabled:_inputEnabled
@@ -345,15 +381,15 @@
   _samplingRate = [_audioController sampleRate];
   _channelCount = [_audioController numberChannels];
   _ticksPerBuffer = [_audioController ticksPerBuffer];
-  // temp
-  //[_audioController print];
+
+  // tell settings to refresh display.
   [settingsVC updateAudioState];
 }
 
 - (void)viewDidLoad{
   [super viewDidLoad];
 
-  // Look for new output address and port
+  // Look for output address and ports specified by user.
   if ([[NSUserDefaults standardUserDefaults] objectForKey:@"outputIPAddress"]) {
     _outputIpAddress = [[NSUserDefaults standardUserDefaults] objectForKey:@"outputIPAddress"];
   }
@@ -363,54 +399,59 @@
   if ([[NSUserDefaults standardUserDefaults] objectForKey:@"inputPortNumber"]) {
     _inputPortNumber = [[[NSUserDefaults standardUserDefaults] objectForKey:@"inputPortNumber"] intValue];
   }
+
   [self connectPorts];
 
+  // view
   self.view.backgroundColor = [UIColor grayColor];
 
-
-  //setup upper left info button, but don't add it anywhere yet
-  _settingsButton = [[MMPMenuButton alloc] init];//[UIButton buttonWithType:UIButtonTypeCustom];
-  [_settingsButton addTarget:self action:@selector(showInfo:) forControlEvents:UIControlEventTouchUpInside];
+  //setup upper left menu button, but don't add it anywhere yet.
+  _settingsButton = [[MMPMenuButton alloc] init];
+  [_settingsButton addTarget:self
+                      action:@selector(showInfo:)
+            forControlEvents:UIControlEventTouchUpInside];
 
   _settingsButtonOffset = self.view.frame.size.width * SETTINGS_BUTTON_OFFSET_PERCENT;
   _settingsButtonDim = MAX(25, self.view.frame.size.width * SETTINGS_BUTTON_DIM_PERCENT);
 
-
-  //midi setup
-  midi.delegate=self;
-  if([midi.sources count]>0){
-    [self connectMidiSource:midi.sources[0]];//connect to first device in MIDI source list
+  // midi setup
+  midi.delegate = self; // move to init?
+  if ([midi.sources count] > 0) {
+    [self connectMidiSource:midi.sources[0]]; //connect to first device in MIDI source list
   }
-  if([midi.destinations count]>0){
-    [self connectMidiDestination:midi.destinations[0]];//connect to first device in MIDI dest list
+  if ([midi.destinations count] > 0) {
+    [self connectMidiDestination:midi.destinations[0]]; //connect to first device in MIDI dest list
   }
 
-  //delegate for file loading, etc
+  //delegates from settigns view for file loading, audio settings, networking, etc.
   settingsVC.delegate = self;
-  //delegate (from audio+midi screen of settingsVC) for setting audio+midi parameters (sampling rate, MIDI source, etc)
   settingsVC.audioDelegate = self;
   settingsVC.LANdiniDelegate = self;
   settingsVC.pingAndConnectDelegate = self;
 
-  navigationController = [[UINavigationController alloc] initWithRootViewController:settingsVC];
-  navigationController.navigationBar.barStyle = UIBarStyleBlack;
-  navigationController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+  _navigationController = [[UINavigationController alloc] initWithRootViewController:settingsVC];
+  _navigationController.navigationBar.barStyle = UIBarStyleBlack;
+  _navigationController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
 
   [_audioController setActive:YES];
 
-  _flipped = [[NSUserDefaults standardUserDefaults] boolForKey:@"MMPFlipInterface"]; //grab from defaults. TODO interact with settignsVC.
+  // grab from defaults. TODO interact with settignsVC.
+  _uiIsFlipped =
+      [[NSUserDefaults standardUserDefaults] boolForKey:@"MMPFlipInterface"];
 
+  // autoload a patch on startup.
   BOOL autoLoad = [[NSUserDefaults standardUserDefaults] boolForKey:@"MMPAutoLoadLastPatch"];
   if (autoLoad) {
-    NSString *lastDocPath = [[NSUserDefaults standardUserDefaults] objectForKey:@"MMPLastOpenedInterfaceOrPdPath"];
-    NSString* suffix = [[lastDocPath componentsSeparatedByString: @"."] lastObject];
+    NSString *lastDocPath =
+        [[NSUserDefaults standardUserDefaults] objectForKey:@"MMPLastOpenedInterfaceOrPdPath"];
+    NSString *suffix = [[lastDocPath componentsSeparatedByString: @"."] lastObject];
     BOOL loaded = NO;
-    if([suffix isEqualToString:@"mmp"]){
+    if ([suffix isEqualToString:@"mmp"]) {
       loaded = [self loadMMPSceneFromDocPath:lastDocPath];
     } else if ([suffix isEqualToString:@"pd"]) {
       loaded = [self loadScenePatchOnlyFromDocPath:lastDocPath];
     }
-    if (loaded){ //success.
+    if (loaded) { //success.
       return;
     } else { //failure
       // TODO: this shows double-alert. Fix.
@@ -422,45 +463,57 @@
                           otherButtonTitles:nil];
     [alert show];
     }
-
   }
 
-  //start default intro patch
-  canvasType hardwareCanvasType = [MMPViewController getCanvasType];
-  NSString* path;
-  if(hardwareCanvasType==canvasTypeWidePhone )
+  // load default intro patch
+  MMPDeviceCanvasType hardwareCanvasType = [MMPViewController getCanvasType];
+  NSString *path;
+  if (hardwareCanvasType == canvasTypeWidePhone) {
     path = [[NSBundle mainBundle] pathForResource:@"Welcome" ofType:@"mmp"];
-  else if (hardwareCanvasType==canvasTypeTallPhone)
+  } else if (hardwareCanvasType == canvasTypeTallPhone) {
     path = [[NSBundle mainBundle] pathForResource:@"Welcome-ip5" ofType:@"mmp"];
-  else//pad
+  } else { //pad
     path = [[NSBundle mainBundle] pathForResource:@"Welcome-Pad" ofType:@"mmp"];
+  }
 
   BOOL loaded = [self loadMMPSceneFromFullPath:path];
   if (!loaded) {
-    //still put butotn
-    _settingsButton.transform = CGAffineTransformMakeRotation(0);
-    _settingsButton.frame = CGRectMake(_settingsButtonOffset, _settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
+    //still put menu button on failure.
+    _settingsButton.transform = CGAffineTransformMakeRotation(0); //reset rotation.
+    _settingsButton.frame =
+        CGRectMake(_settingsButtonOffset, _settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
     [self.view addSubview:_settingsButton];
   }
 }
 
--(void)setupAudioBus {
+//I believe next two methods were neccessary to receive "shake" gesture
+- (void)viewDidAppear:(BOOL)animated {
+  [super viewDidAppear:animated];
+  [self becomeFirstResponder];
+}
 
-  //audioBus check for any audio issues restart audio if detected
+- (void)viewWillDisappear:(BOOL)animated {
+  [self resignFirstResponder];
+  [super viewWillDisappear:animated];
+}
+
+-(void)setupAudioBus {
+  //audioBus check for any audio issues, restart audio if detected.
   UInt32 channels;
   UInt32 size; //= sizeof(channels);
-  OSStatus result = AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareInputNumberChannels, &size, &channels);
+  OSStatus result =
+      AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareInputNumberChannels, &size, &channels);
 
-  if ( result == kAudioSessionIncompatibleCategory ) {
+  if (result == kAudioSessionIncompatibleCategory) {
     // Audio session error (rdar://13022588). Power-cycle audio session.
     AudioSessionSetActive(false);
     AudioSessionSetActive(true);
-    result = AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareInputNumberChannels, &size, &channels);
-    if ( result != noErr ) {
+    result =
+        AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareInputNumberChannels, &size, &channels);
+    if (result != noErr) {
       NSLog(@"Got error %d while querying input channels", (int)result);
     }
   }
-
 
   self.audiobusController = [[ABAudiobusController alloc] initWithApiKey:@"MCoqKk1vYk11UGxhdCoqKk1vYk11UGxhdC12Mi5hdWRpb2J1czovLw==:HJ1QCorzfgJBpb5B5TRb6zhp6o7wHg6UWI7RIkuJJmSMz9e5I+2F7R+cYSQjv9t0WoxYoxIBbYy/XDPGA2VslqaVcBUJ78WQkQ4KDrbKY/N5NndAHPhiAA+2DORdN733"];
 
@@ -477,33 +530,35 @@
 
   self.audiobusController.connectionPanelPosition = ABConnectionPanelPositionLeft;
 
-  AudioComponentDescription acd;
-  acd.componentType = kAudioUnitType_RemoteGenerator;
-  acd.componentSubType = 'aout';
-  acd.componentManufacturer = 'igle';
+  AudioComponentDescription senderACD;
+  senderACD.componentType = kAudioUnitType_RemoteGenerator;
+  senderACD.componentSubType = 'aout';
+  senderACD.componentManufacturer = 'igle';
 
   ABSenderPort *sender = [[ABSenderPort alloc] initWithName:@"MobMuPlat Sender"
-                                                      title:NSLocalizedString(@"MobMuPlat Sender", @"")
-                                  audioComponentDescription:acd
+                                                      title:@"MobMuPlat Sender"
+                                  audioComponentDescription:senderACD
                                                   audioUnit:self.audioController.audioUnit.audioUnit];
   [_audiobusController addSenderPort:sender];
 
+  AudioComponentDescription filterACD;
+  filterACD.componentType = kAudioUnitType_RemoteEffect;
+  filterACD.componentSubType = 'afil';
+  filterACD.componentManufacturer = 'igle';
+
   ABFilterPort *filterPort = [[ABFilterPort alloc] initWithName:@"MobMuPlat Filter"
                                                           title:@"MobMuPlat Filter"
-                                      audioComponentDescription:(AudioComponentDescription) {
-                                        .componentType = kAudioUnitType_RemoteEffect,
-                                        .componentSubType = 'afil',
-                                        .componentManufacturer = 'igle' }
+                                      audioComponentDescription:filterACD
                                                       audioUnit:self.audioController.audioUnit.audioUnit];
   [_audiobusController addFilterPort:filterPort];
 
   ABReceiverPort *receiverPort = [[ABReceiverPort alloc] initWithName:@"MobMuPlat Receiver"
-                                                                title:NSLocalizedString(@"MobMuPlat Receiver", @"")];
+                                                                title:@"MobMuPlat Receiver"];
   [_audiobusController addReceiverPort:receiverPort];
 
-  receiverPort.clientFormat = [self.audioController.audioUnit
-                               ASBDForSampleRate:_samplingRate
-                               numberChannels:_channelCount];
+  receiverPort.clientFormat = [self.audioController.audioUnit ASBDForSampleRate:_samplingRate
+                                                                 numberChannels:_channelCount];
+
   if ([self.audioController.audioUnit isKindOfClass:[MobMuPlatPdAudioUnit class]]) {
     MobMuPlatPdAudioUnit *mmppdAudioUnit = (MobMuPlatPdAudioUnit *)self.audioController.audioUnit;
     mmppdAudioUnit.inputPort = receiverPort; //tell PD callback to look at it
@@ -523,7 +578,6 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
         && !_audiobusController.audiobusAppRunning
         && self.audioController.isActive ) {
       // Audiobus has quit. Time to sleep.
-      //[_audioEngine stop];
       [self.audioController setActive:NO];
     }
   } else {
@@ -531,176 +585,176 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   }
 }
 
-- (void)printAudioSessionUnitInfo {
+/*- (void)printAudioSessionUnitInfo {
   //audio info
   AVAudioSession *audioSession = [AVAudioSession sharedInstance];
   NSLog(@" aft Buffer size %f \n category %@ \n sample rate %f \n input latency %f \n other app playing? %d \n audiosession mode %@ \n audiosession output latency %f",audioSession.IOBufferDuration,audioSession.category,audioSession.sampleRate,audioSession.inputLatency,audioSession.isOtherAudioPlaying,audioSession.mode,audioSession.outputLatency);
 
   [self.audioController.audioUnit print];
+}*/
 
-}
-
--(BOOL)isAudioBusConnected {
-  //return ABFilterPortIsConnected(self.filterPort) || ABInputPortIsConnected(self.inputPort) || ABOutputPortIsConnected(self.outputPort);
-  return self.audiobusController.connected;
-}
-
-
-//I believe next two methods were neccessary to receive "shake" gesture
-- (void)viewDidAppear:(BOOL)animated
-{
-  [super viewDidAppear:animated];
-  [self becomeFirstResponder];
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-  [self resignFirstResponder];
-  [super viewWillDisappear:animated];
-}
-
-//called often by accelerometer, package accel values and send to PD
--(void)accelerometerDidAccelerate:(CMAcceleration)acceleration{
+#pragma mark - Private
+// called often by accelerometer, package accel values and send to PD
+- (void)accelerometerDidAccelerate:(CMAcceleration)acceleration {
   //first, "cook" the values to get a nice tilt value without going beyond -1 to 1
-
-  //printf("\naccel %.2f %.2f %.2f", acceleration.x, acceleration.y, acceleration.z);
   float cookedX = acceleration.x;
   float cookedY = acceleration.y;
+
   //cook it via Z accel to see when we have tipped it beyond 90 degrees
+  if (acceleration.x > 0 && acceleration.z > 0) {
+    cookedX = (2-acceleration.x); //tip towards long side
+  } else if (acceleration.x < 0 && acceleration.z > 0) {
+    cookedX = (-2-acceleration.x); //tip away long side
+  }
 
-  if(acceleration.x>0 && acceleration.z>0) cookedX=(2-acceleration.x); //tip towards long side
-  else if(acceleration.x<0 && acceleration.z>0) cookedX=(-2-acceleration.x); //tip away long side
-
-  if(acceleration.y>0 && acceleration.z>0) cookedY=(2-acceleration.y); //tip right
-  else if(acceleration.y<0 && acceleration.z>0) cookedY=(-2-acceleration.y); //tip left
+  if (acceleration.y > 0 && acceleration.z > 0) {
+    cookedY = (2-acceleration.y); //tip right
+  } else if (acceleration.y < 0 && acceleration.z > 0) {
+    cookedY = (-2-acceleration.y); //tip left
+  }
 
   //clip
-  if(cookedX<-1)cookedX=-1;
-  else if(cookedX>1)cookedX=1;
-  if(cookedY<-1)cookedY=-1;
-  else if(cookedY>1)cookedY=1;
+  cookedX = MIN(MAX(cookedX, -1), 1);
+  cookedY = MIN(MAX(cookedY, -1), 1);
 
   //send the cooked values as "tilts", and the raw values as "accel"
+  NSArray *tiltsArray = @[ @"/tilts", @(cookedX), @(cookedY)];
+  [PdBase sendList:tiltsArray toReceiver:@"fromSystem"];
 
-  NSArray* msgArray=[NSArray arrayWithObjects:@"/tilts", [NSNumber numberWithFloat:cookedX],[NSNumber numberWithFloat:cookedY], nil];
-
-  [PdBase sendList:msgArray toReceiver:@"fromSystem"];
-
-  NSArray* accelArray=[NSArray arrayWithObjects:@"/accel", [NSNumber numberWithFloat:acceleration.x],[NSNumber numberWithFloat:acceleration.y], [NSNumber numberWithFloat:acceleration.z], nil];
-
+  NSArray *accelArray = @[ @"/accel",@(acceleration.x), @(acceleration.y), @(acceleration.z)];
   [PdBase sendList:accelArray toReceiver:@"fromSystem"];
-
 }
 
 - (void)showInfo:(id)sender {
-  [self presentModalViewController:navigationController animated:YES];
-  // TODO: [self presentViewController:animated:completion:]
+  if ([self respondsToSelector:@selector(presentViewController:animated:completion:)]) {
+    // ios 6 and up.
+    [self presentViewController:_navigationController animated:YES completion:nil];
+  } else {
+    // ios 5.
+    [self presentModalViewController:_navigationController animated:YES];
+  }
 }
 
-//=====audio settings delegate methods
+#pragma mark - AudioSettingsDelegate
 
--(int)blockSize{
+- (BOOL)isAudioBusConnected {
+  return self.audiobusController.connected;
+}
+- (int)blockSize {
   return [PdBase getBlockSize];
 }
 
--(int)setTicksPerBuffer:(int)newTick{ //return actual value. Note doesn't call [self updateAudioState]
+//return actual value. Note doesn't call [self updateAudioState]
+- (int)setTicksPerBuffer:(int)newTick {
   [_audioController configureTicksPerBuffer:newTick];
   _ticksPerBuffer = [_audioController ticksPerBuffer];
   [settingsVC updateAudioState]; //send back to settings VC
   return _ticksPerBuffer;
 }
 
--(int)setRate:(int)inRate{//return actual value
+//return actual value
+- (int)setRate:(int)inRate {
   _samplingRate = inRate;
   [self updateAudioState]; // updates _samplingRate to actual val
   return _samplingRate;
 }
 
--(int)setChannelCount:(int)newChannelCount{
+- (int)setChannelCount:(int)newChannelCount {
   _channelCount = newChannelCount;
   [self updateAudioState]; // updates _channelCount to actual val
   return _channelCount;
 }
 
--(int)sampleRate{
+- (int)sampleRate {
   return [self.audioController sampleRate];
 }
 
--(int)actualTicksPerBuffer{
+- (int)actualTicksPerBuffer {
   //NSLog(@"actual ticks is %d",[audioController ticksPerBuffer] );
   return [_audioController ticksPerBuffer];
 }
 
--(PGMidi*) midi{
+- (PGMidi*)midi {
   return midi;
 }
 
--(void)connectPorts{//could probably use some error checking...
-  if(_outputPortNumber>0){
-    outPort = [manager createNewOutputToAddress:_outputIpAddress atPort:_outputPortNumber];
+- (void)connectPorts {//could probably use some error checking...
+  if (_outputPortNumber > 0) {
+    _oscOutPort = [_oscManager createNewOutputToAddress:_outputIpAddress atPort:_outputPortNumber];
   }
-  if(_inputPortNumber > 0){
-    inPort = [manager createNewInputForPort:_inputPortNumber];
+  if (_inputPortNumber > 0) {
+    _oscInPort = [_oscManager createNewInputForPort:_inputPortNumber];
   }
-  outPortToNetworkingModules = [manager createNewOutputToAddress:@"127.0.0.1" atPort:50506];
-  inPortFromNetworkingModules = [manager createNewInputForPort:50505];
+  _outPortToNetworkingModules = [_oscManager createNewOutputToAddress:@"127.0.0.1" atPort:50506];
+  _inPortFromNetworkingModules = [_oscManager createNewInputForPort:50505];
   _isPortsConnected = YES;
 }
 
--(void)disconnectPorts{
-  [manager deleteAllInputs];
-  [manager deleteAllOutputs];
+- (void)disconnectPorts {
+  [_oscManager deleteAllInputs];
+  [_oscManager deleteAllOutputs];
   _isPortsConnected = NO;
 }
 
--(void)setOutputIpAddress:(NSString *)outputIpAddress {
-  if ([_outputIpAddress isEqualToString:outputIpAddress]) return;
+- (void)setOutputIpAddress:(NSString *)outputIpAddress {
+  if ([_outputIpAddress isEqualToString:outputIpAddress]) {
+    return;
+  }
   _outputIpAddress = outputIpAddress;
-  [manager removeOutput:outPort];
-  outPort = [manager createNewOutputToAddress:_outputIpAddress atPort:_outputPortNumber];
+  [_oscManager removeOutput:_oscOutPort];
+  _oscOutPort = [_oscManager createNewOutputToAddress:_outputIpAddress atPort:_outputPortNumber];
   [[NSUserDefaults standardUserDefaults] setObject:outputIpAddress forKey:@"outputIPAddress"];
 }
 
-- (void)setOutputPortNumber:(int)outputPortNumber {
-  if(_outputPortNumber == outputPortNumber) return;
+- (void)setOutputPort:(int)outputPortNumber {
+  if (_outputPortNumber == outputPortNumber) {
+    return;
+  }
   _outputPortNumber = outputPortNumber;
-  [manager removeOutput:outPort];
-  outPort = [manager createNewOutputToAddress:_outputIpAddress atPort:_outputPortNumber];
+  [_oscManager removeOutput:_oscOutPort];
+  _oscOutPort = [_oscManager createNewOutputToAddress:_outputIpAddress atPort:_outputPortNumber];
   [[NSUserDefaults standardUserDefaults] setObject:@(_outputPortNumber) forKey:@"outputPortNumber"];
 }
 
-- (void)setInputPortNumber:(int)inputPortNumber {
-  if(_inputPortNumber == inputPortNumber) return;
+- (void)setInputPort:(int)inputPortNumber {
+  if (_inputPortNumber == inputPortNumber) {
+    return;
+  }
   _inputPortNumber = inputPortNumber;
-  [manager removeOutput:inPort];
-  inPort = [manager createNewInputForPort:_inputPortNumber];
+  [_oscManager removeOutput:_oscInPort];
+  _oscInPort = [_oscManager createNewInputForPort:_inputPortNumber];
   [[NSUserDefaults standardUserDefaults] setObject:@(_inputPortNumber) forKey:@"inputPortNumber"];
 }
 
 //====settingsVC delegate methods
 
 - (void)settingsViewControllerDidFinish:(SettingsViewController *)controller{
-  [self dismissModalViewControllerAnimated:YES];
+  [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 -(void)flipInterface:(BOOL)isFlipped {
-  _flipped = isFlipped;
-  if(isFlipped) {
-    scrollView.transform = pdPatchView.transform = CGAffineTransformMakeRotation(M_PI+isLandscape*M_PI_2);
+  _uiIsFlipped = isFlipped;
+  if (isFlipped) {
+    _scrollView.transform =
+        _pdPatchView.transform = CGAffineTransformMakeRotation(M_PI+_isLandscape*M_PI_2);
   } else {
-    scrollView.transform = pdPatchView.transform = CGAffineTransformMakeRotation(isLandscape*M_PI_2);
+    _scrollView.transform =
+        _pdPatchView.transform = CGAffineTransformMakeRotation(_isLandscape*M_PI_2);
   }
 }
 
 - (BOOL)loadScenePatchOnlyFromBundle:(NSBundle *)bundle filename:(NSString *)filename { //testing
   if (!filename) return NO;
-  NSString* bundlePath = [bundle resourcePath] ;
-  NSString* patchBundlePath = [bundlePath stringByAppendingPathComponent:filename];
+  NSString *bundlePath = [bundle resourcePath] ;
+  NSString *patchBundlePath = [bundlePath stringByAppendingPathComponent:filename];
   return [self loadScenePatchOnlyFromPath:patchBundlePath];
 }
 
 // assumes document dir
--(BOOL)loadScenePatchOnlyFromDocPath:(NSString*)docPath{
-  if (!docPath) return NO;
+-(BOOL)loadScenePatchOnlyFromDocPath:(NSString *)docPath {
+  if (!docPath.length) {
+    return NO;
+  }
   NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
   NSString *publicDocumentsDir = [paths objectAtIndex:0];
   NSString *fromPath = [publicDocumentsDir stringByAppendingPathComponent:docPath];
@@ -713,38 +767,22 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 }
 
 - (BOOL)loadScenePatchOnlyFromPath:(NSString *)fromPath {
-  if (!fromPath) return NO;
+  if (!fromPath.length) {
+    return NO;
+  }
   [self loadSceneCommonReset];
   [_settingsButton setBarColor:[UIColor blackColor]];
 
   NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
   NSString *publicDocumentsDir = [paths objectAtIndex:0];
-  //NSString *fromPath = [publicDocumentsDir stringByAppendingPathComponent:filename];
   NSString *toPath = [publicDocumentsDir stringByAppendingPathComponent:@"tempPdFile"];
 
   NSArray *originalAtomLines = [PdParser getAtomLines:[PdParser readPatch:fromPath]];
 
-  // Process original atom lines into a set of gui lines and a set of shimmed patch lines.
-  NSArray *processedAtomLinesTuple = [MMPPdPatchDisplayUtils proccessAtomLines:originalAtomLines];
-  if (!processedAtomLinesTuple) {
-    return NO;
-  }
-  NSArray *patchAtomLines = processedAtomLinesTuple[0];
-  NSArray *guiAtomLines = processedAtomLinesTuple[1];
-
-  NSMutableString *outputString = [NSMutableString string];
-  for (NSArray *line in patchAtomLines) {
-    [outputString appendString:[line componentsJoinedByString:@" "]];
-    [outputString appendString:@";\n"];
-  }
-
-  // Write temp file to disk.
-  NSError *error;
-  [outputString writeToFile:toPath atomically:YES encoding:NSASCIIStringEncoding error:&error];
-  //
-
-// Compute canvas size
-  if ([originalAtomLines count] == 0 || [originalAtomLines[0] count] < 6 || ![originalAtomLines[0][1] isEqualToString:@"canvas"] ) {
+  // Detect bad pd file.
+  if ([originalAtomLines count] == 0 ||
+      [originalAtomLines[0] count] < 6 ||
+      ![originalAtomLines[0][1] isEqualToString:@"canvas"] ) {
     UIAlertView *alert = [[UIAlertView alloc]
                           initWithTitle: @"Pd file not parsed"
                           message: [NSString stringWithFormat:@"Pd file not readable"]
@@ -755,10 +793,30 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     return NO;
   }
 
+  // Process original atom lines into a set of gui lines and a set of shimmed patch lines.
+  NSArray *processedAtomLinesTuple = [MMPPdPatchDisplayUtils proccessAtomLines:originalAtomLines];
+  if (!processedAtomLinesTuple || processedAtomLinesTuple.count != 2) {
+    return NO;
+  }
+  NSArray *patchAtomLines = processedAtomLinesTuple[0];
+  NSArray *guiAtomLines = processedAtomLinesTuple[1];
+
+  // Reformat patchAtomLines into a pd file.
+  NSMutableString *outputString = [NSMutableString string];
+  for (NSArray *line in patchAtomLines) {
+    [outputString appendString:[line componentsJoinedByString:@" "]];
+    [outputString appendString:@";\n"];
+  }
+
+  // Write temp pd file to disk.
+  NSError *error;
+  [outputString writeToFile:toPath atomically:YES encoding:NSASCIIStringEncoding error:&error];
+
+  // Compute canvas size
   CGSize docCanvasSize = CGSizeMake([originalAtomLines[0][4] floatValue], [originalAtomLines[0][5] floatValue]);
-  // TODO chcek for zero/bad values
+  // TODO check for zero/bad values
   BOOL isOrientationLandscape = (docCanvasSize.width > docCanvasSize.height);
-  CGSize hardwareCanvasSize;
+  CGSize hardwareCanvasSize = CGSizeZero;
   if (isOrientationLandscape) {
     hardwareCanvasSize = CGSizeMake([[UIScreen mainScreen] bounds].size.height,
                                     [[UIScreen mainScreen] bounds].size.width);
@@ -767,83 +825,95 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
                                     [[UIScreen mainScreen] bounds].size.height);
   }
   CGFloat hardwareCanvasRatio = hardwareCanvasSize.width / hardwareCanvasSize.height;
+  CGFloat canvasRatio = docCanvasSize.width / docCanvasSize.height;
 
-  CGFloat canvasWidth, canvasHeight;
-  CGFloat canvasRatio;
-
-  canvasRatio = docCanvasSize.width / docCanvasSize.height;
-
+  CGFloat canvasWidth = 0, canvasHeight = 0;
   if (canvasRatio > hardwareCanvasRatio) {
     // The doc canvas has a wider aspect ratio than the hardware canvas;
     // It will take the width of the screen and get letterboxed on top.
     canvasWidth = hardwareCanvasSize.width ;
     canvasHeight = canvasWidth / canvasRatio;
-    pdPatchView = [[UIView alloc] initWithFrame:CGRectMake(0, (hardwareCanvasSize.height - canvasHeight) / 2.0f, canvasWidth, canvasHeight)];
+    _pdPatchView = [[UIView alloc] initWithFrame:
+                       CGRectMake(0,
+                                  (hardwareCanvasSize.height - canvasHeight) / 2.0f,
+                                  canvasWidth,
+                                  canvasHeight)];
   } else {
     // The doc canvas has a taller aspect ratio thatn the hardware canvas;
     // It will take the height of the screen and get letterboxed on the sides.
     canvasHeight = hardwareCanvasSize.height;
     canvasWidth = canvasHeight * canvasRatio;
-    pdPatchView = [[UIView alloc] initWithFrame:CGRectMake((hardwareCanvasSize.width - canvasWidth) / 2.0f, 0, canvasWidth, canvasHeight)];
+    _pdPatchView = [[UIView alloc] initWithFrame:
+                       CGRectMake((hardwareCanvasSize.width - canvasWidth) / 2.0f,
+                                  0,
+                                  canvasWidth,
+                                  canvasHeight)];
   }
 
-  pdPatchView.clipsToBounds = YES; // Keep Pd gui boxes rendered within the view.
-  pdPatchView.backgroundColor = [UIColor whiteColor];
-  [self.view addSubview:pdPatchView];
+  _pdPatchView.clipsToBounds = YES; // Keep Pd gui boxes rendered within the view.
+  _pdPatchView.backgroundColor = [UIColor whiteColor];
+  [self.view addSubview:_pdPatchView];
 
-  if(isOrientationLandscape){//rotate
-    isLandscape = YES;
-    CGPoint rotatePoint = CGPointMake(hardwareCanvasSize.height / 2.0f, hardwareCanvasSize.width / 2.0f);
-    pdPatchView.center = rotatePoint;
-    if(_flipped){
-      pdPatchView.transform = CGAffineTransformMakeRotation(M_PI_2+M_PI);
-
+  if (isOrientationLandscape) { //rotate
+    _isLandscape = YES;
+    _pdPatchView.center =
+        CGPointMake(hardwareCanvasSize.height / 2.0f, hardwareCanvasSize.width / 2.0f);
+    if (_uiIsFlipped) {
+      _pdPatchView.transform = CGAffineTransformMakeRotation(M_PI_2+M_PI);
       _settingsButton.transform = CGAffineTransformMakeRotation(M_PI_2+M_PI);
-      _settingsButton.frame = CGRectMake(_settingsButtonOffset, self.view.frame.size.height - _settingsButtonOffset - _settingsButtonDim, _settingsButtonDim, _settingsButtonDim);
-    }
-    else {
-      pdPatchView.transform = CGAffineTransformMakeRotation(M_PI_2);
-
-      _settingsButton.frame = CGRectMake(self.view.frame.size.width-_settingsButtonDim-_settingsButtonOffset, _settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
+      _settingsButton.frame =
+          CGRectMake(_settingsButtonOffset,
+                     self.view.frame.size.height - _settingsButtonOffset - _settingsButtonDim,
+                     _settingsButtonDim,
+                     _settingsButtonDim);
+    } else {
+      _pdPatchView.transform = CGAffineTransformMakeRotation(M_PI_2);
+      _settingsButton.frame =
+          CGRectMake(self.view.frame.size.width - _settingsButtonDim - _settingsButtonOffset,
+                     _settingsButtonOffset,
+                     _settingsButtonDim,
+                     _settingsButtonDim);
       _settingsButton.transform = CGAffineTransformMakeRotation(M_PI_2);
     }
   } else {
-    isLandscape = NO;
-    if(_flipped){
-      pdPatchView.transform = CGAffineTransformMakeRotation(M_PI);
-
+    _isLandscape = NO;
+    if (_uiIsFlipped) {
+      _pdPatchView.transform = CGAffineTransformMakeRotation(M_PI);
       _settingsButton.transform = CGAffineTransformMakeRotation(M_PI);
-      _settingsButton.frame = CGRectMake(self.view.frame.size.width-_settingsButtonDim-_settingsButtonOffset, self.view.frame.size.height
-                                        -_settingsButtonDim-_settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
+      _settingsButton.frame =
+          CGRectMake(self.view.frame.size.width - _settingsButtonDim - _settingsButtonOffset,
+                     self.view.frame.size.height -_settingsButtonDim -_settingsButtonOffset,
+                     _settingsButtonDim,
+                     _settingsButtonDim);
 
     } else {
       _settingsButton.transform = CGAffineTransformMakeRotation(0);
-      _settingsButton.frame = CGRectMake(_settingsButtonOffset, _settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
+      _settingsButton.frame =
+          CGRectMake(_settingsButtonOffset,
+                     _settingsButtonOffset,
+                     _settingsButtonDim,
+                     _settingsButtonDim);
     }
   }
   //DEI todo update button pos/rot on flipping.
 
-  //
-
-  _pdGui.parentViewSize = CGSizeMake(canvasWidth, canvasHeight);//pdPatchView.frame.size;//self.view.frame.size;
-
+  _pdGui.parentViewSize = CGSizeMake(canvasWidth, canvasHeight);
   [_pdGui addWidgetsFromAtomLines:guiAtomLines]; // create widgets first
 
   //
-  openPDFile = [PdFile openFileNamed:@"tempPdFile" path:publicDocumentsDir]; //widgets get loadbang
-  if (!openPDFile) {
+  _openPDFile = [PdFile openFileNamed:@"tempPdFile" path:publicDocumentsDir]; //widgets get loadbang
+  if (!_openPDFile) {
     return NO;
   }
 
   for(Widget *widget in _pdGui.widgets) {
-    [widget replaceDollarZerosForGui:_pdGui fromPatch:openPDFile];
-    [pdPatchView addSubview:widget];
+    [widget replaceDollarZerosForGui:_pdGui fromPatch:_openPDFile];
+    [_pdPatchView addSubview:widget];
   }
   [_pdGui reshapeWidgets];
 
   for(Widget *widget in _pdGui.widgets) {
-    //[widget sendInitValue]; // We _DO_ need to send this, since gui objects hold the initial val, not the shims.
-    [widget setup]; //see if we can move up
+    [widget setup];
   }
 
   [self.view addSubview:_settingsButton];
@@ -853,12 +923,11 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
 - (void)trackLastOpenedDocPath:(NSString *)docPath {
   // Can't store full path, need to store path relative to documents.
-  [[NSUserDefaults standardUserDefaults] setObject:docPath forKey:@"MMPLastOpenedInterfaceOrPdPath"];
+  [[NSUserDefaults standardUserDefaults] setObject:docPath
+                                            forKey:@"MMPLastOpenedInterfaceOrPdPath"];
 }
 
-//
-
--(void)loadSceneCommonReset {
+- (void)loadSceneCommonReset {
   // Recurse and add subfolders to Pd directory paths. TODO: only do on file system change?
   [PdBase clearSearchPath];
   NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -868,19 +937,18 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   // Iterate subfolders.
   NSDirectoryEnumerator *enumerator =
       [[NSFileManager defaultManager] enumeratorAtURL:[NSURL URLWithString:publicDocumentsDir]
-                           includingPropertiesForKeys:@[NSURLIsDirectoryKey]
+                           includingPropertiesForKeys:@[ NSURLIsDirectoryKey ]
                                               options:NSDirectoryEnumerationSkipsHiddenFiles
                                          errorHandler:nil];
+
   // Add bundle folder reference that has the "extra"s abstractions
-  //NSArray *pds = [[NSBundle mainBundle] pathsForResourcesOfType:@"pd" inDirectory:@"extra"];
-  //NSString *string = [[NSBundle mainBundle] pathForResource:@"rev1~" ofType:@"pd"];
-  NSString *extrasDir = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"extra"];
+  NSString *extrasDir =
+      [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"extra"];
   [PdBase addToSearchPath:extrasDir];
-  //NSLog(@"pngs in my dir:%@", pds);
 
   NSURL *fileURL;
   NSNumber *isDirectory;
-  while ((fileURL = [enumerator nextObject]) != nil){
+  while ((fileURL = [enumerator nextObject]) != nil) {
     BOOL success = [fileURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:nil];
     if (success && [isDirectory boolValue]) {
       [PdBase addToSearchPath:[fileURL path]];
@@ -888,24 +956,25 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   }
   // End recursion of file paths.
 
-  if(scrollView) {
-    [scrollView removeFromSuperview];
-    scrollView = nil;
+  if (_scrollView) {
+    [_scrollView removeFromSuperview];
+    _scrollView = nil;
   }
 
-  [allGUIControl removeAllObjects];
+  [_addressToGUIObjectsDict removeAllObjects];
 
   for (Widget *widget in _pdGui.widgets) {
     [widget removeFromSuperview];
   }
   [_pdGui.widgets removeAllObjects];
 
-  if (pdPatchView) {
-    [pdPatchView removeFromSuperview];
-    pdPatchView = nil;
+  if (_pdPatchView) {
+    [_pdPatchView removeFromSuperview];
+    _pdPatchView = nil;
   }
 
-  [_mmpPdDispatcher removeAllListeners]; // Hack because dispatcher holds strong references to listeners; they (pd native gui objects) won't get deallocated otherwise.
+  // Dispatcher holds strong references to listeners, manually remove so that they get dealloced.
+  [_mmpPdDispatcher removeAllListeners];
 
   // (re-)Add self as dispatch recipient for MMP symbols.
   [_mmpPdDispatcher addListener:self forSource:@"toGUI"];
@@ -913,20 +982,23 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   [_mmpPdDispatcher addListener:self forSource:@"toSystem"];
 
   //if pdfile is open, close it
-  if(openPDFile != nil) {
-    [openPDFile closeFile];
-    openPDFile = nil;
+  if (_openPDFile != nil) {
+    [_openPDFile closeFile];
+    _openPDFile = nil;
   }
 
-  [locationManager stopUpdatingLocation];
-  [locationManager stopUpdatingHeading];
+  [_locationManager stopUpdatingLocation];
+  [_locationManager stopUpdatingHeading];
 }
 
--(BOOL)loadMMPSceneFromFullPath:(NSString *)fullPath {
-  NSString* jsonString = [NSString stringWithContentsOfFile:fullPath encoding:NSUTF8StringEncoding error:nil];
+- (BOOL)loadMMPSceneFromFullPath:(NSString *)fullPath {
+  NSString *jsonString =
+      [NSString stringWithContentsOfFile:fullPath encoding:NSUTF8StringEncoding error:nil];
   NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
-  if(!data)return NO;
-  NSDictionary* sceneDict = [NSJSONSerialization JSONObjectWithData:data options:nil error:nil];
+  if (!data) {
+    return NO;
+  }
+  NSDictionary *sceneDict = [NSJSONSerialization JSONObjectWithData:data options:nil error:nil];
 
   return [self loadMMPSceneFromJSON:sceneDict];
 }
@@ -934,53 +1006,61 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 - (BOOL)loadMMPSceneFromDocPath:(NSString *)docPath {
   NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
   NSString *publicDocumentsDir = [paths objectAtIndex:0];
-  NSString* fullPath = [publicDocumentsDir stringByAppendingPathComponent:docPath];
+  NSString *fullPath = [publicDocumentsDir stringByAppendingPathComponent:docPath];
 
   BOOL loaded = [self loadMMPSceneFromFullPath:fullPath];
   if (loaded) {
     [self trackLastOpenedDocPath:docPath];
   }
-
   return loaded;
 }
 
--(BOOL)loadMMPSceneFromJSON:(NSDictionary*) sceneDict{
-  if(!sceneDict)return NO;
+- (BOOL)loadMMPSceneFromJSON:(NSDictionary *)sceneDict {
+  if (!sceneDict) {
+    return NO;
+  }
 
   [self loadSceneCommonReset];
 
-  //type of canvas for device
-  //canvasType hardwareCanvasType = [ViewController getCanvasType];
+  // patch specification version, incremented on breaking changes.
+  // current version is 2, lower versions have old slider range behavior.
+  NSUInteger version = [sceneDict[@"version"] unsignedIntegerValue];
 
-  // spec version, incremented on breaking changes. current version is 2, lower versions have old slider range behavior.
-  NSUInteger version = [[sceneDict objectForKey:@"version"] unsignedIntegerValue];
-  //type of canvas used in the _editor_ to make the interface. If it doesn't match the above hardwareCnvasType, then we will be scaling to fit
-  canvasType editorCanvasType = canvasTypeWidePhone;
+  //type of canvas used in the _editor_ to make the interface. If it doesn't match the above
+  // hardwareCnvasType, then we will be scaling to fit
+  MMPDeviceCanvasType editorCanvasType = canvasTypeWidePhone; //default.
   // include deprecated strings
-  if([sceneDict objectForKey:@"canvasType"]){
-    NSString *typeString = (NSString*)[sceneDict objectForKey:@"canvasType"];
-    if([typeString isEqualToString:@"iPhone3p5Inch"] || [typeString isEqualToString:@"widePhone"])editorCanvasType=canvasTypeWidePhone;
-    else if([typeString isEqualToString:@"iPhone4Inch"] || [typeString isEqualToString:@"tallPhone"])editorCanvasType=canvasTypeTallPhone;
-    else if([typeString isEqualToString:@"android7Inch"] || [typeString isEqualToString:@"tallTablet"])editorCanvasType=canvasTypeTallTablet;
-    else if([typeString isEqualToString:@"iPad"] || [typeString isEqualToString:@"wideTablet"])editorCanvasType=canvasTypeWideTablet;
+  if (sceneDict [@"canvasType"]) {
+    NSString *typeString = (NSString*)sceneDict[@"canvasType"];
+    if ([typeString isEqualToString:@"iPhone3p5Inch"] || [typeString isEqualToString:@"widePhone"]) {
+      editorCanvasType = canvasTypeWidePhone;
+    } else if ([typeString isEqualToString:@"iPhone4Inch"] || [typeString isEqualToString:@"tallPhone"]) {
+      editorCanvasType = canvasTypeTallPhone;
+    } else if ([typeString isEqualToString:@"android7Inch"] || [typeString isEqualToString:@"tallTablet"]) {
+      editorCanvasType = canvasTypeTallTablet;
+    } else if ([typeString isEqualToString:@"iPad"] || [typeString isEqualToString:@"wideTablet"]) {
+      editorCanvasType = canvasTypeWideTablet;
+    }
   }
 
-  //get two necessary layout values from the JSON file
+  // get two necessary layout values from the JSON file
   // page count
-  pageCount = 1;
-  if([sceneDict objectForKey:@"pageCount"]){
-    pageCount = [[sceneDict objectForKey:@"pageCount"] intValue];
-    if(pageCount<=0)pageCount=1;
+  _pageCount = 1; //default.
+  if (sceneDict[@"pageCount"]) {
+    _pageCount = [sceneDict[@"pageCount"] intValue];
+    if (_pageCount <= 0) {
+      _pageCount = 1;
+    }
   }
 
-  //orientation and init scrollview
-  BOOL isOrientationLandscape = NO;
-  if([sceneDict objectForKey:@"isOrientationLandscape"]){
-    isOrientationLandscape = [[sceneDict objectForKey:@"isOrientationLandscape"] boolValue];
+  // get orientation and init scrollview
+  BOOL isOrientationLandscape = NO; //default.
+  if (sceneDict[@"isOrientationLandscape"]) {
+    isOrientationLandscape = [sceneDict[@"isOrientationLandscape"] boolValue];
   }
 
   //get layout of the scrollview that holds the GUI
-  float zoomFactor=1;
+  float zoomFactor = 1;
   CGRect scrollViewFrame;
 
   CGSize hardwareCanvasSize;
@@ -996,7 +1076,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   CGSize docCanvasSize;
   CGFloat canvasWidth, canvasHeight;
   CGFloat canvasRatio;
-  switch(editorCanvasType){
+  switch(editorCanvasType) {
     case canvasTypeWidePhone:
       docCanvasSize = isOrientationLandscape ? CGSizeMake(480, 320) : CGSizeMake(320, 480);
       break;
@@ -1019,298 +1099,343 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     zoomFactor = hardwareCanvasSize.width / docCanvasSize.width;
     canvasWidth = hardwareCanvasSize.width ;
     canvasHeight = canvasWidth / canvasRatio;
-    scrollViewFrame = CGRectMake(0, (hardwareCanvasSize.height - canvasHeight) / 2.0f, canvasWidth, canvasHeight);
+    scrollViewFrame = CGRectMake(0,
+                                 (hardwareCanvasSize.height - canvasHeight) / 2.0f,
+                                 canvasWidth,
+                                 canvasHeight);
   } else {
     // The doc canvas has a taller aspect ratio thatn the hardware canvas;
     // It will take the height of the screen and get letterboxed on the sides.
     zoomFactor = hardwareCanvasSize.height/ docCanvasSize.height;
     canvasHeight = hardwareCanvasSize.height;
     canvasWidth = canvasHeight * canvasRatio;
-    scrollViewFrame = CGRectMake((hardwareCanvasSize.width - canvasWidth) / 2.0f, 0, canvasWidth, canvasHeight);
+    scrollViewFrame = CGRectMake((hardwareCanvasSize.width - canvasWidth) / 2.0f,
+                                 0,
+                                 canvasWidth,
+                                 canvasHeight);
   }
 
+  _scrollView = [[UIScrollView alloc]initWithFrame:scrollViewFrame];
+  _scrollInnerView = [[UIView alloc]initWithFrame:CGRectMake(0,
+                                                             0,
+                                                             docCanvasSize.width*_pageCount,
+                                                             docCanvasSize.height)];
 
-  scrollView = [[UIScrollView alloc]initWithFrame:scrollViewFrame];
-  scrollInnerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, docCanvasSize.width*pageCount, docCanvasSize.height)];
+  [_scrollView setContentSize:_scrollInnerView.frame.size];
+  [_scrollView addSubview:_scrollInnerView];
 
-  [scrollView setContentSize:scrollInnerView.frame.size];
-  [scrollView addSubview:scrollInnerView];
-
-  if(isOrientationLandscape){//rotate
-    isLandscape = YES;
-    CGPoint rotatePoint = CGPointMake(hardwareCanvasSize.height / 2.0f, hardwareCanvasSize.width / 2.0f);
-    scrollView.center = rotatePoint;
-    if(_flipped){
-      scrollView.transform = CGAffineTransformMakeRotation(M_PI_2+M_PI);
-    }
-    else {
-      scrollView.transform = CGAffineTransformMakeRotation(M_PI_2);
+  if (isOrientationLandscape) { //rotate
+    _isLandscape = YES;
+    CGPoint rotatePoint =
+        CGPointMake(hardwareCanvasSize.height / 2.0f, hardwareCanvasSize.width / 2.0f);
+    _scrollView.center = rotatePoint;
+    if (_uiIsFlipped) {
+      _scrollView.transform = CGAffineTransformMakeRotation(M_PI_2+M_PI);
+    } else {
+      _scrollView.transform = CGAffineTransformMakeRotation(M_PI_2);
     }
   } else {
-    isLandscape = NO;
-    if(_flipped){
-      scrollView.transform = CGAffineTransformMakeRotation(M_PI);
+    _isLandscape = NO;
+    if (_uiIsFlipped) {
+      _scrollView.transform = CGAffineTransformMakeRotation(M_PI);
     }
   }
 
-  scrollView.pagingEnabled = YES;
-  scrollView.delaysContentTouches=NO;
-  scrollView.maximumZoomScale = zoomFactor;
-  scrollView.minimumZoomScale = zoomFactor;
-  [scrollView setDelegate:self];
-  [self.view addSubview:scrollView];
+  _scrollView.pagingEnabled = YES;
+  _scrollView.delaysContentTouches = NO;
+  _scrollView.maximumZoomScale = zoomFactor;
+  _scrollView.minimumZoomScale = zoomFactor;
+  [_scrollView setDelegate:self];
+  [self.view addSubview:_scrollView];
 
-  //[self connectPorts];//conencts to value of currPortNumber
-
-  //start page
+  // start page
   int startPageIndex = 0;
-  if([sceneDict objectForKey:@"startPageIndex"]){
-    startPageIndex = [[sceneDict objectForKey:@"startPageIndex"] intValue];
+  if (sceneDict[@"startPageIndex"]) {
+    startPageIndex = [sceneDict[@"startPageIndex"] intValue];
     //check if beyond pageCount, then set to last page
-    if(startPageIndex>pageCount)startPageIndex=pageCount-1;
+    if (startPageIndex > _pageCount) {
+      startPageIndex = _pageCount - 1;
+    }
   }
 
-  //bg color
-  if([sceneDict objectForKey:@"backgroundColor"]) {
-    scrollView.backgroundColor=[MeControl colorFromRGBArray:[sceneDict objectForKey:@"backgroundColor"]];
-    [_settingsButton setBarColor:[MeControl inverseColorFromRGBArray:[sceneDict objectForKey:@"backgroundColor"]]];
+  // bg color
+  if (sceneDict[@"backgroundColor"]) {
+    _scrollView.backgroundColor = [MeControl colorFromRGBArray:sceneDict[@"backgroundColor"]];
+    [_settingsButton setBarColor:[MeControl inverseColorFromRGBArray:sceneDict[@"backgroundColor"]]];
   } else {
     [_settingsButton setBarColor:[UIColor whiteColor]]; //default, but shouldn't happen.
   }
 
-  if([sceneDict objectForKey:@"menuButtonColor"]) {
-    [_settingsButton setBarColor:
-         [MeControl colorFromRGBAArray:[sceneDict objectForKey:@"menuButtonColor"]]];
+  if (sceneDict[@"menuButtonColor"]) {
+    [_settingsButton setBarColor:[MeControl colorFromRGBAArray:sceneDict[@"menuButtonColor"]]];
   }
 
-  //get array of all widgets
-  NSArray* controlArray = [sceneDict objectForKey:@"gui"];
-  if(!controlArray)return NO;
-  //check that it is an array of NSDictionary
-  if([controlArray count]>0 && ![[controlArray objectAtIndex:0] isKindOfClass:[NSDictionary class]])return NO;
+  // get array of all widgets
+  NSArray *controlArray = sceneDict[@"gui"];
+  if (!controlArray) {
+    return NO;
+  }
 
-  //step through each gui widget, big loop each time
-  for(NSDictionary* currDict in controlArray){
-    MeControl* currObject;
+  // check that it is an array of NSDictionary
+  if (controlArray.count > 0 && ![controlArray[0] isKindOfClass:[NSDictionary class]]) {
+    return NO;
+  }
+
+  // step through each gui widget, big loop each time
+  for (NSDictionary *currDict in controlArray) {
+    MeControl *currObject;
 
     //start with elements common to all widget subclasses
     //frame - if no frame is found, skip this widget
-    NSArray* frameRectArray = [currDict objectForKey:@"frame"];
-    if(!frameRectArray)continue;
+    NSArray *frameRectArray = currDict[@"frame"];
+    if (frameRectArray.count != 4) {
+      continue;
+    }
 
-    CGRect frame = CGRectMake([[frameRectArray objectAtIndex:0] floatValue], [[frameRectArray objectAtIndex:1] floatValue], [[frameRectArray objectAtIndex:2] floatValue], [[frameRectArray objectAtIndex:3] floatValue]);
+    CGRect frame = CGRectMake([frameRectArray[0] floatValue],
+                              [frameRectArray[1] floatValue],
+                              [frameRectArray[2] floatValue],
+                              [frameRectArray[3] floatValue]);
 
 
-    //widget color
-    UIColor* color = [UIColor colorWithRed:1 green:1 blue:1 alpha:1];
-    if([currDict objectForKey:@"color"]){
-      NSArray* colorArray = [currDict objectForKey:@"color"];
-      if([colorArray count]==3)//old format before translucency
-        color =[MeControl colorFromRGBArray:colorArray];
-      else if([colorArray count]==4)//newer format including transulcency
-        color =[MeControl colorFromRGBAArray:colorArray];
+    // widget color
+    UIColor *color = [UIColor colorWithRed:1 green:1 blue:1 alpha:1]; // default.
+    if (currDict[@"color"]) {
+      NSArray *colorArray = currDict[@"color"];
+      if (colorArray.count == 3) { //old format before translucency
+        color = [MeControl colorFromRGBArray:colorArray];
+      } else if (colorArray.count == 4) { //newer format including transulcency
+        color = [MeControl colorFromRGBAArray:colorArray];
+      }
     }
 
     //widget highlight color
-    UIColor* highlightColor = [UIColor grayColor];
-    if([currDict objectForKey:@"highlightColor"]){
-      NSArray* highlightColorArray = [currDict objectForKey:@"highlightColor"];
-      if([highlightColorArray count]==3)
-        highlightColor =[MeControl colorFromRGBArray:highlightColorArray];
-      else if([highlightColorArray count]==4)
-        highlightColor =[MeControl colorFromRGBAArray:highlightColorArray];
+    UIColor *highlightColor = [UIColor grayColor]; // default.
+    if (currDict[@"highlightColor"]) {
+      NSArray *highlightColorArray = currDict[@"highlightColor"];
+      if (highlightColorArray.count == 3) {
+        highlightColor = [MeControl colorFromRGBArray:highlightColorArray];
+      } else if (highlightColorArray.count == 4) {
+        highlightColor = [MeControl colorFromRGBAArray:highlightColorArray];
+      }
     }
 
-    //get the subclass type, and do subclass-specific stuff
-    NSString* newObjectClass =[currDict objectForKey:@"class"];
-    if(!newObjectClass) continue;
-
-    if([newObjectClass isEqualToString:@"MMPSlider"]){
-      currObject = [[MeSlider alloc] initWithFrame:frame];
-      if([currDict objectForKey:@"isHorizontal"] ){
-        if( [[currDict objectForKey:@"isHorizontal"] boolValue]==YES )[(MeSlider*)currObject setHorizontal];
+    // get the subclass type, and do subclass-specific stuff
+    NSString *newObjectClass = currDict[@"class"];
+    if (!newObjectClass) {
+      continue;
+    }
+    if ([newObjectClass isEqualToString:@"MMPSlider"]) {
+      MeSlider *slider = [[MeSlider alloc] initWithFrame:frame];
+      currObject = slider;
+      if ([currDict[@"isHorizontal"] boolValue] == YES) {
+        [slider setHorizontal];
       }
 
-      if([currDict objectForKey:@"range"]) {
-        int range = [[currDict objectForKey:@"range"] intValue];
+      if (currDict[@"range"]) {
+        int range = [currDict[@"range"] intValue];
         if (version < 2) {
           // handle old style of slider ranges.
-          [((MeSlider*)currObject) setLegacyRange:range];
+          [slider setLegacyRange:range];
         } else {
-          [(MeSlider*)currObject setRange:range];
+          [slider setRange:range];
         }
       }
-
-    }
-    else if([newObjectClass isEqualToString:@"MMPKnob"]){
-      currObject=[[MeKnob alloc]initWithFrame:frame];// alloc] init];
-      if([currDict objectForKey:@"range"]) {
-        int range = [[currDict objectForKey:@"range"] intValue];
+    } else if ([newObjectClass isEqualToString:@"MMPKnob"]) {
+      MeKnob *knob = [[MeKnob alloc] initWithFrame:frame];
+      currObject = knob;
+      if (currDict[@"range"]) {
+        int range = [currDict[@"range"] intValue];
         if (version < 2) {
           // handle old style of knob ranges.
-          [((MeKnob*)currObject) setLegacyRange:range];
+          [knob setLegacyRange:range];
         } else {
-          [(MeKnob*)currObject setRange:range];
+          [knob setRange:range];
         }
       }
-      UIColor* indicatorColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:1];
-      if([currDict objectForKey:@"indicatorColor"]){
-        indicatorColor = [MeControl colorFromRGBAArray:[currDict objectForKey:@"indicatorColor"]];
+      UIColor *indicatorColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:1];
+      if (currDict[@"indicatorColor"]) {
+        indicatorColor = [MeControl colorFromRGBAArray:currDict[@"indicatorColor"]];
       }
-      [(MeKnob*)currObject setIndicatorColor:indicatorColor];
-    }
-    else if([newObjectClass isEqualToString:@"MMPLabel"]){
-      currObject = [[MeLabel alloc]initWithFrame:frame];
-      if([currDict objectForKey:@"text"]) [(MeLabel*)currObject setStringValue:[currDict objectForKey:@"text"]];
-      if([currDict objectForKey:@"textSize"]) [(MeLabel*)currObject setTextSize:[[currDict objectForKey:@"textSize"] intValue] ];
-      if([currDict objectForKey:@"textFont"] && [currDict objectForKey:@"textFontFamily"])
-        [(MeLabel*)currObject setFontFamily:[currDict objectForKey:@"textFontFamily"] fontName:[currDict objectForKey:@"textFont"] ];
-      if([currDict[@"hAlign"] isKindOfClass:[NSNumber class]]) {
-        ((MeLabel*)currObject).horizontalTextAlignment = [currDict[@"hAlign"] integerValue];
-      }
-      if([currDict[@"vAlign"] isKindOfClass:[NSNumber class]]) {
-        ((MeLabel*)currObject).verticalTextAlignment = [currDict[@"vAlign"] integerValue];
-      }
-      [(MeLabel*)currObject sizeToFit];
+      [knob setIndicatorColor:indicatorColor];
+    } else if ([newObjectClass isEqualToString:@"MMPLabel"]) {
+      MeLabel *label = [[MeLabel alloc] initWithFrame:frame];
+      currObject = label;
 
-    }
-    else if([newObjectClass isEqualToString:@"MMPButton"]){
-      currObject = [[MeButton alloc]initWithFrame:frame];
-    }
-    else if([newObjectClass isEqualToString:@"MMPToggle"]){
-      currObject = [[MeToggle alloc]initWithFrame:frame];
-      if([currDict objectForKey:@"borderThickness"])[(MeToggle*)currObject setBorderThickness:[[currDict objectForKey:@"borderThickness"] intValue]];
-    }
-    else if([newObjectClass isEqualToString:@"MMPXYSlider"]){
-      currObject = [[MeXYSlider alloc]initWithFrame:frame];
-    }
-    else if([newObjectClass isEqualToString:@"MMPGrid"]){
-      currObject = [[MeGrid alloc]initWithFrame:frame];
-      if([currDict objectForKey:@"mode"])[(MeGrid*)currObject setMode:[[currDict objectForKey:@"mode"] intValue]];//needs to be done before setting dim.
-      if([currDict objectForKey:@"dim"]){
-        NSArray* dimArray =[currDict objectForKey:@"dim"];
-        [(MeGrid*)currObject setDimX: [[dimArray objectAtIndex:0]intValue] Y:[[dimArray objectAtIndex:1]intValue] ];
+      if (currDict[@"text"]) {
+        label.stringValue = currDict[@"text"];
       }
-      if([currDict objectForKey:@"cellPadding"])[(MeGrid*)currObject setCellPadding:[[currDict objectForKey:@"cellPadding"] intValue]];
-      if([currDict objectForKey:@"borderThickness"])[(MeGrid*)currObject setBorderThickness:[[currDict objectForKey:@"borderThickness"] intValue]];
-    }
-    else if([newObjectClass isEqualToString:@"MMPPanel"]){
-      currObject = [[MePanel alloc]initWithFrame:frame];
-      if([currDict objectForKey:@"imagePath"]) [(MePanel*)currObject setImagePath:[currDict objectForKey:@"imagePath"] ];
-      if([currDict objectForKey:@"passTouches"]) ((MePanel*)currObject).shouldPassTouches = [[currDict objectForKey:@"passTouches"] boolValue] ;
-    }
-    else if([newObjectClass isEqualToString:@"MMPMultiSlider"]){
-      currObject = [[MeMultiSlider alloc] initWithFrame:frame];
-      if([currDict objectForKey:@"range"])
-        [(MeMultiSlider*)currObject setRange:[[currDict objectForKey:@"range"] intValue]];
-      if([currDict objectForKey:@"outputMode"])
-        ((MeMultiSlider*)currObject).outputMode = [[currDict objectForKey:@"outputMode"] integerValue];
-    }
-    else if([newObjectClass isEqualToString:@"MMPLCD"]){
+      if (currDict[@"textSize"]) {
+        label.textSize = [currDict[@"textSize"] intValue];
+      }
+      if (currDict[@"textFont"] && currDict[@"textFontFamily"]) {
+        [label setFontFamily:currDict[@"textFontFamily"] fontName:currDict[@"textFont"]];
+      }
+      if ([currDict[@"hAlign"] isKindOfClass:[NSNumber class]]) {
+        label.horizontalTextAlignment = [currDict[@"hAlign"] integerValue];
+      }
+      if ([currDict[@"vAlign"] isKindOfClass:[NSNumber class]]) {
+        label.verticalTextAlignment = [currDict[@"vAlign"] integerValue];
+      }
+      [label sizeToFit];
+    } else if ([newObjectClass isEqualToString:@"MMPButton"]) {
+      currObject = [[MeButton alloc] initWithFrame:frame];
+    } else if ([newObjectClass isEqualToString:@"MMPToggle"]) {
+      MeToggle *toggle = [[MeToggle alloc] initWithFrame:frame];
+      currObject = toggle;
+      if (currDict[@"borderThickness"]) {
+        toggle.borderThickness = [currDict[@"borderThickness"] intValue];
+      }
+    } else if ([newObjectClass isEqualToString:@"MMPXYSlider"]) {
+      currObject = [[MeXYSlider alloc]initWithFrame:frame];
+    } else if ([newObjectClass isEqualToString:@"MMPGrid"]) {
+      MeGrid *grid = [[MeGrid alloc] initWithFrame:frame];
+      currObject = grid;
+      if (currDict[@"mode"]) {
+        grid.mode = [currDict[@"mode"] intValue]; //needs to be done before setting dim.
+      }
+      if (currDict[@"dim"]) {
+        NSArray *dimArray = currDict[@"dim"];
+        if (dimArray.count == 2) {
+          [grid setDimX:[dimArray[0] intValue] Y:[dimArray[1] intValue]];
+        }
+      }
+      if (currDict[@"cellPadding"]) {
+        grid.cellPadding = [currDict[@"cellPadding"] intValue];
+      }
+      if (currDict[@"borderThickness"]) {
+        grid.borderThickness = [currDict[@"borderThickness"] intValue];
+      }
+    } else if ([newObjectClass isEqualToString:@"MMPPanel"]) {
+      MePanel *panel = [[MePanel alloc] initWithFrame:frame];
+      currObject = panel;
+      if (currDict[@"imagePath"]) {
+        panel.imagePath = currDict[@"imagePath"];
+      }
+      if (currDict[@"passTouches"]) {
+        panel.shouldPassTouches = [currDict[@"passTouches"] boolValue];
+      }
+    } else if ([newObjectClass isEqualToString:@"MMPMultiSlider"]) {
+      MeMultiSlider *multiSlider = [[MeMultiSlider alloc] initWithFrame:frame];
+      currObject = multiSlider;
+      if (currDict[@"range"]) {
+        multiSlider.range = [currDict [@"range"] intValue];
+      }
+      if (currDict[@"outputMode"]) {
+        multiSlider.outputMode = [currDict [@"outputMode"] integerValue];
+      }
+    } else if ([newObjectClass isEqualToString:@"MMPLCD"]) {
       currObject = [[MeLCD alloc] initWithFrame:frame];
-    }
-    else if([newObjectClass isEqualToString:@"MMPMultiTouch"]){
+    } else if ([newObjectClass isEqualToString:@"MMPMultiTouch"]) {
       currObject = [[MeMultiTouch alloc] initWithFrame:frame];
-    }
-    else if([newObjectClass isEqualToString:@"MMPMenu"]){
-      currObject = [[MeMenu alloc] initWithFrame:frame];
-      if([currDict objectForKey:@"title"])
-        [(MeMenu*)currObject setTitleString:[currDict objectForKey:@"title"] ];
-    }
-    else if([newObjectClass isEqualToString:@"MMPTable"]){
-      currObject = [[MeTable alloc] initWithFrame:frame];
-      if([currDict objectForKey:@"mode"])
-        [(MeTable*)currObject setMode:[[currDict objectForKey:@"mode"] intValue]];
-      if([currDict objectForKey:@"selectionColor"])
-        [(MeTable*)currObject setSelectionColor:[MeControl colorFromRGBAArray:[currDict objectForKey:@"selectionColor"]]];
-      /*if([currDict objectForKey:@"displayRange"])
-       [(MeTable*)currObject setDisplayRange:[[currDict objectForKey:@"displayRange"] integerValue]];*/
-      if([currDict objectForKey:@"displayRangeLo"])
-        [(MeTable*)currObject setDisplayRangeLo:[[currDict objectForKey:@"displayRangeLo"] floatValue]];
-      if([currDict objectForKey:@"displayRangeHi"])
-        [(MeTable*)currObject setDisplayRangeHi:[[currDict objectForKey:@"displayRangeHi"] floatValue]];
-      if([currDict objectForKey:@"displayMode"])
-        [(MeTable*)currObject setDisplayMode:[[currDict objectForKey:@"displayMode"] integerValue]];
-    }
-    else{//unkown
-      currObject = [[MeUnknown alloc] initWithFrame:frame];
-      [(MeUnknown*)currObject setWarning:newObjectClass];
+    } else if ([newObjectClass isEqualToString:@"MMPMenu"]) {
+      MeMenu *menu = [[MeMenu alloc] initWithFrame:frame];
+      currObject = menu;
+      if (currDict[@"title"]) {
+        menu.titleString = currDict[@"title"];
+      }
+    } else if ([newObjectClass isEqualToString:@"MMPTable"]) {
+      MeTable *table = [[MeTable alloc] initWithFrame:frame];
+      currObject = table;
+      if (currDict[@"mode"]) {
+        table.mode = [currDict [@"mode"] intValue];
+      }
+      if (currDict[@"selectionColor"]) {
+        table.selectionColor = [MeControl colorFromRGBAArray:currDict[@"selectionColor"]];
+      }
+      if (currDict [@"displayRangeLo"]) {
+        table.displayRangeLo = [currDict[@"displayRangeLo"] floatValue];
+      }
+      if (currDict [@"displayRangeHi"]) {
+        table.displayRangeHi = [currDict[@"displayRangeHi"] floatValue];
+      }
+      if (currDict [@"displayMode"]) {
+        table.displayMode = [currDict[@"displayMode"] integerValue];
+      }
+    } else {
+      MeUnknown *unknownWidget = [[MeUnknown alloc] initWithFrame:frame];
+      currObject = unknownWidget;
+      [unknownWidget setWarning:newObjectClass];
     }
     //end subclass-specific list
 
-    if(currObject){//if successfully created object
-      currObject.controlDelegate=self;
+    if (!currObject) { // failed to create object
+      continue;
+    } else { // if successfully created object
+      currObject.controlDelegate = self;
+      [currObject setColor:color];
+      [currObject setHighlightColor:highlightColor];
 
-      if([currObject respondsToSelector:@selector(setColor:)]){//in theory all mecontrol respond to these
-        [currObject setColor:color];
+      // set OSC address for widget
+      NSString *address = @"dummy";
+      if (currDict[@"address"]) {
+        address = currDict[@"address"];
       }
-      if([currObject respondsToSelector:@selector(setHighlightColor:)]){
-        [currObject setHighlightColor:highlightColor];
-      }
+      currObject.address = address;
 
-      //set OSC address for widget
-      NSString* address = @"dummy";
-      if([currDict objectForKey:@"address"])address = [currDict objectForKey:@"address"];
-      [currObject setAddress:address];
-
-      // New data structure
-      NSMutableArray *addressArray = [allGUIControl objectForKey:currObject.address];
+      // Add to address array in _addressToGUIObjectsDict
+      NSMutableArray *addressArray = _addressToGUIObjectsDict[currObject.address];
       if (!addressArray) {
-        addressArray = [[NSMutableArray alloc] init];
-        [allGUIControl setObject:addressArray forKey:currObject.address];
+        addressArray = [NSMutableArray array];
+        _addressToGUIObjectsDict[currObject.address] = addressArray;
       }
       [addressArray addObject:currObject];
 
-      [scrollInnerView addSubview:currObject];
+      [_scrollInnerView addSubview:currObject];
     }
-
   }
   //end of big loop through widgets
 
   //scroll to start page, and put settings button on top
-  [scrollView zoomToRect:CGRectMake(docCanvasSize.width*startPageIndex, 0, docCanvasSize.width, docCanvasSize.height) animated:NO];
+  [_scrollView zoomToRect:CGRectMake(docCanvasSize.width * startPageIndex,
+                                     0,
+                                     docCanvasSize.width,
+                                     docCanvasSize.height)
+                 animated:NO];
   _settingsButton.transform = CGAffineTransformMakeRotation(0);
-  _settingsButton.frame = CGRectMake(_settingsButtonOffset, _settingsButtonOffset, _settingsButtonDim, _settingsButtonDim);
-  [scrollView addSubview:_settingsButton];
+  _settingsButton.frame = CGRectMake(_settingsButtonOffset,
+                                     _settingsButtonOffset,
+                                     _settingsButtonDim,
+                                     _settingsButtonDim);
+  [_scrollView addSubview:_settingsButton];
 
   ///===PureData patch
-
-  if([sceneDict objectForKey:@"pdFile"]){
-    NSString* filename = [sceneDict objectForKey:@"pdFile"];
+  if (sceneDict[@"pdFile"]) {
+    NSString *filename = sceneDict[@"pdFile"];
 
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *publicDocumentsDir = [paths objectAtIndex:0];
 
-    openPDFile = [PdFile openFileNamed:filename path:publicDocumentsDir];//attempt to open
+    _openPDFile = [PdFile openFileNamed:filename path:publicDocumentsDir];
     NSLog(@"open pd file %@", filename );
 
-    if(openPDFile==nil){//failure to load the named patch
+    if (_openPDFile == nil) { //failure to load the named patch
       NSLog(@"did not find named patch!" );
+      NSString *message =
+          [NSString stringWithFormat:@"Pd file %@ not found, make sure you add it to Documents in iTunes",
+               filename];
       UIAlertView *alert = [[UIAlertView alloc]
                             initWithTitle: @"Pd file not found"
-                            message: [NSString stringWithFormat:@"Pd file %@ not found, make sure you add it to Documents in iTunes", filename]
+                            message:message
                             delegate: nil
                             cancelButtonTitle:@"OK"
                             otherButtonTitles:nil];
       [alert show];
 
-    } else {//success
+    } else { //success
       //refresh tables
       //TODO optimize! make an array of tables only
-      for (NSArray *addressArray in [allGUIControl allValues]) {
-        for(MeControl *control in addressArray){
+      for (NSArray *addressArray in [_addressToGUIObjectsDict allValues]) {
+        for(MeControl *control in addressArray) {
           if ([control isKindOfClass:[MeTable class]]) {
             // use set to quash multiple loads of same table/address - not needed in app, but needed in editor.
             [(MeTable*)control loadTable];
-
           }
         }
       }
-
     }
-  }
-  else{//if no JSON entry found for file, say so
-    openPDFile=nil;
+  } else {//if no JSON entry found for file, say so
+    _openPDFile=nil;
     NSLog(@"did not find a patch name!" );
     UIAlertView *alert = [[UIAlertView alloc]
                           initWithTitle: @"Pd file not specified"
@@ -1324,63 +1449,67 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   return YES;
 }
 
-
 - (void)setAudioInputEnabled:(BOOL)enabled {
   _inputEnabled = enabled;
   [self updateAudioState];
 }
 
-#pragma mark scrollview delegate
+#pragma mark - scrollview delegate
+
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
-  return scrollInnerView;
+  return _scrollInnerView;
 }
 
--(void)scrollViewDidEndDecelerating:(UIScrollView *)inScrollView {
-  if (inScrollView==scrollView) {
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)inScrollView {
+  if (inScrollView == _scrollView) {
     int page = inScrollView.contentOffset.x / inScrollView.frame.size.width;
-    [PdBase sendList:[NSArray arrayWithObjects:@"/page", [NSNumber numberWithInt:page], nil] toReceiver:@"fromSystem"];
+    [PdBase sendList:@[ @"/page", @(page) ] toReceiver:@"fromSystem"];
   }
 }
 
-#pragma mark ControlDelegate
+#pragma mark - ControlDelegate
+
 //I want to send a message into PD patch from a gui widget
--(void)sendGUIMessageArray:(NSArray*)msgArray{
+- (void)sendGUIMessageArray:(NSArray *)msgArray {
   [PdBase sendList:msgArray toReceiver:@"fromGUI"];
 }
 
--(UIColor*)patchBackgroundColor{
-  return scrollView.backgroundColor;
+- (UIColor *)patchBackgroundColor {
+  return _scrollView.backgroundColor;
 }
 
--(UIInterfaceOrientation)orientation{
-  if (isLandscape) {
-    if (_flipped) {
+- (UIInterfaceOrientation)orientation {
+  if (_isLandscape) {
+    if (_uiIsFlipped) {
       return UIInterfaceOrientationLandscapeLeft;
     } else {
       return UIInterfaceOrientationLandscapeRight;
     }
   } else {
-    if (_flipped) {
+    if (_uiIsFlipped) {
       return UIInterfaceOrientationPortraitUpsideDown;
     } else {
       return UIInterfaceOrientationPortrait;
     }
   }
 }
+
 //not used
 /*- (void)receiveSymbol:(NSString *)symbol fromSource:(NSString *)source{
- }*/
+}*/
 
-+ (OSCMessage*) oscMessageFromList:(NSArray*)list{
-  OSCMessage *msg = [OSCMessage createWithAddress:[list objectAtIndex:0]];
-  for(id item in [list subarrayWithRange:NSMakeRange(1, [list count]-1)]){
-    if([item isKindOfClass:[NSString class]]) [msg addString:item];
-    else if([item isKindOfClass:[NSNumber class]]){
-      NSNumber* itemNumber = (NSNumber*)item;
-      if([MobMuPlatUtil numberIsFloat:itemNumber]) {
++ (OSCMessage*) oscMessageFromList:(NSArray *)list {
+  if (!list.count) {
+    return nil;
+  }
+  OSCMessage *msg = [OSCMessage createWithAddress:list[0]];
+  for (id item in [list subarrayWithRange:NSMakeRange(1, list.count - 1)]) {
+    if ([item isKindOfClass:[NSString class]]) [msg addString:item];
+    else if ([item isKindOfClass:[NSNumber class]]) {
+      NSNumber *itemNumber = (NSNumber*)item;
+      if ([MobMuPlatUtil numberIsFloat:itemNumber]) {
         [msg addFloat:[item floatValue]];
-      }
-      else {
+      } else {
         [msg addInt:[item intValue]]; //never used, right?
       }
     }
@@ -1389,188 +1518,174 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 }
 
 //PureData has sent out a message from the patch (from a receive object, we look for messages from "toNetwork","toGUI","toSystem")
-- (void)receiveList:(NSArray *)list fromSource:(NSString *)source{
-  //NSLog(@"rec: %@", list);
-  if([list count]==0){ //guarantee at least one item in array.
+- (void)receiveList:(NSArray *)list fromSource:(NSString *)source {
+  if (!list.count) { //guarantee at least one item in array.
     NSLog(@"got zero args from %@", source);
-    return;//protect against bad elements that got dropped from array...
+    return; //protect against bad elements that got dropped from array...
   }
-  if([source isEqualToString:@"toNetwork"]){
-    if ([list count]==0) return;
-    NSString *address = [list objectAtIndex:0];
+  if ([source isEqualToString:@"toNetwork"]) {
+    NSString *address = list[0];
     if (![address isKindOfClass:[NSString class]]) {
       NSLog(@"toNetwork first element is not string");
       return;
     }
-    //look for LANdini/PaC- this clause looks for /send, /send/GD, /send/OGD.
-    if([address isEqualToString:@"/send"] ||
+    //look for LANdini/P&C- this clause looks for /send, /send/GD, /send/OGD.
+    if ([address isEqualToString:@"/send"] ||
        [address isEqualToString:@"/send/GD"] ||
        [address isEqualToString:@"/send/OGD"] ) {
-      if (llm.enabled|| pacm.enabled ) {
-        [outPortToNetworkingModules sendThisPacket:[OSCPacket createWithContent:[MMPViewController oscMessageFromList:list]]];
-      }  else {
+      if (_llm.enabled || _pacm.enabled) {
+        OSCMessage *message = [MMPViewController oscMessageFromList:list];
+        if (message) {
+          [_outPortToNetworkingModules sendThisPacket:[OSCPacket createWithContent:message]];
+        }
+      } else {
         //landini /ping & connect disabled: remake message without the first 2 landini elements and send out normal port
-        if([list count]>2){
-          NSArray* newList = [list subarrayWithRange:NSMakeRange(2, [list count]-2)];
-          [outPort sendThisPacket:[OSCPacket createWithContent:[MMPViewController oscMessageFromList:newList]]];
+        if (list.count > 2) {
+          NSArray *newList = [list subarrayWithRange:NSMakeRange(2, list.count - 2)];
+          OSCMessage *message = [MMPViewController oscMessageFromList:newList];
+          if (message) {
+            [_oscOutPort sendThisPacket:[OSCPacket createWithContent:message]];
+          }
         }
       }
-    }
-    //other landini/P&C messages, keep passing to landini
-    else if ([address isEqualToString:@"/networkTime"] ||
-             [address isEqualToString:@"/numUsers"] ||
-             [address isEqualToString:@"/userNames"] ||
-             [address isEqualToString:@"/myName"] ||
-      //
-             [address isEqualToString:@"/playerCount"] ||
-             [address isEqualToString:@"/playerNumberSet"] ||
-             [address isEqualToString:@"/playerIpList"] ||
-             [address isEqualToString:@"/myPlayerNumber"] ) {
-
-
-      [outPortToNetworkingModules sendThisPacket:[OSCPacket createWithContent:[MMPViewController oscMessageFromList:list]]];
+    } else if ([address isEqualToString:@"/networkTime"] || //other landini/P&C messages, keep passing to landini
+               [address isEqualToString:@"/numUsers"] ||
+               [address isEqualToString:@"/userNames"] ||
+               [address isEqualToString:@"/myName"] ||
+               [address isEqualToString:@"/playerCount"] ||
+               [address isEqualToString:@"/playerNumberSet"] ||
+               [address isEqualToString:@"/playerIpList"] ||
+               [address isEqualToString:@"/myPlayerNumber"]) {
+      OSCMessage *message = [MMPViewController oscMessageFromList:list];
+      if (message) {
+        [_outPortToNetworkingModules sendThisPacket:[OSCPacket createWithContent:message]];
+      }
     } else if ([address isEqualToString:@"/landini/enable"] &&
-               [list count] >= 2 &&
+               list.count >= 2 &&
                [list[1] isKindOfClass:[NSNumber class]]) {
-      llm.enabled = [list[1] floatValue] > 0;
+      _llm.enabled = ([list[1] floatValue] > 0);
     } else if ([address isEqualToString:@"/pingAndConnect/enable"] &&
-               [list count] >= 2 &&
+               list.count >= 2 &&
                [list[1] isKindOfClass:[NSNumber class]]) {
-      pacm.enabled = [list[1] floatValue] > 0;
+      _pacm.enabled = ([list[1] floatValue] > 0);
     } else if ([address isEqualToString:@"/landini/isEnabled"]) {
-      NSArray* msgArray = @[ @"/landini/isEnabled", [NSNumber numberWithBool:llm.enabled] ];
+      NSArray *msgArray = @[ @"/landini/isEnabled", [NSNumber numberWithBool:_llm.enabled] ];
       [PdBase sendList:msgArray toReceiver:@"fromNetwork"];
     } else if ([address isEqualToString:@"/pingAndConnect/isEnabled"]) {
-      NSArray* msgArray = @[ @"/pingAndConnect/isEnabled", [NSNumber numberWithBool:pacm.enabled] ];
+      NSArray *msgArray = @[ @"/pingAndConnect/isEnabled", [NSNumber numberWithBool:_pacm.enabled] ];
       [PdBase sendList:msgArray toReceiver:@"fromNetwork"];
-    } else if ([address isEqualToString:@"/pingAndConnect/myPlayerNumber"] &&
-               [list count] >= 2) {
+    } else if ([address isEqualToString:@"/pingAndConnect/myPlayerNumber"] && list.count >= 2) {
       if ([list[1] isKindOfClass:[NSString class]] && [list[1] isEqualToString:@"server"]) {
-        pacm.playerNumber = -1; //server val
+        _pacm.playerNumber = -1; // -1 is the "server" value.
       } else if ([list[1] isKindOfClass:[NSNumber class]]) {
         // no bounds/error checking!
-        pacm.playerNumber = [list[1] integerValue];
+        _pacm.playerNumber = [list[1] integerValue];
       }
     } else{ //not for landini - send out regular!
-      [outPort sendThisPacket:[OSCPacket createWithContent:[MMPViewController oscMessageFromList:list]]];
+      OSCMessage *message = [MMPViewController oscMessageFromList:list];
+      if (message) {
+        [_oscOutPort sendThisPacket:[OSCPacket createWithContent:message]];
+      }
     }
-  }
-
-  else if([source isEqualToString:@"toGUI"]){
-    NSMutableArray *addressArray = [allGUIControl objectForKey:[list objectAtIndex:0]];
-    for (MeControl *control in addressArray) { //addressArray can be nil, and will just skip over this...
+  } else if ([source isEqualToString:@"toGUI"]) {
+    NSMutableArray *addressArray = _addressToGUIObjectsDict[list[0]]; // addressArray can be nil.
+    for (MeControl *control in addressArray) {
       [control receiveList:[list subarrayWithRange:NSMakeRange(1, [list count]-1)]];
     }
-  }
-
-  else if([source isEqualToString:@"toSystem"]){
+  } else if ([source isEqualToString:@"toSystem"]) {
     // TODO array size checking!
-    //for some reason, there is a conflict with the audio session, and sending a command to vibrate doesn't work...
-    if([[list objectAtIndex:0] isEqualToString:@"/vibrate"]){
-      //printf("\nvib?");
-      if([list count]>1 && [[list objectAtIndex:1] isKindOfClass:[NSNumber class]] && [[list objectAtIndex:1] floatValue]==2){
+    //for some reason, there is a conflict with the audio session, and sending a command to vibrate
+    // doesn't work unless user flisp audio switch
+    if ([list[0] isEqualToString:@"/vibrate"]) {
+      if (list.count > 1 && [list[1] isKindOfClass:[NSNumber class]] && [list[1] floatValue] == 2) {
         AudioServicesPlaySystemSound(1311); //"/vibrate 2"
-      }
-      else{ //"/vibrate" or "vibrate 1 or non-2
+      } else{ //"/vibrate" or "vibrate 1 or non-2
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
       }
-    }
-    //camera flash
-    if([list count] == 2 &&
-       [[list objectAtIndex:0] isEqualToString:@"/flash"] &&
-       [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]) {
-      float val = [[list objectAtIndex:1] floatValue];
-      if ([avCaptureDevice hasTorch]) {
-        [avCaptureDevice lockForConfiguration:nil];
-        if(val>0)[avCaptureDevice setTorchMode:AVCaptureTorchModeOn];  // use AVCaptureTorchModeOff to turn off
-        else [avCaptureDevice setTorchMode:AVCaptureTorchModeOff];
-        [avCaptureDevice unlockForConfiguration];
-      }
-    }
-    else if([list count] == 2 &&
-            [[list objectAtIndex:0] isEqualToString:@"/setAccelFrequency"] &&
-            [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]){
-      float val = [[list objectAtIndex:1] floatValue];
-      if(val<0.01)val=0.01;//clip
-      if(val>100)val=100;
-      if(val>0)
-        motionManager.accelerometerUpdateInterval = 1.0/val;
-    }
-    else if([[list objectAtIndex:0] isEqualToString:@"/getAccelFrequency"]){
-      NSArray* msgArray=[NSArray arrayWithObjects:@"/accelFrequency", [NSNumber numberWithFloat:motionManager.accelerometerUpdateInterval], nil];
-      [PdBase sendList:msgArray toReceiver:@"fromSystem"];
-    }
-    else if([list count] == 2 &&
-            [[list objectAtIndex:0] isEqualToString:@"/setGyroFrequency"] &&
-            [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]) {
-      float val = [[list objectAtIndex:1] floatValue];
-      if(val<0.01)val=0.01;//clip
-      if(val>100)val=100;
-      if(val>0)
-        motionManager.gyroUpdateInterval=1.0/val;
-    }
-    else if([[list objectAtIndex:0] isEqualToString:@"/getGyroFrequency"]){
-      NSArray* msgArray=[NSArray arrayWithObjects:@"/gyroFrequency", [NSNumber numberWithFloat:motionManager.gyroUpdateInterval], nil];
-      [PdBase sendList:msgArray toReceiver:@"fromSystem"];
-    }
-    else if([list count] == 2 &&
-            [[list objectAtIndex:0] isEqualToString:@"/setMotionFrequency"] &&
-            [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]) {
-      float val = [[list objectAtIndex:1] floatValue];
-      if(val<0.01)val=0.01;//clip
-      if(val>100)val=100;
-      if(val>0)
-        motionManager.deviceMotionUpdateInterval=1.0/val;
-    }
-    else if([[list objectAtIndex:0] isEqualToString:@"/getMotionFrequency"]){
-      NSArray* msgArray=[NSArray arrayWithObjects:@"/motionFrequency", [NSNumber numberWithFloat:motionManager.deviceMotionUpdateInterval], nil];
-      [PdBase sendList:msgArray toReceiver:@"fromSystem"];
-    }
-    //GPS
-    else if([list count] == 2 &&
-            [[list objectAtIndex:0] isEqualToString:@"/enableLocation"] &&
-            [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]) {
-      float val = [[list objectAtIndex:1] floatValue];
-      if(val > 0) {
-        if ([locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
-          [locationManager performSelector:@selector(requestWhenInUseAuthorization)];
+    } else if (list.count == 2 && //camera flash
+               [list[0] isEqualToString:@"/flash"] &&
+               [list[1] isKindOfClass:[NSNumber class]]) {
+      float val = [list[1] floatValue];
+      if ([_avCaptureDevice hasTorch]) {
+        [_avCaptureDevice lockForConfiguration:nil];
+        if (val > 0) {
+          [_avCaptureDevice setTorchMode:AVCaptureTorchModeOn];
+        } else {
+          [_avCaptureDevice setTorchMode:AVCaptureTorchModeOff];
         }
-        [locationManager startUpdatingLocation];
-        [locationManager startUpdatingHeading];
+        [_avCaptureDevice unlockForConfiguration];
+      }
+    } else if (list.count == 2 &&
+               [list[0] isEqualToString:@"/setAccelFrequency"] &&
+               [list[1] isKindOfClass:[NSNumber class]]) {
+      float val = [list[1] floatValue];
+      val = (MIN(MAX(val,0.01), 100)); // clip .01 to 100
+      _motionManager.accelerometerUpdateInterval = 1.0 / val;
+    } else if ([list[0] isEqualToString:@"/getAccelFrequency"]) {
+      NSArray *msgArray = @[ @"/accelFrequency", @(_motionManager.accelerometerUpdateInterval) ];
+      [PdBase sendList:msgArray toReceiver:@"fromSystem"];
+    } else if (list.count == 2 &&
+            [list[0] isEqualToString:@"/setGyroFrequency"] &&
+            [list[1] isKindOfClass:[NSNumber class]]) {
+      float val = [list[1] floatValue];
+      val = (MIN(MAX(val,0.01), 100)); // clip .01 to 100
+      _motionManager.gyroUpdateInterval = 1.0 / val;
+    } else if ([list[0] isEqualToString:@"/getGyroFrequency"]) {
+      NSArray *msgArray = @[ @"/gyroFrequency", @(_motionManager.gyroUpdateInterval)];
+      [PdBase sendList:msgArray toReceiver:@"fromSystem"];
+    } else if (list.count == 2 &&
+               [list[0] isEqualToString:@"/setMotionFrequency"] &&
+               [list[1] isKindOfClass:[NSNumber class]]) {
+      float val = [list[1] floatValue];
+      val = (MIN(MAX(val,0.01), 100)); // clip .01 to 100
+      _motionManager.deviceMotionUpdateInterval = 1.0 / val;
+    } else if ([list[0] isEqualToString:@"/getMotionFrequency"]) {
+      NSArray *msgArray = @[ @"/motionFrequency", @(_motionManager.deviceMotionUpdateInterval) ];
+      [PdBase sendList:msgArray toReceiver:@"fromSystem"];
+    } else if (list.count == 2 && //GPS
+               [list[0] isEqualToString:@"/enableLocation"] &&
+               [list[1] isKindOfClass:[NSNumber class]]) {
+      float val = [list[1] floatValue];
+      if (val > 0) {
+        if ([_locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+          [_locationManager performSelector:@selector(requestWhenInUseAuthorization)];
+        }
+        [_locationManager startUpdatingLocation];
+        [_locationManager startUpdatingHeading];
       }
       else {
-        [locationManager stopUpdatingLocation ];
-        [locationManager stopUpdatingHeading];
+        [_locationManager stopUpdatingLocation ];
+        [_locationManager stopUpdatingHeading];
       }
-    }
-    else if([list count] == 2 &&
-            [[list objectAtIndex:0] isEqualToString:@"/setDistanceFilter"] &&
-            [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]) {
-      float val = [[list objectAtIndex:1] floatValue];
-      if(val > 0) {
-        [locationManager setDistanceFilter:val];
+    } else if (list.count == 2 &&
+               [list[0] isEqualToString:@"/setDistanceFilter"] &&
+               [list[1] isKindOfClass:[NSNumber class]]) {
+      float val = [list[1] floatValue];
+      if (val > 0) {
+        [_locationManager setDistanceFilter:val];
+      } else {
+        [_locationManager setDistanceFilter:kCLDistanceFilterNone];
       }
-      else [locationManager setDistanceFilter:kCLDistanceFilterNone];
-    }
-    else if([[list objectAtIndex:0] isEqualToString:@"/getDistanceFilter"]){
-      NSArray* msgArray=[NSArray arrayWithObjects:@"/distanceFilter", [NSNumber numberWithFloat:locationManager.distanceFilter], nil];
+    } else if ([list[0] isEqualToString:@"/getDistanceFilter"]) {
+      NSArray *msgArray = @[ @"/distanceFilter", @(_locationManager.distanceFilter) ];
       [PdBase sendList:msgArray toReceiver:@"fromSystem"];
-    }
-    //Reachability
-    else if([[list objectAtIndex:0] isEqualToString:@"/getReachability"]){
-      NSArray* msgArray=[NSArray arrayWithObjects:@"/reachability", [NSNumber numberWithFloat:[reach isReachable]? 1.0f : 0.0f ], [MMPViewController fetchSSIDInfo], nil];
+    } else if ([list[0] isEqualToString:@"/getReachability"]) { //Reachability
+      NSArray *msgArray = @[ @"/reachability",
+                             @([_reach isReachable]? 1.0f : 0.0f),
+                             [MMPViewController fetchSSIDInfo] ];
       [PdBase sendList:msgArray toReceiver:@"fromSystem"];
-    }
-    else if([list count] == 2 &&
-            [[list objectAtIndex:0] isEqualToString:@"/setPage"] &&
-            [[list objectAtIndex:1] isKindOfClass:[NSNumber class]]) {
-      int page = [[list objectAtIndex:1] intValue];
-      // clip
-      if(page < 0)page=0;
-      if (page > pageCount-1)page=pageCount-1;
+    } else if (list.count == 2 &&
+               [list[0] isEqualToString:@"/setPage"] &&
+               [list[1] isKindOfClass:[NSNumber class]]) {
+      int pageIndex = [[list objectAtIndex:1] intValue];
+      pageIndex = MIN(MAX(pageIndex,0), _pageCount-1); // clip 0 to pageCout-1;
 
-      [scrollView zoomToRect:CGRectMake(page * scrollView.frame.size.width, 0, scrollView.frame.size.width, scrollView.frame.size.height) animated:YES];
-    } else if ([[list objectAtIndex:0] isEqualToString:@"/getTime"] ){
+      [_scrollView zoomToRect:CGRectMake(pageIndex * _scrollView.frame.size.width,
+                                         0,
+                                         _scrollView.frame.size.width,
+                                         _scrollView.frame.size.height)
+                     animated:YES];
+    } else if ([list[0] isEqualToString:@"/getTime"] ) {
       NSDate *now = [NSDate date];
       NSDateFormatter *humanDateFormat = [[NSDateFormatter alloc] init];
       [humanDateFormat setDateFormat:@"hh:mm:ss z, d MMMM yyy"];
@@ -1582,31 +1697,33 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
        NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit
                                       fromDate:now];
       int ms = (int)(fmod([now timeIntervalSince1970], 1) * 1000);
-      NSArray *msgArray = [NSArray arrayWithObjects:@"/timeList", [NSNumber numberWithInteger:[components year]], [NSNumber numberWithInteger:[components month]], [NSNumber numberWithInteger:[components day]], [NSNumber numberWithInteger:[components hour]], [NSNumber numberWithInteger:[components minute]], [NSNumber numberWithInteger:[components second]], [NSNumber numberWithInt:ms], nil];
+      NSArray *msgArray = @[ @"/timeList", @([components year]), @([components month]),
+                             @([components day]), @([components hour]), @([components minute]),
+                             @([components second]), @(ms)];
       [PdBase sendList:msgArray toReceiver:@"fromSystem"];
 
-      NSArray *msgArray2 = [NSArray arrayWithObjects:@"/timeString", humanDateString, nil];
+      NSArray *msgArray2 = @[ @"/timeString", humanDateString ];
       [PdBase sendList:msgArray2 toReceiver:@"fromSystem"];
-    } else if ([[list objectAtIndex:0] isEqualToString:@"/getIpAddress"] ){
-      NSString *ipAddress = [MMPNetworkingUtils ipAddress];//[LANdiniLANManager getIPAddress]; //String, nil if not found
+    } else if ([[list objectAtIndex:0] isEqualToString:@"/getIpAddress"] ) {
+      NSString *ipAddress = [MMPNetworkingUtils ipAddress]; //String, nil if not found
       if (!ipAddress) {
         ipAddress = @"none";
       }
-      NSArray *msgArray = [NSArray arrayWithObjects:@"/ipAddress", ipAddress, nil];
+      NSArray *msgArray = @[ @"/ipAddress", ipAddress ];
       [PdBase sendList:msgArray toReceiver:@"fromSystem"];
-    } else if ([list count] >= 2 &&
+    } else if (list.count >= 2 &&
                [list[0] isEqualToString:@"/textDialog"] &&
                [list[1] isKindOfClass:[NSString class]]) {
       NSString *tag = list[1];
       NSString *title =
-          [[list subarrayWithRange:NSMakeRange(2,[list count]-2)] componentsJoinedByString:@" "];
+          [[list subarrayWithRange:NSMakeRange(2, list.count - 2)] componentsJoinedByString:@" "];
       [self showTextDialogWithTag:tag title:title];
-    } else if ([list count] >= 2 &&
+    } else if (list.count >= 2 &&
                [list[0] isEqualToString:@"/confirmationDialog"] &&
                [list[1] isKindOfClass:[NSString class]]) {
       NSString *tag = list[1];
       NSString *title =
-          [[list subarrayWithRange:NSMakeRange(2,[list count]-2)] componentsJoinedByString:@" "];
+          [[list subarrayWithRange:NSMakeRange(2, list.count - 2)] componentsJoinedByString:@" "];
       [self showConfirmationDialogWithTag:tag title:title];
     }
   }
@@ -1622,7 +1739,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   // Use MMP category to capture the tag with the alert.
   [alert showWithCompletion:^(UIAlertView *alertView, NSInteger buttonIndex) {
     if (buttonIndex == 1 && [alertView textFieldAtIndex:0]) {
-      NSArray* msgArray = @[ @"/textDialog", tag, [[alertView textFieldAtIndex:0] text] ];
+      NSArray *msgArray = @[ @"/textDialog", tag, [[alertView textFieldAtIndex:0] text] ];
       [PdBase sendList:msgArray toReceiver:@"fromSystem"];
     }
   }];
@@ -1636,7 +1753,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
                                         otherButtonTitles:@"Ok", nil];
   // Use MMP category to capture the tag with the alert.
   [alert showWithCompletion:^(UIAlertView *alertView, NSInteger buttonIndex) {
-    NSArray* msgArray = @[ @"/confirmationDialog", tag, @(buttonIndex) ];
+    NSArray *msgArray = @[ @"/confirmationDialog", tag, @(buttonIndex) ];
     [PdBase sendList:msgArray toReceiver:@"fromSystem"];
   }];
 }
@@ -1649,33 +1766,35 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 - (void) receivedOSCMessage:(OSCMessage *)m	{
   NSString *address = [m address];
 
-  NSMutableArray* msgArray = [[NSMutableArray alloc]init];//create blank message array for sending to pd
-  NSMutableArray* tempOSCValueArray = [[NSMutableArray alloc]init];
+  NSMutableArray *msgArray = [[NSMutableArray alloc]init]; //create blank message array for sending to pd
+  NSMutableArray *tempOSCValueArray = [[NSMutableArray alloc]init];
 
   //VV library handles receiving a value confusingly: if just one value, it has a single value in message "m" and no valueArray, if more than one value, it has valuearray. here we just shove either into a temp array to iterate over
 
-  if([m valueCount]==1)[tempOSCValueArray addObject:[m value]];
-  else for(OSCValue *val in [m valueArray])[tempOSCValueArray addObject:val];
+  if ([m valueCount] == 1) {
+    [tempOSCValueArray addObject:[m value]];
+  } else {
+    for(OSCValue *val in [m valueArray]) {
+      [tempOSCValueArray addObject:val];
+    }
+  }
 
   //first element in msgArray is address
   [msgArray addObject:address];
 
   //then iterate over all values
-  for(OSCValue *val in tempOSCValueArray){//unpack OSC value to NSNumber or NSString
-    if([val type]==OSCValInt){
+  for(OSCValue *val in tempOSCValueArray) {//unpack OSC value to NSNumber or NSString
+    if ([val type] == OSCValInt) {
       [msgArray addObject:[NSNumber numberWithInt:[val intValue]]];
-    }
-    else if([val type]==OSCValFloat){
+    } else if ([val type] == OSCValFloat) {
       [msgArray addObject:[NSNumber numberWithFloat:[val floatValue]]];
-    }
-    else if([val type]==OSCValString){
+    } else if ([val type] == OSCValString) {
       //libpd got _very_ unhappy when it received strings that it couldn't convert to ASCII. Have a check here and convert if needed. This occured when some device user names (coming from LANdini) had odd characters/encodings.
-      if ( ![[val stringValue] canBeConvertedToEncoding:NSASCIIStringEncoding] ) {
+      if (![[val stringValue] canBeConvertedToEncoding:NSASCIIStringEncoding] ) {
         NSData *asciiData = [[val stringValue] dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
         NSString *asciiString = [[NSString alloc] initWithData:asciiData encoding:NSASCIIStringEncoding];
         [msgArray addObject:asciiString];
-      }
-      else{
+      } else{
         [msgArray addObject:[val stringValue]];
       }
     }
@@ -1684,13 +1803,10 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   [PdBase sendList:msgArray toReceiver:@"fromNetwork"];
 }
 
-
 //receive shake gesture
-- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event
-{
-  if ( event.subtype == UIEventSubtypeMotionShake ){
-    NSArray* msgArray=[NSArray arrayWithObjects:@"/shake", [NSNumber numberWithInt:1], nil];
-
+- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event {
+  if (event.subtype == UIEventSubtypeMotionShake) {
+    NSArray *msgArray = @[ @"/shake", @(1) ];
     [PdBase sendList:msgArray toReceiver:@"fromSystem"];
   }
 
@@ -1726,14 +1842,12 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
          [_connectedMidiSources containsObject:connection];
 }
 
-//==== pgmidi delegate methods
-- (void) midi:(PGMidi*)midi sourceAdded:(PGMidiSource *)source
-{
-  //printf("\nmidi source added");
+#pragma mark - PGMidi delegate
+- (void)midi:(PGMidi *)midi sourceAdded:(PGMidiSource *)source {
   [settingsVC reloadMidiSources];
 }
 
-- (void) midi:(PGMidi*)midi sourceRemoved:(PGMidiSource *)source{
+- (void)midi:(PGMidi *)midi sourceRemoved:(PGMidiSource *)source {
   // remove if connected
   [source removeDelegate:self];
   [_connectedMidiSources removeObject:source];
@@ -1741,40 +1855,14 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   [settingsVC reloadMidiSources];
 }
 
-
-- (void) midi:(PGMidi*)midi destinationAdded:(PGMidiDestination *)destination{
-  //NSLog(@"added %@", destination.name);
+- (void)midi:(PGMidi *)midi destinationAdded:(PGMidiDestination *)destination {
   [settingsVC reloadMidiSources];
 }
 
-- (void) midi:(PGMidi*)midi destinationRemoved:(PGMidiDestination *)destination{
-  // remove if connected
-  [_connectedMidiDestinations removeObject:destination];
-
-  //NSLog(@"removed %@", destination.name);
+- (void)midi:(PGMidi *)midi destinationRemoved:(PGMidiDestination *)destination {
+  [_connectedMidiDestinations removeObject:destination]; // remove if connected.
   [settingsVC reloadMidiSources];
 }
-
-
--(NSMutableArray*)midiSourcesArray{//of PGMIDIConnection, get name connection.name
-  return midi.sources;
-}
-
-//PG midisource delegate
-/*NSString *StringFromPacket(const MIDIPacket *packet)
- {
- // Note - this is not an example of MIDI parsing. I'm just dumping
- // some bytes for diagnostics.
- // See comments in PGMidiSourceDelegate for an example of how to
- // interpret the MIDIPacket structure.
- return [NSString stringWithFormat:@"  %u bytes: [%02x,%02x,%02x]",
- packet->length,
- (packet->length > 0) ? packet->data[0] : 0,
- (packet->length > 1) ? packet->data[1] : 0,
- (packet->length > 2) ? packet->data[2] : 0
- ];
- }*/
-
 
 #if TARGET_CPU_ARM
 // MIDIPacket must be 4-byte aligned
@@ -1783,26 +1871,23 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 #define MyMIDIPacketNext(pkt)	((MIDIPacket *)&(pkt)->data[(pkt)->length])
 #endif
 
-- (void) midiSource:(PGMidiSource*)midiSource midiReceived:(const MIDIPacketList *)packetList{
+- (void)midiSource:(PGMidiSource *)midiSource midiReceived:(const MIDIPacketList *)packetList {
 
   const MIDIPacket *packet = &packetList->packet[0];
 
-  for (int i = 0; i < packetList->numPackets; ++i){
+  for (int i = 0; i < packetList->numPackets; ++i) {
     //chop packets into messages, there could be more than one!
 
     int messageLength;//2 or 3
-    /*Byte**/ const unsigned char* statusByte=nil;
-    for(int i=0;i<packet->length;i++){//step throguh each byte, i
-      if(((packet->data[i] >>7) & 0x01) ==1){//if a newstatus byte
+    const unsigned char* statusByte = nil;
+    for(int i=0; i < packet->length; i++) { // step throguh each byte
+      if (((packet->data[i] >>7) & 0x01) ==1) { // if a newstatus byte
         //send existing
-        if(statusByte!=nil) {
+        if (statusByte!=nil) {
+          NSArray *obj = @[ midiSource, [NSData dataWithBytes:statusByte length:messageLength] ];
           [self performSelectorOnMainThread:@selector(parseMessageDataTuple:)
-                                 withObject:@[ midiSource, [NSData dataWithBytes:statusByte length:messageLength] ]
+                                 withObject:obj
                               waitUntilDone:NO];
-          /*dispatch_async(dispatch_get_main_queue(), ^{
-            [self parseMessageData:[NSData dataWithBytes:statusByte length:messageLength]
-                        midiSource:midiSource ];
-          });*/
         }
         messageLength=0;
         //now point to new start
@@ -1811,28 +1896,22 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
       messageLength++;
     }
     //send what is left
+    NSArray *obj = @[ midiSource, [NSData dataWithBytes:statusByte length:messageLength] ];
     [self performSelectorOnMainThread:@selector(parseMessageDataTuple:)
-                           withObject:@[ midiSource, [NSData dataWithBytes:statusByte length:messageLength] ]
+                           withObject:obj
                         waitUntilDone:NO];
-    /*dispatch_async(dispatch_get_main_queue(), ^{
-      [self parseMessageData:[NSData dataWithBytes:statusByte length:messageLength]
-                  midiSource:midiSource ];
-    });*/
-
     packet = MyMIDIPacketNext(packet);
   }
-
 }
 
-//take messageData, derive the MIDI message type, and send it into PD to be picked up by PD's midi objects
-//-(void)parseMessageData:(NSData*)messageData{//2 or 3 bytes
-//- (void)parseMessageData:(NSData *)messageData midiSource:(PGMidiSource*)midiSource {
+// take messageData, derive the MIDI message type, and send it into PD to be picked up by PD's midi
+// objects
 - (void)parseMessageDataTuple:(NSArray *)sourceAndDataTuple {
   PGMidiSource *midiSource = sourceAndDataTuple[0];
   NSData *messageData = sourceAndDataTuple[1];
 
-  Byte* bytePtr = ((Byte*)([messageData bytes]));
-  char type = ( bytePtr[0] >> 4) & 0x07 ;//remove leading 1 bit 0-7
+  Byte *bytePtr = (Byte*)([messageData bytes]);
+  char type = ( bytePtr[0] >> 4) & 0x07; //remove leading 1 bit 0-7
   char channel = (bytePtr[0] & 0x0F);
 
   NSUInteger midiSourceIndex = [midi.sources indexOfObject:midiSource];
@@ -1861,64 +1940,53 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     case 5://aftertouch
       [PdBase sendAftertouch:(int)channel value:(int)bytePtr[1]];
       break;
-    case 6://pitch bend - lsb, msb
-    {
+    case 6: {//pitch bend - lsb, msb
       int bendValue;
-      if([messageData length]==3)
+      if ([messageData length]==3)
         bendValue= (bytePtr[1] | bytePtr[2]<<7) -8192;
       else //2
         bendValue=(bytePtr[1] | bytePtr[1]<<7)-8192;
       [PdBase sendPitchBend:(int)channel value:bendValue];
-    }
       break;
-
+      }
     default:
       break;
 		}
 }
 
-//receive midi from PD, out to PGMidi
-
+// receive midi from PD, out to PGMidi
 - (void)receiveNoteOn:(int)pitch withVelocity:(int)velocity forChannel:(int)channel {
   const UInt8 bytes[]  = { 0x90+channel, pitch, velocity };
-  //[currMidiDestination sendBytes:bytes size:sizeof(bytes)];
   [self sendToMidiDestinations:bytes size:sizeof(bytes)];
 }
 
 - (void)receiveControlChange:(int)value forController:(int)controller forChannel:(int)channel {
   const UInt8 bytes[]  = { 0xB0+channel, controller, value };
-  //[currMidiDestination sendBytes:bytes size:sizeof(bytes)];
   [self sendToMidiDestinations:bytes size:sizeof(bytes)];
 }
 
 - (void)receiveProgramChange:(int)value forChannel:(int)channel {
   const UInt8 bytes[]  = { 0xC0+channel, value };
-  //[currMidiDestination sendBytes:bytes size:sizeof(bytes)];
   [self sendToMidiDestinations:bytes size:sizeof(bytes)];
 }
 
 - (void)receivePitchBend:(int)value forChannel:(int)channel {
   const UInt8 bytes[]  = { 0xE0+channel, (value-8192)&0x7F, ((value-8192)>>7)&0x7F };
-  //[currMidiDestination sendBytes:bytes size:sizeof(bytes)];
   [self sendToMidiDestinations:bytes size:sizeof(bytes)];
 }
 
 - (void)receiveAftertouch:(int)value forChannel:(int)channel {
   const UInt8 bytes[]  = { 0xD0+channel, value };
-  //[currMidiDestination sendBytes:bytes size:sizeof(bytes)];
   [self sendToMidiDestinations:bytes size:sizeof(bytes)];
 }
 
 - (void)receivePolyAftertouch:(int)value forPitch:(int)pitch forChannel:(int)channel {
   const UInt8 bytes[]  = { 0xA0+channel, pitch, value };
-  //[currMidiDestination sendBytes:bytes size:sizeof(bytes)];
   [self sendToMidiDestinations:bytes size:sizeof(bytes)];
 }
 
 - (void)receiveMidiByte:(int)byte forPort: (int)port {
-  //const UInt8 shortByte = (UInt8)byte;
   const UInt8 bytes[]  = { byte };
-  //[currMidiDestination sendBytes:bytes size:sizeof(bytes)];
   [self sendToMidiDestinations:bytes size:sizeof(bytes)];
 }
 
@@ -1931,25 +1999,30 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
 ///GPS
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
-  //printf("\ndidupdate! : %f %f", newLocation.coordinate.latitude, newLocation.coordinate.longitude);
-  //[settingsVC consolePrint:[NSString stringWithFormat:@"\ngps %f %f\n", newLocation.coordinate.latitude, newLocation.coordinate.longitude]];
-
   ///location lat long alt horizacc vertacc, lat fine long fine
-  int latRough = (int)( newLocation.coordinate.latitude*1000);
-  int longRough = (int)( newLocation.coordinate.longitude*1000);
+  int latRough = (int)(newLocation.coordinate.latitude * 1000);
+  int longRough = (int)(newLocation.coordinate.longitude * 1000);
   int latFine = (int)fabs((fmod( newLocation.coordinate.latitude , .001)*1000000));
   int longFine = (int)fabs((fmod( newLocation.coordinate.longitude , .001)*1000000));
 
   //printf("\n %f %f %d %d %d %d", newLocation.coordinate.latitude, newLocation.coordinate.longitude, latRough, longRough, latFine, longFine);
 
-  NSArray* locationArray=[NSArray arrayWithObjects:@"/location", [NSNumber numberWithFloat:newLocation.coordinate.latitude],[NSNumber numberWithFloat:newLocation.coordinate.longitude], [NSNumber numberWithFloat:newLocation.altitude], [NSNumber numberWithFloat:newLocation.horizontalAccuracy], [NSNumber numberWithFloat:newLocation.verticalAccuracy], [NSNumber numberWithInt:latRough], [NSNumber numberWithInt:longRough], [NSNumber numberWithInt:latFine], [NSNumber numberWithInt:longFine], nil];
+  NSArray *locationArray= @[@"/location",
+                            @(newLocation.coordinate.latitude),
+                            @(newLocation.coordinate.longitude),
+                            @(newLocation.altitude),
+                            @(newLocation.horizontalAccuracy),
+                            @(newLocation.verticalAccuracy),
+                            @(latRough),
+                            @(longRough),
+                            @(latFine),
+                            @(longFine) ];
 
   [PdBase sendList:locationArray toReceiver:@"fromSystem"];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-  //printf("\nupdatefail!");
-  if (![CLLocationManager locationServicesEnabled]){
+  if (![CLLocationManager locationServicesEnabled]) {
     UIAlertView *alert = [[UIAlertView alloc]
                           initWithTitle: @"Location Fail"
                           message: @"Location Services Disabled"
@@ -1957,11 +2030,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
                           cancelButtonTitle:@"OK"
                           otherButtonTitles:nil];
     [alert show];
-  }
-
-
-
-  else if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied){
+  } else if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied) {
     UIAlertView *alert = [[UIAlertView alloc]
                           initWithTitle: @"Location Fail"
                           message: @"Location Services Denied - check iOS privacy settings"
@@ -1969,9 +2038,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
                           cancelButtonTitle:@"OK"
                           otherButtonTitles:nil];
     [alert show];
-  }
-
-  else {
+  } else {
     UIAlertView *alert = [[UIAlertView alloc]
                           initWithTitle: @"Location Fail"
                           message: @"Location and/or Compass Unavailable"
@@ -1980,111 +2047,102 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
                           otherButtonTitles:nil];
     [alert show];
   }
-
-
-  /* if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized)
-   NSLog(@"location services are enabled");
-
-   if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined)
-   NSLog(@"about to show a dialog requesting permission");*/
 }
 
-- (void) locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading {
-
-  NSArray* locationArray=[NSArray arrayWithObjects:@"/compass", [NSNumber numberWithFloat:newHeading.magneticHeading], nil];
-
+- (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading {
+  NSArray *locationArray = @[ @"/compass", @(newHeading.magneticHeading) ];
   [PdBase sendList:locationArray toReceiver:@"fromSystem"];
 }
 
 - (void)didReceiveMemoryWarning{
   [super didReceiveMemoryWarning];
-  // Dispose of any resources that can be recreated.
+  // TODO use?
 }
 
 #pragma mark LANdini log delegate - currently dev only
--(void)logLANdiniOutput:(NSArray*)msgArray{
+-(void)logLANdiniOutput:(NSArray *)msgArray{
 }
 
--(void)logMsgOutput:(NSArray*)msgArray{
+-(void)logMsgOutput:(NSArray *)msgArray{
 }
 
--(void)logLANdiniInput:(NSArray*)msgArray{
+-(void)logLANdiniInput:(NSArray *)msgArray{
   [settingsVC consolePrint:@"INPUT:"];
-  for(NSString* str in msgArray)
+  for(NSString *str in msgArray) {
     [settingsVC consolePrint:str];
-
+  }
 }
 
--(void)logMsgInput:(NSArray*)msgArray{
+-(void)logMsgInput:(NSArray *)msgArray{
   [settingsVC consolePrint:@"OUTPUT:"];
-  for(NSString* str in msgArray)
+  for(NSString *str in msgArray) {
     [settingsVC consolePrint:str];
-
+  }
 }
 
--(void) refreshSyncServer:(NSString*)newServerName{
+-(void) refreshSyncServer:(NSString *)newServerName{
   [settingsVC consolePrint:[NSString stringWithFormat:@"new server:%@", newServerName]];
 }
 
 #pragma mark Reachability
 
--(void)reachabilityChanged:(NSNotification*)note {
-  NSString* network = [MMPViewController fetchSSIDInfo];
-  NSArray* msgArray=[NSArray arrayWithObjects:@"/reachability", [NSNumber numberWithFloat:[reach isReachable]? 1.0f : 0.0f ], network , nil];
+-(void)reachabilityChanged:(NSNotification *)note {
+  NSString *network = [MMPViewController fetchSSIDInfo];
+  NSArray *msgArray = @[ @"/reachability", @([_reach isReachable] ? 1.0f : 0.0f), network ];
   [PdBase sendList:msgArray toReceiver:@"fromSystem"];
 }
 
-+ (NSString*)fetchSSIDInfo{
++ (NSString *)fetchSSIDInfo{
   NSArray *ifs = (__bridge id)CNCopySupportedInterfaces();
-  //  NSLog(@"%s: Supported interfaces: %@", __func__, ifs);
   id info = nil;
   for (NSString *ifnam in ifs) {
     info = (__bridge id)CNCopyCurrentNetworkInfo((__bridge CFStringRef)ifnam);
-    NSLog(@"%s: %@ => %@", __func__, ifnam, info);
-
-    //printf("\ninfo exists? %d count %d", info, [info count]);
-    NSString* ssidString = [info objectForKey:@"SSID"];
-    return ssidString;
+    //NSLog(@"%s: %@ => %@", __func__, ifnam, info);
+    NSString *ssidString = info[@"SSID"];
+    if (ssidString) {
+      return ssidString;
+    }
   }
   return nil;
 }
 
 #pragma mark LANdini Delegate from settings
 -(float)getLANdiniTime{
-  return [llm networkTime];
+  return [_llm networkTime];
 }
 
 -(Reachability*)getReachability{
-  return reach;
+  return _reach;
 }
 
 -(void)setLANdiniEnabled:(BOOL)LANdiniEnabled {
-  [llm setEnabled:LANdiniEnabled]; //TODO just expose llm as property.
+  [_llm setEnabled:LANdiniEnabled]; //TODO just expose llm as property.
 }
 
 - (BOOL)LANdiniEnabled {
-  return llm.enabled;
+  return _llm.enabled;
 }
 
 #pragma mark PingAndConnect delegate from settings
 
 -(void)setPingAndConnectEnabled:(BOOL)pingAndConnectEnabled {
-  [pacm setEnabled:pingAndConnectEnabled]; // TODO just expost pacm as property.
+  [_pacm setEnabled:pingAndConnectEnabled]; // TODO just expost pacm as property.
 }
 
 - (BOOL)pingAndConnectEnabled {
-  return pacm.enabled;
+  return _pacm.enabled;
 }
 
 -(void)setPingAndConnectPlayerNumber:(NSInteger)playerNumber {
-  [pacm setPlayerNumber:playerNumber];
+  [_pacm setPlayerNumber:playerNumber];
 }
 
 #pragma mark - from AppDelegate
 
-- (void)applicationWillResignActive { //todo: this is hit even when showing lower drawer...maybe to didEnterBackground.
+//todo: this is hit even when showing lower drawer...maybe to didEnterBackground.
+- (void)applicationWillResignActive {
   // audio & OSC
-  if(!_backgroundAudioAndNetworkEnabled &&
+  if (!_backgroundAudioAndNetworkEnabled &&
      !_audiobusController.connected &&
      !_audiobusController.audiobusAppRunning) {
 
@@ -2093,25 +2151,25 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   }
   // networking
   if (!_backgroundAudioAndNetworkEnabled) {
-    pacm.enabled = NO;
-    llm.enabled = NO;
+    _pacm.enabled = NO;
+    _llm.enabled = NO;
   }
 }
 
 - (void)applicationDidBecomeActive {
   // audio & OSC
-  if(!_audioController.isActive) {
+  if (!_audioController.isActive) {
     _audioController.active = YES;
   }
-  if (!self.isPortsConnected){
+  if (!self.isPortsConnected) {
     [self connectPorts];
   }
   // networking
-  if (settingsVC.pingAndConnectEnableSwitch.isOn && !pacm.enabled) {
-    pacm.enabled = YES;
+  if (settingsVC.pingAndConnectEnableSwitch.isOn && !_pacm.enabled) {
+    _pacm.enabled = YES;
   }
-  if (settingsVC.LANdiniEnableSwitch.isOn && !llm.enabled) {
-    llm.enabled = YES;
+  if (settingsVC.LANdiniEnableSwitch.isOn && !_llm.enabled) {
+    _llm.enabled = YES;
   }
 }
 
@@ -2121,7 +2179,6 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
     // handle case of different supported audio rates, e.g. headphones set to 44.1, switch to 6s hardware which can only do 48K
     // TODO this clobbers intended settings, implement a per-route ledger of last preferred value.
 
-
     int newRate =  [AVAudioSession instancesRespondToSelector:@selector(sampleRate)] ?
                     [[AVAudioSession sharedInstance] sampleRate]: // ios 6+
                     [[AVAudioSession sharedInstance] currentHardwareSampleRate]; // ios 5-
@@ -2129,14 +2186,13 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
       [self setRate:newRate];
     }
 
-
     if ([AVAudioSession instancesRespondToSelector:@selector(outputNumberOfChannels)]) {
       // ios >=6
       // don't care about setting channel count to 1, just handle vals >2
 
-      if(_channelCount<=2 && [[AVAudioSession sharedInstance] outputNumberOfChannels]>2){
+      if (_channelCount <= 2 && [[AVAudioSession sharedInstance] outputNumberOfChannels] > 2) {
         [self setChannelCount:[[AVAudioSession sharedInstance] outputNumberOfChannels] ];
-      } else if(_channelCount>2 && [[AVAudioSession sharedInstance] outputNumberOfChannels]<=2) {
+      } else if (_channelCount > 2 && [[AVAudioSession sharedInstance] outputNumberOfChannels] <= 2) {
         [self setChannelCount:2];
       }
     }

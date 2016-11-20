@@ -31,45 +31,11 @@
 @interface MMPViewController : UIViewController<PdReceiverDelegate, UIAccelerometerDelegate,  SettingsViewControllerDelegate, ControlDelegate, UIScrollViewDelegate, AudioSettingsDelegate, PGMidiDelegate, PGMidiSourceDelegate, OSCDelegateProtocol, PdMidiReceiverDelegate, CLLocationManagerDelegate, LANdiniDelegate, PingAndConnectDelegate,MMPPdDispatcherPrintDelegate>{
     
     
-    UIView* scrollInnerView;
     
-    NSMutableDictionary* allGUIControl;
-    UIScrollView* scrollView; // MMP gui
-  UIView *pdPatchView; //Native gui
-
-    OSCManager *manager;
-    OSCInPort *inPort;
-    OSCOutPort *outPort;
-    
-    //LANdini and Ping&Connect
-    OSCInPort* inPortFromNetworkingModules;
-    OSCOutPort* outPortToNetworkingModules;
-    
-    //midi
-    PGMidi *midi;
-
-    BOOL isLandscape;
-
-    PdFile *openPDFile;
-    AVCaptureDevice *avCaptureDevice;//for flash
-    
-   
-    
-    UINavigationController *navigationController;
-    
-    //new
-    CMMotionManager* motionManager;
-    CLLocationManager *locationManager;
-    
-    //LANdiniLANManager* llm;
-  //PingAndConnectManager *pacm;
-
-    Reachability* reach;
-  int pageCount;
   //
   @public // exposed for testing
-  LANdiniLANManager* llm;
-  PingAndConnectManager *pacm;
+  LANdiniLANManager *_llm;
+  PingAndConnectManager *_pacm;
   MMPPdDispatcher *_mmpPdDispatcher;
 }
 
@@ -78,17 +44,13 @@
 
 -(void)connectPorts;
 -(void)disconnectPorts;
--(BOOL)isAudioBusConnected;
 +(NSString*)fetchSSIDInfo;
-+(canvasType)getCanvasType;
++(MMPDeviceCanvasType)getCanvasType;
 
 @property BOOL backgroundAudioAndNetworkEnabled; //clean up
 @property BOOL isPortsConnected; //clean up
 @property (retain) PdAudioController* audioController;
 @property (retain) SettingsViewController* settingsVC;
-@property (copy, nonatomic) NSString *outputIpAddress;
-@property (nonatomic) int inputPortNumber;
-@property (nonatomic) int outputPortNumber;
 
 //audio bus - make private
 @property (strong, nonatomic) ABAudiobusController *audiobusController; //clean up
