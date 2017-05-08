@@ -802,15 +802,35 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   NSArray *guiAtomLines = processedAtomLinesTuple[1];
 
   // Reformat patchAtomLines into a pd file.
-  NSMutableString *outputString = [NSMutableString string];
+  NSMutableString *outputMutableString = [NSMutableString string];
   for (NSArray *line in patchAtomLines) {
-    [outputString appendString:[line componentsJoinedByString:@" "]];
-    [outputString appendString:@";\n"];
+    [outputMutableString appendString:[line componentsJoinedByString:@" "]];
+    [outputMutableString appendString:@";\n"];
   }
 
+  //handle outputString as non-mutable.
+  NSString *outputString = (NSString *)outputMutableString;
+
   // Write temp pd file to disk.
+  if (![outputString canBeConvertedToEncoding:NSASCIIStringEncoding] ) {
+    // Writing to ascii would fail in Automatism patches. Check first and do lossy conversion.
+    NSData *asciiData = [outputString dataUsingEncoding:NSASCIIStringEncoding
+                                   allowLossyConversion:YES];
+    outputString = [[NSString alloc] initWithData:asciiData encoding:NSASCIIStringEncoding];
+  }
+
   NSError *error;
   [outputString writeToFile:toPath atomically:YES encoding:NSASCIIStringEncoding error:&error];
+  if (error) {
+    UIAlertView *alert = [[UIAlertView alloc]
+                          initWithTitle: @"Pd file not parsed"
+                          message: [NSString stringWithFormat:@"Pd file not parseable for native display"]
+                          delegate: nil
+                          cancelButtonTitle:@"OK"
+                          otherButtonTitles:nil];
+    [alert show];
+    return NO;
+  }
 
   // Compute canvas size
   CGSize docCanvasSize = CGSizeMake([originalAtomLines[0][4] floatValue], [originalAtomLines[0][5] floatValue]);

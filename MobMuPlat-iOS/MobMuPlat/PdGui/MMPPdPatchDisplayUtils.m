@@ -63,9 +63,9 @@
       else if(level == 1) {
         // built in pd things
         // skip empty objects
-        if ([line[1] isEqualToString:@"obj"] && [line count] < 5) {
-          continue;
-        }
+        /*if ([line[1] isEqualToString:@"obj"] && [line count] < 5) {
+          continue; //dangerous, could throw obj index of of what Pd is doing
+        }*/
         NSString *objType = [line[1] isEqualToString:@"obj"] ? line[4] : line[1];
         if (objTypeToSendRecIndeces[objType]) {
           // floatatom, symbolatom, bng, tgl, nbox, etc....
@@ -126,8 +126,12 @@
 
       // add line to patch output
       [patchLines addObject:patchLine];
-      [guiLines addObject:guiLine]; // todo, not necc if level > 1?
-      if ([line[0] isEqualToString:@"#X"] && level == 1 && ![line[1] isEqualToString:@"connect"]) {        objIndex++;
+      [guiLines addObject:guiLine]; // todo, not necc if level > 1? //todo don't add #X declare?
+      if ([line[0] isEqualToString:@"#X"] &&
+          level == 1 &&
+          ![line[1] isEqualToString:@"connect"] &&
+          ![line[1] isEqualToString:@"declare"]) {//DEI do positive counting (line is obj), not negative (line is not connect/declare)
+        objIndex++;
       }
     }
   } @catch (NSException *exception) {

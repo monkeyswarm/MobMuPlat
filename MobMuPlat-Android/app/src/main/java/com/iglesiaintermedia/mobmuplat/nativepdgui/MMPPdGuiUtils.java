@@ -67,9 +67,9 @@ public class MMPPdGuiUtils {
                 // find different types of UI element in the top level patch
                 else if (level == 1) {
                     // skip empty objects
-                    if (line[1].equals("obj") && line.length < 5) {
-                        continue;
-                    }
+                    /*if (line[1].equals("obj") && line.length < 5) {
+                        continue; //Dangerous since this may throw off objIndex count in comparison to puredata
+                    }*/
                     String objType = line[1].equals("obj") ? line[4] : line[1];
                     if (objTypeToSendRecIndices.containsKey(objType)) {
                         // floatatom, symbolatom, bng, tgl, nbox, etc....
@@ -125,7 +125,10 @@ public class MMPPdGuiUtils {
                 }
                 patchLines.add(patchLine);
                 guiLines.add(guiLine); // todo, not necc if level > 1?
-                if (line[0].equals("#X") && level == 1 && !line[1].equals("connect")) { //DEI just line index...
+                if (line[0].equals("#X") &&
+                        level == 1 &&
+                        !line[1].equals("connect") &&
+                        !line[1].equals("declare")) { //DEI do positive counting (line is obj), not negative (line is not connect/declare)
                     objIndex++;
                 }
             }
