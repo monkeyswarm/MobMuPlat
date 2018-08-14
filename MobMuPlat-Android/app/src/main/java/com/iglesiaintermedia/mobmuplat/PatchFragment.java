@@ -135,7 +135,6 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
         scrollContainer.setBackgroundColor(Color.BLACK);
 
         scrollRelativeLayout = (RelativeLayout)rootView.findViewById(R.id.relativeLayout);
-        //scrollRelativeLayout.setBackgroundColor(Color.GREEN);
         _catchButton = (Button)rootView.findViewById(R.id.catchFocusButton);
         _settingsButton = (MMPMenuButton)rootView.findViewById(R.id.button1);
         _settingsButton.setOnClickListener(new OnClickListener() {
@@ -795,8 +794,8 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
             }
             if (args.length>=2 && args[0].equals("/flash") && args[1] instanceof Float) { //move stuff to parent...
                 float val =  ((Float)args[1]).floatValue();
-                if (val > 0) _mainActivity.flashlightController.turnLightOn();
-                else _mainActivity.flashlightController.turnLightOff();
+                if (val > 0) _mainActivity.enableLight(true);
+                else _mainActivity.enableLight(false);
 
             } /*else if (args.length==2 && args[0].equals("/setSensorFrequency") && args[1] instanceof Float) {
                     float val = ((Float)args[1]).floatValue();

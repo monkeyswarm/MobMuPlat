@@ -23,7 +23,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import android.Manifest;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -64,6 +68,7 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Display;
@@ -148,7 +153,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	private Fragment _lastFrag;
 	private String _lastFragTitle;
 
-	public FlashlightController flashlightController;
+	private FlashlightController flashlightController;
 	private BroadcastReceiver _bc;
 	private boolean _backgroundAudioAndNetworkEnabled;
 
@@ -169,7 +174,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
   private GoogleApiClient mGoogleApiClient;
 	private static final long CONNECTION_TIME_OUT_MS = 100;
 	private String nodeId;
-	
+
+	// new permissions pattern
+	String[] STARTUP_PERMISSIONS = {
+			Manifest.permission.READ_EXTERNAL_STORAGE,
+			Manifest.permission.WRITE_EXTERNAL_STORAGE,
+			Manifest.permission.RECORD_AUDIO
+	};
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -216,6 +227,80 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			}
 		} 
 
+
+		//
+		//AudioParameters.init(this);
+		PdPreferences.initPreferences(getApplicationContext());
+		initSensors();
+//		initLocation();
+		usbMidiController = new UsbMidiController(this); //matched close in onDestroy...move closer in?
+
+		//allow multicast
+		WifiManager wifi = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+		if(wifi != null){
+			WifiManager.MulticastLock lock = wifi.createMulticastLock("MulticastLockTag");
+			lock.acquire();
+		}  //Automatically released on app exit/crash.
+
+		networkController = new NetworkController(this);
+		networkController.delegate = this;
+
+
+
+    //wear
+    mGoogleApiClient = new GoogleApiClient.Builder(this)
+     	          .addApi(Wearable.API)
+        .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
+		//fragments
+		_patchFragment = new PatchFragment();
+		_documentsFragment = new DocumentsFragment();
+		_networkFragment = new NetworkFragment();
+		_consoleFragment = new ConsoleFragment();
+		_hidFragment = new HIDFragment();
+		_audioMidiFragment = new AudioMidiFragment();
+		//_audioMidiFragment.audioDelegate = this;
+		// bookmark for launch from info button
+		_lastFrag = _documentsFragment;
+		_lastFragTitle = "Documents";
+
+
+		_topLayout = (FrameLayout)findViewById(R.id.container);
+
+		// Go full screen and lay out to top of screen.
+		// Only on SDK >= 16. This means that patch will not go truly fullscreen on ICS. Separate layouts for 14+ vs 16+ for the fragment margins.
+		_topLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+
+		//Flashlight TODO make black
+//		SurfaceView surfaceView = (SurfaceView)findViewById(R.id.surfaceView);
+//		flashlightController = new FlashlightController(surfaceView);
+//		flashlightController.startCamera();
+
+		// axes for table
+		if (getDeviceNaturalOrientation() == Configuration.ORIENTATION_LANDSCAPE) _shouldSwapAxes = true;
+
+		// set action bar title on fragment stack changes
+		getSupportFragmentManager().addOnBackStackChangedListener(this);
+
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+		for (String permission : STARTUP_PERMISSIONS) {
+			if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+				ActivityCompat.requestPermissions(this,STARTUP_PERMISSIONS, MMP_PERMISSIONS_REQUEST_AUDIO_AND_STORAGE);
+				return; // something missing, so ask for permissions
+			}
+		}
+		// REached here if didn't break oout of permisisons loop
+		postStartupPermissions();
+		if (savedInstanceState == null) {
+			launchSplash();
+		}
+	}
+
+	private void postStartupPermissions() {
+		// copy docs
 		//version
 		boolean shouldCopyDocs = false;
 		int versionCode = 0;
@@ -265,31 +350,14 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			}
 
 		}
-
-		//
-		//AudioParameters.init(this);
-		PdPreferences.initPreferences(getApplicationContext());
-		initSensors();
-		initLocation();
-		usbMidiController = new UsbMidiController(this); //matched close in onDestroy...move closer in?
-
-		//allow multicast
-		WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
-		if(wifi != null){
-			WifiManager.MulticastLock lock = wifi.createMulticastLock("MulticastLockTag");
-			lock.acquire();
-		}  //Automatically released on app exit/crash.
-
-		networkController = new NetworkController(this);
-		networkController.delegate = this;
-
+		// pd service
 		bindService(new Intent(this, PdService.class), pdConnection, BIND_AUTO_CREATE);
-        //wifi
+		//wifi
 		_bc = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) { //having trouble with this, reports "0x", doesn't repond to supplicant stuff
 				networkController.newSSIDData();
-			}	
+			}
 		};
 		IntentFilter intentFilter = new IntentFilter();
 		//intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
@@ -298,47 +366,77 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 		registerReceiver(_bc, intentFilter);
 
-    //wear
-    mGoogleApiClient = new GoogleApiClient.Builder(this)
-     	          .addApi(Wearable.API)
-        .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
+		// camera
+//		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//			ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MMP_PERMISSIONS_REQUEST_CAMERA);
+//			return;
+//		}
+//		if (flashlightController == null) {
+//			SurfaceView surfaceView = (SurfaceView)findViewById(R.id.surfaceView);
+//			flashlightController = new FlashlightController(surfaceView);
+//			flashlightController.startCamera();
+//		}
+	}
 
-		//fragments
-		_patchFragment = new PatchFragment();
-		_documentsFragment = new DocumentsFragment();
-		_networkFragment = new NetworkFragment();
-		_consoleFragment = new ConsoleFragment();
-		_hidFragment = new HIDFragment();
-		_audioMidiFragment = new AudioMidiFragment();
-		//_audioMidiFragment.audioDelegate = this;
-		// bookmark for launch from info button
-		_lastFrag = _documentsFragment;
-		_lastFragTitle = "Documents";
+	//dangerous: audio, camera, location, read/write external storage
+	private static final int MMP_PERMISSIONS_REQUEST_AUDIO_AND_STORAGE = 1;
+	private static final int MMP_PERMISSIONS_REQUEST_LOCATION = 2;
+	private static final int MMP_PERMISSIONS_REQUEST_CAMERA = 3;
+	//private static final int MMP_PERMISSIONS_REQUEST_READWRITESTORAGE = 2;
+//	private static final int MMP_PERMISSIONS_REQUEST_AUDIO = 1;
+//	private static final int MMP_PERMISSIONS_REQUEST_AUDIO = 1;
+//	private static final int MMP_PERMISSIONS_REQUEST_AUDIO = 1;
+//	private static final int MMP_PERMISSIONS_REQUEST_AUDIO = 1;
+//	private static final int MMP_PERMISSIONS_REQUEST_AUDIO = 1;
+//	private static final int MMP_PERMISSIONS_REQUEST_AUDIO = 1;
+//	private static final int MMP_PERMISSIONS_REQUEST_AUDIO = 1;
+//
+//	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+//    <uses-permission android:name="android.permission.CAMERA" />
+//    <uses-permission android:name="android.permission.INTERNET" />
+//    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+//    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+//    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+//    <uses-permission android:name="android.permission.VIBRATE" />
+//    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+//    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+//    <uses-permission android:name="android.permission.WAKE_LOCK" />
+//    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+//    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-
-		_topLayout = (FrameLayout)findViewById(R.id.container);
-
-		// Go full screen and lay out to top of screen.
-		// Only on SDK >= 16. This means that patch will not go truly fullscreen on ICS. Separate layouts for 14+ vs 16+ for the fragment margins.
-		_topLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-
-		//Flashlight TODO make black
-		SurfaceView surfaceView = (SurfaceView)findViewById(R.id.surfaceView);
-		flashlightController = new FlashlightController(surfaceView);
-		flashlightController.startCamera();
-
-		// axes for table
-		if (getDeviceNaturalOrientation() == Configuration.ORIENTATION_LANDSCAPE) _shouldSwapAxes = true;
-
-		// set action bar title on fragment stack changes
-		getSupportFragmentManager().addOnBackStackChangedListener(this);
-
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-		if (savedInstanceState == null) {
-			launchSplash();
+	@Override
+	public void onRequestPermissionsResult(int requestCode,
+										   String permissions[], int[] grantResults) {
+		switch (requestCode) {
+			case MMP_PERMISSIONS_REQUEST_AUDIO_AND_STORAGE: {
+				// If request is cancelled, the result arrays are empty.
+				if (grantResults.length == 3
+						&& grantResults[0] == PackageManager.PERMISSION_GRANTED
+						&& grantResults[1] == PackageManager.PERMISSION_GRANTED
+						&& grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+					postStartupPermissions();
+					launchSplash();
+				} else {
+					// permission denied
+					showAlert("MobMuPlat needs disk and audio access to work.", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialogInterface, int i) {
+							ActivityCompat.requestPermissions(MainActivity.this,STARTUP_PERMISSIONS, MMP_PERMISSIONS_REQUEST_AUDIO_AND_STORAGE);
+						}
+					});
+				}
+				return;
+			}
+			case MMP_PERMISSIONS_REQUEST_LOCATION: {
+				if (grantResults.length > 0  && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+					startLocationUpdates();
+				}
+			}
+			case MMP_PERMISSIONS_REQUEST_CAMERA: {
+				if (grantResults.length > 0  && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+					enableLight(true);
+				}
+			}
 		}
 	}
 
@@ -520,26 +618,30 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		flashlightController.stopCamera();
+		if (flashlightController != null) {
+			flashlightController.stopCamera();
+		}
 	}
 
 	@Override
 	protected void onStop() {
 		if(!_backgroundAudioAndNetworkEnabled) {
 			stopAudio();
-      networkController.stop();
+      		networkController.stop();
 		}
-		flashlightController.stopCamera();
-    if (null != mGoogleApiClient && mGoogleApiClient.isConnected()) {
-        mGoogleApiClient.disconnect();
-    }
-    super.onStop();
+		if (flashlightController != null) {
+			flashlightController.stopCamera();
+		}
+    	if (null != mGoogleApiClient && mGoogleApiClient.isConnected()) {
+        	mGoogleApiClient.disconnect();
+    	}
+    	super.onStop();
 	}
 
 	@Override
 	protected void onRestart() {
 		super.onRestart();
-    networkController.maybeRestart();
+    	networkController.maybeRestart();
 		if(pdService!=null && !pdService.isRunning()) {
 			pdService.startAudio();
 		}
@@ -548,7 +650,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		flashlightController.startCamera();
+		if (flashlightController != null) {
+			flashlightController.startCamera();
+		}
 	}
 	
 	@Override
@@ -717,29 +821,36 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		return jsonString;
 	}
 
-	private void initLocation() {
-		locationManagerA = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-		//locationManagerA.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 5, this);
-		locationManagerB = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-		//locationManagerB.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 5, this);
-	}
+//	private void initLocation() {
+//		locationManagerA = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+//		//locationManagerA.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 5, this);
+//		locationManagerB = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+//		//locationManagerB.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 5, this);
+//	}
 
 	public void startLocationUpdates() {
+		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+			ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MMP_PERMISSIONS_REQUEST_LOCATION);
+			return;
+		}
+		if (locationManagerA == null) locationManagerA = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+		if (locationManagerB == null) locationManagerB = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+
 		Location lastKnownLocation = null;
-		if (locationManagerA!=null){
+		//if (locationManagerA!=null){
 			locationManagerA.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 5, this);
 			// send initial val from this
 			lastKnownLocation = locationManagerA.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 			if (lastKnownLocation != null)onLocationChanged(lastKnownLocation);
-		}
-		if (locationManagerB!=null){
+		//}
+		//if (locationManagerB!=null){
 			locationManagerB.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 5, this);
 			//if initial didn't work, try here
 			if (lastKnownLocation==null) {
 				lastKnownLocation = locationManagerB.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 				if (lastKnownLocation != null)onLocationChanged(lastKnownLocation);
 			}
-		}
+		//}
 		
 	}
 
@@ -748,9 +859,26 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		if (locationManagerB!=null)locationManagerB.removeUpdates(this);
 	}
 
-	private void initSensors() { //TODO allow sensors on default thread for low-power devices (or just shutoff)
+	// flashslight
+	public void enableLight(boolean isOn) {
+		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+			ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MMP_PERMISSIONS_REQUEST_CAMERA);
+			return;
+		}
+		if (flashlightController == null) {
+			SurfaceView surfaceView = (SurfaceView)findViewById(R.id.surfaceView);
+			flashlightController = new FlashlightController(surfaceView);
+			flashlightController.startCamera();
+		}
+		if (isOn) {
+			flashlightController.turnLightOn();
+		} else {
+			flashlightController.turnLightOff();
+		}
+	}
 
-		//_camera = Camera.open();
+
+	private void initSensors() { //TODO allow sensors on default thread for low-power devices (or just shutoff)
 		_rawAccelArray = new float[3];
 		_cookedAccelArray = new float[3];
 		_tiltsMsgArray = new Object[3];
@@ -912,13 +1040,17 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	}
 
 	//TODO consolidate this with version in fragment
-	private void showAlert(String string) {
+	private void showAlert(String string, DialogInterface.OnClickListener listener) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(string);
 		builder.setCancelable(false);
-		builder.setPositiveButton("OK", null);
+		builder.setPositiveButton("OK", listener);
 		AlertDialog alert = builder.create();
 		alert.show();
+	}
+
+	private void showAlert(String string) {
+		showAlert(string, null);
 	}
 
 	// on orientation changed
@@ -963,10 +1095,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		try {
 			//Simulator breaks on audio input, so here's a little flag
 			boolean amOnSimulator = false;
-			pdService.initAudio(44100, amOnSimulator? 0 : -1, -1, -1);   // negative values will be replaced with defaults/preferences
+			pdService.initAudio(44100, amOnSimulator ? 0 : -1, -1, -1);   // negative values will be replaced with defaults/preferences
 			pdService.startAudio();
 		} catch (IOException e) {
-			Log.e(TAG, "Audio init error: "+e.toString());
+			Log.e(TAG, "Audio init error: " + e.toString());
 		}
 	}
 	
@@ -993,7 +1125,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			// already unbound
 			pdService = null;
 		}
-		flashlightController.stopCamera();
+		if (flashlightController != null) {
+			flashlightController.stopCamera();
+		}
 	}
 
 	protected void onDestroy() {

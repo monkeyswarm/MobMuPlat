@@ -236,6 +236,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		F937BA3B201803E00017076E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F975608C1A6E235B005CCE8E /* libpd.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 30C3D36D1FAA200100C67F08;
+			remoteInfo = "libpd-ios-multi";
+		};
+		F937BA3D201803E00017076E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F975608C1A6E235B005CCE8E /* libpd.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 30C3D2FA1FAA1FCC00C67F08;
+			remoteInfo = "libpd-osx-multi";
+		};
 		F93FC05C1C4D79570059E39F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = DC233D9F1655EDF500AC01C5 /* Project object */;
@@ -1477,6 +1491,8 @@
 			children = (
 				F97560921A6E235B005CCE8E /* libpd-ios.a */,
 				F9FC179F1A85735A00152392 /* libpd-osx.a */,
+				F937BA3C201803E00017076E /* libpd-ios-multi.a */,
+				F937BA3E201803E00017076E /* libpd-osx-multi.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1598,6 +1614,20 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		F937BA3C201803E00017076E /* libpd-ios-multi.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libpd-ios-multi.a";
+			remoteRef = F937BA3B201803E00017076E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F937BA3E201803E00017076E /* libpd-osx-multi.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libpd-osx-multi.a";
+			remoteRef = F937BA3D201803E00017076E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		F97560921A6E235B005CCE8E /* libpd-ios.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;

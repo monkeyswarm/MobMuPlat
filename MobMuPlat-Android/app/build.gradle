@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "com.iglesiaintermedia.mobmuplat"
-        minSdkVersion 14
-        targetSdkVersion 22
+        minSdkVersion 17
+        targetSdkVersion 27
         versionCode 21
         versionName "0.33"
     }
@@ -17,18 +17,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    //useLibrary 'org.apache.http.legacy' // Will need on SDK 23.
+    useLibrary 'org.apache.http.legacy' // Will need on SDK 23.
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:22.2.1'
-    compile 'com.android.support:design:22.2.1'
-    compile files('libs/gson-2.2.4.jar') //necc?
-    compile 'org.puredata.android:pd-core:1.0.2'
-    compile 'com.google.android.support:wearable:1.3.0'
-    compile 'com.google.android.gms:play-services-wearable:8.4.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
+    implementation files('libs/gson-2.2.4.jar') //necc?
+    implementation 'org.puredata.android:pd-core:1.1.0'
+    implementation 'com.google.android.support:wearable:1.3.0'
+    implementation 'com.google.android.gms:play-services-wearable:8.4.0'
+    compileOnly 'com.google.android.wearable:wearable:1.0.0'
     wearApp project(':mobmuplatandroidwear')
 
 }

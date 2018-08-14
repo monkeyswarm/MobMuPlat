@@ -1,6 +1,7 @@
 package com.iglesiaintermedia.mobmuplat.nativepdgui;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 import org.puredata.core.PdBase;
 import org.puredata.core.PdListener;
@@ -23,7 +24,7 @@ public class Widget extends RelativeLayout implements PdListener {
 
     protected float scale;
 
-    //public RectF dRect = new RectF();
+    public RectF originalRect;
     protected RectF postLayoutInnerRect = new RectF();
     Paint paint;
     private float value = 0;
@@ -67,6 +68,12 @@ public class Widget extends RelativeLayout implements PdListener {
         // compute a line width
         lineWidth = scale > 2 ? 2 : 1;
         paint.setStrokeWidth(lineWidth);
+    }
+
+    public void reshape() {
+        setLayoutParams(new RelativeLayout.LayoutParams((int) (originalRect.width() * scale), (int)(originalRect.height() * scale)));
+        setX(originalRect.left * scale);
+        setY(originalRect.top * scale);
     }
 
     public void setup(){
@@ -179,7 +186,6 @@ public class Widget extends RelativeLayout implements PdListener {
 
     @Override
     public void receiveList(String source, Object... args) {
-        // TODO Auto-generated method stub
         //Log.i("WIDGET", "receive list on "+this.receiveName);
         if(args.length > 0) {
             // pass float through, setting the value
@@ -187,9 +193,11 @@ public class Widget extends RelativeLayout implements PdListener {
                 receiveFloatFromSource(((Float)args[0]).floatValue(), source);
             }
             else if(args[0] instanceof String) {
-
                 // if we receive a set message
                 if(args[0].equals("set")) {
+                    // assume args[1] is String
+                    receiveEditMessage((String)args[1], Arrays.copyOfRange(args, 1, args.length));
+               /*
                     // set value but don't pass through
                     if(args.length > 1) {
                         if(args[1] instanceof Float) {
@@ -198,11 +206,11 @@ public class Widget extends RelativeLayout implements PdListener {
                         else if(args[1] instanceof String) {
                             receiveSetSymbol((String)args[1]);
                         }
-                    }
+                    }*/
                 } else if(args[0].equals("bang")) { // got a bang!
                     receiveBangFromSource(source);
-                } else {
-                    //DDLogWarn(@"%@: dropped list", self.type);
+                } else { // pass symbol through., setting the value
+                    receiveSymbolFromSource((String)args[0], source);
                 }
             }
         }
@@ -213,21 +221,19 @@ public class Widget extends RelativeLayout implements PdListener {
 
     @Override
     public void receiveMessage(String source, String message, Object... args) {
-        // TODO Auto-generated method stub
         //Log.i("WIDGET", "receive message on "+this.receiveName);
-        if(message.equals("set") ) {
-            if (args.length == 0) {
-                receiveSetBang(); //special, this means a bang is sent to the GUI object for display, not output
-            } else { //len>0
-                if (args[0] instanceof Float) {
-                    receiveSetFloat(((Float)args[0]).floatValue());
-                } else if (args[0] instanceof String) {
-                    receiveSetSymbol((String)args[0]);
-                }
+        if(message.equals("set") && args.length == 0) {
+            receiveSetBang(); //special, this means a bang is sent to the GUI object for display, not output
+        } else if (message.equals("set") && args.length == 1) {
+            if (args[0] instanceof Float) {
+                receiveSetFloat(((Float)args[0]).floatValue());
+            } else if (args[0] instanceof String) {
+                receiveSetSymbol((String)args[0]);
             }
         } else if (message.equals("bang")) {
             receiveBangFromSource(source);
         } else {
+            receiveEditMessage(message, args);
             // edit, drop
         }
 
@@ -252,6 +258,10 @@ public class Widget extends RelativeLayout implements PdListener {
 
     }
 
+    protected void receiveEditMessage(String message, Object... args) {
+
+    }
+
     protected void receiveBangFromSource(String source) {
 
     }
@@ -270,8 +280,6 @@ public class Widget extends RelativeLayout implements PdListener {
     protected String stringForFloat(float val, int width, DecimalFormat fmt) {
         boolean isExp = false;
         int i, idecimal;
-        //NSMutableString *string = [NSMutableString stringWithFormat:@"%g", f];
-        //String string = String.format("%g", val);
         String string = fmt.format(val);
         // if it is in exponential mode
         if(string.length() >= 5) {

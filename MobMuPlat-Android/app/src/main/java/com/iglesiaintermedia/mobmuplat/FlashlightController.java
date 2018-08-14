@@ -22,7 +22,7 @@ public class FlashlightController implements SurfaceHolder.Callback{
 	private Camera mCamera;
 	  private boolean lightOn;
 	  private boolean previewOn;
-	  
+
 	  private SurfaceView surfaceView;
 	  private SurfaceHolder surfaceHolder;
 
@@ -32,23 +32,23 @@ public class FlashlightController implements SurfaceHolder.Callback{
 		    surfaceHolder = surfaceView.getHolder();
 		    surfaceHolder.addCallback(this);
 		    surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-		  
+
 	  }
-	  
+
 	  public void startCamera() {
 		  if(mCamera == null) {
 			  getCamera();
 			  startPreview();
 		  }
 	  }
-	  
+
 	  public void stopCamera() {
 		  turnLightOff();
 		  if (mCamera != null) {
 		      stopPreview();
 		      mCamera.release();
 		      mCamera = null;
-		    }; 
+		    };
 	  }
 
 	  private void getCamera() {
@@ -77,7 +77,7 @@ public class FlashlightController implements SurfaceHolder.Callback{
 	  }
 
 	  public void turnLightOn() {
-	    
+
 	    if (mCamera == null) {
 //	      Toast.makeText(this, "Camera not found", Toast.LENGTH_LONG);
 	      // Use the screen as a flashlight (next best thing)

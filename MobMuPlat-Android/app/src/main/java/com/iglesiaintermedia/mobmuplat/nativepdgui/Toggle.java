@@ -8,7 +8,7 @@ import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.widget.RelativeLayout;
 
-public class Toggle extends Widget {
+public class Toggle extends IEMWidget {
     private static final String TAG = "Toggle";
 
     float nonZeroValue;
@@ -16,10 +16,16 @@ public class Toggle extends Widget {
     public Toggle(Context context, String[] atomline, float scale) {
         super(context, scale);
 
-        float x = Float.parseFloat(atomline[2]) * scale;
+        /*float x = Float.parseFloat(atomline[2]) * scale;
         float y = Float.parseFloat(atomline[3]) * scale;
         float w = Float.parseFloat(atomline[5]) * scale;
-        float h = Float.parseFloat(atomline[5]) * scale;
+        float h = Float.parseFloat(atomline[5]) * scale;*/
+        float x = Float.parseFloat(atomline[2]);
+        float y = Float.parseFloat(atomline[3]);
+        float w = Float.parseFloat(atomline[5]);
+        float h = Float.parseFloat(atomline[5]);
+        originalRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),
+                Math.round(y + h));
 
         sendValueOnInit = Integer.parseInt(atomline[6]) > 0;
         sendname = sanitizeLabel(atomline[7]);
@@ -38,13 +44,15 @@ public class Toggle extends Widget {
             setValue(Float.parseFloat(atomline[17]));
         }
 
+        reshape();
+
         // graphics setup
-        RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),
+        /*RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),
                 Math.round(y + h));
 
         setLayoutParams(new RelativeLayout.LayoutParams((int)dRect.width(), (int)dRect.height()));
         setX(dRect.left);
-        setY(dRect.top);
+        setY(dRect.top);*/
     }
 
     @Override

@@ -26,10 +26,12 @@ public class Slider extends Widget {
         super(context, scale);
         this.isHorizontal = isHorizontal;
 
-        float x = Float.parseFloat(atomline[2]) * scale;
-        float y = Float.parseFloat(atomline[3]) * scale;
-        float w = Float.parseFloat(atomline[5]) * scale;
-        float h = Float.parseFloat(atomline[6]) * scale;
+        float x = Float.parseFloat(atomline[2]);
+        float y = Float.parseFloat(atomline[3]);
+        float w = Float.parseFloat(atomline[5]);
+        float h = Float.parseFloat(atomline[6]);
+        originalRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),
+                Math.round(y + h));
         if (isHorizontal) {
             originalFrameSize = Float.parseFloat(atomline[5]); //original w
         } else {
@@ -64,13 +66,15 @@ public class Slider extends Widget {
 
         if (sendValueOnInit) {
             setControlValue(Integer.parseInt(atomline[21]));
-            ;        }
+        }
+
+        reshape();
 
         // graphics setup - TODO generalize in super
-        RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
+        /*RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
         setLayoutParams(new RelativeLayout.LayoutParams((int)dRect.width(), (int)dRect.height()));
         setX(dRect.left);
-        setY(dRect.top);
+        setY(dRect.top);*/
     }
 
     //
