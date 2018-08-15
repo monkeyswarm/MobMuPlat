@@ -118,7 +118,7 @@ import cx.mccormick.pddroidparty.PdParser;
 
 public class MainActivity extends FragmentActivity implements LocationListener, SensorEventListener, AudioDelegate, InputDeviceListener, OnBackStackChangedListener,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener, PreviewSurface.Callback {
 	private static final String TAG = "MobMuPlat MainActivity";
 	public static final boolean VERBOSE = false;
 	//
@@ -153,7 +153,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	private Fragment _lastFrag;
 	private String _lastFragTitle;
 
-	private FlashlightController flashlightController;
+	PreviewSurface mSurface;
+
 	private BroadcastReceiver _bc;
 	private boolean _backgroundAudioAndNetworkEnabled;
 
@@ -192,6 +193,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 		//layout view 
 		setContentView(R.layout.activity_main);
+		mSurface = (PreviewSurface) findViewById(R.id.surface);
+		mSurface.setCallback(this);
 
 		processIntent();
 
@@ -272,11 +275,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		// Go full screen and lay out to top of screen.
 		// Only on SDK >= 16. This means that patch will not go truly fullscreen on ICS. Separate layouts for 14+ vs 16+ for the fragment margins.
 		_topLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-
-		//Flashlight TODO make black
-//		SurfaceView surfaceView = (SurfaceView)findViewById(R.id.surfaceView);
-//		flashlightController = new FlashlightController(surfaceView);
-//		flashlightController.startCamera();
 
 		// axes for table
 		if (getDeviceNaturalOrientation() == Configuration.ORIENTATION_LANDSCAPE) _shouldSwapAxes = true;
@@ -366,43 +364,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 		registerReceiver(_bc, intentFilter);
 
-		// camera
-//		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-//			ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MMP_PERMISSIONS_REQUEST_CAMERA);
-//			return;
-//		}
-//		if (flashlightController == null) {
-//			SurfaceView surfaceView = (SurfaceView)findViewById(R.id.surfaceView);
-//			flashlightController = new FlashlightController(surfaceView);
-//			flashlightController.startCamera();
-//		}
 	}
 
-	//dangerous: audio, camera, location, read/write external storage
+	//'dangerous' permissions that must be requested: audio, camera, location, read/write external storage
 	private static final int MMP_PERMISSIONS_REQUEST_AUDIO_AND_STORAGE = 1;
 	private static final int MMP_PERMISSIONS_REQUEST_LOCATION = 2;
 	private static final int MMP_PERMISSIONS_REQUEST_CAMERA = 3;
-	//private static final int MMP_PERMISSIONS_REQUEST_READWRITESTORAGE = 2;
-//	private static final int MMP_PERMISSIONS_REQUEST_AUDIO = 1;
-//	private static final int MMP_PERMISSIONS_REQUEST_AUDIO = 1;
-//	private static final int MMP_PERMISSIONS_REQUEST_AUDIO = 1;
-//	private static final int MMP_PERMISSIONS_REQUEST_AUDIO = 1;
-//	private static final int MMP_PERMISSIONS_REQUEST_AUDIO = 1;
-//	private static final int MMP_PERMISSIONS_REQUEST_AUDIO = 1;
-//	private static final int MMP_PERMISSIONS_REQUEST_AUDIO = 1;
-//
-//	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-//    <uses-permission android:name="android.permission.CAMERA" />
-//    <uses-permission android:name="android.permission.INTERNET" />
-//    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-//    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-//    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-//    <uses-permission android:name="android.permission.VIBRATE" />
-//    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-//    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-//    <uses-permission android:name="android.permission.WAKE_LOCK" />
-//    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-//    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode,
@@ -434,6 +401,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			}
 			case MMP_PERMISSIONS_REQUEST_CAMERA: {
 				if (grantResults.length > 0  && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+					mSurface.kick();
 					enableLight(true);
 				}
 			}
@@ -618,9 +586,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (flashlightController != null) {
-			flashlightController.stopCamera();
-		}
+		mSurface.lightOff();
 	}
 
 	@Override
@@ -628,9 +594,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		if(!_backgroundAudioAndNetworkEnabled) {
 			stopAudio();
       		networkController.stop();
-		}
-		if (flashlightController != null) {
-			flashlightController.stopCamera();
 		}
     	if (null != mGoogleApiClient && mGoogleApiClient.isConnected()) {
         	mGoogleApiClient.disconnect();
@@ -650,11 +613,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (flashlightController != null) {
-			flashlightController.startCamera();
-		}
 	}
-	
+
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -865,17 +825,17 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MMP_PERMISSIONS_REQUEST_CAMERA);
 			return;
 		}
-		if (flashlightController == null) {
-			SurfaceView surfaceView = (SurfaceView)findViewById(R.id.surfaceView);
-			flashlightController = new FlashlightController(surfaceView);
-			flashlightController.startCamera();
-		}
+
 		if (isOn) {
-			flashlightController.turnLightOn();
+			mSurface.lightOn();
 		} else {
-			flashlightController.turnLightOff();
+			mSurface.lightOff();
 		}
 	}
+
+	// PreviewSurface callbacks
+	public void cameraReady(){};
+	public void cameraNotAvailable(){};
 
 
 	private void initSensors() { //TODO allow sensors on default thread for low-power devices (or just shutoff)
@@ -1124,9 +1084,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		} catch (IllegalArgumentException e) {
 			// already unbound
 			pdService = null;
-		}
-		if (flashlightController != null) {
-			flashlightController.stopCamera();
 		}
 	}
 
