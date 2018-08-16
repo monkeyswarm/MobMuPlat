@@ -1,8 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11201" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <deployment version="1536" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -52,13 +55,14 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="1">
-            <rect key="frame" x="0.0" y="44" width="375" height="623"/>
+            <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jzo-Qb-N4Y">
+                    <rect key="frame" x="10" y="8" width="355" height="524"/>
                     <subviews>
                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="wifi network:" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fw1-oI-RB4">
-                            <frame key="frameInset" minX="20" minY="8" width="260" height="40"/>
+                            <rect key="frame" x="20" y="8" width="260" height="40"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="40" id="vAd-LH-bR5"/>
                             </constraints>
@@ -66,7 +70,7 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <segmentedControl opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="vDI-Qy-l43">
-                            <frame key="frameInset" minX="13" minY="55" width="274" height="29"/>
+                            <rect key="frame" x="13" y="55" width="274" height="29"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="28" id="ank-Eo-PA8"/>
                             </constraints>
@@ -78,26 +82,26 @@
                             <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </segmentedControl>
                         <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CUe-QD-ydR">
-                            <frame key="frameInset" minX="13" minY="85" width="275" height="330"/>
+                            <rect key="frame" x="13" y="85" width="275" height="330"/>
                             <subviews>
                                 <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OHo-WM-0TI">
-                                    <frame key="frameInset" width="275" height="330"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="275" height="330"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="LANdini is an ad-hoc networking protocol for groups, with guaranteed delivery. All other clients must be LANdini-enabled." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kAS-V2-Eud">
-                                            <frame key="frameInset" width="275" height="49"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="275" height="49"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="enable LANdini (v.22):" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CCC-jq-OoT">
-                                            <frame key="frameInset" minX="20" minY="52" width="147" height="21"/>
+                                            <rect key="frame" x="20" y="52" width="147" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="1Sk-5m-7Kw">
-                                            <frame key="frameInset" minX="175" minY="49" width="51" height="31"/>
+                                            <rect key="frame" x="175" y="49" width="51" height="31"/>
                                         </switch>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8on-GK-DIE">
-                                            <frame key="frameInset" minX="-35" minY="80" width="350" height="45"/>
+                                            <rect key="frame" x="-35" y="80" width="350" height="45"/>
                                             <string key="text">Note that LANdini sends out multicast messages. 
 Some school/company networks may not like this. 
 Use a local router only for best results. </string>
@@ -106,7 +110,7 @@ Use a local router only for best results. </string>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mb1-I8-Nw6">
-                                            <frame key="frameInset" minY="117" width="275" height="15"/>
+                                            <rect key="frame" x="0.0" y="117" width="275" height="15"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="15" id="haF-Rj-9yS"/>
                                             </constraints>
@@ -116,16 +120,16 @@ Use a local router only for best results. </string>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="LAN User List:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AQH-2o-BsZ">
-                                            <frame key="frameInset" minY="137" width="260" height="21"/>
+                                            <rect key="frame" x="0.0" y="137" width="260" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="s2z-u2-63O">
-                                            <frame key="frameInset" minY="158" width="275" height="157"/>
+                                            <rect key="frame" x="0.0" y="158" width="275" height="157"/>
                                             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </tableView>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="See LANdini example for more info" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uUt-KY-jfR">
-                                            <frame key="frameInset" minX="10" minY="310" width="260" height="21"/>
+                                            <rect key="frame" x="10" y="310" width="260" height="21"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="21" id="jZZ-un-rPJ"/>
                                             </constraints>
@@ -161,28 +165,28 @@ Use a local router only for best results. </string>
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="paR-QD-hDa" userLabel="Ping and Connect">
-                                    <frame key="frameInset" width="275" height="330"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="275" height="330"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Ping &amp; Connect is an ad-hoc networking protocol. All other clients must be Ping &amp; Connect-enabled." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fpQ-82-deI">
-                                            <frame key="frameInset" minX="-50" width="375" height="40"/>
+                                            <rect key="frame" x="-50" y="0.0" width="375" height="40"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="enable Ping &amp; Connect" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WI0-Sb-4e3">
-                                            <frame key="frameInset" minX="10" minY="41" width="158" height="21"/>
+                                            <rect key="frame" x="10" y="41" width="158" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="scy-hy-weS">
-                                            <frame key="frameInset" minX="176" minY="41" width="51" height="31"/>
+                                            <rect key="frame" x="176" y="41" width="51" height="31"/>
                                         </switch>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="set player number" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jB5-MO-XX7">
-                                            <frame key="frameInset" minX="10" minY="72" width="158" height="21"/>
+                                            <rect key="frame" x="10" y="72" width="158" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <segmentedControl opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" apportionsSegmentWidthsByContent="YES" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="eBq-65-C46">
-                                            <frame key="frameInset" minX="8" minY="86" width="267" height="29"/>
+                                            <rect key="frame" x="8" y="86" width="267" height="29"/>
                                             <segments>
                                                 <segment title="none"/>
                                                 <segment title="server"/>
@@ -198,7 +202,7 @@ Use a local router only for best results. </string>
                                             <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </segmentedControl>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="j7j-nU-ZXm">
-                                            <frame key="frameInset" minX="-35" minY="116" width="350" height="45"/>
+                                            <rect key="frame" x="-35" y="116" width="350" height="45"/>
                                             <string key="text">Note that this sends out multicast messages. 
 Some school/company networks may not like this. 
 Use a local router only for best results. </string>
@@ -207,16 +211,16 @@ Use a local router only for best results. </string>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="LAN User List:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Em-Qt-kft">
-                                            <frame key="frameInset" minY="161" width="260" height="21"/>
+                                            <rect key="frame" x="0.0" y="161" width="260" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="XBR-g3-vsG">
-                                            <frame key="frameInset" minY="182" width="275" height="115"/>
+                                            <rect key="frame" x="0.0" y="182" width="275" height="115"/>
                                             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </tableView>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="See Ping &amp; Connect example for more info" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="s5j-fb-Vl0">
-                                            <frame key="frameInset" minY="309" width="273" height="21"/>
+                                            <rect key="frame" x="0.0" y="309" width="273" height="21"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="21" id="47d-bk-zhg"/>
                                             </constraints>
@@ -253,15 +257,15 @@ Use a local router only for best results. </string>
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EpL-mu-96r">
-                                    <frame key="frameInset" width="275" height="330"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="275" height="330"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Network communication is multicast by default. You may instead specify a unicast IP address." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZnY-BJ-as4">
-                                            <frame key="frameInset" width="275" height="35"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="275" height="35"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="nfW-EI-Twp">
-                                            <frame key="frameInset" minY="37" width="275" height="30"/>
+                                            <rect key="frame" x="0.0" y="37" width="275" height="30"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="30" id="AMC-q9-qsA"/>
                                             </constraints>
@@ -269,12 +273,12 @@ Use a local router only for best results. </string>
                                             <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation" returnKeyType="done"/>
                                         </textField>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Output IP Address:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uei-eI-luO">
-                                            <frame key="frameInset" minX="14" minY="41" width="162" height="21"/>
+                                            <rect key="frame" x="14" y="41" width="162" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cby-V4-Jmm">
-                                            <frame key="frameInset" minX="46" minY="67" width="183" height="30"/>
+                                            <rect key="frame" x="46" y="67" width="183" height="30"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="30" id="dbX-sK-vD0"/>
                                             </constraints>
@@ -283,7 +287,7 @@ Use a local router only for best results. </string>
                                             </state>
                                         </button>
                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="yhU-J8-F1v">
-                                            <frame key="frameInset" minY="99" width="275" height="30"/>
+                                            <rect key="frame" x="0.0" y="99" width="275" height="30"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="30" id="rch-hH-qeC"/>
                                             </constraints>
@@ -291,12 +295,12 @@ Use a local router only for best results. </string>
                                             <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation" returnKeyType="done"/>
                                         </textField>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Output Port:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KOq-2C-cD1">
-                                            <frame key="frameInset" minX="14" minY="103" width="95" height="21"/>
+                                            <rect key="frame" x="14" y="103" width="95" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8ae-zg-AEz">
-                                            <frame key="frameInset" minY="132" width="275" height="30"/>
+                                            <rect key="frame" x="0.0" y="132" width="275" height="30"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="30" id="FmS-lr-c5N"/>
                                             </constraints>
@@ -304,7 +308,7 @@ Use a local router only for best results. </string>
                                             <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation" returnKeyType="done"/>
                                         </textField>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Input Port:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aN4-2l-fI9">
-                                            <frame key="frameInset" minX="14" minY="136" width="81" height="21"/>
+                                            <rect key="frame" x="14" y="136" width="81" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="highlightedColor"/>
                                         </label>
@@ -367,7 +371,7 @@ Use a local router only for best results. </string>
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ybc-0c-0Vc">
-                    <frame key="frameInset" minX="226" minY="612" width="84" height="30"/>
+                    <rect key="frame" x="226" y="612" width="84" height="30"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="30" id="sQo-bH-7d7"/>
                     </constraints>
@@ -384,7 +388,7 @@ Use a local router only for best results. </string>
                     </state>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6e5-hL-t5E">
-                    <frame key="frameInset" minX="162" minY="612" width="90" height="30"/>
+                    <rect key="frame" x="162" y="612" width="90" height="30"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="30" id="LFO-yC-Mj9"/>
                     </constraints>
@@ -401,7 +405,7 @@ Use a local router only for best results. </string>
                     </state>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="P20-pN-hWz">
-                    <frame key="frameInset" minX="10" minY="612" width="87" height="30"/>
+                    <rect key="frame" x="10" y="612" width="87" height="30"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="30" id="AHP-oe-bif"/>
                     </constraints>
@@ -418,6 +422,7 @@ Use a local router only for best results. </string>
                     </state>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZAP-q4-kko">
+                    <rect key="frame" x="10" y="581" width="355" height="30"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="30" id="Sl6-kz-8C8"/>
                     </constraints>
@@ -434,15 +439,16 @@ Use a local router only for best results. </string>
                     </state>
                 </button>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tm1-Ey-OH2">
+                    <rect key="frame" x="10" y="8" width="355" height="524"/>
                     <subviews>
                         <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" editable="NO" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aU3-fC-jVS">
-                            <frame key="frameInset" minX="10" minY="11" width="280" height="370"/>
+                            <rect key="frame" x="10" y="11" width="280" height="370"/>
                             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                             <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                         </textView>
                         <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rxx-z8-lcI">
-                            <frame key="frameInset" minX="10" minY="389" width="280" height="30"/>
+                            <rect key="frame" x="10" y="389" width="280" height="30"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="30" id="Mah-jB-zue"/>
                             </constraints>
@@ -471,39 +477,39 @@ Use a local router only for best results. </string>
                     </constraints>
                 </view>
                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" bounces="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rwa-D0-SdT">
-                    <frame key="frameInset" minX="10" minY="8" width="394" height="593"/>
+                    <rect key="frame" x="10" y="8" width="394" height="593"/>
                     <subviews>
                         <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TrW-s5-vQA">
                             <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                             <subviews>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Select MIDI Input &amp; Output" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q9j-d4-GqO">
-                                    <frame key="frameInset" minX="47" minY="5" width="206" height="21"/>
+                                    <rect key="frame" x="47" y="5" width="206" height="21"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" style="plain" separatorStyle="default" allowsMultipleSelection="YES" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="c6h-Vz-iyZ">
-                                    <frame key="frameInset" minX="20" minY="30" width="125" height="80"/>
+                                    <rect key="frame" x="20" y="30" width="125" height="80"/>
                                     <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="80" id="CfD-mu-lLm"/>
                                     </constraints>
                                 </tableView>
                                 <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" style="plain" separatorStyle="default" allowsMultipleSelection="YES" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="ag9-Xi-eUi">
-                                    <frame key="frameInset" minX="155" minY="30" width="125" height="80"/>
+                                    <rect key="frame" x="155" y="30" width="125" height="80"/>
                                     <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="80" id="NX5-hP-32Q"/>
                                     </constraints>
                                 </tableView>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Audio Buffer Size (in Pd blocks)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ae5-3f-1vM">
-                                    <frame key="frameInset" minX="30" minY="117" width="241" height="21"/>
+                                    <rect key="frame" x="30" y="117" width="241" height="21"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <segmentedControl opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="4" translatesAutoresizingMaskIntoConstraints="NO" id="7ZM-S8-9hq">
-                                    <frame key="frameInset" minX="20" minY="140" width="260" height="29"/>
+                                    <rect key="frame" x="20" y="140" width="260" height="29"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="28" id="O5g-ea-a0t"/>
                                     </constraints>
@@ -519,20 +525,20 @@ Use a local router only for best results. </string>
                                     <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </segmentedControl>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pm3-MB-iI4">
-                                    <frame key="frameInset" minX="30" minY="172" width="241" height="33"/>
+                                    <rect key="frame" x="30" y="172" width="241" height="33"/>
                                     <string key="text">request:
 actual:</string>
                                     <fontDescription key="fontDescription" type="system" pointSize="10"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Sampling Rate" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hSn-Zl-1vm">
-                                    <frame key="frameInset" minX="25" minY="206" width="250" height="21"/>
+                                    <rect key="frame" x="25" y="206" width="250" height="21"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <segmentedControl opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="4" translatesAutoresizingMaskIntoConstraints="NO" id="nel-wk-XYx">
-                                    <frame key="frameInset" minX="20" minY="228" width="260" height="29"/>
+                                    <rect key="frame" x="20" y="228" width="260" height="29"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="28" id="lWg-J6-H8S"/>
                                     </constraints>
@@ -547,7 +553,7 @@ actual:</string>
                                     <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </segmentedControl>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zye-Nv-u80">
-                                    <frame key="frameInset" minX="20" minY="267" width="188" height="33"/>
+                                    <rect key="frame" x="20" y="267" width="188" height="33"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="188" id="OQz-cV-Bzi"/>
                                     </constraints>
@@ -557,7 +563,7 @@ for iOS controllers/sequencers)</string>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IbY-rZ-xNa">
-                                    <frame key="frameInset" minX="20" minY="307" width="188" height="49"/>
+                                    <rect key="frame" x="20" y="307" width="188" height="49"/>
                                     <string key="text">override audio input
 (allows system vibration
 and audio output routing)</string>
@@ -565,7 +571,7 @@ and audio output routing)</string>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FpM-Dy-zYX">
-                                    <frame key="frameInset" minX="0.85310000000000008" minY="0.59999999999999998" width="75" height="35"/>
+                                    <rect key="frame" x="0.85310000000000008" y="0.59999999999999998" width="75" height="35"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="75" id="O3k-uZ-XaJ"/>
                                         <constraint firstAttribute="height" constant="35" id="PnZ-AU-s3J"/>
@@ -577,14 +583,14 @@ and audio output routing)</string>
                                     </state>
                                 </button>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ved-fV-r3s">
-                                    <frame key="frameInset" minX="20" minY="401" width="260" height="33"/>
+                                    <rect key="frame" x="20" y="401" width="260" height="33"/>
                                     <string key="text">input:
 output:</string>
                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="lcE-wK-Ga2">
-                                    <frame key="frameInset" minX="0.82530000000000003" minY="0.69930000000000003" width="51" height="31"/>
+                                    <rect key="frame" x="0.82530000000000003" y="0.69930000000000003" width="51" height="31"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="49" id="Fb9-pH-HXX"/>
                                         <constraint firstAttribute="height" constant="31" id="Ult-h1-lGy"/>
@@ -637,13 +643,14 @@ output:</string>
                     </constraints>
                 </scrollView>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bbb-eu-PYZ">
+                    <rect key="frame" x="10" y="8" width="355" height="524"/>
                     <subviews>
                         <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="7if-bL-GZD">
-                            <frame key="frameInset" minX="10" minY="11" width="280" height="370"/>
+                            <rect key="frame" x="10" y="11" width="280" height="370"/>
                             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </tableView>
                         <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RKH-wj-XyU">
-                            <frame key="frameInset" minX="10" minY="389" width="110" height="30"/>
+                            <rect key="frame" x="10" y="389" width="110" height="30"/>
                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                             <state key="normal" title="show all files">
                                 <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -651,7 +658,7 @@ output:</string>
                             </state>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fEK-gL-YRS" userLabel="Button - flip interface">
-                            <frame key="frameInset" minX="128" minY="389" width="110" height="30"/>
+                            <rect key="frame" x="128" y="389" width="110" height="30"/>
                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                             <state key="normal" title="flip interface">
                                 <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -659,7 +666,7 @@ output:</string>
                             </state>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j8w-sP-81f" userLabel="Button - auto load">
-                            <frame key="frameInset" minX="238" minY="389" width="110" height="30"/>
+                            <rect key="frame" x="238" y="389" width="110" height="30"/>
                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                             <state key="normal" title="load on start">
                                 <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -726,9 +733,4 @@ output:</string>
             <point key="canvasLocation" x="35.5" y="89.5"/>
         </view>
     </objects>
-    <simulatedMetricsContainer key="defaultSimulatedMetrics">
-        <simulatedStatusBarMetrics key="statusBar"/>
-        <simulatedOrientationMetrics key="orientation"/>
-        <simulatedScreenMetrics key="destination" type="retina4_7.fullscreen"/>
-    </simulatedMetricsContainer>
 </document>

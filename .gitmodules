@@ -8,3 +8,6 @@
 [submodule "PdParty"]
 	path = PdParty
 	url = https://github.com/danomatika/PdParty.git
+[submodule "ZipArchive"]
+	path = ZipArchive
+	url = https://github.com/mattconnolly/ZipArchive.git

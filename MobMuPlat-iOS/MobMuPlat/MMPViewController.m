@@ -209,12 +209,12 @@
   _connectedMidiSources = [NSMutableArray array];
   _connectedMidiDestinations = [NSMutableArray array];
 
-  // If iOS 5, then use non-auto-layout xib files.
-  if (SYSTEM_VERSION_LESS_THAN(@"6.0")) {
+  // If iOS 5, then use non-auto-layout xib files. - these xibs are no longer supported.
+  /*if (SYSTEM_VERSION_LESS_THAN(@"6.0")) {
     settingsVC = [[SettingsViewController alloc] initWithNibName:@"SettingsViewControllerIOS5" bundle:nil];
-  } else {
+  } else {*/
     settingsVC = [[SettingsViewController alloc] initWithNibName:nil bundle:nil];
-  }
+  //}
 
   // OSC setup
   _oscManager = [[OSCManager alloc] init];

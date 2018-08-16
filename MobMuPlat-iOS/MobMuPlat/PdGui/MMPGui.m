@@ -27,10 +27,10 @@
   BOOL _inLevel2CanvasShowingArray;
 }
 
-- (BOOL)addObjectType:(NSString *)type fromAtomLine:(NSArray *)atomLine {
-  BOOL retVal = [super addObjectType:type fromAtomLine:atomLine];
+- (BOOL)addObjectType:(NSString *)type fromAtomLine:(NSArray *)atomLine atLevel:(int)level {
+  BOOL retVal = [super addObjectType:type fromAtomLine:atomLine atLevel:level];
   if (retVal) return YES; // super handled it
-
+  if (level != 1) return NO;
   // check against restore graph, etc...
   //if ([type isEqualToString:@"obj"]) {
     // Render object box
@@ -42,7 +42,7 @@
   } else {
     return NO;
   }*/
-  return NO;
+  //return NO;
 }
 
 - (void)addWidgetsFromAtomLines:(NSArray *)lines {
