@@ -706,7 +706,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   [[NSUserDefaults standardUserDefaults] setObject:outputIpAddress forKey:@"outputIPAddress"];
 }
 
-- (void)setOutputPort:(int)outputPortNumber {
+- (void)setOutputPortNumber:(int)outputPortNumber {
   if (_outputPortNumber == outputPortNumber) {
     return;
   }
@@ -716,7 +716,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   [[NSUserDefaults standardUserDefaults] setObject:@(_outputPortNumber) forKey:@"outputPortNumber"];
 }
 
-- (void)setInputPort:(int)inputPortNumber {
+- (void)setInputPortNumber:(int)inputPortNumber {
   if (_inputPortNumber == inputPortNumber) {
     return;
   }
@@ -2108,7 +2108,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
 
 -(void)reachabilityChanged:(NSNotification *)note {
   NSString *network = [MMPViewController fetchSSIDInfo];
-  NSArray *msgArray = @[ @"/reachability", @([_reach isReachable] ? 1.0f : 0.0f), network ];
+  NSArray *msgArray = @[ @"/reachability", @([_reach isReachable] ? 1.0f : 0.0f), network == nil ? @"" : network ];
   [PdBase sendList:msgArray toReceiver:@"fromSystem"];
 }
 
