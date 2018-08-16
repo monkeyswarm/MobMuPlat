@@ -4,13 +4,15 @@ import java.text.DecimalFormat;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.RelativeLayout;
 
-public class NumberBox2 extends Widget {
+public class NumberBox2 extends IEMWidget {
     private DecimalFormat fmt;
     private int numWidth;
     private float min, max;
@@ -21,9 +23,8 @@ public class NumberBox2 extends Widget {
 
     public NumberBox2(Context context, String[] atomline, float scale, float fontSize) {
         super(context, scale);
-        float x = Float.parseFloat(atomline[2]) * scale ;
-        float y = Float.parseFloat(atomline[3]) * scale ;
-        //Rect tRect = new Rect();
+        float x = Float.parseFloat(atomline[2]);
+        float y = Float.parseFloat(atomline[3]);
 
         setLogHeight(256);
 
@@ -51,6 +52,8 @@ public class NumberBox2 extends Widget {
         labelString = sanitizeLabel(atomline[13]);
         labelpos[0] = Float.parseFloat(atomline[14]) ;
         labelpos[1] = Float.parseFloat(atomline[15]) ;
+        labelsize = Integer.parseInt(atomline[17]) ;
+        fontSize = labelsize;
 
         if (sendValueOnInit) {
             setValue(Float.parseFloat(atomline[21]));
@@ -63,23 +66,29 @@ public class NumberBox2 extends Widget {
         Rect rect = new Rect();
         paint.setTextSize(fontSize * scale);
         paint.getTextBounds(calclen.toString(), 0, calclen.length(), rect);
-        float h = rect.height();
 
-        rect.right += h*.75;//add width for triangle (h/2) and notch (h/4)
+        rect.right += rect.height() *.75;//add width for triangle (h/2) and notch (h/4)
         RectF dRect = new RectF(rect);
         dRect.sort();
-        dRect.offset((int)x, (int)y + fontSize * scale);
 
-        setLayoutParams(new RelativeLayout.LayoutParams((int)dRect.width(), (int)(dRect.height()+ 4*scale)));
-        setX(dRect.left);
-        setY(dRect.top);
+        originalRect = new RectF(Math.round(x), Math.round(y), Math.round(x + dRect.width()/scale),
+                Math.round(y + dRect.height()/scale+ 4));
+        reshape();
+//        setLayoutParams(new RelativeLayout.LayoutParams((int)dRect.width(), (int)(dRect.height()+ 4*scale)));
+//        setX(dRect.left);
+//        setY(dRect.top);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         float w = getWidth(); //TODO check if this is much slower than storing as an ivar one0time.
         float h = getHeight();
+        paint.setColor(bgcolor);
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawPaint(paint);
         float notch = h / 4;
+        paint.setColor(Color.BLACK);
+        paint.setStrokeWidth(lineWidth);
         canvas.drawLine(0, 0, w - notch, 0, paint); //top
         canvas.drawLine(0,0,0,h, paint); //left
         canvas.drawLine(w, notch, w, h, paint); //right
@@ -91,7 +100,9 @@ public class NumberBox2 extends Widget {
         //canvas.drawText("" + fmt.format(getValue()), 3f,h*.75f, paint);
         float val = getValue();
         String string = stringForFloat(val, numWidth, fmt);
+        paint.setColor(fgcolor);
         canvas.drawText(string, triangleWidth, h-(2*scale), paint);
+        drawLabel(canvas);
     }
 
     //TODO consolidate this with number box.

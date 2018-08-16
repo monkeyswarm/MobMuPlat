@@ -25,8 +25,8 @@ public class Comment extends Widget {
         paint.setColor(Color.BLACK);
         lineHeight = fontSize * scale;
 
-        float x = Float.parseFloat(atomline[2]) * scale;
-        float y = Float.parseFloat(atomline[3]) * scale;
+        float x = Float.parseFloat(atomline[2]);
+        float y = Float.parseFloat(atomline[3]);
 
         // create the comment string as an array of lines, handle escaped chars
         stringList = new ArrayList<String>();
@@ -81,10 +81,13 @@ public class Comment extends Widget {
                 maxWidth = rect.width();
             }
         }
-        RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + maxWidth), Math.round(y + (lineHeight * stringList.size())));
+        originalRect = new RectF(Math.round(x), Math.round(y), Math.round(x + maxWidth),
+                Math.round(y + (lineHeight * stringList.size())));
+        reshape();
+        /*RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + maxWidth), Math.round(y + (lineHeight * stringList.size())));
         setLayoutParams(new RelativeLayout.LayoutParams((int)dRect.width(), (int)dRect.height()));
         setX(dRect.left);
-        setY(dRect.top);
+        setY(dRect.top);*/
 	}
 
 

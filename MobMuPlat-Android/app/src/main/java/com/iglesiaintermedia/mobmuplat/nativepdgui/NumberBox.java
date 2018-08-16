@@ -20,8 +20,8 @@ public class NumberBox extends AtomWidget {
     public NumberBox(Context context, String[] atomline, float scale, int fontSize) {
         super(context, scale, fontSize);
 
-        float x = Float.parseFloat(atomline[2]) * scale;
-        float y = Float.parseFloat(atomline[3]) * scale;
+        float x = Float.parseFloat(atomline[2]);
+        float y = Float.parseFloat(atomline[3]);
 
         // calculate screen bounds for the numbers that can fit
         numWidth = Integer.parseInt(atomline[4]);
@@ -44,15 +44,17 @@ public class NumberBox extends AtomWidget {
 
         // graphics setup
         String adjustedString = calclen.append("0").toString(); //add one char space padding
-        Rect rect = new Rect();
+        Rect rect = new Rect(); //computed post-scaling since paint scales its fontSize
         paint.setTextSize(fontSize * scale);
         paint.getTextBounds(adjustedString, 0, adjustedString.length(), rect);
 
-        RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + rect.width()), Math.round(y + rect.height() + 4*scale));
-
+        originalRect = new RectF(Math.round(x), Math.round(y), Math.round(x + rect.width()/scale),
+                Math.round(y + rect.height()/scale + 4));
+        reshape();
+        /*RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + rect.width()), Math.round(y + rect.height() + 4*scale));
         setLayoutParams(new RelativeLayout.LayoutParams((int)dRect.width(), (int)dRect.height()));
         setX(dRect.left);
-        setY(dRect.top);
+        setY(dRect.top);*/
     }
 
     @Override

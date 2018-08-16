@@ -258,8 +258,8 @@ public class Widget extends RelativeLayout implements PdListener {
 
     }
 
-    protected void receiveEditMessage(String message, Object... args) {
-
+    protected boolean receiveEditMessage(String message, Object... args) {
+        return false;
     }
 
     protected void receiveBangFromSource(String source) {

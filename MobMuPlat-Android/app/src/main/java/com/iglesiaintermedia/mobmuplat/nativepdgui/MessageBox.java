@@ -29,8 +29,9 @@ public class MessageBox extends AtomWidget {
     public MessageBox(Context context, String[] atomline, float scale, int fontSize) {
         super(context, scale, fontSize);
         //TODO check length >=5
-        float x = Float.parseFloat(atomline[2]) * scale;
-        float y = Float.parseFloat(atomline[3]) * scale;
+        float x = Float.parseFloat(atomline[2]);
+        float y = Float.parseFloat(atomline[3]);
+
 
         //last two atoms (added via post-MMP-processing) will be the send/rec names!!!
         //symbolValue = TextUtils.join(" ", Arrays.copyOfRange(atomline, 4, atomline.length-2));
@@ -38,23 +39,12 @@ public class MessageBox extends AtomWidget {
         setReceiveName(sanitizeLabel(atomline[atomline.length-1]));
         //ignoring min/max value...
 
-        lineHeight = fontSize * scale;
+        lineHeight = fontSize; //* scale;
 
         setText(Arrays.copyOfRange(atomline, 4, atomline.length - 2));
 
-   /*     // graphics setup
-        paint.setColor(Color.BLACK);
-        Rect rect = new Rect();
-        paint.setTextSize(fontSize * scale);
-        paint.getTextBounds(symbolValue, 0, symbolValue.length(), rect);
-        RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + rect.width() + 8*scale), Math.round(y + (fontSize + 4)*scale));
-
-        setLayoutParams(new RelativeLayout.LayoutParams((int)dRect.width(), (int)dRect.height()));
-        setX(dRect.left);
-        setY(dRect.top);*/
-
         // graphics setup
-        int maxWidth = 0;
+        int maxWidth = 0; //maxWidth is initially computed as post-scaled, since "paint" has a scaled font size.
 
         Rect rect = new Rect();
         for (String stringLine : stringList) {
@@ -64,11 +54,15 @@ public class MessageBox extends AtomWidget {
             }
         }
         maxWidth += lineWidth+(rightPadding*scale);
+        maxWidth /= scale;
 
-        RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + maxWidth), Math.round(y + (lineHeight * stringList.size()) + (bottomPadding*scale)));
+        originalRect = new RectF(Math.round(x), Math.round(y), Math.round(x + maxWidth),
+                Math.round(y + (lineHeight * stringList.size()) + bottomPadding));
+        reshape();
+        /*RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + maxWidth), Math.round(y + (lineHeight * stringList.size()) + (bottomPadding*scale)));
         setLayoutParams(new RelativeLayout.LayoutParams((int)dRect.width(), (int)dRect.height()));
         setX(dRect.left);
-        setY(dRect.top);
+        setY(dRect.top);*/
     }
 
     private void setText(Object[] textAtoms){
@@ -164,7 +158,7 @@ public class MessageBox extends AtomWidget {
         //canvas.drawText(symbolValue, 0, h - (3 * scale), paint);
 
         //drawLabel(canvas);
-        float yPos = lineHeight - (verticalTextOffset*scale);
+        float yPos = (lineHeight - verticalTextOffset)*scale;
         for (String stringLine : stringList) {
             canvas.drawText(stringLine, 0,yPos, paint);
             //canvas.drawCircle(0,yPos,5,paint);
@@ -201,10 +195,11 @@ public class MessageBox extends AtomWidget {
             }
         }
         maxWidth += lineWidth+(rightPadding*scale);
+        maxWidth /= scale;
 
         ViewGroup.LayoutParams params = getLayoutParams();
         params.width = maxWidth;
-        params.height = (int)((lineHeight * stringList.size()) + (bottomPadding*scale));
+        params.height = (int)((lineHeight * stringList.size()) + (bottomPadding/**scale*/));
         setLayoutParams(params);
         invalidate();
     }

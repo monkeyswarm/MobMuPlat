@@ -35,10 +35,12 @@ public class ArrayWidget extends Widget {
 
         //_clipRect = new Rect(); // dirty rect doesn't work
 
-        float x = Float.parseFloat(restoreLine[2]) * scale;
-        float y = Float.parseFloat(restoreLine[3]) * scale;
-        float w = Float.parseFloat(coordsLine[6]) * scale;
-        float h = Float.parseFloat(coordsLine[7]) * scale;
+        float x = Float.parseFloat(restoreLine[2]);
+        float y = Float.parseFloat(restoreLine[3]);
+        float w = Float.parseFloat(coordsLine[6]);
+        float h = Float.parseFloat(coordsLine[7]);
+        originalRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),
+                Math.round(y + h));
 
         // communicate with array directly via PdBase.
         // receive name is just to handle messages sent to array that
@@ -52,11 +54,12 @@ public class ArrayWidget extends Widget {
         labelpos[1] = -fontSize; //TODO nudge
         labelsize = fontSize;
 
+        reshape();
         // graphics setup
-        RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),Math.round(y + h));
+        /*RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),Math.round(y + h));
         setLayoutParams(new RelativeLayout.LayoutParams((int)dRect.width(), (int)dRect.height()));
         setX(dRect.left);
-        setY(dRect.top);
+        setY(dRect.top);*/
     }
 
     public void setup() {

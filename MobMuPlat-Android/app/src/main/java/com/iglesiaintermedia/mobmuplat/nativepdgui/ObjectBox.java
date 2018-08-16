@@ -16,8 +16,8 @@ public class ObjectBox extends AtomWidget {
     public ObjectBox(Context context, String[] atomline, float scale, int fontSize) {
         super(context, scale, fontSize);
         //TODO check length >=5
-        float x = Float.parseFloat(atomline[2]) * scale;
-        float y = Float.parseFloat(atomline[3]) * scale;
+        float x = Float.parseFloat(atomline[2]);
+        float y = Float.parseFloat(atomline[3]);
 
         // parse off first 4 to get the text array
         atomline = Arrays.copyOfRange(atomline, 4, atomline.length);
@@ -49,7 +49,7 @@ public class ObjectBox extends AtomWidget {
         Rect rect = new Rect();
         paint.setTextSize(fontSize * scale);
         paint.getTextBounds(symbolValue, 0, symbolValue.length(), rect);
-        float width = rect.width();
+        float width = rect.width(); // computed as post-scaled, since paint has fontsize with scaling.
 
         if (overridenCharWidth>0) {
             Rect singleCharWidthRect = new Rect();
@@ -57,15 +57,18 @@ public class ObjectBox extends AtomWidget {
             width = singleCharWidthRect.width() * overridenCharWidth;
         }
 
-        RectF dRect = new RectF(
-                Math.round(x),
-                Math.round(y),
-                Math.round(x + width+4*scale),
-                Math.round(y + (fontSize + 4)*scale)); //todo use fontMetrics to get height
-
-        setLayoutParams(new RelativeLayout.LayoutParams((int)dRect.width(), (int)dRect.height()));
-        setX(dRect.left);
-        setY(dRect.top);
+        originalRect = new RectF(Math.round(x), Math.round(y), Math.round(x + (width/scale)+4),
+                Math.round(y + (fontSize + 4)));
+        reshape();
+//        RectF dRect = new RectF(
+//                Math.round(x),
+//                Math.round(y),
+//                Math.round(x + width+4*scale),
+//                Math.round(y + (fontSize + 4)*scale)); //todo use fontMetrics to get height
+//
+//        setLayoutParams(new RelativeLayout.LayoutParams((int)dRect.width(), (int)dRect.height()));
+//        setX(dRect.left);
+//        setY(dRect.top);
     }
 
     @Override

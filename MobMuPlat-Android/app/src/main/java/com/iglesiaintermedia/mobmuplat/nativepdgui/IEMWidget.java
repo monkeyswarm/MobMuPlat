@@ -8,7 +8,7 @@ public abstract class IEMWidget extends Widget {
         super(context, scale);
     }
 
-    protected void receiveEditMessage(String message, Object... args) {
+    protected boolean receiveEditMessage(String message, Object... args) {
         if (message.equals("color") && args.length > 2 && args[0] instanceof Float &&
                 args[1] instanceof Float && args[2] instanceof Float) {
             // background color, front color, label color
@@ -16,9 +16,11 @@ public abstract class IEMWidget extends Widget {
             fgcolor = getColor(((Float) (args[1])).intValue());
             labelcolor = getColor(((Float) (args[2])).intValue());
             invalidate();
+            return true;
         } else if (message.equals("size") && args.length > 1 && args[0] instanceof Float &&
                 args[1] instanceof Float) {
             //width, heightorigin
+	    return false;
         }
         /*
         if([message isEqualToString:@"color"] && [arguments count] > 2 &&
@@ -100,6 +102,7 @@ public abstract class IEMWidget extends Widget {
         }
         return NO;
     }*/
+        return false;
     }
 
 }

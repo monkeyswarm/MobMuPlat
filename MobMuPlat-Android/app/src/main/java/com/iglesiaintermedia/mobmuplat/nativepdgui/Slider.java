@@ -9,7 +9,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.RelativeLayout;
 
-public class Slider extends Widget {
+public class Slider extends IEMWidget {
     private static final String TAG = "Slider";
 
     private boolean isHorizontal;

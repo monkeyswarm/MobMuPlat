@@ -9,7 +9,7 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.widget.RelativeLayout;
 
-public class Bang extends Widget {
+public class Bang extends IEMWidget {
 
     private long holdTime;
     private long interrupt;
@@ -21,10 +21,12 @@ public class Bang extends Widget {
     public Bang(Context context, String[] atomline, float scale) {
         super(context, scale);
 
-        float x = Float.parseFloat(atomline[2]) * scale;
-        float y = Float.parseFloat(atomline[3]) * scale;
-        float w = Float.parseFloat(atomline[5]) * scale;
-        float h = Float.parseFloat(atomline[5]) * scale;
+        float x = Float.parseFloat(atomline[2]);
+        float y = Float.parseFloat(atomline[3]);
+        float w = Float.parseFloat(atomline[5]);
+        float h = Float.parseFloat(atomline[5]);
+        originalRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),
+                Math.round(y + h));
 
         holdTime = Math.max(IEM_BNG_MINHOLDFLASHTIME, (int) Float.parseFloat(atomline[6]));
         interrupt = Math.max(IEM_BNG_MINBREAKFLASHTIME, (int) Float.parseFloat(atomline[7]));
@@ -42,11 +44,12 @@ public class Bang extends Widget {
         fgcolor = getColor(Integer.parseInt(atomline[17]));
         labelcolor = getColor(Integer.parseInt(atomline[18]));
 
+        reshape();
         // graphics setup
-        RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
+        /*RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
         setLayoutParams(new RelativeLayout.LayoutParams((int) dRect.width(), (int) dRect.height()));
         setX(dRect.left);
-        setY(dRect.top);
+        setY(dRect.top);*/
     }
 
     @Override
@@ -133,8 +136,9 @@ public class Bang extends Widget {
     }
 
     public void receiveMessage(String source, String message, Object... args) {
-        // need to ignore scripting messages?
-        bang();
+        boolean wasEditMessage = super.receiveEditMessage(message, args);
+        if (!wasEditMessage)
+            bang();
         //sendBang();
     }
 

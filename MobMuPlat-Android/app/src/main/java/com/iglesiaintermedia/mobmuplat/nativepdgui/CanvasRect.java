@@ -6,15 +6,17 @@ import android.graphics.RectF;
 import android.widget.RelativeLayout;
 import android.graphics.Paint;
 
-public class CanvasRect extends Widget {
+public class CanvasRect extends IEMWidget {
 
 	public CanvasRect(Context context, String[] atomline, float scale) {
 		super(context, scale);
 
-		float x = Float.parseFloat(atomline[2]) * scale;
-		float y = Float.parseFloat(atomline[3]) * scale;
-		float w = Float.parseFloat(atomline[6]) * scale;
-		float h = Float.parseFloat(atomline[7]) * scale;
+		float x = Float.parseFloat(atomline[2]);
+		float y = Float.parseFloat(atomline[3]);
+		float w = Float.parseFloat(atomline[6]);
+		float h = Float.parseFloat(atomline[7]);
+		originalRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),
+				Math.round(y + h));
 		
 		sendname = atomline[8];
 		setReceiveName(atomline[9]);
@@ -25,12 +27,13 @@ public class CanvasRect extends Widget {
 		labelsize = (int)(Float.parseFloat(atomline[14]));
 		bgcolor = getColor(Integer.parseInt(atomline[15]));
 		labelcolor = getColor(Integer.parseInt(atomline[16]));
-		
+
+		reshape();
 		// graphics setup
-		RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),Math.round(y + h));
+		/*RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),Math.round(y + h));
 		setLayoutParams(new RelativeLayout.LayoutParams((int)dRect.width(), (int)dRect.height()));
 		setX(dRect.left);
-		setY(dRect.top);
+		setY(dRect.top);*/
 	}
 	
 	//@Override

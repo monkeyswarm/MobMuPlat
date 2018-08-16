@@ -8,7 +8,7 @@ import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.widget.RelativeLayout;
 
-public class Radio extends Widget {
+public class Radio extends IEMWidget {
     float cellSize; //i.e. width/height, post-scale
     int numCells;
     boolean isHorizontal;
@@ -17,13 +17,13 @@ public class Radio extends Widget {
         // TODO check atomline length >= 20.
         super(context, scale);
         this.isHorizontal = isHorizontal;
-        float x = Float.parseFloat(atomline[2]) * scale;
-        float y = Float.parseFloat(atomline[3]) * scale;
+        float x = Float.parseFloat(atomline[2]);
+        float y = Float.parseFloat(atomline[3]);
 
-        cellSize = Integer.parseInt(atomline[5]) * scale;
+        cellSize = Integer.parseInt(atomline[5]);
         numCells = Integer.parseInt(atomline[8]);
 
-        float w,h;
+        float w,h; // pre-scaling
         if (isHorizontal) {
             w = cellSize * numCells;
             h = cellSize;
@@ -51,11 +51,13 @@ public class Radio extends Widget {
             setValue(Float.parseFloat(atomline[19]));
         }
 
+        originalRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h));
+        reshape();
         // graphics setup
-        RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),Math.round(y + h));
-        setLayoutParams(new RelativeLayout.LayoutParams((int)dRect.width(), (int)dRect.height()));
-        setX(dRect.left);
-        setY(dRect.top);
+//        RectF dRect = new RectF(Math.round(x), Math.round(y), Math.round(x + w),Math.round(y + h));
+//        setLayoutParams(new RelativeLayout.LayoutParams((int)dRect.width(), (int)dRect.height()));
+//        setX(dRect.left);
+//        setY(dRect.top);
     }
 
     @Override
@@ -74,22 +76,24 @@ public class Radio extends Widget {
         canvas.drawLine(0,0,0,h, paint);
         canvas.drawLine(w,0,w,h, paint);
 
+        float scaledCellSize = cellSize * scale;
+
         // dividers
         for (int i = 1; i < numCells; i++) {
             if (isHorizontal) {
-                canvas.drawLine(i * cellSize, 0, i * cellSize, h, paint);
+                canvas.drawLine(i * scaledCellSize, 0, i * scaledCellSize, h, paint);
             } else {
-                canvas.drawLine(0, i * cellSize, w, i * cellSize, paint);
+                canvas.drawLine(0, i * scaledCellSize, w, i * scaledCellSize, paint);
             }
         }
         // selected square
         float value = getValue();
         paint.setColor(fgcolor);
-        float cellOffset = cellSize/4;
+        float scaledCellOffset = scaledCellSize/4;
         if (isHorizontal) {
-            canvas.drawRect(value * cellSize + cellOffset, cellOffset, (value + 1) * cellSize - cellOffset, h - cellOffset, paint);
+            canvas.drawRect(value * scaledCellSize + scaledCellOffset, scaledCellOffset, (value + 1) * scaledCellSize - scaledCellOffset, h - scaledCellOffset, paint);
         } else {
-            canvas.drawRect(cellOffset, value * cellSize + cellOffset, w - cellOffset, (value + 1) * cellSize - cellOffset, paint);
+            canvas.drawRect(scaledCellOffset, value * scaledCellSize + scaledCellOffset, w - scaledCellOffset, (value + 1) * scaledCellSize - scaledCellOffset, paint);
         }
 
         drawLabel(canvas);
@@ -101,9 +105,9 @@ public class Radio extends Widget {
         if (action == MotionEvent.ACTION_DOWN) {
             float val;
             if (isHorizontal) {
-                val = (int)(event.getX() / cellSize);
+                val = (int)(event.getX() / (cellSize * scale));
             } else {
-                val = (int)(event.getY() / cellSize);
+                val = (int)(event.getY() / (cellSize * scale));
             }
             setValue(val);
             sendFloat(getValue());
