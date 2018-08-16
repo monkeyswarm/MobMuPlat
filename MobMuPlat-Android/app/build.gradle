@@ -8,8 +8,8 @@ android {
         applicationId "com.iglesiaintermedia.mobmuplat"
         minSdkVersion 17
         targetSdkVersion 27
-        versionCode 21
-        versionName "0.33"
+        versionCode 22
+        versionName "0.34"
     }
     buildTypes {
         release {
@@ -18,6 +18,11 @@ android {
         }
     }
     useLibrary 'org.apache.http.legacy' // Will need on SDK 23.
+    android {
+        lintOptions {
+            abortOnError false // Throws a lint error about the below wearable mismatch, but this seems to be ok on page 50: https://media.readthedocs.org/pdf/android-wear-docs/latest/android-wear-docs.pdf
+        }
+    }
 }
 
 dependencies {
