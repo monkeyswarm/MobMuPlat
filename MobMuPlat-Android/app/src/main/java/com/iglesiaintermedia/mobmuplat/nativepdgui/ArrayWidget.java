@@ -93,7 +93,7 @@ public class ArrayWidget extends Widget {
 
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(bgcolor);
-        canvas.drawPaint(paint); //fill whole canvas
+        canvas.drawRect(0, 0, w, h, paint);
 
         paint.setColor(Color.BLACK);
         //paint.setStrokeWidth(1);

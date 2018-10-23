@@ -85,7 +85,7 @@ public class NumberBox2 extends IEMWidget {
         float h = getHeight();
         paint.setColor(bgcolor);
         paint.setStyle(Paint.Style.FILL);
-        canvas.drawPaint(paint);
+        canvas.drawRect(0, 0, w, h, paint);
         float notch = h / 4;
         paint.setColor(Color.BLACK);
         paint.setStrokeWidth(lineWidth);
