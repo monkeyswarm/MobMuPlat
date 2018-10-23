@@ -21,6 +21,10 @@ public abstract class IEMWidget extends Widget {
                 args[1] instanceof Float) {
             //width, heightorigin
 	    return false;
+        } else if (message.equals("label") && args.length > 0 && args[0] instanceof String) {
+            labelString = sanitizeLabel((String)args[0]);
+            invalidate();
+            return true;
         }
         /*
         if([message isEqualToString:@"color"] && [arguments count] > 2 &&
