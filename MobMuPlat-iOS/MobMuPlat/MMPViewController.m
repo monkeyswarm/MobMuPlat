@@ -1020,10 +1020,11 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   }
   NSDictionary *sceneDict = [NSJSONSerialization JSONObjectWithData:data options:nil error:nil];
 
-  return [self loadMMPSceneFromJSON:sceneDict];
+  return [self loadMMPSceneFromJSON:sceneDict parentPath:[fullPath stringByDeletingLastPathComponent]];
 }
 
 - (BOOL)loadMMPSceneFromDocPath:(NSString *)docPath {
+  NSLog(@"load from doc path: %@", docPath);
   NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
   NSString *publicDocumentsDir = [paths objectAtIndex:0];
   NSString *fullPath = [publicDocumentsDir stringByAppendingPathComponent:docPath];
@@ -1035,7 +1036,8 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   return loaded;
 }
 
-- (BOOL)loadMMPSceneFromJSON:(NSDictionary *)sceneDict {
+// parentPath is used so that mmp files in a subfolder can load the pd patch relative to their path
+- (BOOL)loadMMPSceneFromJSON:(NSDictionary *)sceneDict parentPath:(NSString *)parentPath {
   if (!sceneDict) {
     return NO;
   }
@@ -1423,10 +1425,7 @@ static void * kAudiobusRunningOrConnectedChanged = &kAudiobusRunningOrConnectedC
   if (sceneDict[@"pdFile"]) {
     NSString *filename = sceneDict[@"pdFile"];
 
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *publicDocumentsDir = [paths objectAtIndex:0];
-
-    _openPDFile = [PdFile openFileNamed:filename path:publicDocumentsDir];
+    _openPDFile = [PdFile openFileNamed:filename path:parentPath];
     NSLog(@"open pd file %@", filename );
 
     if (_openPDFile == nil) { //failure to load the named patch

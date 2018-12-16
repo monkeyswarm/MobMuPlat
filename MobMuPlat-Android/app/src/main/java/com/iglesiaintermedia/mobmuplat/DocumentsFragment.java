@@ -133,10 +133,22 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 	    Arrays.sort(files); //listfiles does not have an order...
 	    if (files.length == 0)
 	        return null;
-	    else {
-	        for (int i=0; i<files.length; i++) 
-	        	fileList.add(files[i].getName());
-	    }
+
+		for (File file : files) {
+		    // if its a folder, look for a main.pd in it and add that
+            if (file.isDirectory()) {
+                File testFile1 = new File(file, "main.pd");
+                if (testFile1.exists()) {
+                    fileList.add(file.getName()+"/main.pd"); // add "foo/main.pd" as item
+                }
+                File testFile2 = new File(file, "main.mmp");
+                if (testFile2.exists()) {
+                    fileList.add(file.getName()+"/main.mmp"); // add "foo/main.mmp" as item
+                }
+            } else {
+                fileList.add(file.getName());
+            }
+		}
 
 	    return fileList;
 	}

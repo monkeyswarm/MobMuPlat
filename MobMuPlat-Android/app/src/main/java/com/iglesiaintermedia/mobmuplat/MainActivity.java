@@ -126,6 +126,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	public CanvasType hardwareScreenType;
 	// Bookmark it between config change
 	private Object _fileDataToLoad; //mmp patches = Json string, pd patches = List<String[]>atomLines
+	private String _fileDataToLoadParentPathString;
     private boolean _fileDataToLoadIsPatchOnly;
 
 	//Pd
@@ -655,10 +656,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         // end wear
 	}
 
-	public void loadScene(String filenameToLoad) {
+	public void loadScene(String filenameToLoad) { //filename is relative to doc dir.
+		Log.i(TAG, "filename to load:"+filenameToLoad);
 		getActionBar().hide();
 
-
+		String parentPathString =  new File(MainActivity.getDocumentsFolderPath(), filenameToLoad).getParentFile().getAbsolutePath();
+		Log.i(TAG, "parentPathString to load:"+parentPathString);
 		String fileJSON = readMMPToString(filenameToLoad);
 		if (fileJSON == null) { //could not load/find filename...i.e. filename is stale
 			showAlert("Cannot load "+filenameToLoad+", please tap the \"show files\" button twice to refresh the file list");
@@ -667,15 +670,18 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		boolean requestedChange = setOrientationOfMMP(fileJSON);
 
         _fileDataToLoad = fileJSON;
+        _fileDataToLoadParentPathString = parentPathString;
         _fileDataToLoadIsPatchOnly = false;
 
 		if(!requestedChange){
-			_patchFragment.loadSceneFromJSON(fileJSON);
+			_patchFragment.loadSceneFromJSON(fileJSON, parentPathString);
 			_fileDataToLoad = null;
+			_fileDataToLoadParentPathString = null;
 		}
 		//otherwise is being loaded in onConfigChange
 	}
 
+	// filename is relative to documents dir.
 	public void loadScenePatchOnly(String filenameToLoad) {
 		//don't bother with rotation for now...
 		stopLocationUpdates(); //move? handled in common reset?
@@ -700,7 +706,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		//_patchFragment.loadScenePatchOnly(filenameToLoad); // calls loadPdFile
 	}
 
-	public int loadPdFile(String pdFilename) {
+	public int loadPdFile(String pdFilename, String parentPathString) {
 		// load pd patch
 		if(openPdFileHandle != 0) {
 			PdBase.closePatch(openPdFileHandle); 
@@ -710,7 +716,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		// File patchFile = null;
 		if(pdFilename!=null) {
 			try {
-				File pdFile = new File(MainActivity.getDocumentsFolderPath(), pdFilename);
+				File pdFile = new File(parentPathString != null ? parentPathString : MainActivity.getDocumentsFolderPath(), pdFilename);
 				openPdFileHandle = PdBase.openPatch(pdFile);
 			} catch (FileNotFoundException e) {
 				showAlert("PD file "+pdFilename+" not found.");
@@ -1026,9 +1032,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     if (_fileDataToLoadIsPatchOnly) {
                         _patchFragment.loadScenePatchOnly((List<String[]>)_fileDataToLoad);
                     } else {
-                        _patchFragment.loadSceneFromJSON((String) _fileDataToLoad);
+                        _patchFragment.loadSceneFromJSON((String) _fileDataToLoad, _fileDataToLoadParentPathString);
                     }
                     _fileDataToLoad = null;
+                    _fileDataToLoadParentPathString = null;
 
                     //DEI need to load tables?
                 }

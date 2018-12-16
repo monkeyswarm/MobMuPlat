@@ -66,7 +66,7 @@
         /*if ([line[1] isEqualToString:@"obj"] && [line count] < 5) {
           continue; //dangerous, could throw obj index of of what Pd is doing
         }*/
-        NSString *objType = [line[1] isEqualToString:@"obj"] ? line[4] : line[1];
+        NSString *objType = [line[1] isEqualToString:@"obj"] ? line[4] : line[1]; //HERE CRASH ON EMPTY OBJECTS
         if (objTypeToSendRecIndeces[objType]) {
           // floatatom, symbolatom, bng, tgl, nbox, etc....
           NSArray *sendRecIndeces = objTypeToSendRecIndeces[objType];

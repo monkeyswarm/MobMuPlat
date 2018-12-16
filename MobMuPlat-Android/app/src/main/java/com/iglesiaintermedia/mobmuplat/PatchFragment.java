@@ -173,7 +173,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 
                 }
 
-                loadSceneFromJSON(fileJSON);
+                loadSceneFromJSON(fileJSON, null);
             }
         });
 
@@ -313,7 +313,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
         //float scale = _container.getWidth() / docCanvasSizeWidth;
         mPdGui.buildUI(_mainActivity, guiAtomLines, scale); // create widgets
 
-        int dollarSignZero = _mainActivity.loadPdFile("tempPdFile");//filenameToLoad); // loadbang to widgets
+        int dollarSignZero = _mainActivity.loadPdFile("tempPdFile", null);//filenameToLoad); // loadbang to widgets
 
         for (Widget widget : mPdGui.widgets) {
             widget.replaceDollarZero(dollarSignZero);
@@ -331,7 +331,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
         _settingsButton.setVisibility(View.VISIBLE);//not really necc, since initial welcome load should set it visible...
     }
 
-    public void loadSceneFromJSON(String inString){
+    public void loadSceneFromJSON(String inString, final String parentPathString){
         loadSceneCommonReset();
         if (inString.isEmpty()) return;
 
@@ -619,9 +619,10 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
                         control = new MMPPanel(getActivity(), screenRatio);
                         if(guiDict.get("imagePath")!=null) {
                             //convert relative image path to full external storage path TODO merge with panel recevelist code. static method?
-                            String path = guiDict.get("imagePath").getAsString();
-                            File extFile = new File(MainActivity.getDocumentsFolderPath(), path);
-                            ((MMPPanel)control).setImagePath(extFile.getAbsolutePath());
+                            String filename = guiDict.get("imagePath").getAsString();
+                            //File extFile = new File(MainActivity.getDocumentsFolderPath(), path);
+                            File imageFile = new File(parentPathString != null ? parentPathString : MainActivity.getDocumentsFolderPath(), filename);
+                            ((MMPPanel)control).setImagePath(imageFile.getAbsolutePath());
                         }
                         if(guiDict.get("passTouches")!=null)
                             ((MMPPanel)control).setShouldPassTouches( guiDict.get("passTouches").getAsBoolean() );
@@ -709,7 +710,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
                     // scroll to start
                     //_scrollContainer.setScrollX(0);
 
-                    _mainActivity.loadPdFile(pdFilename);
+                    _mainActivity.loadPdFile(pdFilename, parentPathString);
 
                     //load tables! TODO optimize!
                     for (ArrayList<MMPControl> addressArray : _allGUIControlMap.values()) {

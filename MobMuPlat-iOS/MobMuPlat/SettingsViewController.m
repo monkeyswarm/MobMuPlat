@@ -65,10 +65,36 @@ static NSString *pingAndConnectTableCellIdentifier = @"pingAndConnectTableCell";
 
 
   for(NSString* file in files){
-    if(!onlyMMP) [retval addObject:file];//everything
-
-    else if ([[file pathExtension] isEqualToString: @"mmp"]) {//just mmp
-      [retval addObject:file];
+    if (onlyMMP) {
+      if([[file pathExtension] isEqualToString: @"mmp"]) { // just mmp
+        [retval addObject:file];
+      }
+      // also check for mmp in folder
+      // This should really be using file tree enumeration, to know what is a directory vs a file.
+      if ([file rangeOfString:@"."].location == NSNotFound) { // guess it is a directory if no period.
+        NSString *testPath =
+            [[publicDocumentsDir stringByAppendingPathComponent:file] stringByAppendingPathComponent:@"main.mmp"];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:testPath]) {
+          [retval addObject:[file stringByAppendingPathComponent:@"main.mmp"]];
+        }
+      }
+    } else  {
+      // Add all files, but for folders check to see if there's a main.pd in it, then add that.
+      // This should really be using file tree enumeration, to know what is a directory vs a file.
+      if ([file rangeOfString:@"."].location == NSNotFound) { // guess it is a directory if no period.
+        NSString *testPath1 =
+            [[publicDocumentsDir stringByAppendingPathComponent:file] stringByAppendingPathComponent:@"main.pd"];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:testPath1]) {
+          [retval addObject:[file stringByAppendingPathComponent:@"main.pd"]];
+        }
+        NSString *testPath2 =
+            [[publicDocumentsDir stringByAppendingPathComponent:file] stringByAppendingPathComponent:@"main.mmp"];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:testPath2]) {
+          [retval addObject:[file stringByAppendingPathComponent:@"main.mmp"]];
+        }
+      } else { //file
+        [retval addObject:file];
+      }
     }
   }
   return retval;

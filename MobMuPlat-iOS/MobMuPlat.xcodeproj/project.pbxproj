@@ -23,7 +23,6 @@
 		DC233DBD1655EDF500AC01C5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DC233DBC1655EDF500AC01C5 /* AppDelegate.m */; };
 		DC233DC61655EDF500AC01C5 /* MMPViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DC233DC51655EDF500AC01C5 /* MMPViewController.m */; };
 		DC29445F16584ABE00BF4A50 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC29445E16584ABE00BF4A50 /* AVFoundation.framework */; };
-		DC29446916584B0100BF4A50 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC29446816584B0100BF4A50 /* AudioToolbox.framework */; };
 		DC3DB0A11668C3840056DF1A /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DC3DB0A01668C3840056DF1A /* SettingsViewController.m */; };
 		DC456B03176BC1540080BB33 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC456B02176BC1540080BB33 /* CoreLocation.framework */; };
 		DC59570A1733800500CEBECC /* MeButton.m in Sources */ = {isa = PBXBuildFile; fileRef = DC5956F71733800500CEBECC /* MeButton.m */; };
@@ -97,6 +96,7 @@
 		F91CB9BB1C16AEBE0088C445 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F91CB9B81C16AEBE0088C445 /* Default-568h@2x.png */; };
 		F91CB9BC1C16AEBE0088C445 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = F91CB9B91C16AEBE0088C445 /* Default.png */; };
 		F91CB9BD1C16AEBE0088C445 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F91CB9BA1C16AEBE0088C445 /* Default@2x.png */; };
+		F921F8962126121C0006AD8F /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F921F8952126121C0006AD8F /* AudioToolbox.framework */; };
 		F9295DE319BD1980008691CB /* MeMultiTouch.m in Sources */ = {isa = PBXBuildFile; fileRef = F9295DE219BD1980008691CB /* MeMultiTouch.m */; };
 		F9295E3419BD19C6008691CB /* anderson1.wav in Resources */ = {isa = PBXBuildFile; fileRef = F9295DF219BD19C6008691CB /* anderson1.wav */; };
 		F9295E3519BD19C6008691CB /* cats1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = F9295DF319BD19C6008691CB /* cats1.jpg */; };
@@ -352,7 +352,6 @@
 		DC233DC41655EDF500AC01C5 /* MMPViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMPViewController.h; sourceTree = "<group>"; };
 		DC233DC51655EDF500AC01C5 /* MMPViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MMPViewController.m; sourceTree = "<group>"; };
 		DC29445E16584ABE00BF4A50 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		DC29446816584B0100BF4A50 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		DC3DB09F1668C3840056DF1A /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		DC3DB0A01668C3840056DF1A /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		DC456B02176BC1540080BB33 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -481,6 +480,7 @@
 		F91CB9B81C16AEBE0088C445 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "Images.xcassets/LaunchImage.launchimage/Default-568h@2x.png"; sourceTree = "<group>"; };
 		F91CB9B91C16AEBE0088C445 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Default.png; path = Images.xcassets/LaunchImage.launchimage/Default.png; sourceTree = "<group>"; };
 		F91CB9BA1C16AEBE0088C445 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default@2x.png"; path = "Images.xcassets/LaunchImage.launchimage/Default@2x.png"; sourceTree = "<group>"; };
+		F921F8952126121C0006AD8F /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F9295DE119BD1980008691CB /* MeMultiTouch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeMultiTouch.h; path = gui/MeMultiTouch.h; sourceTree = "<group>"; };
 		F9295DE219BD1980008691CB /* MeMultiTouch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeMultiTouch.m; path = gui/MeMultiTouch.m; sourceTree = "<group>"; };
 		F9295DE419BD19A5008691CB /* ABAnimatedTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ABAnimatedTrigger.h; path = Audiobus/ABAnimatedTrigger.h; sourceTree = "<group>"; };
@@ -709,13 +709,13 @@
 				F975609D1A6EADCD005CCE8E /* libpd-ios.a in Frameworks */,
 				DCA9BD9718E31AA600FAD233 /* Security.framework in Frameworks */,
 				DCA9BD9518E31A9400FAD233 /* Accelerate.framework in Frameworks */,
+				F921F8962126121C0006AD8F /* AudioToolbox.framework in Frameworks */,
 				DC13B959188E125600647115 /* SystemConfiguration.framework in Frameworks */,
 				90503180188474D9003D85E9 /* MediaPlayer.framework in Frameworks */,
 				DC456B03176BC1540080BB33 /* CoreLocation.framework in Frameworks */,
 				DCB11AE11702B315004B92EA /* CoreMotion.framework in Frameworks */,
 				DCFF717716B59F3100CDCEAE /* libz.dylib in Frameworks */,
 				DC8EBBB91660F3B4003C3162 /* QuartzCore.framework in Frameworks */,
-				DC29446916584B0100BF4A50 /* AudioToolbox.framework in Frameworks */,
 				F97D45A819A541E000874EAA /* libAudiobus.a in Frameworks */,
 				DC29445F16584ABE00BF4A50 /* AVFoundation.framework in Frameworks */,
 				DC8EFEC71656F782004A88E3 /* CoreMIDI.framework in Frameworks */,
@@ -833,6 +833,7 @@
 		DC233DAB1655EDF500AC01C5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F921F8952126121C0006AD8F /* AudioToolbox.framework */,
 				F93FC06F1C4E03E20059E39F /* CoreText.framework */,
 				F97D45A719A541E000874EAA /* libAudiobus.a */,
 				DCA9BD9618E31AA600FAD233 /* Security.framework */,
@@ -843,7 +844,6 @@
 				DCB11AE01702B315004B92EA /* CoreMotion.framework */,
 				DCFF717616B59F3100CDCEAE /* libz.dylib */,
 				DC8EBBB81660F3B4003C3162 /* QuartzCore.framework */,
-				DC29446816584B0100BF4A50 /* AudioToolbox.framework */,
 				DC29445E16584ABE00BF4A50 /* AVFoundation.framework */,
 				DC8EFEC61656F782004A88E3 /* CoreMIDI.framework */,
 				DC233DAC1655EDF500AC01C5 /* UIKit.framework */,
@@ -1499,6 +1499,7 @@
 				TargetAttributes = {
 					DC233DA71655EDF500AC01C5 = {
 						DevelopmentTeam = RJC7S963JF;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.InterAppAudio = {
 								enabled = 1;
@@ -1941,6 +1942,8 @@
 				CODE_SIGN_ENTITLEMENTS = MobMuPlat/MobMuPlat.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = RJC7S963JF;
 				ENABLE_BITCODE = NO;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -1968,6 +1971,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.iglesiaintermedia.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "danieliglesia-development";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../libpd/** $(SRCROOT)/../PdParty/src/** $(SRCROOT)/../PdParty/libs $(SRCROOT)/../ZipArchive/**";
 				VALID_ARCHS = "armv7 armv7s arm64";
@@ -1982,9 +1986,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = MobMuPlat/MobMuPlat.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = RJC7S963JF;
 				ENABLE_BITCODE = NO;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -2007,7 +2013,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.iglesiaintermedia.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "059c7f5c-fe0b-4fc5-bee8-e254b2139278";
+				PROVISIONING_PROFILE_SPECIFIER = MobMuPlat;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../libpd/** $(SRCROOT)/../PdParty/src/** $(SRCROOT)/../PdParty/libs $(SRCROOT)/../ZipArchive/**";
 				VALID_ARCHS = "armv7 armv7s arm64";
