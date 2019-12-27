@@ -63,7 +63,7 @@ public class Toggle extends IEMWidget {
         paint.setColor(bgcolor);
         paint.setStyle(Paint.Style.FILL);
         //canvas.drawRect(dRect,paint);
-        canvas.drawPaint(paint); //fill whole canvas
+        canvas.drawRect(0, 0, w, h, paint);
 
         paint.setColor(Color.BLACK);
         //paint.setStrokeWidth(scale); // aka stroke width of one, times scale

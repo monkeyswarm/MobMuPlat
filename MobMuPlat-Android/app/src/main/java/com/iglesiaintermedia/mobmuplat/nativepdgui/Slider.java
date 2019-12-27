@@ -120,7 +120,7 @@ public class Slider extends IEMWidget {
         //float strokeWidth = 1;// * scale;
         paint.setColor(bgcolor);
         paint.setStyle(Paint.Style.FILL);
-        canvas.drawPaint(paint);
+        canvas.drawRect(0, 0, w, h, paint);
         // draw outline
         paint.setColor(Color.BLACK);
         paint.setStrokeWidth(lineWidth);
