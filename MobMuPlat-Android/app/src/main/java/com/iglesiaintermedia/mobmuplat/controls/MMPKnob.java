@@ -116,6 +116,7 @@ public class MMPKnob extends MMPControl{
 	}
 	
 	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
 		this.paint.setStyle(Paint.Style.FILL);
 		this.paint.setColor(_highlight ? this.highlightColor : this.color);
 

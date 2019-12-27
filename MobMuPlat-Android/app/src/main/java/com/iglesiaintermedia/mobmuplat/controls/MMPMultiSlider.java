@@ -141,6 +141,7 @@ public class MMPMultiSlider extends MMPControl {
 	}
 	
 	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
 		
        this.paint.setStyle(Paint.Style.STROKE);
        this.paint.setStrokeWidth(2 * this.screenRatio);

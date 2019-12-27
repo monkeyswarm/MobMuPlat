@@ -239,6 +239,7 @@ class GridCellView extends View {
 		
 	//TODO make my own paint? static?
 	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
 		_parentGrid.paint.setStrokeWidth(_parentGrid.borderThickness * _parentGrid.screenRatio);
 		if(_value==true){	
 			_parentGrid.paint.setStyle(Paint.Style.FILL);

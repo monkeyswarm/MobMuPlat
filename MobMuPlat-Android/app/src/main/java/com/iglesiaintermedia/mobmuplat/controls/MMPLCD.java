@@ -73,6 +73,7 @@ public class MMPLCD extends MMPControl {
 		
 	@Override 
 	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
         if (_bitmap != null) {
             canvas.drawBitmap(_bitmap, 0, 0, null);
         }

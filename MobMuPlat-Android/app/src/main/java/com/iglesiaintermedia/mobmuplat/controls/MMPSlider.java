@@ -108,6 +108,7 @@ public class MMPSlider extends MMPControl{
     }
 
     protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
       canvas.drawRoundRect(_grooveRect,3*this.screenRatio,3*this.screenRatio,paint);
       canvas.drawRoundRect(_touchRect,5*this.screenRatio,5*this.screenRatio,paint);
       int width = getWidth();

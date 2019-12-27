@@ -47,6 +47,7 @@ public class MMPLabel extends MMPControl {
 	}
 	
 	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
          StaticLayout staticLayout =
                  new StaticLayout(_stringValue,
                         this.paint,

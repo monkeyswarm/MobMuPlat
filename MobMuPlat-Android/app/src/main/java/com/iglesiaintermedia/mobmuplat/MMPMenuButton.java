@@ -30,6 +30,7 @@ public class MMPMenuButton extends RelativeLayout{
 
     @Override
     protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
         float w = getWidth();
         float h = getHeight();
 

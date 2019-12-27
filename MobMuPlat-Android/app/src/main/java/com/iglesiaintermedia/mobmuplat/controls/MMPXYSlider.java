@@ -71,6 +71,7 @@ public class MMPXYSlider extends MMPControl {
     }
 	
 	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
 		
 		//border 
 		 canvas.drawRect(_myInnerRect,paint); 

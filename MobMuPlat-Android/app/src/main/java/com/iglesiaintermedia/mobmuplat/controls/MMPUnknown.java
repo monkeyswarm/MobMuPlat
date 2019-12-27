@@ -30,6 +30,7 @@ public class MMPUnknown extends MMPControl {
 	}
 	
 	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
 		this.paint.setStyle(Paint.Style.FILL);
 		this.paint.setColor(Color.GRAY);
 		canvas.drawRect(_myRectF, this.paint);

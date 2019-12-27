@@ -52,6 +52,7 @@ public class MMPButton extends MMPControl {
     }
 	
 	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
 		//border
 		/*this.paint.setColor(this.color);
 		this.paint.setStyle(Paint.Style.STROKE);

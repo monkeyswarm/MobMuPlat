@@ -69,6 +69,7 @@ public class MMPMenu extends MMPControl {
 	}
 	
 	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
 		this.paint.setStyle(Paint.Style.FILL);
 		this.paint.getTextBounds(titleString, 0, titleString.length(), _textRect);//move to set title?
 		canvas.drawText(titleString, _myInnerRect.centerX(), _myInnerRect.centerY() - (_textRect.centerY()), paint);

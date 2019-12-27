@@ -190,6 +190,7 @@ public class MMPMultiTouch extends MMPControl {
 	}
 	
 	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
 		//if (highlight) this.paint.setColor(this.highlightColor);
 		//this.paint.setColor(this.color);
 		

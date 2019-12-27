@@ -215,6 +215,7 @@ public class MMPTable extends MMPControl {
 	}
 	
 	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
 		if (_drawCanvas == null) return;
         _drawCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 		_path.reset();

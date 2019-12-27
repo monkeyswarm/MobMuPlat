@@ -74,6 +74,7 @@ public class MMPPanel extends MMPControl {
 	}
 	
 	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
 		
         	//this.paint.setStyle(Paint.Style.FILL);
 		this.paint.setFilterBitmap(true);

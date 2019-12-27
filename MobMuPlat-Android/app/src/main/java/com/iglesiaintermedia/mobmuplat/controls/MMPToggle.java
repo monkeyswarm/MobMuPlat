@@ -62,6 +62,7 @@ public class MMPToggle extends MMPControl {
     }
 	
 	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
 		//fill
 		if (_value == 1) {
 	    	this.paint.setStyle(Paint.Style.FILL);

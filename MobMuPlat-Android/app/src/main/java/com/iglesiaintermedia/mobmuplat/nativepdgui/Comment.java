@@ -93,6 +93,7 @@ public class Comment extends Widget {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
         /*    float w = getWidth();
             float h = getHeight();
             canvas.drawLine(0,0, w,0, paint);

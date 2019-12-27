@@ -73,6 +73,7 @@ public class ObjectBox extends AtomWidget {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
         float w = getWidth(); //TODO check if this is much slower than storing as an ivar one0time.
         float h = getHeight();
         paint.setColor(Color.BLACK);
