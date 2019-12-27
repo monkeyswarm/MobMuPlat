@@ -8,8 +8,8 @@ android {
         applicationId "com.iglesiaintermedia.mobmuplat"
         minSdkVersion 17
         targetSdkVersion 27
-        versionCode 23
-        versionName "0.35"
+        versionCode 24
+        versionName "0.36"
     }
     buildTypes {
         release {
