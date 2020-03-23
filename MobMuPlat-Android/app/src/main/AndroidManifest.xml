@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.iglesiaintermedia.mobmuplat"
-    android:versionCode="24"
-    android:versionName="0.36">
+    android:versionCode="25"
+    android:versionName="0.37">
 
     <uses-sdk
         android:minSdkVersion="17"
@@ -122,6 +122,9 @@
 
         <meta-data android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <!-- https://developer.android.com/about/versions/pie/android-9.0-changes-28#apache-p -->
+        <uses-library android:name="org.apache.http.legacy" android:required="false" />
 
     </application>
 
