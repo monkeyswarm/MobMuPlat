@@ -1,6 +1,6 @@
 [submodule "pd-for-android"]
 	path = pd-for-android
-	url = git://github.com/libpd/pd-for-android.git
+	url = https://github.com/libpd/pd-for-android.git
 [submodule "libpd"]
 	path = libpd
 	url = git://github.com/libpd/libpd.git

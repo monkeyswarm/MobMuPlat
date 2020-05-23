@@ -6,7 +6,9 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath 'com.android.tools.build:gradle:3.5.2'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5' //DEI click
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3' //DEI click
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -21,4 +23,11 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+ext {
+    minSdkVersion = 17
+    compileSdkVersion = 28
+    buildToolsVersion = '27.0.3'
+    androidxLegacySupportVersion = '1.0.0'
 }

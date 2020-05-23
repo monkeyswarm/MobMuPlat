@@ -42,7 +42,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -474,7 +474,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
                 }
                 wearDict.add("wearGui", pageGuiArray);
                 String jsonString = wearDict.toString();
-                _mainActivity.sendWearMessage("/loadGUI", jsonString);
+//                _mainActivity.sendWearMessage("/loadGUI", jsonString);
                 // track the wear dict
                 loadedWearString = jsonString;
 
@@ -776,7 +776,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
             if (_wearAddressSet.contains(addressObj)) {
                 Object argsNoAddress[] = Arrays.copyOfRange(args, 1, args.length);
                 String message = TextUtils.join(" ",argsNoAddress); //rest is turned into list, delimited by space.
-                _mainActivity.sendWearMessage((String)addressObj, message);
+//                _mainActivity.sendWearMessage((String)addressObj, message);
             }
         } else if (source.equals("toSystem")) {
             if (args.length==0) return;

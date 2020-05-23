@@ -20,7 +20,6 @@ import android.os.Looper;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.GridViewPager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnApplyWindowInsetsListener;
 import android.view.WindowInsets;
@@ -39,7 +38,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 
 import android.content.IntentFilter;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.core.content.LocalBroadcastManager;
 import android.content.Intent;
 import android.content.BroadcastReceiver;
 

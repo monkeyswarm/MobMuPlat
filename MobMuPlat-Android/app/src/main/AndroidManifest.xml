@@ -4,9 +4,6 @@
     android:versionCode="25"
     android:versionName="0.37">
 
-    <uses-sdk
-        android:minSdkVersion="17"
-        android:targetSdkVersion="27" />
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -120,8 +117,8 @@
 
         <service android:name="org.puredata.android.service.PdService" />
 
-        <meta-data android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+      <!--  <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" /> -->
 
         <!-- https://developer.android.com/about/versions/pie/android-9.0-changes-28#apache-p -->
         <uses-library android:name="org.apache.http.legacy" android:required="false" />

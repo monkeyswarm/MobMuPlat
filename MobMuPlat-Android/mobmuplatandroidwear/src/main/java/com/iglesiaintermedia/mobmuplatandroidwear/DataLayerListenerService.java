@@ -1,7 +1,7 @@
 package com.iglesiaintermedia.mobmuplatandroidwear;
 
 import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.core.content.LocalBroadcastManager;
 
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;

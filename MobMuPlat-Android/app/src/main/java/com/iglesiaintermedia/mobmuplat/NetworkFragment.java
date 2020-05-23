@@ -1,17 +1,11 @@
 package com.iglesiaintermedia.mobmuplat;
 
 import java.lang.reflect.Field;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.apache.http.conn.util.InetAddressUtils;
-
-import com.iglesiaintermedia.LANdini.LANdiniLANManager;
 import com.iglesiaintermedia.LANdini.LANdiniTimer;
 import com.iglesiaintermedia.LANdini.LANdiniTimerListener;
 import com.iglesiaintermedia.LANdini.LANdiniUser;
@@ -19,9 +13,8 @@ import com.iglesiaintermedia.LANdini.UserStateDelegate;
 
 
 //import android.app.Fragment;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;

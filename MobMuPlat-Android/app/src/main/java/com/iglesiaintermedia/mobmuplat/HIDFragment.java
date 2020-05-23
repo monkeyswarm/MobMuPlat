@@ -1,28 +1,22 @@
 package com.iglesiaintermedia.mobmuplat;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.Log;
+import androidx.fragment.app.Fragment;
+
 import android.util.SparseArray;
-import android.util.SparseIntArray;
-import android.view.InputDevice;
-import android.view.InputEvent;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.InputDevice.MotionRange;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class HIDFragment extends Fragment{
 	private static final String TAG = "HID";

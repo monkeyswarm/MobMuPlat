@@ -12,27 +12,23 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.os.Message;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
-import android.support.v4.app.FragmentTransaction;
+
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentManager.OnBackStackChangedListener;
+import androidx.fragment.app.FragmentTransaction;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -66,9 +62,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
-import android.os.Looper;
 import android.provider.MediaStore;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Display;
@@ -79,7 +73,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Surface;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
@@ -88,37 +81,38 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import org.puredata.android.io.AudioParameters;
 import org.puredata.android.service.PdPreferences;
 import org.puredata.android.service.PdService;
 import org.puredata.core.PdBase;
 //import org.puredata.core.PdReceiver;
 
 // wear
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.MessageApi;
-import com.google.android.gms.wearable.MessageApi.MessageListener;
-import com.google.android.gms.wearable.MessageEvent;
-import com.google.android.gms.wearable.Node;
-import com.google.android.gms.wearable.NodeApi;
-import com.google.android.gms.wearable.Wearable;
-import com.google.android.gms.common.ConnectionResult;
+//import com.google.android.gms.common.ConnectionResult;
+//import com.google.android.gms.common.api.GoogleApiClient;
+//import com.google.android.gms.wearable.MessageApi;
+//import com.google.android.gms.wearable.MessageApi.MessageListener;
+//import com.google.android.gms.wearable.MessageEvent;
+//import com.google.android.gms.wearable.Node;
+//import com.google.android.gms.wearable.NodeApi;
+//import com.google.android.gms.wearable.Wearable;
+//import com.google.android.gms.common.ConnectionResult;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.iglesiaintermedia.mobmuplat.PatchFragment.CanvasType;
 import com.iglesiaintermedia.mobmuplat.controls.*;
-import com.iglesiaintermedia.mobmuplat.nativepdgui.MMPPdGuiUtils;
 import com.illposed.osc.OSCMessage;
 import com.example.inputmanagercompat.InputManagerCompat;
 import com.example.inputmanagercompat.InputManagerCompat.InputDeviceListener;
 
 import cx.mccormick.pddroidparty.PdParser;
 
-public class MainActivity extends FragmentActivity implements LocationListener, SensorEventListener, AudioDelegate, InputDeviceListener, OnBackStackChangedListener,
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, PreviewSurface.Callback {
+public class MainActivity extends FragmentActivity implements LocationListener, SensorEventListener, AudioDelegate, InputDeviceListener, OnBackStackChangedListener
+//        GoogleApiClient.ConnectionCallbacks,
+//        GoogleApiClient.OnConnectionFailedListener,
+        ,PreviewSurface.Callback
+{
 	private static final String TAG = "MobMuPlat MainActivity";
 	public static final boolean VERBOSE = false;
 	//
@@ -172,10 +166,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	private boolean _shouldSwapAxes = false;
 	
 	// wear
-  WorkerThread wt;
-  private GoogleApiClient mGoogleApiClient;
-	private static final long CONNECTION_TIME_OUT_MS = 100;
-	private String nodeId;
+//  WorkerThread wt;
+//  private GoogleApiClient mGoogleApiClient;
+//	private static final long CONNECTION_TIME_OUT_MS = 100;
+//	private String nodeId;
 
 	// new permissions pattern
 	String[] STARTUP_PERMISSIONS = {
@@ -252,11 +246,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 
     //wear
-    mGoogleApiClient = new GoogleApiClient.Builder(this)
-     	          .addApi(Wearable.API)
-        .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
+//    mGoogleApiClient = new GoogleApiClient.Builder(this)
+//     	          .addApi(Wearable.API)
+//        .addConnectionCallbacks(this)
+//                .addOnConnectionFailedListener(this)
+//                .build();
 
 		//fragments
 		_patchFragment = new PatchFragment();
@@ -410,60 +404,60 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	}
 
     // wear
-    private void retrieveDeviceNode() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-              NodeApi.GetConnectedNodesResult result =
-                        Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
-                List<Node> nodes = result.getNodes();
-                if (nodes.size() > 0) {
-                    nodeId = nodes.get(0).getId();
-                    //Log.i("WEAR", "gotNODE");
-                }
-            }
-        }).start();
-    } 
+//    private void retrieveDeviceNode() {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//              NodeApi.GetConnectedNodesResult result =
+//                        Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
+//                List<Node> nodes = result.getNodes();
+//                if (nodes.size() > 0) {
+//                    nodeId = nodes.get(0).getId();
+//                    //Log.i("WEAR", "gotNODE");
+//                }
+//            }
+//        }).start();
+//    }
     
-    class WorkerThread extends Thread {
-        public Handler mHandler;
-        public void run() {	 
-            Looper.prepare();
-           mHandler = new Handler(){
-               @Override
-               public void handleMessage(Message msg) {
-                   Bundle u = msg.getData();
-                   //Log.i(TAG, "received a msg to worker thread: " + u.getString("path"));
-                   String path = u.getString("path");
-                   String message = u.getString("message");
-                   if (path == null || message == null) return;;
-                   //
-                   NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
-                   for (Node node : nodes.getNodes()) {
-                       MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), path, message.getBytes()).await();
-                       if (result.getStatus().isSuccess()) {
-                           //Log.v("myTag", "Message: {" + message + "} sent to: " + node.getDisplayName());
-                       } else {
-                           // Log an error
-                           //Log.v("myTag", "ERROR: failed to send Message");
-                       }
-                   }
-               }
-           };
-            Looper.loop();
-        }
-    }
+//    class WorkerThread extends Thread {
+//        public Handler mHandler;
+//        public void run() {
+//            Looper.prepare();
+//           mHandler = new Handler(){
+//               @Override
+//               public void handleMessage(Message msg) {
+//                   Bundle u = msg.getData();
+//                   //Log.i(TAG, "received a msg to worker thread: " + u.getString("path"));
+//                   String path = u.getString("path");
+//                   String message = u.getString("message");
+//                   if (path == null || message == null) return;;
+//                   //
+//                   NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
+//                   for (Node node : nodes.getNodes()) {
+//                       MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), path, message.getBytes()).await();
+//                       if (result.getStatus().isSuccess()) {
+//                           //Log.v("myTag", "Message: {" + message + "} sent to: " + node.getDisplayName());
+//                       } else {
+//                           // Log an error
+//                           //Log.v("myTag", "ERROR: failed to send Message");
+//                       }
+//                   }
+//               }
+//           };
+//            Looper.loop();
+//        }
+//    }
 
-    public void sendWearMessage(String inPath, String message) {
-        //new SendToDataLayerThread(inPath, message).start();
-        Handler workerHandler = wt.mHandler;
-        // obtain a msg object from global msg pool
-        Message m = workerHandler.obtainMessage();
-        Bundle b = m.getData();
-        b.putString("path", inPath);
-        b.putString("message", message);
-        workerHandler.sendMessage(m);
-    }
+//    public void sendWearMessage(String inPath, String message) {
+//        //new SendToDataLayerThread(inPath, message).start();
+//        Handler workerHandler = wt.mHandler;
+//        // obtain a msg object from global msg pool
+//        Message m = workerHandler.obtainMessage();
+//        Bundle b = m.getData();
+//        b.putString("path", inPath);
+//        b.putString("message", message);
+//        workerHandler.sendMessage(m);
+//    }
 
     /*
     class SendToDataLayerThread extends Thread {
@@ -596,9 +590,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			stopAudio();
       		networkController.stop();
 		}
-    	if (null != mGoogleApiClient && mGoogleApiClient.isConnected()) {
-        	mGoogleApiClient.disconnect();
-    	}
+//    	if (null != mGoogleApiClient && mGoogleApiClient.isConnected()) {
+//        	mGoogleApiClient.disconnect();
+//    	}
     	super.onStop();
 	}
 
@@ -621,38 +615,38 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		super.onStart();
         //==== wear
 
-		mGoogleApiClient.connect();
-		retrieveDeviceNode(); //TODO on connection?
-        // message send thread
-        wt = new WorkerThread();
-        wt.start();
-
-        Wearable.MessageApi.addListener(mGoogleApiClient, new MessageListener() {
-            @Override
-            public void onMessageReceived(MessageEvent messageEvent) {
-
-                String path = messageEvent.getPath();
-                //TODO system calls,: 1) get load completion from wear to send buffered messages, 2) page swipe?
-                //try {
-                    String dataString = new String(messageEvent.getData());//, "UTF-8");
-                    String[] messageStringArray = dataString.split(" ");
-                    List<Object> objList = new ArrayList<Object>();
-                    objList.add(path); //add address first, then rest of list
-                    for (String token : messageStringArray) {
-                        try {
-                            Float f = Float.valueOf(token);
-                            objList.add(f);
-                        } catch (NumberFormatException e) {
-                            // not a number, add as string.
-                            objList.add(token);
-                        }
-                    }
-                    PdBase.sendList("fromGUI", objList.toArray());
-				/*} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}*/
-			}
-		});
+//		mGoogleApiClient.connect();
+//		retrieveDeviceNode(); //TODO on connection?
+//        // message send thread
+//        wt = new WorkerThread();
+//        wt.start();
+//
+//        Wearable.MessageApi.addListener(mGoogleApiClient, new MessageListener() {
+//            @Override
+//            public void onMessageReceived(MessageEvent messageEvent) {
+//
+//                String path = messageEvent.getPath();
+//                //TODO system calls,: 1) get load completion from wear to send buffered messages, 2) page swipe?
+//                //try {
+//                    String dataString = new String(messageEvent.getData());//, "UTF-8");
+//                    String[] messageStringArray = dataString.split(" ");
+//                    List<Object> objList = new ArrayList<Object>();
+//                    objList.add(path); //add address first, then rest of list
+//                    for (String token : messageStringArray) {
+//                        try {
+//                            Float f = Float.valueOf(token);
+//                            objList.add(f);
+//                        } catch (NumberFormatException e) {
+//                            // not a number, add as string.
+//                            objList.add(token);
+//                        }
+//                    }
+//                    PdBase.sendList("fromGUI", objList.toArray());
+//				/*} catch (UnsupportedEncodingException e) {
+//					e.printStackTrace();
+//				}*/
+//			}
+//		});
         // end wear
 	}
 
@@ -1507,20 +1501,20 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     //wear connection
     // Send a message when the wear data layer connection is successful. Called on app start and foreground
-    @Override
-    public void onConnected(Bundle connectionHint) {
-		// Now, activity is started via loadGUI call.
-        // Call startActivity, on foreground, to restart wear app on _current_ loaded GUI
-        if (_patchFragment!=null && _patchFragment.loadedWearString!=null) {
-            sendWearMessage("/loadGUI", _patchFragment.loadedWearString);
-        }
-    }
-
-    // Placeholders for required connection callbacks
-    @Override
-    public void onConnectionSuspended(int cause) { }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) { }
+//    @Override
+//    public void onConnected(Bundle connectionHint) {
+//		// Now, activity is started via loadGUI call.
+//        // Call startActivity, on foreground, to restart wear app on _current_ loaded GUI
+//        if (_patchFragment!=null && _patchFragment.loadedWearString!=null) {
+//            sendWearMessage("/loadGUI", _patchFragment.loadedWearString);
+//        }
+//    }
+//
+//    // Placeholders for required connection callbacks
+//    @Override
+//    public void onConnectionSuspended(int cause) { }
+//
+//    @Override
+//    public void onConnectionFailed(ConnectionResult connectionResult) { }
 }
 

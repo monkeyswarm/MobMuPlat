@@ -28,13 +28,20 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support:design:27.1.1'
+    //implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation "androidx.legacy:legacy-support-v4:1.0.0" //dei click?
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.fragment:fragment:1.2.4'
+
+    //implementation 'com.android.support:design:27.1.1'
+    //implementation 'com.google.android.material:material:1.1.0'
+
     implementation files('libs/gson-2.2.4.jar') //necc?
-    implementation 'org.puredata.android:pd-core:1.1.0'
-    implementation 'com.google.android.support:wearable:1.3.0'
-    implementation 'com.google.android.gms:play-services-wearable:8.4.0'
-    compileOnly 'com.google.android.wearable:wearable:1.0.0'
-    wearApp project(':mobmuplatandroidwear')
+    //implementation 'org.puredata.android:pd-core:1.1.0'
+    implementation project(':PdCore')
+//    implementation 'com.google.android.support:wearable:1.3.0'
+//    implementation 'com.google.android.gms:play-services-wearable:8.4.0'
+//    compileOnly 'com.google.android.wearable:wearable:1.0.0'
+//    wearApp project(':mobmuplatandroidwear')
 
 }
