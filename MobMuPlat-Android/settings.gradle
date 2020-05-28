@@ -1,1 +1,2 @@
 include ':app', ':mobmuplatandroidwear', ':PdCore'
+project (":PdCore").projectDir = new File("../pd-for-android/PdCore")

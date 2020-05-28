@@ -75,8 +75,7 @@ dependencies {
     implementation 'androidx.fragment:fragment:1.2.4'
 
     implementation files('libs/gson-2.2.4.jar') //necc?
-    implementation project(':PdCore')
-
+    implementation project(':PdCore');
 }
 
 def getNdkBuildExecutablePath() {

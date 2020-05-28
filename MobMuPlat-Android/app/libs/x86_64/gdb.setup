@@ -1,0 +1,2 @@
+set solib-search-path /Users/diglesia/Source/MobMuPlat/MobMuPlat-Android/app/obj/local/x86_64
+directory /Users/diglesia/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot /Users/diglesia/Source/MobMuPlat/MobMuPlat-Android/app/jni/jni ../../../pd-for-android/PdCore/src/main/jni/libpd/pure-data/src /Users/diglesia/Library/Android/sdk/ndk-bundle/sources/cxx-stl/system
