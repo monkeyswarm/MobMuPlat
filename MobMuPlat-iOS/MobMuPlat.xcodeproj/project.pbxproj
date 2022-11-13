@@ -52,7 +52,6 @@
 		DC5A5AD21882565500FC97D5 /* MeUnknown.m in Sources */ = {isa = PBXBuildFile; fileRef = DC5A5AD11882565500FC97D5 /* MeUnknown.m */; };
 		DC5A5AD8188256E400FC97D5 /* VVAssertionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = DC5A5AD7188256E400FC97D5 /* VVAssertionHandler.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DC5A5ADB1882572300FC97D5 /* OSCQueryReply.m in Sources */ = {isa = PBXBuildFile; fileRef = DC5A5ADA1882572300FC97D5 /* OSCQueryReply.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		DC6A9FF51878F88900A7585A /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = DC6A9FEF1878F88900A7585A /* LICENSE */; };
 		DC6A9FF61878F88900A7585A /* README.markdown in Resources */ = {isa = PBXBuildFile; fileRef = DC6A9FF01878F88900A7585A /* README.markdown */; };
 		DC6A9FF71878F88900A7585A /* MAZeroingWeakRef.m in Sources */ = {isa = PBXBuildFile; fileRef = DC6A9FF31878F88900A7585A /* MAZeroingWeakRef.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DC7DD717188F2A660068BA66 /* SettingsViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = DC7DD716188F2A660068BA66 /* SettingsViewController~ipad.xib */; };
@@ -1517,6 +1516,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = DC233D9D1655EDF500AC01C5;
@@ -1618,7 +1618,6 @@
 				F92AF7871C0CAB4700EED3BB /* LICENSE in Resources */,
 				F9295E6319BD19C6008691CB /* MMPTutorial3-Hardware.mmp in Resources */,
 				DCB5B94718888BF9003E6C2C /* Images.xcassets in Resources */,
-				DC6A9FF51878F88900A7585A /* LICENSE in Resources */,
 				F9295E5819BD19C6008691CB /* MMPTutorial0-HelloSine.pd in Resources */,
 				DCB5B95618889355003E6C2C /* Icon.png in Resources */,
 				DC6A9FF61878F88900A7585A /* README.markdown in Resources */,
@@ -1940,7 +1939,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = MobMuPlat/MobMuPlat.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = RJC7S963JF;
@@ -1971,7 +1970,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.iglesiaintermedia.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "danieliglesia-development";
+				PROVISIONING_PROFILE_SPECIFIER = MobMuPlat;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../libpd/** $(SRCROOT)/../PdParty/src/** $(SRCROOT)/../PdParty/libs $(SRCROOT)/../ZipArchive/**";
 				VALID_ARCHS = "armv7 armv7s arm64";
