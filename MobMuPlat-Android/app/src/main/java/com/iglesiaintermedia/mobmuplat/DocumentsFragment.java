@@ -3,9 +3,13 @@ package com.iglesiaintermedia.mobmuplat;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -28,15 +32,19 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.helper.ItemTouchHelper;
 
 public class DocumentsFragment extends Fragment implements OnClickListener{
 
-	private ListView _listView;
+	private RecyclerView _recyclerView;
 	private ArrayList<String> _filenamesList;
-	private ArrayAdapter<String> _adapter;
+	private DocumentsRecyclerViewAdapter _adapter;
 	private boolean _isListFiltered;
-	private Button _showAllFilesButton, _infoButton;
+	private Button _showAllFilesButton, _infoButton, _importButton;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,9 +56,13 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 		
 		_infoButton = (Button)rootView.findViewById(R.id.button2);
 		_infoButton.setOnClickListener(this);
-		
-		
-		_listView = (ListView)rootView.findViewById(R.id.listView1);
+		_importButton = (Button)rootView.findViewById(R.id.button3);
+		_importButton.setOnClickListener(this);
+
+
+		_recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerView1);
+		_recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+
 		_filenamesList = new ArrayList<String>();
 
         _isListFiltered = true;
@@ -60,49 +72,48 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 		refreshFileList();
         refreshShowFilesButton();
 		
-	    _adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_documents, R.id.list_item_textView, _filenamesList) {
-	    	@Override
-	    	public View getView(int position, View convertView, ViewGroup parent) {
-	    		View view = super.getView(position, convertView, parent);
-	    		String filename = _filenamesList.get(position);
-				view.setEnabled(isOpenable(filename)); //when filtered, should always be true...
-				return view;
-	    	}
-	    };
-	    _listView.setAdapter(_adapter);
-		
-	    _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parentAdapter, View view, int position,long id) {
-				//TextView clickedView = (TextView) view;
-				//final ProgressBar pb = (ProgressBar) view.findViewById(R.id.progressBar1);
-	    		//pb.setVisibility(View.VISIBLE);
-				final String filename = _filenamesList.get(position);
+	    _adapter = new DocumentsRecyclerViewAdapter(getActivity(), _filenamesList);
+		_adapter.setClickListener(new DocumentsRecyclerViewAdapter.ItemClickListener() {
+			@Override
+			public void onItemClick(View view, int index) {
+				final String filename = _filenamesList.get(index);
 				String suffix = filename.substring(filename.lastIndexOf(".")+1);
 				if (suffix.equalsIgnoreCase("mmp")) {
 					Toast.makeText(getActivity(), "Loading MobMuPlat document "+filename, Toast.LENGTH_SHORT).show();
-					
-						/*	Handler handler = new Handler();
-	        				handler.post(new Runnable() {
-	        					@Override
-	        					public void run() {*/
-	        						((MainActivity)getActivity()).loadScene(filename);
-	        						getActivity().getSupportFragmentManager().popBackStack();// remove(DocumentsFragment.this).commit();
-	        						
-	        						//	pb.setVisibility(View.INVISIBLE);
-	        					/*}
-	        				});*/
-
-	        		
-					
-					
+    				((MainActivity)getActivity()).loadScene(filename);
+	        		getActivity().getSupportFragmentManager().popBackStack();// remove(DocumentsFragment.this).commit();
 				} else if (suffix.equalsIgnoreCase("pd")) {
 					Toast.makeText(getActivity(), "Loading PureData patch "+filename, Toast.LENGTH_SHORT).show();
 					((MainActivity)getActivity()).loadScenePatchOnly(filename);
 					getActivity().getSupportFragmentManager().popBackStack();// remove(DocumentsFragment.this).commit();
 				}
-				
-			}	
+			}
 		});
+		_recyclerView.setAdapter(_adapter);
+
+		//
+		ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+			@Override
+			public boolean onMove(
+					 RecyclerView recyclerView,
+					RecyclerView.ViewHolder viewHolder,
+					RecyclerView.ViewHolder target) {
+				// Not called.
+				return false;
+			}
+			@Override
+			public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+				// Delete file
+				String filename = _filenamesList.get(viewHolder.getAdapterPosition());
+				File dir = getActivity().getFilesDir();
+				File file = new File(dir, filename);
+				boolean deleted = file.delete();
+				refreshFileList();
+				_adapter.notifyDataSetChanged();
+			}
+		});
+		itemTouchHelper.attachToRecyclerView(_recyclerView);
+
 	   //TODO zips!
 	    //rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
 		return rootView;
@@ -114,18 +125,12 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 		else return false;
 	}
 	
-	private boolean isOpenable(String filename) {
-		String suffix = filename.substring(filename.lastIndexOf(".") + 1);
-		if (suffix.equalsIgnoreCase("mmp") || suffix.equalsIgnoreCase("pd")) return true;
-		else return false;
-	}
-	
 	private ArrayList<String> getFilenames() {
 		String state = Environment.getExternalStorageState();
 		Log.i("DOC state", state);
 		if (!(Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))) return null;
 		
-		File fileDir = new File(MainActivity.getDocumentsFolderPath());//device/sdcard
+		File fileDir = new File(MainActivity.getDocumentsFolderPath(getActivity()));
 
 		ArrayList<String> fileList = new ArrayList<String>();
 	    File[] files = fileDir.listFiles();
@@ -169,10 +174,12 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 		} else if (v==_infoButton) {
 			new AlertDialog.Builder(getActivity())
 		    .setTitle("Getting files in and out of MobMuPlat")
-		    .setMessage("MobMuPlat files are stored in \n"+MainActivity.getDocumentsFolderPath()+"\n(Some file system apps may also show this as /sdcard/MobMuPlat).\nYou can use a file system app to manually copy files in and out of that folder.\n\nMobMuPlat will also automatically import .mmp, .pd, and .zip files, so just tap on those files from any other application (email, web, Dropbox, Google Drive, etc), and MobMuPlat will copy the file(s) into this folder (and extract all files from a .zip).")
+		    .setMessage("MobMuPlat files are stored within the app file system. \nTo bring in files, use the 'import' button to select file(s) from the file picker. \nNote that selection of a zip file will unzip its contents; its contents should all be in the top level, without any subdirectories. \n\nMobMuPlat will also automatically import .mmp, .pd, and .zip files, so just tap on those files from any other application (email, web, Dropbox, Google Drive, etc), and MobMuPlat will copy the file(s) into this folder (and extract all files from a .zip).\n\nSwiping on a file will remove it from the app file storage.")
 		    .setPositiveButton(android.R.string.yes, null)
 		    .setIcon(R.drawable.ic_launcher)
 		     .show();
+		} else if (v==_importButton) {
+			((MainActivity)getActivity()).requestImportFiles();
 		}
 	}
 
@@ -199,7 +206,7 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
         //DEI
     }
 	
-	private void refreshFileList() {
+	public void refreshFileList() {
 		ArrayList<String> files = getFilenames();
 		_filenamesList.clear();
 		if (files == null) return;
@@ -209,6 +216,71 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 			} else {//add all files
 				_filenamesList.add(filename);
 			}
+		}
+	}
+
+	private static class DocumentsRecyclerViewAdapter extends RecyclerView.Adapter<DocumentsRecyclerViewAdapter.DocumentsRecyclerViewHolder> {
+
+		private List<String> filenames;
+		private LayoutInflater inflater;
+		private ItemClickListener clickListener;
+
+		// data is passed into the constructor
+		DocumentsRecyclerViewAdapter(Context context, List<String> filenames) {
+			this.inflater = LayoutInflater.from(context);
+			this.filenames = filenames;
+		}
+
+		@Override
+		public DocumentsRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+			View view = inflater.inflate(R.layout.list_item_documents, parent, false);
+			return new DocumentsRecyclerViewHolder(view);
+		}
+
+		private boolean isOpenable(String filename) {
+			String suffix = filename.substring(filename.lastIndexOf(".") + 1);
+			if (suffix.equalsIgnoreCase("mmp") || suffix.equalsIgnoreCase("pd")) return true;
+			else return false;
+		}
+		// binds the data to the TextView in each row
+		@Override
+		public void onBindViewHolder(DocumentsRecyclerViewHolder holder, int position) {
+			String filename = filenames.get(position);
+			holder.setEnabled(isOpenable(filename));
+			holder.myTextView.setText(filename);
+		}
+
+		@Override
+		public int getItemCount() {
+			return filenames.size();
+		}
+
+		public class DocumentsRecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+			TextView myTextView;
+
+			DocumentsRecyclerViewHolder(View itemView) {
+				super(itemView);
+				myTextView = itemView.findViewById(R.id.list_item_textView);
+				itemView.setOnClickListener(this);
+			}
+
+			@Override
+			public void onClick(View view) {
+				if (clickListener != null) clickListener.onItemClick(view, getAdapterPosition());
+			}
+
+			void setEnabled(boolean isEnabled) {
+				myTextView.setEnabled(isEnabled); // gray out text
+				itemView.setEnabled(isEnabled); // disable tap
+			}
+		}
+
+		void setClickListener(ItemClickListener itemClickListener) {
+			this.clickListener = itemClickListener;
+		}
+
+		public interface ItemClickListener {
+			void onItemClick(View view, int position);
 		}
 	}
 }

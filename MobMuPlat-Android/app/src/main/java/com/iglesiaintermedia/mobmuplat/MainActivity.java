@@ -24,9 +24,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import android.Manifest;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Message;
+import android.provider.OpenableColumns;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -179,8 +181,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 	// new permissions pattern
 	String[] STARTUP_PERMISSIONS = {
-			Manifest.permission.READ_EXTERNAL_STORAGE,
-			Manifest.permission.WRITE_EXTERNAL_STORAGE,
 			Manifest.permission.RECORD_AUDIO
 	};
 
@@ -287,7 +287,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 		for (String permission : STARTUP_PERMISSIONS) {
 			if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-				ActivityCompat.requestPermissions(this,STARTUP_PERMISSIONS, MMP_PERMISSIONS_REQUEST_AUDIO_AND_STORAGE);
+				ActivityCompat.requestPermissions(this,STARTUP_PERMISSIONS, MMP_PERMISSIONS_REQUEST_AUDIO);
 				return; // something missing, so ask for permissions
 			}
 		}
@@ -302,6 +302,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		// copy docs
 		//version
 		boolean shouldCopyDocs = false;
+		boolean shouldShowVersion26UpgradeNotice = false; // Whether to show alert about new file system changes.
 		int versionCode = 0;
 		PackageInfo packageInfo;
 		try {
@@ -312,14 +313,24 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			if (versionCode > lastOpenedVersionCode) {
 				shouldCopyDocs = true;
 			}
+			// Notice shown if user is upgrading from < 26 to >= 26 (and hasn't already seen the
+			// upgrade notice). Not shown on fresh installs.
+			if (lastOpenedVersionCode > 0 && lastOpenedVersionCode < 26 && versionCode >=26) {
+				boolean sawNotice = sp.getBoolean("sawVersion26UpgradeNotice", false);
+				if (!sawNotice) {
+					shouldShowVersion26UpgradeNotice = true;
+				}
+			}
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
 		}
 
 		//temp
 		//shouldCopyDocs = true;
+		//shouldShowVersion26UpgradeNotice = true;
+
 		//copy
-		if(shouldCopyDocs) {//!alreadyStartedOnVersion || [alreadyStartedOnVersion boolValue] == NO) {
+		if(shouldCopyDocs) {
 			List<String> defaultPatchesList;
 			if(hardwareScreenType == CanvasType.canvasTypeWidePhone || hardwareScreenType == CanvasType.canvasTypeTallTablet){
 				defaultPatchesList=Arrays.asList("MMPTutorial0-HelloSine.mmp", "MMPTutorial1-GUI.mmp", "MMPTutorial2-Input.mmp", "MMPTutorial3-Hardware.mmp", "MMPTutorial4-Networking.mmp","MMPTutorial5-Files.mmp","MMPExamples-Vocoder.mmp", "MMPExamples-Motion.mmp", "MMPExamples-Sequencer.mmp", "MMPExamples-GPS.mmp", "MMPTutorial6-2DGraphics.mmp", "MMPExamples-LANdini.mmp", "MMPExamples-Arp.mmp", "MMPExamples-TableGlitch.mmp", "MMPExamples-HID.mmp", "MMPExamples-PingAndConnect.mmp", "MMPExamples-Watch.mmp");
@@ -345,10 +356,18 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 				SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
 				SharedPreferences.Editor editor = settings.edit();
 				editor.putInt("lastOpenedVersionCode", versionCode);
+				if (shouldShowVersion26UpgradeNotice) {
+					editor.putBoolean("sawVersion26UpgradeNotice", true);
+				}
 				editor.commit();
 			}
-
 		}
+
+		// show upgrade notice
+		if (shouldShowVersion26UpgradeNotice) {
+			showAlert("Thanks for using MobMuPlat!\n\nDue to Android requirements, the app now handles files differently. \nIt no longer uses a shared external folder; you may delete the external \"MobMuPlat\" folder, as the app no longer has access to it. \nSee the 'Info' button in the Documents page for details on file import.");
+		}
+
 		// pd service
 		bindService(new Intent(this, PdService.class), pdConnection, BIND_AUTO_CREATE);
 		//wifi
@@ -367,8 +386,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 	}
 
-	//'dangerous' permissions that must be requested: audio, camera, location, read/write external storage
-	private static final int MMP_PERMISSIONS_REQUEST_AUDIO_AND_STORAGE = 1;
+	//'dangerous' permissions that must be requested: audio, camera, location
+	private static final int MMP_PERMISSIONS_REQUEST_AUDIO = 1; // Startup permissions.
 	private static final int MMP_PERMISSIONS_REQUEST_LOCATION = 2;
 	private static final int MMP_PERMISSIONS_REQUEST_CAMERA = 3;
 
@@ -376,7 +395,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	public void onRequestPermissionsResult(int requestCode,
 										   String permissions[], int[] grantResults) {
 		switch (requestCode) {
-			case MMP_PERMISSIONS_REQUEST_AUDIO_AND_STORAGE: {
+			case MMP_PERMISSIONS_REQUEST_AUDIO: {
 				// If request is cancelled, the result arrays are empty.
 				if (grantResults.length == 3
 						&& grantResults[0] == PackageManager.PERMISSION_GRANTED
@@ -389,7 +408,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 					showAlert("MobMuPlat needs disk and audio access to work.", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialogInterface, int i) {
-							ActivityCompat.requestPermissions(MainActivity.this,STARTUP_PERMISSIONS, MMP_PERMISSIONS_REQUEST_AUDIO_AND_STORAGE);
+							ActivityCompat.requestPermissions(MainActivity.this,STARTUP_PERMISSIONS, MMP_PERMISSIONS_REQUEST_AUDIO);
 						}
 					});
 				}
@@ -660,9 +679,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		Log.i(TAG, "filename to load:"+filenameToLoad);
 		getActionBar().hide();
 
-		String parentPathString =  new File(MainActivity.getDocumentsFolderPath(), filenameToLoad).getParentFile().getAbsolutePath();
+		String parentPathString =  new File(MainActivity.getDocumentsFolderPath(this), filenameToLoad).getParentFile().getAbsolutePath();
 		Log.i(TAG, "parentPathString to load:"+parentPathString);
-		String fileJSON = readMMPToString(filenameToLoad);
+		String fileJSON = readMMPToString(filenameToLoad, this);
 		if (fileJSON == null) { //could not load/find filename...i.e. filename is stale
 			showAlert("Cannot load "+filenameToLoad+", please tap the \"show files\" button twice to refresh the file list");
 		}
@@ -688,7 +707,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		
 		getActionBar().hide();
 
-        String path = MainActivity.getDocumentsFolderPath() + File.separator + filenameToLoad;
+        String path = MainActivity.getDocumentsFolderPath(this) + File.separator + filenameToLoad;
         ArrayList<String[]> originalAtomLines = PdParser.parsePatch(path);
 
         _fileDataToLoad = originalAtomLines;
@@ -716,7 +735,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		// File patchFile = null;
 		if(pdFilename!=null) {
 			try {
-				File pdFile = new File(parentPathString != null ? parentPathString : MainActivity.getDocumentsFolderPath(), pdFilename);
+				File pdFile = new File(parentPathString != null ? parentPathString : MainActivity.getDocumentsFolderPath(this), pdFilename);
 				openPdFileHandle = PdBase.openPatch(pdFile);
 			} catch (FileNotFoundException e) {
 				showAlert("PD file "+pdFilename+" not found.");
@@ -729,9 +748,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		return openPdFileHandle;
 	}
 
-	static public String readMMPToString(String filename) {
+	static public String readMMPToString(String filename, Context context) {
 		if (filename == null) return null;
-		File file = new File(MainActivity.getDocumentsFolderPath(),filename);
+		File file = new File(MainActivity.getDocumentsFolderPath(context),filename);
 		if (!file.exists())return null;
 
 		Writer writer = new StringWriter();
@@ -761,7 +780,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 	static public String readMMPAssetToString(InputStream is) {
 		if (is == null) return null;
-		//File file = new File(MainActivity.getDocumentsFolderPath(),filename);
 
 		Writer writer = new StringWriter();
 		char[] buffer = new char[1024];
@@ -965,7 +983,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	}
 
 	private void copyInputStream(InputStream in, String filename, boolean showAlert) {
-		File file = new File(MainActivity.getDocumentsFolderPath(), filename);
+		File file = new File(MainActivity.getDocumentsFolderPath(this), filename);
 		try {
 			OutputStream out = new FileOutputStream(file);
 			byte[] data = new byte[in.available()];
@@ -975,10 +993,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			out.close();
 
 			if(showAlert)showAlert("File "+filename+" copied to MobMuPlat Documents");
-		} catch (FileNotFoundException e) {
-      Log.i(TAG, "Unable to copy file: "+e.getMessage());
 		} catch (IOException e) {
-			Log.i(TAG, "Unable to copy file: "+e.getMessage());
+      		Log.i(TAG, "Unable to copy file: "+e.getMessage());
+			if(showAlert)showAlert("File "+filename+" copied to MobMuPlat Documents");
 		}
 	}
 
@@ -1258,8 +1275,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		// TODO Auto-generated method stub
 	}
 
-	public static String getDocumentsFolderPath() {
-		File fileDir = new File(Environment.getExternalStorageDirectory(), "MobMuPlat");//device/sdcard aka simulated storage
+	public static String getDocumentsFolderPath(Context context) {
+		// In-app file system; no more external directory.
+		File fileDir = context.getFilesDir();
 		fileDir.mkdir(); // make mobmuplat dir if not there
 		return fileDir.getAbsolutePath();
 	}
@@ -1328,61 +1346,64 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	private class UnzipTask extends AsyncTask<Void, Void, Boolean> {
 		InputStream _is;
 		String _zipname;
-		public UnzipTask(InputStream is, String zipname) {
+		Context _context;
+		public UnzipTask(InputStream is, String zipname, Context context) {
 			_is = is;
 			_zipname = zipname;
+			_context = context;
 		}
 		@Override
 		protected Boolean doInBackground(Void... args) {
 			ZipInputStream zis;
-			try {
+
 				String filename;
 
 				zis = new ZipInputStream(new BufferedInputStream(_is));          
 				ZipEntry ze;
 				byte[] buffer = new byte[1024];
 				int count;
-
+				try {
 				while ((ze = zis.getNextEntry()) != null) {
 
 					filename = ze.getName();
 					Log.i("ZIP", "opening "+filename);
 
-					// Need to create directories if doesn't exist.
+					// do NOT make subdirectories.
 					if (ze.isDirectory()) {
-						File fmd = new File(MainActivity.getDocumentsFolderPath(),  filename);
-						fmd.mkdirs();
 						continue;
 					}
 
-					File outFile = new File(MainActivity.getDocumentsFolderPath(), filename);
+					File outFile = new File(MainActivity.getDocumentsFolderPath(_context), filename);
 					if(VERBOSE)Log.i(TAG, "zip writes to: "+outFile.getAbsolutePath());
-					FileOutputStream fout = new FileOutputStream(outFile);
+					try {
+						FileOutputStream fout = new FileOutputStream(outFile);
 
-					while ((count = zis.read(buffer)) != -1) {
-						fout.write(buffer, 0, count);             
+						while ((count = zis.read(buffer)) != -1) {
+							fout.write(buffer, 0, count);
+						}
+
+						fout.close();
+						if(VERBOSE)Log.i(TAG, "zip wrote "+filename);
+					} catch (FileNotFoundException e) {
+						// continue if cannot find file. This happens with OSX-made zips, for the hidden files, which can be ignored.
+						if(VERBOSE)Log.i(TAG, "zip could not write "+filename);
 					}
-
-					fout.close();               
 					zis.closeEntry();
-					if(VERBOSE)Log.i(TAG, "zip wrote "+filename);
 				}
 
 				zis.close();
 				return true;
-				//Log.i("ZIP", "complete");
 				
-			} 
-			catch(Exception e) {
-				e.printStackTrace();
+			} catch (IOException e) {
 				return false;
-			} 
+			}
 		}
 
 		@Override
 		protected void onPostExecute(Boolean success) {
 			if (success.booleanValue()==true) {
 				showAlert("Unzipped contents of "+_zipname+" into Documents folder.");
+				_documentsFragment.refreshFileList();
 			} else {
 				showAlert("Error unzipping contents of "+_zipname);
 			}
@@ -1391,7 +1412,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 	private void unpackZipInputStream(InputStream is, String zipname) {
 		Toast.makeText(this, "Unzipping "+zipname+" to Documents", Toast.LENGTH_LONG).show();;
-		new UnzipTask(is,zipname).execute();
+		new UnzipTask(is,zipname, this).execute();
 	}
 
 	private void unpackZip(String path, String zipname) {    
@@ -1522,5 +1543,65 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) { }
+
+	//
+	private static final int IMPORT_FILES_REQUEST_CODE = 1234;
+	public void requestImportFiles() {
+		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+		intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+		intent.addCategory(Intent.CATEGORY_OPENABLE);
+		intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+		intent.setType("*/*");
+//		String[] mimeTypes = new String[]{"application/x-binary,application/octet-stream"};
+//		if (mimeTypes.length > 0) {
+//			intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+//		}
+
+   		startActivityForResult(Intent.createChooser(intent, "foo"), IMPORT_FILES_REQUEST_CODE);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode,Intent resultData) {
+		if (requestCode == IMPORT_FILES_REQUEST_CODE && resultCode ==Activity.RESULT_OK) {
+			if (resultData == null) return;
+			// multi selection
+			if(resultData.getClipData() != null) {
+				int count = resultData.getClipData().getItemCount();
+				for (int i=0;i<count;i++) {
+					Uri uri = resultData.getClipData().getItemAt(i).getUri();
+					importFileFromContentUri(uri, false);
+				}
+				showAlert("Imported "+count+" files");
+			} else if (resultData.getData() != null) {
+				Uri uri = resultData.getData();
+				importFileFromContentUri(uri, true);
+			}
+		}
+	}
+
+	private void importFileFromContentUri(Uri uri, boolean showAlert) {
+		if (uri == null || !uri.getScheme().equals("content")) {
+			showAlert("Could not copy to MobMuPlat Documents");
+			return;
+		}
+
+		ContentResolver contentResolver = getContentResolver();
+		Cursor cursor = contentResolver.query(uri, null, null, null, null);
+		if (cursor == null || !cursor.moveToFirst()) return;
+		String	filename = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+		String mimeType = contentResolver.getType(uri);
+		try {
+			InputStream is = contentResolver.openInputStream(uri);
+			if (mimeType.equals("application/zip")) {
+				if(showAlert)Toast.makeText(this, "Unzipping " + filename + " to Documents", Toast.LENGTH_LONG).show();
+				new UnzipTask(is, filename, this).execute();
+			} else {
+				copyInputStream(is, filename, showAlert);
+				_documentsFragment.refreshFileList();
+			}
+		} catch (FileNotFoundException e) {
+			showAlert("Could not copy " + filename + " to MobMuPlat Documents");
+		}
+	}
 }
 

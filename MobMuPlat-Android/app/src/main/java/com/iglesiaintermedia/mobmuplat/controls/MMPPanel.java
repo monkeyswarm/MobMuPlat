@@ -100,7 +100,7 @@ public class MMPPanel extends MMPControl {
     	//image path
 		if (messageArray.size()==2 && (messageArray.get(0) instanceof String) && ((String)(messageArray.get(0))).equals("image")){
 			String path =  (String)messageArray.get(1);
-			File extFile = new File(/*Environment.getExternalStorageDirectory()*/ MainActivity.getDocumentsFolderPath(), path);
+			File extFile = new File(MainActivity.getDocumentsFolderPath(getContext()), path);
             setImagePath(extFile.getAbsolutePath());
 		}
 		//highlight

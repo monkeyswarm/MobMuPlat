@@ -264,7 +264,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
         }
 
         // Write file to disk
-        File file = new File(MainActivity.getDocumentsFolderPath(), "tempPdFile");
+        File file = new File(MainActivity.getDocumentsFolderPath(getActivity()), "tempPdFile");
         FileOutputStream outputStream;
 
         try {
@@ -620,8 +620,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
                         if(guiDict.get("imagePath")!=null) {
                             //convert relative image path to full external storage path TODO merge with panel recevelist code. static method?
                             String filename = guiDict.get("imagePath").getAsString();
-                            //File extFile = new File(MainActivity.getDocumentsFolderPath(), path);
-                            File imageFile = new File(parentPathString != null ? parentPathString : MainActivity.getDocumentsFolderPath(), filename);
+                            File imageFile = new File(parentPathString != null ? parentPathString : MainActivity.getDocumentsFolderPath(getActivity()), filename);
                             ((MMPPanel)control).setImagePath(imageFile.getAbsolutePath());
                         }
                         if(guiDict.get("passTouches")!=null)

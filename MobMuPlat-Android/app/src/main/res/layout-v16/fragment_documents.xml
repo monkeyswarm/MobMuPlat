@@ -9,8 +9,8 @@
     android:orientation="vertical" 
     android:background="#7f007f">
     
-     <ListView
-        android:id="@+id/listView1"
+     <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -35,6 +35,14 @@
              android:layout_weight="1"
              android:layout_height="50dp"
              android:text="Info"
+             android:textColor="#FFFFFF"/>
+
+         <Button
+             android:id="@+id/button3"
+             android:layout_width="0dp"
+             android:layout_weight="1"
+             android:layout_height="50dp"
+             android:text="Import"
              android:textColor="#FFFFFF"/>
 
      </LinearLayout>
