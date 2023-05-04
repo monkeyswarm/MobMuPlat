@@ -74,7 +74,7 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
     public PagingHorizontalScrollView scrollContainer;
     public RelativeLayout scrollRelativeLayout; //content view of the scroll view.
 
-    public enum CanvasType{ canvasTypeWidePhone ,canvasTypeTallPhone , canvasTypeWideTablet, canvasTypeTallTablet }
+    public enum CanvasType{ canvasTypeWidePhone ,canvasTypeTallPhone , canvasTypeWideTablet, canvasTypeTallTablet, canvasTypeCustom }
 
     CanvasType _canvasType;
     boolean _isOrientationLandscape;
@@ -343,6 +343,8 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
             //
             int screenWidth = _container.getWidth();//_rootView.getWidth();
             int screenHeight = _container.getHeight();//_rootView.getHeight();
+            int customWidth = 0;
+            int customHeight = 0;
             if(MainActivity.VERBOSE)Log.i(TAG, "load scene _container dim "+screenWidth+" "+screenHeight);
             if(screenWidth==0 || screenHeight == 0) return;//error
 
@@ -365,6 +367,12 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
                 else if(canvasTypeString.equals("android7Inch") ||
                         canvasTypeString.equals("tallTablet")) {
                     _canvasType=CanvasType.canvasTypeTallTablet;
+                }
+                else if(canvasTypeString.split("[x]").length == 2){
+                    _canvasType=CanvasType.canvasTypeCustom;
+                    String[] tokens = canvasTypeString.split("[x]");
+                    customWidth = Integer.parseInt(tokens[0]);
+                    customHeight = Integer.parseInt(tokens[1]);
                 }
             }
             if(topDict.get("isOrientationLandscape")!=null)
@@ -394,6 +402,11 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
                     case canvasTypeTallTablet://half of 1200 1824 aspect 1.52 NOW half of 1200 1920
                         referenceWidth = 600;
                         referenceHeight = 960;
+                        break;
+                    case canvasTypeCustom:
+                        referenceWidth = customHeight;
+                        referenceHeight = customWidth;
+                        break;
                 }
             } else { //landscape
                 switch (_canvasType) {
@@ -412,6 +425,11 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
                     case canvasTypeTallTablet://half of 1920 1104 NOW half of 1920 x 1200
                         referenceWidth = 960;
                         referenceHeight = 600;
+                        break;
+                    case canvasTypeCustom:
+                        referenceWidth = customWidth;
+                        referenceHeight = customHeight;
+                        break;
                 }
             }
             double xRatio = (double)screenWidth/referenceWidth;
