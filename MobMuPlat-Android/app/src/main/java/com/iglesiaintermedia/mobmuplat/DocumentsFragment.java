@@ -1,6 +1,12 @@
 package com.iglesiaintermedia.mobmuplat;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,9 +75,7 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 
         SharedPreferences sp = getActivity().getPreferences(Activity.MODE_PRIVATE);
         _isListFiltered = !sp.getBoolean("showAllFiles", false);
-		refreshFileList();
-        refreshShowFilesButton();
-		
+
 	    _adapter = new DocumentsRecyclerViewAdapter(getActivity(), _filenamesList);
 		_adapter.setClickListener(new DocumentsRecyclerViewAdapter.ItemClickListener() {
 			@Override
@@ -90,6 +94,8 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 			}
 		});
 		_recyclerView.setAdapter(_adapter);
+		refreshFileList();
+		refreshShowFilesButton();
 
 		//
 		ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
@@ -107,9 +113,13 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 				String filename = _filenamesList.get(viewHolder.getAdapterPosition());
 				File dir = getActivity().getFilesDir();
 				File file = new File(dir, filename);
-				boolean deleted = file.delete();
-				refreshFileList();
-				_adapter.notifyDataSetChanged();
+				if (file.isDirectory()) {
+					deleteDirectory(file);
+					refreshFileList();
+				} else {
+					boolean deleted = file.delete();
+					refreshFileList();
+				}
 			}
 		});
 		itemTouchHelper.attachToRecyclerView(_recyclerView);
@@ -118,7 +128,28 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 	    //rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
 		return rootView;
 	}
-	
+
+	private void deleteDirectory(File file) {
+		Path directory = file.toPath();
+		try {
+			Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+				@Override
+				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+					Files.delete(file);
+					return FileVisitResult.CONTINUE;
+				}
+
+				@Override
+				public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+					Files.delete(dir);
+					return FileVisitResult.CONTINUE;
+				}
+			});
+		} catch (IOException e) {
+			Log.e("DOCUMENTS_FRAGMENT", "Could not delete directory");
+		}
+	}
+
 	private boolean isMMP(String filename) {
 		String suffix = filename.substring(filename.lastIndexOf(".")+1);
 		if (suffix.equalsIgnoreCase("mmp")) return true;// || suffix.equalsIgnoreCase("pd")) return true;
@@ -126,10 +157,6 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 	}
 	
 	private ArrayList<String> getFilenames() {
-		String state = Environment.getExternalStorageState();
-		Log.i("DOC state", state);
-		if (!(Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))) return null;
-		
 		File fileDir = new File(MainActivity.getDocumentsFolderPath(getActivity()));
 
 		ArrayList<String> fileList = new ArrayList<String>();
@@ -140,19 +167,18 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 	        return null;
 
 		for (File file : files) {
-		    // if its a folder, look for a main.pd in it and add that
+		    // if its a folder, look for a main.pd/mmp in it and add that
             if (file.isDirectory()) {
-                File testFile1 = new File(file, "main.pd");
-                if (testFile1.exists()) {
-                    fileList.add(file.getName()+"/main.pd"); // add "foo/main.pd" as item
-                }
-                File testFile2 = new File(file, "main.mmp");
-                if (testFile2.exists()) {
-                    fileList.add(file.getName()+"/main.mmp"); // add "foo/main.mmp" as item
-                }
-            } else {
-                fileList.add(file.getName());
-            }
+				File testFile1 = new File(file, "main.pd");
+				if (testFile1.exists()) {
+					fileList.add(file.getName() + "/main.pd"); // add "foo/main.pd" as item
+				}
+				File testFile2 = new File(file, "main.mmp");
+				if (testFile2.exists()) {
+					fileList.add(file.getName() + "/main.mmp"); // add "foo/main.mmp" as item
+				}
+			}
+			fileList.add(file.getName());
 		}
 
 	    return fileList;
@@ -164,7 +190,6 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 			_isListFiltered = !_isListFiltered;
 			_showAllFilesButton.setText(_isListFiltered ? "Show all files" : "Showing all files");
 			refreshFileList();
-			_adapter.notifyDataSetChanged();
             refreshShowFilesButton();
 			// save to preferences
             SharedPreferences settings = getActivity().getPreferences(Activity.MODE_PRIVATE);
@@ -217,6 +242,7 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 				_filenamesList.add(filename);
 			}
 		}
+		_adapter.notifyDataSetChanged();
 	}
 
 	private static class DocumentsRecyclerViewAdapter extends RecyclerView.Adapter<DocumentsRecyclerViewAdapter.DocumentsRecyclerViewHolder> {

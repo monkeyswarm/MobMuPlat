@@ -1354,6 +1354,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		}
 		@Override
 		protected Boolean doInBackground(Void... args) {
+			String documentsPath = MainActivity.getDocumentsFolderPath(_context);
 			ZipInputStream zis;
 
 				String filename;
@@ -1368,12 +1369,14 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 					filename = ze.getName();
 					Log.i("ZIP", "opening "+filename);
 
-					// do NOT make subdirectories.
+					// Need to create directories if doesn't exist.
 					if (ze.isDirectory()) {
+						File fmd = new File(documentsPath, filename);
+						fmd.mkdirs();
 						continue;
 					}
 
-					File outFile = new File(MainActivity.getDocumentsFolderPath(_context), filename);
+					File outFile = new File(documentsPath, filename);
 					if(VERBOSE)Log.i(TAG, "zip writes to: "+outFile.getAbsolutePath());
 					try {
 						FileOutputStream fout = new FileOutputStream(outFile);
