@@ -119,9 +119,6 @@
 
         <service android:name="org.puredata.android.service.PdService" />
 
-        <meta-data android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-
         <!-- https://developer.android.com/about/versions/pie/android-9.0-changes-28#apache-p -->
         <uses-library android:name="org.apache.http.legacy" android:required="false" />
 

@@ -464,30 +464,30 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
 
             JsonArray controlDictArray;//array of dictionaries, one for each gui element
             // WEAR GUI
-            if (topDict.get("wearGui")!=null) {
-                JsonArray pageGuiArray = topDict.get("wearGui").getAsJsonArray();
-                // construct new dict with background color, and wear gui array
-                JsonObject wearDict = new JsonObject();
-                if(topDict.getAsJsonArray("backgroundColor")!=null){
-                    JsonArray colorArray = topDict.getAsJsonArray("backgroundColor");
-                    wearDict.add("backgroundColor", colorArray);
-                }
-                wearDict.add("wearGui", pageGuiArray);
-                String jsonString = wearDict.toString();
-                _mainActivity.sendWearMessage("/loadGUI", jsonString);
-                // track the wear dict
-                loadedWearString = jsonString;
-
-                // iterate through wear pages and get addresses
-                for(int i=0;i<pageGuiArray.size();i++){
-                    JsonObject pageDict = pageGuiArray.get(i).getAsJsonObject();//page-level dict
-                    if (pageDict.get("pageGui")==null)continue;
-                    JsonObject pageGuiDict = pageDict.get("pageGui").getAsJsonObject();
-                    if(pageGuiDict.get("address")==null)continue;// if doesn't have an address, skip
-                    String address = pageGuiDict.get("address").getAsString();
-                    _wearAddressSet.add(address);
-                }
-            }// end wear
+//            if (topDict.get("wearGui")!=null) {
+//                JsonArray pageGuiArray = topDict.get("wearGui").getAsJsonArray();
+//                // construct new dict with background color, and wear gui array
+//                JsonObject wearDict = new JsonObject();
+//                if(topDict.getAsJsonArray("backgroundColor")!=null){
+//                    JsonArray colorArray = topDict.getAsJsonArray("backgroundColor");
+//                    wearDict.add("backgroundColor", colorArray);
+//                }
+//                wearDict.add("wearGui", pageGuiArray);
+//                String jsonString = wearDict.toString();
+//                _mainActivity.sendWearMessage("/loadGUI", jsonString);
+//                // track the wear dict
+//                loadedWearString = jsonString;
+//
+//                // iterate through wear pages and get addresses
+//                for(int i=0;i<pageGuiArray.size();i++){
+//                    JsonObject pageDict = pageGuiArray.get(i).getAsJsonObject();//page-level dict
+//                    if (pageDict.get("pageGui")==null)continue;
+//                    JsonObject pageGuiDict = pageDict.get("pageGui").getAsJsonObject();
+//                    if(pageGuiDict.get("address")==null)continue;// if doesn't have an address, skip
+//                    String address = pageGuiDict.get("address").getAsString();
+//                    _wearAddressSet.add(address);
+//                }
+//            }// end wear
 
             // MAIN GUI
             if(topDict.get("gui")!=null){
@@ -772,11 +772,11 @@ public class PatchFragment extends Fragment implements ControlDelegate, PagingSc
                 }
             }
             // If wear has the address, send it out.
-            if (_wearAddressSet.contains(addressObj)) {
-                Object argsNoAddress[] = Arrays.copyOfRange(args, 1, args.length);
-                String message = TextUtils.join(" ",argsNoAddress); //rest is turned into list, delimited by space.
-                _mainActivity.sendWearMessage((String)addressObj, message);
-            }
+//            if (_wearAddressSet.contains(addressObj)) {
+//                Object argsNoAddress[] = Arrays.copyOfRange(args, 1, args.length);
+//                String message = TextUtils.join(" ",argsNoAddress); //rest is turned into list, delimited by space.
+//                _mainActivity.sendWearMessage((String)addressObj, message);
+//            }
         } else if (source.equals("toSystem")) {
             if (args.length==0) return;
 

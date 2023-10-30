@@ -1,2 +1,3 @@
-include ':app', ':mobmuplatandroidwear', ':midi'
+include ':app', ':midi'//, ':pdcore'
 project(':midi').projectDir = new File('../btmidi/AndroidMidi')
+//project(':pdcore').projectDir = new File('../pd-for-android/PdCore')
