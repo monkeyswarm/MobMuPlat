@@ -91,9 +91,10 @@ public class UsbMidiController extends Observable{
             @Override
             public void onPermissionGranted(UsbDevice device) {
                 // find it
-                //ConsoleLogController.getInstance().append("\npermission granted "+device.toString());
+                ConsoleLogController.getInstance().append("\npermission granted "+device.toString());
                 UsbMidiDevice midiDevice = findUsbMidiDeviceMatching(device);
                 if (midiDevice == null) {
+                    ConsoleLogController.getInstance().append("\ndevice not found "+device.toString());
                     requestNextDevice();
                     return; // not found
                 }
