@@ -11,3 +11,6 @@
 [submodule "ZipArchive"]
 	path = ZipArchive
 	url = https://github.com/mattconnolly/ZipArchive.git
+[submodule "btmidi"]
+	path = btmidi
+	url = https://github.com/monkeyswarm/btmidi.git

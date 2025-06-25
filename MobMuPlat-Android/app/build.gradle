@@ -1,7 +1,11 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+}
+
 
 android {
     compileSdkVersion 33
+    namespace 'com.iglesiaintermedia.mobmuplat'
 
     defaultConfig {
         applicationId "com.iglesiaintermedia.mobmuplat"
