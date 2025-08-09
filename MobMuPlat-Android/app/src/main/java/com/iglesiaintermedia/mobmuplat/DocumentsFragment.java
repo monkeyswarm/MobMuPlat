@@ -92,6 +92,12 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 					getActivity().getSupportFragmentManager().popBackStack();// remove(DocumentsFragment.this).commit();
 				}
 			}
+
+			@Override
+			public void onLongItemClick(View view, int index) {
+				final String filename = _filenamesList.get(index);
+				((MainActivity)getActivity()).requestExportFiles(filename);
+			}
 		});
 		_recyclerView.setAdapter(_adapter);
 		refreshFileList();
@@ -281,23 +287,31 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 			return filenames.size();
 		}
 
-		public class DocumentsRecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+		public class DocumentsRecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 			TextView myTextView;
 
 			DocumentsRecyclerViewHolder(View itemView) {
 				super(itemView);
 				myTextView = itemView.findViewById(R.id.list_item_textView);
 				itemView.setOnClickListener(this);
+				itemView.setOnLongClickListener(this);
 			}
 
 			@Override
 			public void onClick(View view) {
+				// Ignore click if view is disabled (but we want to still allow long-click)
+				if (!view.isEnabled()) return;
 				if (clickListener != null) clickListener.onItemClick(view, getAdapterPosition());
 			}
 
 			void setEnabled(boolean isEnabled) {
-				myTextView.setEnabled(isEnabled); // gray out text
-				itemView.setEnabled(isEnabled); // disable tap
+				myTextView.setEnabled(isEnabled); // gray out text. clicks still handled.
+			}
+
+			@Override
+			public boolean onLongClick(View view) {
+				if (clickListener != null) clickListener.onLongItemClick(view, getAdapterPosition());
+				return true;
 			}
 		}
 
@@ -307,6 +321,7 @@ public class DocumentsFragment extends Fragment implements OnClickListener{
 
 		public interface ItemClickListener {
 			void onItemClick(View view, int position);
+			void onLongItemClick(View view, int position);
 		}
 	}
 }

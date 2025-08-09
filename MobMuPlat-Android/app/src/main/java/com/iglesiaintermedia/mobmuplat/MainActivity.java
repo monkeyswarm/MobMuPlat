@@ -161,6 +161,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	Object[] _compassMsgArray; 
 	private boolean _shouldSwapAxes = false;
 
+	// Hold tapped filename during export file picker activity
+	String _exportFilename;
 
 	// new permissions pattern
 	String[] STARTUP_PERMISSIONS = {
@@ -1414,8 +1416,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		return super.onGenericMotionEvent(event);
 	}
 
-	//
+	// import and export files to/from documents
 	private static final int IMPORT_FILES_REQUEST_CODE = 1234;
+	private static final int EXPORT_FILES_REQUEST_CODE = 1235;
 	public void requestImportFiles() {
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
 		intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
@@ -1428,6 +1431,15 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //		}
 
    		startActivityForResult(Intent.createChooser(intent, "foo"), IMPORT_FILES_REQUEST_CODE);
+	}
+
+	public void requestExportFiles(String filename) {
+		_exportFilename = filename;
+		Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+		intent.addCategory(Intent.CATEGORY_OPENABLE);
+		intent.setType("*/*"); // Set appropriate MIME type
+		intent.putExtra(Intent.EXTRA_TITLE, filename); // Default filename
+		startActivityForResult(intent, EXPORT_FILES_REQUEST_CODE);
 	}
 
 	@Override
@@ -1445,6 +1457,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			} else if (resultData.getData() != null) {
 				Uri uri = resultData.getData();
 				importFileFromContentUri(uri, true);
+			}
+		} else if (requestCode == EXPORT_FILES_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+			if (resultData != null && _exportFilename != null) {
+				Uri destinationUri = resultData.getData();
+				copyFileToPublicStorage(_exportFilename, destinationUri);
+//				Log.i("DEI", "export " + destinationUri);
 			}
 		}
 	}
@@ -1471,6 +1489,38 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 			}
 		} catch (FileNotFoundException e) {
 			showAlert("Could not copy " + filename + " to MobMuPlat Documents");
+		}
+	}
+
+	private void copyFileToPublicStorage(String filename, Uri destinationUri) {
+		// Path to internal storage file
+		File internalFile = new File(MainActivity.getDocumentsFolderPath(this),filename);
+
+		try {
+			// Open input stream from internal file
+			FileInputStream inputStream = new FileInputStream(internalFile);
+
+			// Open output stream to the selected public location
+			OutputStream outputStream = getContentResolver().openOutputStream(destinationUri);
+
+			if (outputStream != null) {
+				// Copy the file
+				byte[] buffer = new byte[1024];
+				int length;
+				while ((length = inputStream.read(buffer)) > 0) {
+					outputStream.write(buffer, 0, length);
+				}
+
+				// Close streams
+				inputStream.close();
+				outputStream.close();
+
+				Toast.makeText(this, "File copied successfully", Toast.LENGTH_SHORT).show();
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			Toast.makeText(this, "Error copying file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
 		}
 	}
 }
