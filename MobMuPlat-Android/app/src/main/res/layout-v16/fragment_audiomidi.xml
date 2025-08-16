@@ -13,10 +13,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="?android:attr/actionBarSize"
         android:gravity="center"
-        android:text="Select Midi Input + Ouput"
-        android:textAppearance="?android:attr/textAppearanceMedium" 
-        android:layout_marginTop="?android:attr/actionBarSize"/>
+        android:text="Connected Midi Input + Ouput"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -46,15 +46,8 @@
         android:id="@+id/textView5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:text="To use Bluetooth LE MIDI devices, install the MIDI+BTLE app and connect the device within that app. It should then show up as a connected device here." />
 
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Refresh Midi Devices" />
-
-    
 
     <Switch
         android:id="@+id/switch1"

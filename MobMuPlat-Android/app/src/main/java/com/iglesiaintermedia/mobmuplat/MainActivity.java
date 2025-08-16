@@ -222,7 +222,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 		PdPreferences.initPreferences(getApplicationContext());
 		initSensors();
 //		initLocation();
-		usbMidiController = new UsbMidiController(this); //matched close in onDestroy...move closer in?
+		usbMidiController = new UsbMidiController(this);
 
 		//allow multicast
 		WifiManager wifi = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -999,7 +999,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 	}
 
 	protected void onDestroy() {
-		usbMidiController.close(); //solves "Intent Receiver Leaked: ... are you missing a call to unregisterReceiver()?"
 		unregisterReceiver(_bc);
 		super.onDestroy();
 		cleanup();

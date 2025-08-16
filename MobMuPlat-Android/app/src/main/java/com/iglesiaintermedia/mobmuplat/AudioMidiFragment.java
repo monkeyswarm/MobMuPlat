@@ -1,17 +1,20 @@
 package com.iglesiaintermedia.mobmuplat;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.stream.Collectors;
 
 import android.graphics.Color;
+import android.media.midi.MidiDeviceInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -19,17 +22,12 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-import com.noisepages.nettoyeur.usb.midi.UsbMidiDevice;
 
 public class AudioMidiFragment extends Fragment implements Observer, SegmentedControlListener {
-	
-	//private Button _refreshMidiButton;
+
 	private UsbMidiController _usbMidiController;
 	private ListView _listViewInput, _listViewOutput;
-	//private TextView _bufferSizeTextView, _samplingRateTextView;
-	//public AudioDelegate audioDelegate;
-	private ArrayAdapter<String> adapterInput;
-	private ArrayAdapter<String> adapterOutput;
+
 	private SegmentedControlView _rateSeg;
 	private int[] _rates = new int[]{8000,11025,22050,32000,44100,48000};
 	
@@ -41,56 +39,12 @@ public class AudioMidiFragment extends Fragment implements Observer, SegmentedCo
 		
 		_usbMidiController = ((MainActivity)getActivity()).usbMidiController;
 		_usbMidiController.addObserver(this);
-		
-		
-		_listViewInput = (ListView)rootView.findViewById(R.id.listViewInput);
-		_listViewInput.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-		_listViewOutput = (ListView)rootView.findViewById(R.id.listViewOutput);
-		_listViewOutput.setChoiceMode(ListView.CHOICE_MODE_SINGLE); // PdBase only one receiver
-		
-		 adapterInput = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_multiple_choice, _usbMidiController.midiInputStringList);
-		 _listViewInput.setAdapter(adapterInput);
-		 adapterOutput = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_single_choice, _usbMidiController.midiOutputStringList);
-		 _listViewOutput.setAdapter(adapterOutput);
-		
-		_listViewInput.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parentAdapter, View view, int position,long id) {
-				//TextView clickedView = (TextView) view;
-				//Toast.makeText(getActivity(), "Item with id ["+id+"] - Position ["+position+"] - Planet ["+clickedView.getText()+"]", Toast.LENGTH_SHORT).show();
-                UsbMidiDevice.UsbMidiInput input = _usbMidiController.midiInputList.get(position);
-                if (_usbMidiController.isConnectedToInput(input)) {
-                    _usbMidiController.disconnectMidiInput(input);
-                } else { //not connected
-                    _usbMidiController.connectMidiInput(input);
-                }
-				refreshList();
-			}
-		});
-		
-		_listViewOutput.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parentAdapter, View view, int position,long id) {
-				//TextView clickedView = (TextView) view;
-				//Toast.makeText(getActivity(), "Item with id ["+id+"] - Position ["+position+"] - Planet ["+clickedView.getText()+"]", Toast.LENGTH_SHORT).show();
-				//_usbMidiController.connectMidiOutput(_usbMidiController.midiOutputList.get(position));
-                UsbMidiDevice.UsbMidiOutput output = _usbMidiController.midiOutputList.get(position);
-                if (_usbMidiController.isConnectedToOutput(output)) {
-                    _usbMidiController.disconnectMidiOutput(output);
-                } else { //not connected
-                    _usbMidiController.connectMidiOutput(output);
-                }
-				refreshList();//see if the index was selected, then highlight
-			}
-		});
 
-		Button button = (Button) rootView.findViewById(R.id.button1);
-		button.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				//Toast.makeText(AudioMidiActivity.this, "Button Clicked", Toast.LENGTH_SHORT).show();
-				_usbMidiController.refreshDevices();
-			}
-		});
-		
+		_listViewInput = (ListView)rootView.findViewById(R.id.listViewInput);
+		_listViewOutput = (ListView)rootView.findViewById(R.id.listViewOutput);
+
+		refreshList(); // Set up device names and adapters for midi in/out lists
+
 		Switch _backgroundAudioSwitch = (Switch)rootView.findViewById(R.id.switch1);
 		_backgroundAudioSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			   @Override
@@ -143,26 +97,28 @@ public class AudioMidiFragment extends Fragment implements Observer, SegmentedCo
 	@Override  // from midi controller that it has refreshed data
 	public void update(Observable observable, Object data) {
 		refreshList();
-		
 	}
 	
 	private void refreshList(){
-		adapterInput.notifyDataSetChanged();
-		adapterOutput.notifyDataSetChanged();
-
-        // redo checks - since the view is recycled the checkmark could be stale.
-        // TODO: do this in a custom adapter's getView().
-        for (int i=0;i<_usbMidiController.midiInputList.size();i++) {
-            UsbMidiDevice.UsbMidiInput input = _usbMidiController.midiInputList.get(i);
-            _listViewInput.setItemChecked(i, _usbMidiController.isConnectedToInput(input));
-        }
-        for (int i=0;i<_usbMidiController.midiOutputList.size();i++) {
-            UsbMidiDevice.UsbMidiOutput output = _usbMidiController.midiOutputList.get(i);
-            _listViewOutput.setItemChecked(i, _usbMidiController.isConnectedToOutput(output));
-        }
-
-		
+		List<String> deviceInputNames = _usbMidiController.deviceInfos.stream().filter(info->hasInputOrOutput(info, false)).map(info->info.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME)).collect(Collectors.toList());
+		List<String> deviceOutputNames = _usbMidiController.deviceInfos.stream().filter(info->hasInputOrOutput(info, true)).map(info->info.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME)).collect(Collectors.toList());
+		ArrayAdapter<String> adapterInput = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, deviceInputNames);
+		_listViewInput.setAdapter(adapterInput);
+		ArrayAdapter<String> adapterOutput = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, deviceOutputNames);
+		_listViewOutput.setAdapter(adapterOutput);
 	}
 
-	
+	boolean hasInputOrOutput(MidiDeviceInfo info, boolean wantOutput) {
+		MidiDeviceInfo.PortInfo[] portInfos = info.getPorts();
+		for (MidiDeviceInfo.PortInfo portInfo : portInfos) {
+			if (!wantOutput && portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_INPUT) {
+				return true;
+			}
+			if (wantOutput && portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_OUTPUT) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
+
